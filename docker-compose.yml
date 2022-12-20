@@ -1,0 +1,52 @@
+version: '3'
+
+services:
+
+    php:
+        build: ./backend-laravel
+        restart: always
+        depends_on:
+            - mysql
+        volumes:
+            - ./backend-laravel:/var/www/html
+            - /var/www/html/vendor/
+
+    nginx:
+        image: nginx
+        restart: always
+        depends_on:
+            - php
+        ports:
+            - "8080:80"
+        volumes:
+            - ./configs/nginx:/etc/nginx/conf.d
+            - ./backend-laravel:/var/www/html
+
+    vue:
+        build: ./frontend-vue
+        depends_on:
+            - nginx
+        ports:
+            - "3000:3000"
+        volumes:
+            -  /app/node_modules
+
+    mysql:
+        image: mysql
+        restart: always
+        environment:
+            MYSQL_ROOT_PASSWORD: password
+            MYSQL_DATABASE: vk-bot
+        volumes:
+            - ./database:/var/lib/mysql
+
+    phpmyadmin:
+        image: phpmyadmin
+        depends_on:
+            - php
+        ports:
+            - "8181:80"
+        environment:
+            PMA_HOST: mysql
+
+
