@@ -29,6 +29,7 @@ services:
         ports:
             - "3000:3000"
         volumes:
+            - ./frontend-vue:/app
             -  /app/node_modules
 
     mysql:
@@ -48,5 +49,6 @@ services:
             - "8181:80"
         environment:
             PMA_HOST: mysql
+
 
 
