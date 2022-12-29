@@ -13,7 +13,7 @@ EXPOSE 9000
 
 COPY . .
 
-RUN composer install
+RUN composer update
 
 
 
