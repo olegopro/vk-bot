@@ -16,8 +16,8 @@ class CreateTasksTable extends Migration
         Schema::create('tasks', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('account_id')->unsigned();
-            $table->string('payload');
-            $table->unsignedTinyInteger('attempts');
+            $table->string('payload')->nullable();
+            $table->unsignedTinyInteger('attempts')->nullable();
             $table->timestamps();
 
             $table->foreign('account_id')->references('id')->on('accounts');
