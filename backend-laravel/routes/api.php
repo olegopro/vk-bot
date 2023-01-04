@@ -21,3 +21,5 @@ use Illuminate\Support\Facades\Route;
 
 
 Route::resource('/',AccountController::class);
+
+Route::post('test', [AccountController::class, 'test']);
