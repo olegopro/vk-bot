@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AccountController;
+use App\Http\Controllers\TaskController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -20,6 +21,6 @@ use Illuminate\Support\Facades\Route;
 // });
 
 
-Route::resource('/',AccountController::class);
+Route::resource('/accounts',AccountController::class);
+Route::resource('/tasks',TaskController::class);
 
-Route::post('test', [AccountController::class, 'test']);

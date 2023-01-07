@@ -3,3 +3,46 @@ nav {
 	padding-bottom: 30px;
 
 }
+
+//.table > :not(caption) > * > *{
+//	border-bottom-width: 10px;
+//}
+
+table {
+	box-shadow: 0 1px 27px 0 rgba(34, 60, 80, 0.2);
+	border-radius: 2rem;
+
+	tr, td {
+		text-align: center;
+		padding: 10px;
+	}
+
+	thead {
+		height: 4rem;
+		vertical-align: middle !important;
+	}
+
+	tbody {
+		tr {
+			&:last-child {
+				border-color: transparent;
+
+				th:first-child {
+					border-bottom-left-radius: 2rem;
+				}
+
+				td:last-child {
+					border-bottom-right-radius: 2rem;
+				}
+
+				td,th {
+					border-bottom-width: 0;
+				}
+			}
+		}
+
+		&:last-child{
+			border-bottom-width: 0;
+		}
+	}
+}

@@ -10,16 +10,16 @@ export default {
     },
 
     mutations: {
-        addAccount(state, account) {
-            state.accounts = account
+        addAccounts(state, accounts) {
+            state.accounts = accounts
         }
     },
 
     actions: {
         async accounts({ commit }) {
-            const { data } = await axios.post('http://localhost:8080/api')
+            const { data } = await axios.post('http://localhost:8080/api/accounts')
             console.log(data)
-            commit('addAccount', data)
+            commit('addAccounts', data)
         }
     },
 

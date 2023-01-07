@@ -3,10 +3,10 @@
         <thead>
             <tr>
                 <th scope="col">#</th>
-                <th scope="col">Имя</th>
+                <th scope="col">Имя и фамилия</th>
                 <th scope="col">Логин</th>
                 <th scope="col">Лайки</th>
-                <th scope="col">Дата входа</th>
+                <th scope="col">Добавлен</th>
             </tr>
         </thead>
         <tbody>
@@ -39,7 +39,3 @@
         }
     }
 </script>
-
-<style scoped>
-
-</style>
