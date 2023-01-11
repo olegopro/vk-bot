@@ -24,3 +24,5 @@ use Illuminate\Support\Facades\Route;
 Route::resource('/accounts',AccountController::class);
 Route::resource('/tasks',TaskController::class);
 
+Route::post('/account/task/{taskId}', [AccountController::class, 'accountByTaskId']);
+

@@ -18,7 +18,6 @@ export default {
     actions: {
         async accounts({ commit }) {
             const { data } = await axios.post('http://localhost:8080/api/accounts')
-            console.log(data)
             commit('addAccounts', data)
         }
     },

@@ -25,8 +25,14 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|Task wherePayload($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Task whereUpdatedAt($value)
  * @mixin \Eloquent
+ * @property-read \App\Models\Account $account
  */
 class Task extends Model
 {
     use HasFactory;
+
+    public function account()
+    {
+        return $this->belongsTo(Account::class);
+    }
 }
