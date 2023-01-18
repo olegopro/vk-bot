@@ -30,14 +30,18 @@
                 <td>{{ account.username }}</td>
                 <td>{{ account.login }}</td>
                 <td>{{ account.likes_count }}</td>
-                <td>
-                    <button type="button" class="btn btn-primary me-2">
-                        <svg width="16" height="20">
-                            <use xlink:href="#info"></use>
-                        </svg>
-                    </button>
 
-                    <button type="button" class="btn btn-danger">
+                <td>
+
+                    <router-link custom :to="{name: 'Account', params: { id: account.id }}" v-slot="{navigate}">
+                        <a class="btn btn-primary me-2" @click="navigate">
+                            <svg width="16" height="20">
+                                <use xlink:href="#info"></use>
+                            </svg>
+                        </a>
+                    </router-link>
+
+                    <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteAccount">
                         <svg width="16" height="20">
                             <use xlink:href="#delete"></use>
                         </svg>
@@ -49,12 +53,18 @@
         </tbody>
     </table>
 
+    <Teleport to="body">
+        <DeleteAccount />
+    </Teleport>
+
 </template>
 
 <script>
     import { mapActions, mapGetters } from 'vuex'
+    import DeleteAccount from '../components/Accounts/Modals/DeleteAccount.vue'
 
     export default {
+        components: { DeleteAccount },
         mounted() {
             this.accounts()
         },
