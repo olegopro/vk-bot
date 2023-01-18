@@ -14,9 +14,10 @@ class AccountFactory extends Factory
     public function definition()
     {
         return [
-            'username' => $this->faker->name,
-            'password'=>$this->faker->word,
-            'likes_count'=>$this->faker->numberBetween(5,100)
+            'username'    => $this->faker->name,
+            'login'       => $this->faker->word,
+            'password'    => $this->faker->word,
+            'likes_count' => $this->faker->numberBetween(5, 100)
         ];
     }
 }

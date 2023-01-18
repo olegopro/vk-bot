@@ -16,7 +16,8 @@ class TaskFactory extends Factory
     public function definition()
     {
         return [
-           'account_id' => Account::get()->random()->id
+            'account_id' => Account::get()->random()->id,
+            'attempts'   => $this->faker->randomDigit()
         ];
     }
 }

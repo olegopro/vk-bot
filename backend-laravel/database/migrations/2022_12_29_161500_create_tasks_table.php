@@ -17,7 +17,7 @@ class CreateTasksTable extends Migration
             $table->id();
             $table->bigInteger('account_id')->unsigned();
             $table->string('payload')->nullable();
-            $table->unsignedTinyInteger('attempts')->nullable();
+            $table->unsignedTinyInteger('attempts')->default(0);
             $table->timestamps();
 
             $table->foreign('account_id')->references('id')->on('accounts');
