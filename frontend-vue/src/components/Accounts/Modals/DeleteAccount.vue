@@ -7,7 +7,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <p>Удалить аккаунт с логином</p>
+                    <p>Удалить аккаунт с логином <strong>{{ login }}</strong></p>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
@@ -19,7 +19,13 @@
 </template>
 
 <script>
-    export default {}
+    export default {
+        data() {
+            return {
+                login: ''
+            }
+        }
+    }
 </script>
 
 <style scoped lang="scss">

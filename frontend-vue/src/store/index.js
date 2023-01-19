@@ -1,6 +1,7 @@
 import { createStore } from 'vuex'
 import accounts from './modules/accounts'
 import tasks from './modules/tasks'
+import account from './modules/account'
 
 export default createStore({
     state: {},
@@ -8,6 +9,6 @@ export default createStore({
     mutations: {},
     actions: {},
     modules: {
-        accounts, tasks
+        account, accounts, tasks
     }
 })
