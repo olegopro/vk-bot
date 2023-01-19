@@ -4,8 +4,9 @@
             <tr>
                 <th scope="col">#</th>
                 <th scope="col">Имя аккаунта</th>
-                <th scope="col">Задача (payload)</th>
+                <th scope="col">Статус</th>
                 <th scope="col">Попытки</th>
+                <th scope="col">Действия</th>
                 <th scope="col">Задача создана</th>
             </tr>
         </thead>
