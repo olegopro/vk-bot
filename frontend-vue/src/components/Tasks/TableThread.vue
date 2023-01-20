@@ -13,7 +13,7 @@
 
         </td>
         <td>
-            <TaskStatus :type="task.payload" />
+            <TaskStatus :type="task.status" />
         </td>
 
         <td>{{ task.attempts }}</td>

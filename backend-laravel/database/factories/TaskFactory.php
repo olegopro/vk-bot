@@ -15,8 +15,16 @@ class TaskFactory extends Factory
      */
     public function definition()
     {
+        $taskStatus = [
+            'active',
+            'cancelled',
+            'done',
+            'pending'
+        ];
+
         return [
             'account_id' => Account::get()->random()->id,
+            'status'     => $taskStatus[array_rand($taskStatus)],
             'attempts'   => $this->faker->randomDigit()
         ];
     }
