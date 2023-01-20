@@ -14,14 +14,20 @@
             <TableThread v-for="task in getTasks" :task="task" :key="task.id" />
         </tbody>
     </table>
+
+    <Teleport to="body">
+        <DeleteTask />
+    </Teleport>
+
 </template>
 
 <script>
     import { mapActions, mapGetters } from 'vuex'
     import TableThread from '../components/Tasks/TableThread.vue'
+    import DeleteTask from '../components/Tasks/Modals/DeleteTask.vue'
 
     export default {
-        components: { TableThread },
+        components: { DeleteTask, TableThread },
 
         data() {
             return {

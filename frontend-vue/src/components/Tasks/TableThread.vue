@@ -29,10 +29,9 @@
 
             <button
                 class="btn btn-danger"
-                data-bs-target="#deleteAccount"
+                data-bs-target="#deleteTask"
                 data-bs-toggle="modal"
                 type="button"
-                @click="getLogin(account.login)"
             >
                 <svg width="16" height="20">
                     <use xlink:href="#delete"></use>
