@@ -1,5 +1,5 @@
 <template>
-    <h1>Системный лог</h1>
+    <h1>Настройки</h1>
 </template>
 
 <script>

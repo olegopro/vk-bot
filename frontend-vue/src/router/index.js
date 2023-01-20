@@ -2,8 +2,8 @@ import { createRouter, createWebHistory } from 'vue-router'
 import Accounts from '../views/Accounts.vue'
 import Tasks from '../views/Tasks.vue'
 import Account from '../views/Account.vue'
-import ActionsHistory from '../views/ActionsHistory.vue'
-import SystemLogs from '../views/SystemLogs.vue'
+import Statistics from '../views/Statistics.vue'
+import Settings from '../views/Settings.vue'
 
 const routes = [
     {
@@ -31,17 +31,17 @@ const routes = [
         }
     },
     {
-        path: '/history',
-        name: 'History',
-        component: ActionsHistory,
+        path: '/statistics',
+        name: 'Statistics',
+        component: Statistics,
         meta: {
             layout: 'main'
         }
     },
     {
-        path: '/logs',
-        name: 'Logs',
-        component: SystemLogs,
+        path: '/settings',
+        name: 'Settings',
+        component: Settings,
         meta: {
             layout: 'main'
         }

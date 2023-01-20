@@ -2,8 +2,8 @@
     <nav class="nav nav-pills nav-fill">
         <router-link to="/" class="nav-link">Аккаунты</router-link>
         <router-link to="/tasks" class="nav-link">Задачи</router-link>
-        <router-link to="/history" class="nav-link">Статистика</router-link>
-        <router-link to="/logs" class="nav-link">Настройки</router-link>
+        <router-link to="/statistics" class="nav-link">Статистика</router-link>
+        <router-link to="/settings" class="nav-link">Настройки</router-link>
     </nav>
 </template>
 
