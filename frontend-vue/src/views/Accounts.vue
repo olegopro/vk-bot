@@ -19,21 +19,21 @@
 
                 <td>
                     <router-link custom :to="{name: 'Account', params: {id: account.id}}" v-slot="{navigate}">
-                        <a class="btn btn-primary me-2" @click="navigate">
-                            <svg width="16" height="20">
+                        <a class="btn btn-primary me-2 button-style" @click="navigate">
+                            <svg width="16" height="16">
                                 <use xlink:href="#info"></use>
                             </svg>
                         </a>
                     </router-link>
 
                     <button
-                        class="btn btn-danger"
+                        class="btn btn-danger button-style"
                         data-bs-target="#deleteAccount"
                         data-bs-toggle="modal"
                         type="button"
                         @click="getLogin(account.login)"
                     >
-                        <svg width="16" height="20">
+                        <svg width="16" height="16">
                             <use xlink:href="#delete"></use>
                         </svg>
                     </button>

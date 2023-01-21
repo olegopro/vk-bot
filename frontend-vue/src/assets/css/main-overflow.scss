@@ -14,6 +14,7 @@ table {
 
 	tr, td {
 		text-align: center;
+		vertical-align: middle;
 		padding: 10px;
 	}
 
@@ -35,13 +36,24 @@ table {
 					border-bottom-right-radius: 2rem;
 				}
 
-				td,th {
+				td, th {
 					border-bottom-width: 0;
+				}
+			}
+
+			td {
+				.button-style {
+					display: inline-flex;
+					width: 42px;
+					height: 38px;
+					justify-content: center;
+					align-items: center;
+					padding: 0;
 				}
 			}
 		}
 
-		&:last-child{
+		&:last-child {
 			border-bottom-width: 0;
 		}
 	}

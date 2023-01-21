@@ -3,8 +3,9 @@
         <th scope="row">{{ task.id }}</th>
         <td>
             {{ username }}
-            <router-link custom :to="{name: 'Account', params: {id: task.account_id}}" v-slot="{navigate}">
-                <a class="btn btn-primary me-2" @click="navigate">
+
+            <router-link v-if="username" custom :to="{name: 'Account', params: {id: task.account_id}}" v-slot="{navigate}">
+                <a class="me-2 account-link" @click="navigate">
                     <svg width="16" height="20">
                         <use xlink:href="#right-arrow"></use>
                     </svg>
@@ -20,20 +21,20 @@
 
         <td>
             <router-link custom to="/" v-slot="{navigate}">
-                <a class="btn btn-primary me-2" @click="navigate">
-                    <svg width="16" height="20">
+                <a class="btn btn-primary me-2 button-style" @click="navigate">
+                    <svg width="16" height="16">
                         <use xlink:href="#info"></use>
                     </svg>
                 </a>
             </router-link>
 
             <button
-                class="btn btn-danger"
+                class="btn btn-danger button-style"
                 data-bs-target="#deleteTask"
                 data-bs-toggle="modal"
                 type="button"
             >
-                <svg width="16" height="20">
+                <svg width="16" height="16">
                     <use xlink:href="#delete"></use>
                 </svg>
             </button>
@@ -71,6 +72,8 @@
     }
 </script>
 
-<style scoped>
-
+<style scoped lang="scss">
+    .account-link {
+        cursor: pointer;
+    }
 </style>

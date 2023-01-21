@@ -39,5 +39,11 @@
 </script>
 
 <style scoped lang="scss">
-
+    span {
+        line-height: 12px;
+        padding: 0.4rem;
+        width: fit-content;
+        user-select: none;
+        cursor: default;
+    }
 </style>
