@@ -119,7 +119,7 @@ class AccountController extends Controller
         ]);
     }
 
-    public function getAccountFollowers($id, $limit = 10)
+    public function getAccountFollowers($id, $limit = 6)
     {
         return (new VkClient())->request('users.getFollowers', [
             'user_id' => $id,
@@ -128,6 +128,19 @@ class AccountController extends Controller
                 'about',
                 'photo_200'
             ]
+        ]);
+
+    }
+
+    public function getAccountFriends($id, $limit = 9)
+    {
+        return (new VkClient())->request('friends.get', [
+            'user_id' => $id,
+            'count'   => $limit,
+            // 'fields'  => [
+            //     'about',
+            //     'photo_200'
+            // ]
         ]);
 
     }

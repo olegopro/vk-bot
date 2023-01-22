@@ -28,3 +28,4 @@ Route::post('/account/task/{taskId}', [AccountController::class, 'accountByTaskI
 
 Route::post('/account/data/{id}',[AccountController::class, 'getAccountData']);
 Route::post('/account/followers/{id}',[AccountController::class, 'getAccountFollowers']);
+Route::post('/account/friends/{id}',[AccountController::class, 'getAccountFriends']);
