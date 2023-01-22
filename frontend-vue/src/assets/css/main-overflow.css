@@ -1,0 +1,43 @@
+nav {
+  padding-top: 30px;
+  padding-bottom: 30px;
+}
+
+table {
+  box-shadow: 0 1px 27px 0 rgba(34, 60, 80, 0.2);
+  border-radius: 2rem;
+}
+table tr, table td {
+  text-align: center;
+  vertical-align: middle;
+  padding: 10px;
+}
+table thead {
+  height: 4rem;
+  vertical-align: middle !important;
+}
+table tbody tr:last-child {
+  border-color: transparent;
+}
+table tbody tr:last-child th:first-child {
+  border-bottom-left-radius: 2rem;
+}
+table tbody tr:last-child td:last-child {
+  border-bottom-right-radius: 2rem;
+}
+table tbody tr:last-child td, table tbody tr:last-child th {
+  border-bottom-width: 0;
+}
+table tbody tr td .button-style {
+  display: inline-flex;
+  width: 42px;
+  height: 38px;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+}
+table tbody:last-child {
+  border-bottom-width: 0;
+}
+
+/*# sourceMappingURL=main-overflow.css.map */
