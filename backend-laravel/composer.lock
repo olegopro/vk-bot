@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "dedc76d9df4dc397f900166df7924228",
+    "content-hash": "6fc6549207938da3572c1298d88248f4",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -61,6 +61,54 @@
                 "source": "https://github.com/asm89/stack-cors/tree/v2.1.1"
             },
             "time": "2022-01-18T09:12:03+00:00"
+        },
+        {
+            "name": "atehnix/vk-client",
+            "version": "1.4.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/LaravelRUS/vk-client.git",
+                "reference": "09babd2eba2ee31d718014c4f1590c68ed6b1f58"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/LaravelRUS/vk-client/zipball/09babd2eba2ee31d718014c4f1590c68ed6b1f58",
+                "reference": "09babd2eba2ee31d718014c4f1590c68ed6b1f58",
+                "shasum": ""
+            },
+            "require": {
+                "guzzlehttp/guzzle": "~6.0|~7.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "ATehnix\\VkClient\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "ATehnix",
+                    "email": "atehnix@gmail.com"
+                }
+            ],
+            "description": "PHP client for Vk.com API",
+            "keywords": [
+                "api",
+                "client",
+                "php",
+                "vk",
+                "vk.com",
+                "vkontakte"
+            ],
+            "support": {
+                "issues": "https://github.com/LaravelRUS/vk-client/issues",
+                "source": "https://github.com/LaravelRUS/vk-client/tree/1.4.0"
+            },
+            "time": "2020-09-10T17:46:51+00:00"
         },
         {
             "name": "brick/math",

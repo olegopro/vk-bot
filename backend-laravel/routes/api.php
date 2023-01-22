@@ -26,3 +26,5 @@ Route::resource('/tasks',TaskController::class);
 
 Route::post('/account/task/{taskId}', [AccountController::class, 'accountByTaskId']);
 
+Route::post('/account/data/{id}',[AccountController::class, 'getAccountData']);
+Route::post('/account/followers/{id}',[AccountController::class, 'getAccountFollowers']);
