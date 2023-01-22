@@ -110,7 +110,11 @@ class AccountController extends Controller
             'fields'   => [
                 'photo_200',
                 'status',
-                'is_friend'
+                'screen_name',
+                'last_seen',
+                'followers_count',
+                'city',
+                'online'
             ]
         ]);
     }

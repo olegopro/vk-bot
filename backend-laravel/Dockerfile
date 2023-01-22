@@ -14,7 +14,3 @@ EXPOSE 9000
 COPY . .
 
 RUN composer update
-
-
-
-

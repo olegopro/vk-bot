@@ -1,27 +1,36 @@
 <template>
-    <div class="card" style="width: 18rem;">
-        <img class="bd-placeholder-img card-img-top" width="200" height="200" :src="getAccountData.photo_200" alt="">
-        <div class="card-body">
-            <!--<h5 class="card-title">{{ getAccount.username }}</h5>-->
-            <h5 class="card-title">Имя - {{ getAccountData.first_name }}</h5>
-            <h5 class="card-title">Фамилия - {{ getAccountData.last_name }}</h5>
+    <div class="row account">
 
-            <p class="card-text">Статус - {{ getAccountData.status }}</p>
-            <p class="card-text">Друг? -  {{ getAccountData.is_friend }}</p>
-            <a href="#" class="btn btn-primary">Показать историю</a>
+        <img class="col-3 ps-0" width="200" height="200" :src="getAccountData.photo_200" alt="">
+        <div class="col-4 p-3">
+            <h2>{{ getAccountData.first_name }} {{ getAccountData.last_name }}</h2>
+            <h3>{{ getAccountData.screen_name }}</h3>
+
+            <p>Статус - {{ getAccountData.status }}</p>
+            <p>Последняя активность - {{ getAccountData.last_seen?.time }}</p>
         </div>
+
+        <div class="col-4 p-3">
+            <h3>Друзья - </h3>
+            <h3>Подписчики - {{ getAccountData.followers_count }}</h3>
+            <h3>Город - {{ getAccountData.city?.title }}</h3>
+
+        </div>
+
+        <div class="col-1 p-3">
+            <h3>Онлайн - {{ getAccountData.online }}</h3>
+        </div>
+
     </div>
 
-    <Followers />
+    <!--<Followers />-->
 
 </template>
 
 <script>
     import { mapActions, mapGetters } from 'vuex'
-    import Followers from '../components/Account/Followers.vue'
 
     export default {
-        components: { Followers },
         computed: {
             ...mapGetters('account', ['getAccount', 'getAccountData'])
         },
@@ -38,7 +47,15 @@
 </script>
 
 <style scoped lang="scss">
-    img {
-        object-fit: cover;
+    .account {
+        box-shadow: 0 1px 27px 0 rgba(34, 60, 80, 0.2);
+        border-radius: 2rem;
+
+        img {
+            border-top-left-radius: 2rem;
+            border-bottom-left-radius: 2rem;
+            width: 200px;
+            height: 200px;
+        }
     }
 </style>
