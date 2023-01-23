@@ -22,14 +22,17 @@
     <!--<Followers />-->
     <Followers />
 
+    <Friends />
+
 </template>
 
 <script>
     import { mapActions, mapGetters } from 'vuex'
     import Followers from '../components/Account/Followers.vue'
+    import Friends from '../components/Account/Friends.vue'
 
     export default {
-        components: { Followers },
+        components: { Followers, Friends },
 
         data() {
             return {

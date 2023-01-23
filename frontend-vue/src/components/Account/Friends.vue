@@ -1,16 +1,16 @@
 <template>
     <div class="row mt-5">
-        <h1>Подписчики</h1>
-        <div class="col-2" v-for="follower in getAccountFollowers.items" :key="follower.id">
+        <h1>Друзья</h1>
+        <div class="col-2" v-for="friends in getAccountFriends.items" :key="friends.id">
             <div class="card">
                 <img class="bd-placeholder-img card-img-top"
                      width="100%"
                      height="200"
                      alt=""
-                     :src="follower.photo_200"
+                     :src="friends.photo_200"
                 />
                 <div class="card-body">
-                    <p class="card-text">{{ follower.first_name }} {{ follower.last_name }}</p>
+                    <p class="card-text">{{ friends.first_name }} {{ friends.last_name }}</p>
                     <div class="d-flex justify-content-between align-items-center">
                         <div class="btn-group">
                             <button type="button" class="btn btn-sm btn-outline-secondary">View</button>
@@ -30,20 +30,20 @@
     export default {
         data() {
             return {
-                followers: []
+                friends: []
             }
         },
 
         mounted() {
-            this.accountFollowers(this.$route.params.id)
+            this.accountFriends(this.$route.params.id)
         },
 
         computed: {
-            ...mapGetters('account', ['getAccountFollowers'])
+            ...mapGetters('account', ['getAccountFriends'])
         },
 
         methods: {
-            ...mapActions('account', ['accountFollowers'])
+            ...mapActions('account', ['accountFriends'])
         }
     }
 </script>

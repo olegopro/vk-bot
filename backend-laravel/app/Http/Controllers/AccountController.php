@@ -132,15 +132,15 @@ class AccountController extends Controller
 
     }
 
-    public function getAccountFriends($id, $limit = 9)
+    public function getAccountFriends($id, $limit = 6)
     {
         return (new VkClient())->request('friends.get', [
             'user_id' => $id,
             'count'   => $limit,
-            // 'fields'  => [
-            //     'about',
-            //     'photo_200'
-            // ]
+            'fields'  => [
+                'about',
+                'photo_200'
+            ]
         ]);
 
     }
