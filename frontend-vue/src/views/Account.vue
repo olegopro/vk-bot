@@ -6,20 +6,18 @@
             <h3>{{ getAccountData.screen_name }}</h3>
 
             <p>Статус - {{ getAccountData.status }}</p>
-            <p>Последняя активность - {{ getAccountData.last_seen?.time }}</p>
+            <p>Последняя активность - {{ date(getAccountData.last_seen?.time) }}</p>
         </div>
-        <div class="col-4 p-3">
-            <h3>Друзья - {{ getAccountFriends.count }}</h3>
+        <div class="col-4 p-3 d-flex flex-column justify-content-around">
+            <h3>Друзья - {{ getAccountFriendsCount.count }}</h3>
             <h3>Подписчики - {{ getAccountData.followers_count }}</h3>
             <h3>Город - {{ getAccountData.city?.title }}</h3>
-
         </div>
         <div class="col-1 p-3">
-            <h3>Онлайн - {{ getAccountData.online }}</h3>
+            <OnlineStatus :type="getAccountData.online === 0 ? 'offline' : 'online'" />
         </div>
     </div>
 
-    <!--<Followers />-->
     <Followers />
 
     <Friends />
@@ -30,9 +28,10 @@
     import { mapActions, mapGetters } from 'vuex'
     import Followers from '../components/Account/Followers.vue'
     import Friends from '../components/Account/Friends.vue'
+    import OnlineStatus from '../components/Account/OnlineStatus.vue'
 
     export default {
-        components: { Followers, Friends },
+        components: { OnlineStatus, Followers, Friends },
 
         data() {
             return {
@@ -41,7 +40,7 @@
         },
 
         computed: {
-            ...mapGetters('account', ['getAccount', 'getAccountData', 'getAccountFriends'])
+            ...mapGetters('account', ['getAccount', 'getAccountData', 'getAccountFriendsCount'])
         },
 
         created() {
@@ -51,11 +50,15 @@
         async mounted() {
             await this.account(this.userID)
             await this.accountData(this.userID)
-            await this.accountFriends(this.userID)
+            await this.accountFriendsCount(this.userID)
         },
 
         methods: {
-            ...mapActions('account', ['account', 'accountData', 'accountFriends'])
+            ...mapActions('account', ['account', 'accountData', 'accountFriendsCount']),
+
+            date(timestamp) {
+                return new Date(timestamp).toLocaleTimeString('ru-RU')
+            }
         }
     }
 </script>

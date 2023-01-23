@@ -8,7 +8,8 @@ export default {
             account: [],
             accountData: {},
             accountFollowers: {},
-            accountFriends: {}
+            accountFriends: {},
+            accountFriendsCount: {}
         }
     },
 
@@ -27,6 +28,10 @@ export default {
 
         addAccountFriends(state, accountFriend) {
             state.accountFriends = accountFriend
+        },
+
+        addAccountFriendsCount(state, accountFriendCounts) {
+            state.accountFriendsCount = accountFriendCounts
         }
     },
 
@@ -44,12 +49,17 @@ export default {
         async accountFollowers({ commit }, id) {
             const { data } = await axios.post(`http://localhost:8080/api/account/followers/${id}`)
             commit('addAccountFollowers', data.response)
-            console.log(data.response)
         },
 
         async accountFriends({ commit }, id) {
             const { data } = await axios.post(`http://localhost:8080/api/account/friends/${id}`)
             commit('addAccountFriends', data.response)
+        },
+
+        async accountFriendsCount({ commit }, id) {
+            const { data } = await axios.post(`http://localhost:8080/api/account/friends/count/${id}`)
+            commit('addAccountFriendsCount', data.response)
+            console.log(data.response)
         }
     },
 
@@ -68,6 +78,10 @@ export default {
 
         getAccountFriends(state) {
             return state.accountFriends
+        },
+
+        getAccountFriendsCount(state) {
+            return state.accountFriendsCount
         }
     }
 }

@@ -144,4 +144,13 @@ class AccountController extends Controller
         ]);
 
     }
+
+    public function getAccountCountFriends($id)
+    {
+        return (new VkClient())->request('friends.get', [
+            'user_id' => $id,
+            'count'   => 1,
+        ]);
+
+    }
 }
