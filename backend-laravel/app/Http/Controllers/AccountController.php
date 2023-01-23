@@ -129,7 +129,6 @@ class AccountController extends Controller
                 'photo_200'
             ]
         ]);
-
     }
 
     public function getAccountFriends($id, $limit = 6)
@@ -142,7 +141,6 @@ class AccountController extends Controller
                 'photo_200'
             ]
         ]);
-
     }
 
     public function getAccountCountFriends($id)
@@ -151,6 +149,5 @@ class AccountController extends Controller
             'user_id' => $id,
             'count'   => 1,
         ]);
-
     }
 }
