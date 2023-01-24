@@ -15,11 +15,10 @@ class CreateAccountsTable extends Migration
     {
         Schema::create('accounts', function (Blueprint $table) {
             $table->id();
-            $table->string('username');
-            $table->string('login');
-            $table->string('password');
-            $table->bigInteger('likes_count')->default(0)->unsigned();
-            $table->timestamps();
+            $table->string('screen_name');
+            $table->string('first_name');
+            $table->string('last_name');
+            $table->string('bdate');
         });
     }
 
