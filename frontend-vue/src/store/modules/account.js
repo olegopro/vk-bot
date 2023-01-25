@@ -59,7 +59,31 @@ export default {
         async accountFriendsCount({ commit }, id) {
             const { data } = await axios.post(`http://localhost:8080/api/account/friends/count/${id}`)
             commit('addAccountFriendsCount', data.response)
-            console.log(data.response)
+        },
+
+        async addAccount({ rootState }, accessToken) {
+            const { data } = await axios.post('http://localhost:8080/api/account/add', null, {
+                params: {
+                    access_token: accessToken
+                }
+            })
+
+            rootState.accounts.accounts.push(data)
+        },
+
+        async deleteAccount({ rootState, rootMutations }, id) {
+            try {
+                await axios.delete(`http://localhost:8080/api/accounts/${id}`)
+
+                const accounts = rootState.accounts.accounts
+
+                accounts.splice(
+                    accounts.findIndex(key => key.id === id),
+                    1
+                )
+            } catch (error) {
+                console.log(error)
+            }
         }
     },
 

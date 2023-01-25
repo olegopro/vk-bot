@@ -5,37 +5,20 @@ namespace App\Http\Controllers;
 use App\Library\VkClient;
 use App\Models\Account;
 use App\Models\Task;
-use App\Services\VkService;
 use Illuminate\Http\Request;
 
 class AccountController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index()
     {
         //
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function create()
     {
         //
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
         $accounts = Account::all();
@@ -43,12 +26,6 @@ class AccountController extends Controller
         return response($accounts);
     }
 
-    /**
-     * Возвращает данные аккаунт по id задачи
-     *
-     * @param $taskId
-     * @return \Illuminate\Http\Response
-     */
     public function accountByTaskId($taskId)
     {
         $account = Task::find($taskId)->account;
@@ -56,12 +33,6 @@ class AccountController extends Controller
         return response($account);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\Response
-     */
     public function show($id)
     {
         $account = Account::find($id);
@@ -69,38 +40,19 @@ class AccountController extends Controller
         return response($account);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\Response
-     */
     public function edit($id)
     {
         //
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param \Illuminate\Http\Request $request
-     * @param int $id
-     * @return \Illuminate\Http\Response
-     */
     public function update(Request $request, $id)
     {
         //
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\Response
-     */
     public function destroy($id)
     {
-        //
+        return Account::destroy($id);
     }
 
     public function getAccountData($id)
@@ -148,6 +100,25 @@ class AccountController extends Controller
         return (new VkClient())->request('friends.get', [
             'user_id' => $id,
             'count'   => 1,
+        ]);
+    }
+
+    public function getAccountInfo($access_token)
+    {
+        return (new VkClient($access_token))->request('account.getProfileInfo');
+    }
+
+    public function setAccountData(Request $request)
+    {
+        $accountData = $this->getAccountInfo($request['access_token']);
+
+        return Account::create([
+            'access_token' => $request['access_token'],
+            'account_id'   => $accountData['response']['id'],
+            'screen_name'  => $accountData['response']['screen_name'],
+            'first_name'   => $accountData['response']['first_name'],
+            'last_name'    => $accountData['response']['last_name'],
+            'bdate'        => $accountData['response']['bdate']
         ]);
     }
 }

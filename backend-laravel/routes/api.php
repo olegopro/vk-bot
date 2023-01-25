@@ -30,3 +30,5 @@ Route::post('/account/data/{id}',[AccountController::class, 'getAccountData']);
 Route::post('/account/followers/{id}',[AccountController::class, 'getAccountFollowers']);
 Route::post('/account/friends/{id}',[AccountController::class, 'getAccountFriends']);
 Route::post('/account/friends/count/{id}',[AccountController::class, 'getAccountCountFriends']);
+Route::post('/account/info/{access_token}',[AccountController::class, 'getAccountInfo']);
+Route::post('/account/add',[AccountController::class, 'setAccountData']);

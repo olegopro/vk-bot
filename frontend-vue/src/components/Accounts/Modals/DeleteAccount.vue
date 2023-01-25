@@ -11,7 +11,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
-                    <button type="button" class="btn btn-danger">Удалить</button>
+                    <button @click="deleteAccount(id)" type="button" data-bs-dismiss="modal" class="btn btn-danger">Удалить</button>
                 </div>
             </div>
         </div>
@@ -19,11 +19,18 @@
 </template>
 
 <script>
+    import { mapActions } from 'vuex'
+
     export default {
         data() {
             return {
-                login: ''
+                login: '',
+                id: ''
             }
+        },
+
+        methods: {
+            ...mapActions('account', ['deleteAccount'])
         }
     }
 </script>

@@ -20,10 +20,10 @@ table tbody tr:last-child {
   border-color: transparent;
 }
 table tbody tr:last-child th:first-child {
-  border-bottom-left-radius: 2rem;
+  border-bottom-left-radius: 0.675rem;
 }
 table tbody tr:last-child td:last-child {
-  border-bottom-right-radius: 2rem;
+  border-bottom-right-radius: 0.675rem;
 }
 table tbody tr:last-child td, table tbody tr:last-child th {
   border-bottom-width: 0;
