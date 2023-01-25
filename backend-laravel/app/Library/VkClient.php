@@ -11,8 +11,8 @@ class VkClient
 
     public function __construct($account_access_token = null)
     {
-        $api = $this->api = new Client(config('services.vk.version'));
-        $api->setDefaultToken(
+        $this->api = new Client(config('services.vk.version'));
+        $this->api->setDefaultToken(
             $account_access_token === null
                 ? config('services.vk.token')
                 : $account_access_token
