@@ -98,8 +98,19 @@ export default {
                 }
             })
             const result = data.response.items.filter(item => item.attachments[0]?.type === 'photo')
-
             commit('addAccountNewsFeed', result)
+        },
+
+        async addLike(_, { accountId, ownerId, itemId }) {
+            const { data } = await axios.post('http://localhost:8080/api/account/like', null, {
+                params: {
+                    account_id: accountId,
+                    owner_id: ownerId,
+                    item_id: itemId
+                }
+            })
+
+            return data
         }
     },
 

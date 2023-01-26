@@ -6,5 +6,6 @@ import store from './store'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import './assets/css/main-overflow.css'
 import 'bootstrap'
+import 'masonry-layout'
 
 createApp(App).use(store).use(router).mount('#app')

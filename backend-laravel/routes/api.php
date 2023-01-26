@@ -33,3 +33,4 @@ Route::post('/account/friends/count/{id}',[AccountController::class, 'getAccount
 Route::post('/account/info/{access_token}',[AccountController::class, 'getAccountInfo']);
 Route::post('/account/add',[AccountController::class, 'setAccountData']);
 Route::post('/account/newsfeed',[AccountController::class, 'getAccountNewsfeed']);
+Route::post('/account/like',[AccountController::class, 'addLike']);

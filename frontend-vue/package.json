@@ -12,6 +12,7 @@
     "axios": "^1.2.2",
     "bootstrap": "^5.2.3",
     "core-js": "^3.8.3",
+    "masonry-layout": "^4.2.2",
     "vue": "^3.2.13",
     "vue-router": "^4.0.3",
     "vuex": "^4.0.0"

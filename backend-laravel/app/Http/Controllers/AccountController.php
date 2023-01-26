@@ -125,18 +125,32 @@ class AccountController extends Controller
 
     public function getAccountNewsfeed(Request $request)
     {
-        $access_token =  $this->getAccessTokenByAccountID($request->input('account_id'));
+        $access_token = $this->getAccessTokenByAccountID($request->input('account_id'));
 
         return (new VkClient($access_token))->request('newsfeed.get', [
             'filters' => 'post',
-            'count'   => 12
+            'count'   => 30
         ]);
     }
 
-    public function getAccessTokenByAccountID($account_id)
+    private function getAccessTokenByAccountID($account_id)
     {
         return $account = DB::table('accounts')
                             ->where('account_id', $account_id)
                             ->value('access_token');
+    }
+
+    public function addLike(Request $request)
+    {
+        $owner_id = $request->input('owner_id');
+        $item_id = $request->input('item_id');
+
+        $access_token = $this->getAccessTokenByAccountID(request()->input('account_id'));
+
+        return (new VkClient($access_token))->request('likes.add', [
+            'type'     => 'post',
+            'owner_id' => $owner_id,
+            'item_id'  => $item_id
+        ]);
     }
 }
