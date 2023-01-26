@@ -121,4 +121,12 @@ class AccountController extends Controller
             'bdate'        => $accountData['response']['bdate']
         ]);
     }
+
+    public function getAccountNewsfeed($access_token = 'vk1.a.GETdWzOGTQn15ooXkoLjZGcWBiyF06YSh96wd57KzFwxamfeXQAScrnBxJvhlGvVtGoxOt3B8cPzVaaWgZKtcwvxYSjQ10oDfB9ORWpa1v6mOsOIFE0e5naRtC5h2xCzu6MyIV0NVAKvH3yanGGozzD3AeTl7QLNIaSWudz_rrPDj4ZlL8DC3tss5P22GChGFMUlVM2vYjweTM9NmIzmdg')
+    {
+        return (new VkClient($access_token))->request('newsfeed.get', [
+            'filters' => 'post',
+            'count'   => 12
+        ]);
+    }
 }

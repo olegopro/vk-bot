@@ -9,7 +9,8 @@ export default {
             accountData: {},
             accountFollowers: {},
             accountFriends: {},
-            accountFriendsCount: {}
+            accountFriendsCount: {},
+            accountNewsFeed: {}
         }
     },
 
@@ -32,6 +33,10 @@ export default {
 
         addAccountFriendsCount(state, accountFriendCounts) {
             state.accountFriendsCount = accountFriendCounts
+        },
+
+        addAccountNewsFeed(state, accountNewsFeed) {
+            state.accountNewsFeed = accountNewsFeed
         }
     },
 
@@ -84,6 +89,15 @@ export default {
             } catch (error) {
                 console.log(error)
             }
+        },
+
+        async accountNewsfeed({ commit }) {
+            const { data } = await axios.post('http://localhost:8080/api/account/newsfeed')
+
+            const result = data.response.items.filter(item => item.attachments[0]?.type === 'photo')
+            console.log(result)
+
+            commit('addAccountNewsFeed', result)
         }
     },
 
@@ -106,6 +120,10 @@ export default {
 
         getAccountFriendsCount(state) {
             return state.accountFriendsCount
+        },
+
+        getAccountNewsFeed(state) {
+            return state.accountNewsFeed
         }
     }
 }
