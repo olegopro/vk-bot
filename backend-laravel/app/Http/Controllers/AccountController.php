@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Library\VkClient;
 use App\Models\Account;
 use App\Models\Task;
+use DB;
 use Illuminate\Http\Request;
 
 class AccountController extends Controller
@@ -122,11 +123,20 @@ class AccountController extends Controller
         ]);
     }
 
-    public function getAccountNewsfeed($access_token = 'vk1.a.GETdWzOGTQn15ooXkoLjZGcWBiyF06YSh96wd57KzFwxamfeXQAScrnBxJvhlGvVtGoxOt3B8cPzVaaWgZKtcwvxYSjQ10oDfB9ORWpa1v6mOsOIFE0e5naRtC5h2xCzu6MyIV0NVAKvH3yanGGozzD3AeTl7QLNIaSWudz_rrPDj4ZlL8DC3tss5P22GChGFMUlVM2vYjweTM9NmIzmdg')
+    public function getAccountNewsfeed(Request $request)
     {
+        $access_token =  $this->getAccessTokenByAccountID($request->input('account_id'));
+
         return (new VkClient($access_token))->request('newsfeed.get', [
             'filters' => 'post',
             'count'   => 12
         ]);
+    }
+
+    public function getAccessTokenByAccountID($account_id)
+    {
+        return $account = DB::table('accounts')
+                            ->where('account_id', $account_id)
+                            ->value('access_token');
     }
 }

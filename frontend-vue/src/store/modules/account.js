@@ -91,11 +91,13 @@ export default {
             }
         },
 
-        async accountNewsfeed({ commit }) {
-            const { data } = await axios.post('http://localhost:8080/api/account/newsfeed')
-
+        async accountNewsfeed({ commit }, accountID) {
+            const { data } = await axios.post('http://localhost:8080/api/account/newsfeed', null, {
+                params: {
+                    account_id: accountID
+                }
+            })
             const result = data.response.items.filter(item => item.attachments[0]?.type === 'photo')
-            console.log(result)
 
             commit('addAccountNewsFeed', result)
         }
