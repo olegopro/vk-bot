@@ -76,6 +76,14 @@ export default {
             rootState.accounts.accounts.push(data)
         },
 
+        async addPostsToLike(_, accountId) {
+            await axios.post('http://localhost:8080/api/account/get-posts-for-like', null, {
+                params: {
+                    account_id: accountId
+                }
+            })
+        },
+
         async deleteAccount({ rootState, rootMutations }, id) {
             try {
                 await axios.delete(`http://localhost:8080/api/accounts/${id}`)
@@ -111,6 +119,16 @@ export default {
             })
 
             return data
+        },
+
+        async getScreenNameById({ commit }, accountId) {
+            const { data } = await axios.post('http://localhost:8080/api/account/get-screen-name-by-id', null, {
+                params: {
+                    user_id: accountId
+                }
+            })
+
+            return data.response
         }
     },
 

@@ -18,6 +18,9 @@ class CreateTasksTable extends Migration
             $table->bigInteger('account_id')->unsigned();
             $table->integer('owner_id');
             $table->integer('item_id')->unsigned();
+            $table->integer('attempt_count')->unsigned()->default('0');
+            $table->tinyText('status');
+            $table->timestamps();
 
             // $table->foreign('account_id')->references('id')->on('accounts');
         });

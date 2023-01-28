@@ -146,11 +146,14 @@ class AccountController extends Controller
         $data = $result['response']['items'];
 
         foreach ($data as $post) {
-            Task::create([
-                'account_id' => 9121607,
-                'owner_id'   => $post['owner_id'],
-                'item_id'    => $post['post_id'],
-            ]);
+            if ($post['owner_id'] > 0) {
+                Task::create([
+                    'account_id' => 9121607,
+                    'owner_id'   => $post['owner_id'],
+                    'item_id'    => $post['post_id'],
+                    'status'     => 'pending'
+                ]);
+            }
         }
     }
 
@@ -158,19 +161,13 @@ class AccountController extends Controller
     {
         $token = 'vk1.a.GETdWzOGTQn15ooXkoLjZGcWBiyF06YSh96wd57KzFwxamfeXQAScrnBxJvhlGvVtGoxOt3B8cPzVaaWgZKtcwvxYSjQ10oDfB9ORWpa1v6mOsOIFE0e5naRtC5h2xCzu6MyIV0NVAKvH3yanGGozzD3AeTl7QLNIaSWudz_rrPDj4ZlL8DC3tss5P22GChGFMUlVM2vYjweTM9NmIzmdg';
 
-        $tasks = DB::table('tasks')->get();
+        $tasks = DB::table('tasks')
+                   ->where('status', '=', 'pending')
+                   ->get();
 
         foreach ($tasks as $task) {
-
             addLikesToPosts::dispatch($task, $token);
         }
-    }
-
-    private function getAccessTokenByAccountID($account_id)
-    {
-        return $account = DB::table('accounts')
-                            ->where('account_id', $account_id)
-                            ->value('access_token');
     }
 
     public function addLike(Request $request)
@@ -186,4 +183,22 @@ class AccountController extends Controller
             'item_id'  => $item_id
         ]);
     }
+
+    public function getScreenNameById(Request $request)
+    {
+        $user_id = $request->input('user_id');
+
+        return (new VkClient())->request('users.get', [
+            'fields'  => 'screen_name',
+            'user_id' => $user_id
+        ]);
+    }
+
+    private function getAccessTokenByAccountID($account_id)
+    {
+        return $account = DB::table('accounts')
+                            ->where('account_id', $account_id)
+                            ->value('access_token');
+    }
+
 }

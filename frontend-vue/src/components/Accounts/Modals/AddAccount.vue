@@ -9,12 +9,15 @@
                 <div class="modal-body">
                     <div class="input-group mb-3">
                         <span class="input-group-text">Access token</span>
-                        <input aria-describedby="access-token"
-                               aria-label="Access token"
-                               class="form-control"
-                               type="text"
-                               v-model="accessToken"
+
+                        <input
+                            aria-describedby="access-token"
+                            aria-label="Access token"
+                            class="form-control"
+                            type="text"
+                            v-model="accessToken"
                         >
+
                     </div>
                 </div>
                 <div class="modal-footer">

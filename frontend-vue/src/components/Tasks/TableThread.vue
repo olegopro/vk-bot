@@ -2,22 +2,13 @@
     <tr>
         <th scope="row">{{ task.id }}</th>
         <td>
-            {{ username }}
-
-            <router-link v-if="username" custom :to="{name: 'Account', params: {id: task.account_id}}" v-slot="{navigate}">
-                <a class="me-2 account-link" @click="navigate">
-                    <svg width="16" height="20">
-                        <use xlink:href="#right-arrow"></use>
-                    </svg>
-                </a>
-            </router-link>
-
+            {{ firstName }} {{ lastName }}
         </td>
         <td>
             <TaskStatus :type="task.status" />
         </td>
 
-        <td>{{ task.attempts }}</td>
+        <td>{{ task.attempt_count }}</td>
 
         <td>
             <router-link custom to="/" v-slot="{navigate}">
@@ -40,7 +31,7 @@
             </button>
         </td>
 
-        <td>{{ task.created_at }}</td>
+        <td>{{ dateFormat(task.created_at) }}</td>
     </tr>
 </template>
 
@@ -55,19 +46,29 @@
 
         data() {
             return {
-                username: ''
+                firstName: '',
+                lastName: ''
             }
         },
 
         created() {
-            this.accountByTaskId(this.task.id)
-                .then(({ data }) => {
-                    this.username = data.username
+            this.getScreenNameById(this.task.owner_id)
+                .then((data) => {
+                    this.firstName = data[0].first_name
+                    this.lastName = data[0].last_name
                 })
         },
 
         methods: {
-            ...mapActions('tasks', ['accountByTaskId'])
+            ...mapActions('tasks', ['accountByTaskId']),
+            ...mapActions('account', ['getScreenNameById']),
+
+            dateFormat(date) {
+                return new Date(date).toISOString()
+                    .replace('T', ' ')
+                    .replace('Z', '')
+                    .split('.')[0]
+            }
         }
     }
 </script>

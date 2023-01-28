@@ -16,11 +16,6 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-// Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-//     return $request->user();
-// });
-
-
 Route::resource('/accounts',AccountController::class);
 Route::resource('/tasks',TaskController::class);
 
@@ -36,6 +31,7 @@ Route::post('/account/newsfeed',[AccountController::class, 'getAccountNewsfeed']
 Route::post('/account/like',[AccountController::class, 'addLike']);
 
 
-Route::post('/account/get_posts_for_like',[AccountController::class, 'getNewsfeedPosts']);
-Route::post('/account/add_task_likes',[AccountController::class, 'addLikeTask']);
+Route::post('/account/get-posts-for-like',[AccountController::class, 'getNewsfeedPosts']);
+Route::post('/account/add-task-likes',[AccountController::class, 'addLikeTask']);
+Route::post('/account/get-screen-name-by-id',[AccountController::class, 'getScreenNameById']);
 

@@ -31,8 +31,8 @@ class Task extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['account_id', 'owner_id', 'item_id'];
-    public $timestamps = false;
+    protected $fillable = ['account_id', 'owner_id', 'item_id', 'status'];
+    // public $timestamps = false;
 
     public function account()
     {
