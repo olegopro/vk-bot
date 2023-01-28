@@ -16,12 +16,10 @@ class CreateTasksTable extends Migration
         Schema::create('tasks', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('account_id')->unsigned();
-            $table->string('status')->nullable();
-            $table->string('payload')->nullable();
-            $table->unsignedTinyInteger('attempts')->default(0);
-            $table->timestamps();
+            $table->integer('owner_id');
+            $table->integer('item_id')->unsigned();
 
-            $table->foreign('account_id')->references('id')->on('accounts');
+            // $table->foreign('account_id')->references('id')->on('accounts');
         });
     }
 

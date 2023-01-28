@@ -10,7 +10,6 @@
                      :src="post.attachments[0].photo.sizes[4].url"
                 />
                 <button type="button" class="btn btn-danger" @click="addLikeToPost(post.owner_id, post.post_id)">Лайкнуть</button>
-
             </div>
         </div>
     </div>

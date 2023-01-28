@@ -31,6 +31,9 @@ class Task extends Model
 {
     use HasFactory;
 
+    protected $fillable = ['account_id', 'owner_id', 'item_id'];
+    public $timestamps = false;
+
     public function account()
     {
         return $this->belongsTo(Account::class);

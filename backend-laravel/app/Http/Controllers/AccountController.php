@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\addLikesToPosts;
 use App\Library\VkClient;
 use App\Models\Account;
 use App\Models\Task;
@@ -131,6 +132,38 @@ class AccountController extends Controller
             'filters' => 'post',
             'count'   => 30
         ]);
+    }
+
+    public function getNewsfeedPosts(Request $request)
+    {
+        $access_token = $this->getAccessTokenByAccountID($request->input('account_id'));
+
+        $result = (new VkClient($access_token))->request('newsfeed.get', [
+            'filters' => 'post',
+            'count'   => 5
+        ]);
+
+        $data = $result['response']['items'];
+
+        foreach ($data as $post) {
+            Task::create([
+                'account_id' => 9121607,
+                'owner_id'   => $post['owner_id'],
+                'item_id'    => $post['post_id'],
+            ]);
+        }
+    }
+
+    public function addLikeTask()
+    {
+        $token = 'vk1.a.GETdWzOGTQn15ooXkoLjZGcWBiyF06YSh96wd57KzFwxamfeXQAScrnBxJvhlGvVtGoxOt3B8cPzVaaWgZKtcwvxYSjQ10oDfB9ORWpa1v6mOsOIFE0e5naRtC5h2xCzu6MyIV0NVAKvH3yanGGozzD3AeTl7QLNIaSWudz_rrPDj4ZlL8DC3tss5P22GChGFMUlVM2vYjweTM9NmIzmdg';
+
+        $tasks = DB::table('tasks')->get();
+
+        foreach ($tasks as $task) {
+
+            addLikesToPosts::dispatch($task, $token);
+        }
     }
 
     private function getAccessTokenByAccountID($account_id)

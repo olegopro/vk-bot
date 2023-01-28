@@ -34,3 +34,8 @@ Route::post('/account/info/{access_token}',[AccountController::class, 'getAccoun
 Route::post('/account/add',[AccountController::class, 'setAccountData']);
 Route::post('/account/newsfeed',[AccountController::class, 'getAccountNewsfeed']);
 Route::post('/account/like',[AccountController::class, 'addLike']);
+
+
+Route::post('/account/get_posts_for_like',[AccountController::class, 'getNewsfeedPosts']);
+Route::post('/account/add_task_likes',[AccountController::class, 'addLikeTask']);
+
