@@ -57,6 +57,7 @@
                     this.firstName = data[0].first_name
                     this.lastName = data[0].last_name
                 })
+                .catch(error => console.log(error.response.data.message))
         },
 
         methods: {

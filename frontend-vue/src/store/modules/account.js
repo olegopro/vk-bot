@@ -1,4 +1,5 @@
 import axios from 'axios'
+import axiosThrottle from 'axios-request-throttle'
 
 export default {
     namespaced: true,
@@ -122,7 +123,10 @@ export default {
         },
 
         async getScreenNameById({ commit }, accountId) {
-            const { data } = await axios.post('http://localhost:8080/api/account/get-screen-name-by-id', null, {
+            const localAxios = axios
+            axiosThrottle.use(localAxios, { requestsPerSecond: 1.5 })
+
+            const { data } = await localAxios.post('http://localhost:8080/api/account/get-screen-name-by-id', null, {
                 params: {
                     user_id: accountId
                 }
