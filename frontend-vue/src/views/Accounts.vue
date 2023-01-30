@@ -46,7 +46,7 @@
                                 data-bs-target="#deleteAccount"
                                 data-bs-toggle="modal"
                                 type="button"
-                                @click="getLogin(account.screen_name, account.id)"
+                                @click="getLogin(account.screen_name, account.account_id)"
                             >
                                 <svg width="16" height="16">
                                     <use xlink:href="#delete"></use>

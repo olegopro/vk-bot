@@ -16,7 +16,7 @@
 
     <div class="row">
         <div class="col-12">
-            <table class="table table-hover">
+            <table v-if="getTasks.length" class="table table-hover">
                 <thead>
                     <tr>
                         <th scope="col">#</th>
@@ -31,6 +31,9 @@
                     <TableThread v-for="task in getTasks" :task="task" :key="task.id" />
                 </tbody>
             </table>
+
+            <h3 v-else class="text-center">Список задач пустой</h3>
+
         </div>
     </div>
 

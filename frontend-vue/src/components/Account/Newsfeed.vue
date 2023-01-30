@@ -9,7 +9,13 @@
                      alt=""
                      :src="post.attachments[0].photo.sizes[4].url"
                 />
-                <button type="button" class="btn btn-danger" @click="addLikeToPost(post.owner_id, post.post_id)">Лайкнуть</button>
+                <button class="btn btn-danger"
+                        type="button"
+                        :id="post.post_id"
+                        :disabled="post.likes.user_likes === 1"
+                        @click="addLikeToPost(post.owner_id, post.post_id)">Лайкнуть
+
+                </button>
             </div>
         </div>
     </div>
@@ -29,6 +35,7 @@
             ...mapGetters('account', ['getAccountNewsFeed']),
 
             newsfeed() {
+                console.log(this.getAccountNewsFeed)
                 return this.getAccountNewsFeed
             }
         },
@@ -46,11 +53,13 @@
 
             async addLikeToPost(ownerId, itemId) {
                 const payload = { accountId: this.userID, ownerId, itemId }
-                const data = await this.addLike(payload)
+                await this.addLike(payload).then(() => {
+                    this.disableButton(itemId)
+                })
+            },
 
-                if (data.response) {
-                    console.log('лайк поставлен')
-                }
+            disableButton(sourceId) {
+                document.getElementById(sourceId).setAttribute('disabled', 'true')
             }
         }
     }
