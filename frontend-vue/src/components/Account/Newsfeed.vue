@@ -35,7 +35,6 @@
             ...mapGetters('account', ['getAccountNewsFeed']),
 
             newsfeed() {
-                console.log(this.getAccountNewsFeed)
                 return this.getAccountNewsFeed
             }
         },

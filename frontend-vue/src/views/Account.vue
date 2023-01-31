@@ -19,8 +19,8 @@
     </div>
 
     <Newsfeed />
-    <Followers />
-    <Friends />
+    <Followers v-if="getSettings.show_followers === 1" />
+    <Friends v-if="getSettings.show_friends === 1"/>
 
 </template>
 
@@ -41,7 +41,8 @@
         },
 
         computed: {
-            ...mapGetters('account', ['getAccount', 'getAccountData', 'getAccountFriendsCount'])
+            ...mapGetters('account', ['getAccount', 'getAccountData', 'getAccountFriendsCount']),
+            ...mapGetters('settings', ['getSettings'])
         },
 
         created() {
@@ -49,6 +50,7 @@
         },
 
         async mounted() {
+            await this.settings()
             await this.account(this.userID)
             await this.accountData(this.userID)
             await this.accountFriendsCount(this.userID)
@@ -56,6 +58,7 @@
 
         methods: {
             ...mapActions('account', ['account', 'accountData', 'accountFriendsCount']),
+            ...mapActions('settings', ['settings']),
 
             date(timestamp) {
                 return new Date(timestamp).toLocaleTimeString('ru-RU')
