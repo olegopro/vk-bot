@@ -1,7 +1,7 @@
 <template>
-    <div class="row mt-5 mb-5">
-        <h1>Публикации в ленте (photo)</h1>
-        <div class="col-3 mb-3" v-for="post in newsfeed" :key="post.source_id">
+    <div class="row mt-5 mb-5" v-masonry transition-duration="0s" item-selector=".item">
+        <!--<h1>Публикации в ленте</h1>-->
+        <div class="col-3 mb-3 item" v-masonry-tile v-for="post in newsfeed" :key="post.source_id">
             <div class="card">
                 <img class="bd-placeholder-img card-img-top"
                      width="100%"

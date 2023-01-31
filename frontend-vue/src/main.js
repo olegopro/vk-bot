@@ -2,10 +2,14 @@ import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router'
 import store from './store'
+import { VueMasonryPlugin } from 'vue-masonry'
 
 import 'bootstrap/dist/css/bootstrap.min.css'
 import './assets/css/main-overflow.css'
 import 'bootstrap'
-import 'masonry-layout'
 
-createApp(App).use(store).use(router).mount('#app')
+createApp(App)
+    .use(store)
+    .use(router)
+    .use(VueMasonryPlugin)
+    .mount('#app')
