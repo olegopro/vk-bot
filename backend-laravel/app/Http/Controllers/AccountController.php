@@ -148,7 +148,10 @@ class AccountController extends Controller
 
         foreach ($data as $post) {
             //только аккаунты/не группы и оригинальные посты/не репосты
-            if ($post['owner_id'] > 0 && !array_key_exists('copy_history', $post)) {
+            if ($post['owner_id'] > 0
+                && !array_key_exists('copy_history', $post)
+                && $post['likes']['user_likes'] === 0
+            ) {
                 Task::create([
                     'account_id' => $account_id,
                     'owner_id'   => $post['owner_id'],
