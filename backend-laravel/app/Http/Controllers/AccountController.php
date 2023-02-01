@@ -136,7 +136,8 @@ class AccountController extends Controller
 
     public function getNewsfeedPosts(Request $request)
     {
-        $access_token = $this->getAccessTokenByAccountID($request->input('account_id'));
+        $account_id = $request->input('account_id');
+        $access_token = $this->getAccessTokenByAccountID($account_id);
 
         $result = (new VkClient($access_token))->request('newsfeed.get', [
             'filters' => 'post',
@@ -148,19 +149,19 @@ class AccountController extends Controller
         foreach ($data as $post) {
             if ($post['owner_id'] > 0) {
                 Task::create([
-                    'account_id' => 9121607,
+                    'account_id' => $account_id,
                     'owner_id'   => $post['owner_id'],
                     'item_id'    => $post['post_id'],
                     'status'     => 'pending'
                 ]);
             }
         }
+
+        $this->addLikeTask($access_token);
     }
 
-    public function addLikeTask()
+    public function addLikeTask($token)
     {
-        $token = 'vk1.a.GETdWzOGTQn15ooXkoLjZGcWBiyF06YSh96wd57KzFwxamfeXQAScrnBxJvhlGvVtGoxOt3B8cPzVaaWgZKtcwvxYSjQ10oDfB9ORWpa1v6mOsOIFE0e5naRtC5h2xCzu6MyIV0NVAKvH3yanGGozzD3AeTl7QLNIaSWudz_rrPDj4ZlL8DC3tss5P22GChGFMUlVM2vYjweTM9NmIzmdg';
-
         $tasks = DB::table('tasks')
                    ->where('status', '=', 'pending')
                    ->get();

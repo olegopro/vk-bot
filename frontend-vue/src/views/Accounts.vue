@@ -19,7 +19,7 @@
             <table class="table table-hover" v-if="getAccounts.length">
                 <thead>
                     <tr>
-                        <th scope="col">#</th>
+                        <th scope="col">ID</th>
                         <th scope="col">Имя и фамилия</th>
                         <th scope="col">Логин</th>
                         <th scope="col">Действия</th>
@@ -27,8 +27,8 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="account in getAccounts" :key="account.id">
-                        <th scope="row">{{ account.id }}</th>
+                    <tr v-for="account in getAccounts" :key="account.account_id">
+                        <th scope="row">{{ account.account_id }}</th>
                         <td>{{ account.first_name }} {{ account.last_name }}</td>
                         <td>{{ account.screen_name }}</td>
 

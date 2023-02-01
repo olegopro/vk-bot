@@ -1,6 +1,6 @@
 <template>
     <div class="row account mx-0">
-        <img class="col-3 ps-0" width="200" height="200" :src="getAccountData.photo_200" alt="">
+        <img class="col-3 ps-0 back-image" width="200" height="200" :src="getAccountData.photo_200" alt="">
         <div class="col-4 p-3">
             <h2>{{ getAccountData.first_name }} {{ getAccountData.last_name }}</h2>
             <h3>{{ getAccountData.screen_name }}</h3>
@@ -19,7 +19,7 @@
     </div>
 
     <Followers v-if="getSettings.show_followers === 1" />
-    <Friends v-if="getSettings.show_friends === 1"/>
+    <Friends v-if="getSettings.show_friends === 1" />
     <Newsfeed />
 
 </template>
