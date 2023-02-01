@@ -147,7 +147,8 @@ class AccountController extends Controller
         $data = $result['response']['items'];
 
         foreach ($data as $post) {
-            if ($post['owner_id'] > 0) {
+            //только аккаунты/не группы и оригинальные посты/не репосты
+            if ($post['owner_id'] > 0 && !array_key_exists('copy_history', $post)) {
                 Task::create([
                     'account_id' => $account_id,
                     'owner_id'   => $post['owner_id'],
@@ -163,8 +164,8 @@ class AccountController extends Controller
     public function addLikeTask($token)
     {
         $increase = $pause = DB::table('settings')
-                   ->where('id', '=', '1')
-                   ->value('task_timeout');
+                               ->where('id', '=', '1')
+                               ->value('task_timeout');
 
         $tasks = DB::table('tasks')
                    ->where('status', '=', 'pending')
