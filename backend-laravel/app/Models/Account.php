@@ -25,6 +25,18 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|Account whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Account whereUsername($value)
  * @mixin \Eloquent
+ * @property int $account_id
+ * @property string $access_token
+ * @property string $screen_name
+ * @property string $first_name
+ * @property string $last_name
+ * @property string $bdate
+ * @method static \Illuminate\Database\Eloquent\Builder|Account whereAccessToken($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Account whereAccountId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Account whereBdate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Account whereFirstName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Account whereLastName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Account whereScreenName($value)
  */
 class Account extends Model
 {

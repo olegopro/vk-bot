@@ -26,6 +26,14 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|Task whereUpdatedAt($value)
  * @mixin \Eloquent
  * @property-read \App\Models\Account $account
+ * @property int $owner_id
+ * @property int $item_id
+ * @property int $attempt_count
+ * @property string $status
+ * @method static \Illuminate\Database\Eloquent\Builder|Task whereAttemptCount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Task whereItemId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Task whereOwnerId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Task whereStatus($value)
  */
 class Task extends Model
 {

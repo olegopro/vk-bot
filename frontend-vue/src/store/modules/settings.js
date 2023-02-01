@@ -19,6 +19,18 @@ export default {
         async settings({ commit }) {
             const { data } = await axios.post('http://localhost:8080/api/settings')
             commit('addSettings', data[0])
+        },
+
+        saveSettings(_, { showFollowers, showFriends, taskTimeout }) {
+            const { data } = axios.post('http://localhost:8080/api/settings/save', null, {
+                params: {
+                    show_followers: showFollowers,
+                    show_friends: showFriends,
+                    task_timeout: taskTimeout
+                }
+            })
+
+            return data
         }
     },
 

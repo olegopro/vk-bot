@@ -37,4 +37,5 @@ Route::post('/account/add-task-likes',[AccountController::class, 'addLikeTask'])
 Route::post('/account/get-screen-name-by-id',[AccountController::class, 'getScreenNameById']);
 
 Route::post('/settings', [SettingsController::class, 'settings']);
+Route::post('/settings/save',[SettingsController::class, 'saveSettings']);
 

@@ -18,9 +18,9 @@
         </div>
     </div>
 
-    <Newsfeed />
     <Followers v-if="getSettings.show_followers === 1" />
     <Friends v-if="getSettings.show_friends === 1"/>
+    <Newsfeed />
 
 </template>
 
