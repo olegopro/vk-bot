@@ -162,12 +162,17 @@ class AccountController extends Controller
 
     public function addLikeTask($token)
     {
+        $increase = $pause = DB::table('settings')
+                   ->where('id', '=', '1')
+                   ->value('task_timeout');
+
         $tasks = DB::table('tasks')
                    ->where('status', '=', 'pending')
                    ->get();
 
         foreach ($tasks as $task) {
-            addLikesToPosts::dispatch($task, $token);
+            addLikesToPosts::dispatch($task, $token)->delay(now()->addSeconds($pause));
+            $pause += $increase;
         }
     }
 

@@ -40,14 +40,12 @@ class addLikesToPosts implements ShouldQueue
           ->where('id', '=', $this->task->id)
           ->update(['status' => 'active']);
 
-        sleep(20);
         $response = (new VkClient($this->token))->request('likes.add', [
             'type'     => 'post',
             'owner_id' => $this->task->owner_id,
             'item_id'  => $this->task->item_id
         ]);
 
-        sleep(10);
         if (response($response)) {
             DB::table('tasks')
               ->where('id', '=', $this->task->id)
