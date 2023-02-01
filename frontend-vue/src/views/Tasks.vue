@@ -18,17 +18,23 @@
         <div class="col-12">
             <table v-if="getTasks.length" class="table table-hover">
                 <thead>
-                    <tr>
-                        <th scope="col">#</th>
-                        <th scope="col">Имя аккаунта</th>
-                        <th scope="col">Статус</th>
-                        <th scope="col">Попытки</th>
-                        <th scope="col">Действия</th>
-                        <th scope="col">Задача создана</th>
-                    </tr>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Имя и фамилия</th>
+                    <th scope="col">Статус</th>
+                    <th scope="col">Попытки</th>
+                    <th scope="col">Действия</th>
+                    <th scope="col">Задача создана</th>
+                </tr>
                 </thead>
                 <tbody>
-                    <TableThread v-for="task in getTasks" :task="task" :key="task.id" />
+                <TableThread
+                    v-for="task in getTasks"
+                    :task="task"
+                    :key="task.id"
+                    @deleteTask="idTaskForDelete"
+
+                />
                 </tbody>
             </table>
 
@@ -38,7 +44,7 @@
     </div>
 
     <Teleport to="body">
-        <DeleteTask />
+        <DeleteTask :taskId="taskId" />
         <AddTask />
     </Teleport>
 
@@ -56,7 +62,8 @@
         data() {
             return {
                 request: {},
-                username: ''
+                username: '',
+                taskId: null
             }
         },
 
@@ -69,7 +76,15 @@
         },
 
         methods: {
-            ...mapActions('tasks', ['tasks'])
+            ...mapActions('tasks', ['tasks']),
+
+            helloFromDeleteTask(data) {
+                console.log(data)
+            },
+
+            idTaskForDelete(id) {
+                this.taskId = id
+            }
         }
     }
 </script>

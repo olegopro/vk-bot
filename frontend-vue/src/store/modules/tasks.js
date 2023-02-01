@@ -12,6 +12,10 @@ export default {
     mutations: {
         addTasks(state, tasks) {
             state.tasks = tasks
+        },
+
+        deleteTask(state, id) {
+            state.tasks(id, 1)
         }
     },
 
@@ -23,6 +27,11 @@ export default {
 
         async accountByTaskId(_, id) {
             return await axios.post(`http://localhost:8080/api/account/task/${id}`)
+        },
+
+        async deleteTask({ commit }, id) {
+            await axios.delete((`http://localhost:8080/api/tasks/${id}`))
+            // commit('deleteTask', id)
         }
     },
 

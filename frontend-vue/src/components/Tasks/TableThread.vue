@@ -24,6 +24,7 @@
                 data-bs-target="#deleteTask"
                 data-bs-toggle="modal"
                 type="button"
+                @click="deleteTask(task.id)"
             >
                 <svg width="16" height="16">
                     <use xlink:href="#delete"></use>
@@ -43,6 +44,7 @@
         components: { TaskStatus },
 
         props: ['task'],
+        emits: ['delete-task'],
 
         data() {
             return {
@@ -69,6 +71,10 @@
                     .replace('T', ' ')
                     .replace('Z', '')
                     .split('.')[0]
+            },
+
+            deleteTask(id) {
+                this.$emit('delete-task', id)
             }
         }
     }
