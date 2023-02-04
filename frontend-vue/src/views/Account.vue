@@ -1,6 +1,10 @@
 <template>
     <div class="row account mx-0">
-        <img class="col-3 ps-0 " width="200" height="200" :src="getAccountData.photo_200" alt="">
+        <div v-if="!getAccountData.photo_200" class="stub">
+            <div class="spinner-border" style="width: 3rem; height: 3rem;" role="status">
+            </div>
+        </div>
+        <img v-else class="col-3 ps-0 " width="200" height="200" :src="getAccountData.photo_200" alt="">
         <div class="col-4 p-3 d-flex flex-column justify-content-between">
             <div>
                 <h2>{{ getAccountData.first_name }} {{ getAccountData.last_name }}</h2>
@@ -106,6 +110,15 @@
             width: 200px;
             height: 200px;
             object-fit: cover;
+        }
+
+        .stub {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 200px;
+            height: 200px;
+            border-right: 1px solid whitesmoke;
         }
     }
 </style>
