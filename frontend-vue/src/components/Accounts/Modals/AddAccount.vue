@@ -7,7 +7,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <div class="input-group mb-3">
+                    <div class="input-group">
                         <span class="input-group-text">Access token</span>
 
                         <input
@@ -19,13 +19,13 @@
                         >
 
                     </div>
-                    <div v-if="errorMessage" class="alert alert-danger" role="alert">
+                    <div v-if="errorMessage" class="alert alert-danger mt-3 mb-0" role="alert">
                         {{ errorMessage }}
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" @click="modalHide">Отмена</button>
-                    <button type="submit" class="btn btn-success">Добавить</button>
+                    <button type="submit" class="btn btn-success" :disabled="disableSubmit">Добавить</button>
                 </div>
             </form>
         </div>
@@ -42,7 +42,16 @@
                 accessToken: null,
                 modal: null,
                 showError: false,
-                errorMessage: null
+                errorMessage: null,
+                disableSubmit: true
+            }
+        },
+
+        watch: {
+            accessToken(data) {
+                data.length > 3
+                    ? this.disableSubmit = false
+                    : this.disableSubmit = true
             }
         },
 
@@ -60,7 +69,7 @@
                     })
                     .catch(error => {
                         this.errorMessage = error.response.data.message
-                        console.log(error.response.data.message)
+                        this.disableSubmit = true
                     })
             },
 

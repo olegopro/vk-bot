@@ -159,17 +159,18 @@ class AccountController extends Controller
                 && $post['likes']['user_likes'] === 0
             ) {
                 Task::create([
-                    'account_id' => $account_id,
-                    'first_name' => $username['response'][0]['first_name'],
-                    'last_name'  => $username['response'][0]['last_name'],
-                    'owner_id'   => $post['owner_id'],
-                    'item_id'    => $post['post_id'],
-                    'status'     => 'pending'
+                    'account_id'    => $account_id,
+                    'first_name'    => $username['response'][0]['first_name'],
+                    'last_name'     => $username['response'][0]['last_name'],
+                    'owner_id'      => $post['owner_id'],
+                    'item_id'       => $post['post_id'],
+                    'attempt_count' => 1,
+                    'status'        => 'pending'
                 ]);
             }
         }
 
-        // $this->addLikeTask($access_token);
+        $this->addLikeTask($access_token);
     }
 
     public function addLikeTask($token)
