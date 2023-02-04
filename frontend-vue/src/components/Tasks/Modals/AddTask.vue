@@ -18,7 +18,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
-                    <button type="submit" class="btn btn-danger">Создать</button>
+                    <button type="submit" class="btn btn-success">Создать</button>
                 </div>
             </form>
         </div>

@@ -3,11 +3,11 @@
         <div class="modal-dialog modal-dialog-centered">
             <form @submit.prevent="deleteTaskById" class="modal-content">
                 <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="Delete task"></h1>
+                    <h1 class="modal-title fs-5" id="Delete task">Удаление задачи</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <p>Удалить задачу c ID <strong>{{ taskId }}</strong></p>
+                    <p class="mb-0">Удалить задачу c ID <strong>{{ taskId }}</strong></p>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" @click="modalHide">Отмена</button>

@@ -4,8 +4,7 @@ import router from './router'
 import store from './store'
 import { VueMasonryPlugin } from 'vue-masonry'
 
-import 'bootstrap/dist/css/bootstrap.min.css'
-import './assets/css/main-overflow.css'
+import './assets/scss/main.css'
 import 'bootstrap'
 
 createApp(App)

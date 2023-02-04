@@ -11,13 +11,13 @@
         <td>{{ task.attempt_count }}</td>
 
         <td>
-            <router-link custom to="/" v-slot="{navigate}">
-                <a class="btn btn-primary me-2 button-style" @click="navigate">
-                    <svg width="16" height="16">
-                        <use xlink:href="#info"></use>
-                    </svg>
-                </a>
-            </router-link>
+            <!--<router-link custom to="/" v-slot="{navigate}">-->
+            <!--    <a class="btn btn-primary me-2 button-style" @click="navigate">-->
+            <!--        <svg width="16" height="16">-->
+            <!--            <use xlink:href="#info"></use>-->
+            <!--        </svg>-->
+            <!--    </a>-->
+            <!--</router-link>-->
 
             <button
                 class="btn btn-danger button-style"
