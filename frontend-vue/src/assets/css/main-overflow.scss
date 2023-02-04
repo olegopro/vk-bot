@@ -1,13 +1,3 @@
-nav {
-	padding-top: 30px;
-	padding-bottom: 30px;
-
-}
-
-//.table > :not(caption) > * > *{
-//	border-bottom-width: 10px;
-//}
-
 table {
 	box-shadow: 0 1px 27px 0 rgba(34, 60, 80, 0.2);
 	border-radius: 0.675rem;
@@ -57,4 +47,8 @@ table {
 			border-bottom-width: 0;
 		}
 	}
+}
+
+.btn.btn-action {
+	width: 170px;
 }

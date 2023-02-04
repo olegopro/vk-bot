@@ -1,8 +1,3 @@
-nav {
-  padding-top: 30px;
-  padding-bottom: 30px;
-}
-
 table {
   box-shadow: 0 1px 27px 0 rgba(34, 60, 80, 0.2);
   border-radius: 0.675rem;
@@ -38,6 +33,10 @@ table tbody tr td .button-style {
 }
 table tbody:last-child {
   border-bottom-width: 0;
+}
+
+.btn.btn-action {
+  width: 170px;
 }
 
 /*# sourceMappingURL=main-overflow.css.map */

@@ -11,7 +11,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" @click="modalHide">Отмена</button>
-                    <button type="submit" class="btn btn-danger">Удалить</button>
+                    <button type="submit" class="btn btn-danger" :disabled="disable">Удалить</button>
                 </div>
             </form>
         </div>
@@ -27,7 +27,8 @@
 
         data() {
             return {
-                modal: null
+                modal: null,
+                disable: false
             }
         },
 
@@ -39,9 +40,12 @@
             ...mapActions('tasks', ['deleteTask']),
 
             deleteTaskById() {
+                this.disable = true
+
                 this.deleteTask(this.taskId)
                     .then(() => {
                         this.modal.hide()
+                        this.disable = false
                     })
             },
 

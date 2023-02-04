@@ -1,11 +1,11 @@
 <template>
 
-    <div class="row mb-3">
+    <div class="row mb-3 align-items-center">
         <div class="col">
             <h1 class="h2">Список аккаунтов</h1>
         </div>
         <div class="col">
-            <button class="btn btn-success float-end"
+            <button class="btn btn-success btn-action float-end"
                     data-bs-target="#addAccount"
                     data-bs-toggle="modal"
                     type="button">

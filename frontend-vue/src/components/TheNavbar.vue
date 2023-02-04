@@ -13,6 +13,21 @@
     }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+    nav {
+        padding-top: 30px;
+        padding-bottom: 30px;
 
+        .nav-link {
+            color: #636363;
+
+            &:hover {
+                color: #000000;
+
+                &.active {
+                    color: white
+                }
+            }
+        }
+    }
 </style>

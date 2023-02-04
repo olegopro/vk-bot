@@ -1,11 +1,11 @@
 <template>
 
-    <div class="row mb-3">
+    <div class="row mb-3 align-items-center">
         <div class="col">
             <h1 class="h2">Список задач</h1>
         </div>
         <div class="col">
-            <button class="btn btn-success float-end"
+            <button class="btn btn-success btn-action float-end"
                     data-bs-target="#addTask"
                     data-bs-toggle="modal"
                     type="button">
@@ -28,13 +28,14 @@
                 </tr>
                 </thead>
                 <tbody>
+
                 <TableThread
                     v-for="task in getTasks"
                     :task="task"
                     :key="task.id"
                     @deleteTask="idTaskForDelete"
-
                 />
+
                 </tbody>
             </table>
 
@@ -89,6 +90,6 @@
     }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 
 </style>
