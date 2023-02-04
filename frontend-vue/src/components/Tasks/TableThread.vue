@@ -2,7 +2,7 @@
     <tr>
         <th scope="row">{{ task.id }}</th>
         <td>
-            {{ firstName }} {{ lastName }}
+            {{ task.first_name }} {{ task.last_name }}
         </td>
         <td>
             <TaskStatus :type="task.status" />
@@ -45,22 +45,6 @@
 
         props: ['task'],
         emits: ['delete-task'],
-
-        data() {
-            return {
-                firstName: '',
-                lastName: ''
-            }
-        },
-
-        created() {
-            this.getScreenNameById(this.task.owner_id)
-                .then((data) => {
-                    this.firstName = data[0].first_name
-                    this.lastName = data[0].last_name
-                })
-                .catch(error => console.log(error.response.data.message))
-        },
 
         methods: {
             ...mapActions('tasks', ['accountByTaskId']),

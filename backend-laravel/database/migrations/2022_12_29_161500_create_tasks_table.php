@@ -17,6 +17,8 @@ class CreateTasksTable extends Migration
             $table->id();
             $table->integer('account_id')->unsigned();
             $table->integer('owner_id');
+            $table->string('first_name');
+            $table->string('last_name');
             $table->integer('item_id')->unsigned();
             $table->integer('attempt_count')->unsigned()->default('0');
             $table->tinyText('status');

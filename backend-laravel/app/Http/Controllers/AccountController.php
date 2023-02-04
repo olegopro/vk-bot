@@ -147,6 +147,12 @@ class AccountController extends Controller
         $data = $result['response']['items'];
 
         foreach ($data as $post) {
+
+            $username = (new VkClient())->request('users.get', [
+                'fields'  => 'screen_name',
+                'user_id' => $post['owner_id']
+            ]);
+
             //только аккаунты/не группы и оригинальные посты/не репосты
             if ($post['owner_id'] > 0
                 && !array_key_exists('copy_history', $post)
@@ -154,6 +160,8 @@ class AccountController extends Controller
             ) {
                 Task::create([
                     'account_id' => $account_id,
+                    'first_name' => $username['response'][0]['first_name'],
+                    'last_name'  => $username['response'][0]['last_name'],
                     'owner_id'   => $post['owner_id'],
                     'item_id'    => $post['post_id'],
                     'status'     => 'pending'
@@ -161,7 +169,7 @@ class AccountController extends Controller
             }
         }
 
-        $this->addLikeTask($access_token);
+        // $this->addLikeTask($access_token);
     }
 
     public function addLikeTask($token)
