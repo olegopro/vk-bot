@@ -13,37 +13,35 @@
             </button>
         </div>
     </div>
+        <div class="row test">
+            <div class="col-12">
+                <table v-if="getTasks.length" class="table table-hover mb-4">
+                    <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Имя и фамилия</th>
+                        <th scope="col">Статус</th>
+                        <th scope="col">Попытки</th>
+                        <th scope="col">Действия</th>
+                        <th scope="col">Задача создана</th>
+                    </tr>
+                    </thead>
+                    <tbody>
 
-    <div class="row">
-        <div class="col-12">
-            <table v-if="getTasks.length" class="table table-hover">
-                <thead>
-                <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">Имя и фамилия</th>
-                    <th scope="col">Статус</th>
-                    <th scope="col">Попытки</th>
-                    <th scope="col">Действия</th>
-                    <th scope="col">Задача создана</th>
-                </tr>
-                </thead>
-                <tbody>
+                    <TableThread
+                        v-for="task in getTasks"
+                        :task="task"
+                        :key="task.id"
+                        @deleteTask="idTaskForDelete"
+                    />
 
-                <TableThread
-                    v-for="task in getTasks"
-                    :task="task"
-                    :key="task.id"
-                    @deleteTask="idTaskForDelete"
-                />
+                    </tbody>
+                </table>
 
-                </tbody>
-            </table>
+                <h3 v-else class="text-center">Список задач пустой</h3>
 
-            <h3 v-else class="text-center">Список задач пустой</h3>
-
+            </div>
         </div>
-    </div>
-
     <Teleport to="body">
         <DeleteTask :taskId="taskId" />
         <AddTask />
