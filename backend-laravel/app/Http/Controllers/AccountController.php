@@ -130,7 +130,7 @@ class AccountController extends Controller
 
         return (new VkClient($access_token))->request('newsfeed.get', [
             'filters' => 'post',
-            'count'   => 30
+            'count'   => 100
         ]);
     }
 
@@ -141,7 +141,7 @@ class AccountController extends Controller
 
         $result = (new VkClient($access_token))->request('newsfeed.get', [
             'filters' => 'post',
-            'count'   => 20
+            'count'   => 5
         ]);
 
         $data = $result['response']['items'];
@@ -170,7 +170,7 @@ class AccountController extends Controller
             }
         }
 
-        $this->addLikeTask($access_token);
+        return $this->addLikeTask($access_token);
     }
 
     public function addLikeTask($token)
@@ -187,6 +187,8 @@ class AccountController extends Controller
             addLikesToPosts::dispatch($task, $token)->delay(now()->addSeconds($pause));
             $pause += $increase;
         }
+
+        return response($tasks);
     }
 
     public function addLike(Request $request)

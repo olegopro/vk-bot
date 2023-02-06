@@ -77,12 +77,14 @@ export default {
             rootState.accounts.accounts.push(data)
         },
 
-        async addPostsToLike(_, accountId) {
-            await axios.post('http://localhost:8080/api/account/get-posts-for-like', null, {
+        async addPostsToLike({ rootState }, accountId) {
+            const { data } = await axios.post('http://localhost:8080/api/account/get-posts-for-like', null, {
                 params: {
                     account_id: accountId
                 }
             })
+
+            rootState.tasks.tasks = [...data]
         },
 
         async deleteAccount({ rootState, rootMutations }, id) {
