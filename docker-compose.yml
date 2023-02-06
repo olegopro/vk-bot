@@ -20,8 +20,10 @@ services:
             - DB_DATABASE=vk-bot
             - DB_USERNAME=root
             - DB_PASSWORD=password
+            - QUEUE_CONNECTION=database
             - VK_API_URL=https://api.vk.com/method/
             - VK_API_VERSION=5.131
+            - VK_API_SERVICE_KEY='Защищённый ключ'
 
     nginx:
         image: nginx
