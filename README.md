@@ -1,5 +1,7 @@
 # vk-bot
 
+![ID приложения](./frontend-vue/src/assets/github-images/app-preview.gif)
+
 ## Использованные технологии
 
 ### Docker
