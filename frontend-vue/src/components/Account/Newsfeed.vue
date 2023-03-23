@@ -13,8 +13,10 @@
                         type="button"
                         :id="post.post_id"
                         :disabled="post.likes.user_likes === 1"
-                        @click="addLikeToPost(post.owner_id, post.post_id)">Лайкнуть
-
+                        @click="addLikeToPost(post.owner_id, post.post_id)"
+                        ref="buttons"
+                >
+                    Лайкнуть
                 </button>
             </div>
         </div>
@@ -51,14 +53,21 @@
             ...mapActions('account', ['accountNewsfeed', 'addLike']),
 
             async addLikeToPost(ownerId, itemId) {
+                this.disableButton(itemId)
+
                 const payload = { accountId: this.userID, ownerId, itemId }
-                await this.addLike(payload).then(() => {
-                    this.disableButton(itemId)
-                })
+                await this.addLike(payload)
+                    .then(() => {
+                        const button = this.$refs.buttons.find(item => +item.id === itemId)
+                        button.classList.remove('btn-danger')
+                        button.classList.add('btn-success')
+                    })
             },
 
             disableButton(sourceId) {
-                document.getElementById(sourceId).setAttribute('disabled', 'true')
+                this.$refs
+                    .buttons.find(item => +item.id === sourceId)
+                    .setAttribute('disabled', 'true')
             }
         }
     }
