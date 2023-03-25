@@ -21,7 +21,7 @@ export default {
             commit('addSettings', data[0])
         },
 
-        async saveSettings(_, { showFollowers, showFriends, taskTimeout }) {
+        async saveSettings({ commit }, { showFollowers, showFriends, taskTimeout }) {
             const { data } = await axios.post('http://localhost:8080/api/settings/save', null, {
                 params: {
                     show_followers: showFollowers,
@@ -29,6 +29,7 @@ export default {
                     task_timeout: taskTimeout
                 }
             })
+            commit('addSettings', { showFollowers, showFriends, taskTimeout })
 
             return data
         }

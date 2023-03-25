@@ -39,7 +39,7 @@
             return {
                 userID: null,
                 loadingStatus: [],
-                newsFeedLoadingStatus: null
+                newsFeedLoadingStatus: false
             }
         },
 
@@ -79,18 +79,18 @@
                     })
             },
 
+            disableButton(sourceId) {
+                this.$refs
+                    .buttons.find(item => +item.id === sourceId)
+                    .setAttribute('disabled', 'true')
+            },
+
             refreshNewsfeed() {
                 this.newsFeedLoadingStatus = true
                 this.accountNewsfeed(this.userID)
                     .finally(() => {
                         this.newsFeedLoadingStatus = false
                     })
-            },
-
-            disableButton(sourceId) {
-                this.$refs
-                    .buttons.find(item => +item.id === sourceId)
-                    .setAttribute('disabled', 'true')
             }
         }
     }

@@ -70,13 +70,13 @@
 
         created() {
             this.userID = this.$route.params.id
+            this.settings()
         },
 
-        async mounted() {
-            await this.settings()
-            await this.account(this.userID)
-            await this.accountData(this.userID)
-            await this.accountFriendsCount(this.userID)
+        mounted() {
+            this.account(this.userID)
+            this.accountData(this.userID)
+            this.accountFriendsCount(this.userID)
         },
 
         methods: {
