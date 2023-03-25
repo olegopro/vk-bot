@@ -1,6 +1,13 @@
 <template>
+    <div class="row justify-content-end mt-5">
+        <div class="col-3">
+            <button type="button" class="btn btn-secondary w-100" @click="refreshNewsfeed" :disabled="newsFeedLoadingStatus">
+                Обновить ленту
+                <span v-show="newsFeedLoadingStatus" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+            </button>
+        </div>
+    </div>
     <div class="row mt-5 mb-5" v-masonry transition-duration="0s" item-selector=".item">
-        <!--<h1>Публикации в ленте</h1>-->
         <div class="col-3 mb-3 item" v-masonry-tile v-for="(post, index) in newsfeed" :key="post.source_id">
             <div class="card">
                 <img class="bd-placeholder-img card-img-top"
@@ -31,7 +38,8 @@
         data() {
             return {
                 userID: null,
-                loadingStatus: []
+                loadingStatus: [],
+                newsFeedLoadingStatus: null
             }
         },
 
@@ -68,6 +76,14 @@
                         button.classList.add('btn-success')
                     }).finally(() => {
                         this.loadingStatus[index] = false
+                    })
+            },
+
+            refreshNewsfeed() {
+                this.newsFeedLoadingStatus = true
+                this.accountNewsfeed(this.userID)
+                    .finally(() => {
+                        this.newsFeedLoadingStatus = false
                     })
             },
 

@@ -4,16 +4,21 @@
             <h1 class="h2">Настройки</h1>
         </div>
         <div class="col">
-            <button type="submit" form="save-settings" class="btn btn-success btn-action float-end">Сохранить</button>
+            <button type="submit" form="save-settings" class="btn btn-success btn-action float-end">
+                Сохранить
+                <span v-show="saveSettingStatus" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+            </button>
         </div>
     </div>
 
     <div class="row">
-        <div class="col">
+
+        <div class="col" v-if="loadingStatus">
             <form @submit.prevent="save" class="settings" id="save-settings">
                 <div class="row align-items-center justify-content-between">
                     <div class="col-6">
                         <div class="form-check form-switch mb-1 d-flex align-items-center">
+
                             <input id="showFriends"
                                    :checked="getSettings.show_friends === 1"
                                    class="form-check-input"
@@ -35,11 +40,6 @@
                         </div>
                     </div>
                     <div class="col-6 d-flex justify-content-end">
-                        <!--<div class="input-group flex-nowrap">-->
-                        <!--    <span class="input-group-text">Задержка между задачами</span>-->
-                        <!--    <input type="text" class="form-control " v-model="taskTimeout">-->
-                        <!--</div>-->
-
                         <div class="input-group">
                             <span class="input-group-text">Задержка между задачами</span>
                             <input type="text" class="form-control" v-model="taskTimeout">
@@ -61,7 +61,9 @@
             return {
                 showFriends: null,
                 showFollowers: null,
-                taskTimeout: null
+                taskTimeout: null,
+                loadingStatus: false,
+                saveSettingStatus: false
             }
         },
 
@@ -71,20 +73,25 @@
 
         async mounted() {
             await this.settings()
-            this.showFriends = await this.getSettings.show_friends === 1
-            this.showFollowers = await this.getSettings.show_followers === 1
-            this.taskTimeout = await this.getSettings.task_timeout
+                .then(() => (this.loadingStatus = true))
+
+            this.showFriends = this.getSettings.show_friends === 1
+            this.showFollowers = this.getSettings.show_followers === 1
+            this.taskTimeout = this.getSettings.task_timeout
         },
 
         methods: {
             ...mapActions('settings', ['settings', 'saveSettings']),
 
-            save() {
-                this.saveSettings({
+            async save() {
+                this.saveSettingStatus = true
+
+                await this.saveSettings({
                     showFollowers: this.showFollowers === true ? 1 : 0,
                     showFriends: this.showFriends === true ? 1 : 0,
                     taskTimeout: this.taskTimeout
                 })
+                    .finally(() => (this.saveSettingStatus = false))
             }
         }
     }
@@ -97,7 +104,7 @@
         padding: 2rem;
 
         input {
-            &:focus{
+            &:focus {
                 box-shadow: none;
             }
 
@@ -107,7 +114,7 @@
                 width: 48px;
             }
 
-            &.form-control{
+            &.form-control {
                 max-width: 48px;
             }
         }
@@ -119,7 +126,7 @@
             font-size: 19px;
         }
 
-        .input-group{
+        .input-group {
             width: fit-content;
         }
     }
