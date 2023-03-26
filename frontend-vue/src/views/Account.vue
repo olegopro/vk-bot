@@ -84,7 +84,7 @@
             ...mapActions('settings', ['settings']),
 
             date(timestamp) {
-                return new Date(timestamp).toLocaleTimeString('ru-RU')
+                return new Date(timestamp * 1000).toLocaleTimeString('ru-RU')
             }
         }
     }
