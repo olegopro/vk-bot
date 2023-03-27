@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@popperjs/core": "^2.11.6",
+    "@yeger/vue-masonry-wall": "^3.4.4",
     "axios": "^1.2.2",
     "axios-request-throttle": "^1.0.0",
     "bootstrap": "^5.2.3",
@@ -17,7 +18,7 @@
     "masonry-layout": "^4.2.2",
     "vue": "^3.2.13",
     "vue-chartjs": "^5.2.0",
-    "vue-masonry": "^0.16.0",
+    "vue-masonry-wall": "^0.3.2",
     "vue-router": "^4.0.3",
     "vue3-perfect-scrollbar": "^1.6.1",
     "vuex": "^4.0.0"

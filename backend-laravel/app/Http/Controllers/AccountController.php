@@ -128,10 +128,11 @@ class AccountController extends Controller
     {
         $access_token = $this->getAccessTokenByAccountID($request->input('account_id'));
 
-        return (new VkClient($access_token))->request('newsfeed.get', [
+        return response((new VkClient($access_token))->request('newsfeed.get', [
             'filters' => 'post',
-            'count'   => 100
-        ]);
+            'count'   => 100,
+            'start_from' => $request->input('start_from') ?? null
+        ]));
     }
 
     public function getNewsfeedPosts(Request $request)

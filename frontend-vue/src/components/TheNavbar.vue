@@ -17,13 +17,8 @@
                     ? 'active'
                     : ''
             }
-        },
-
-        mounted() {
-            console.log()
         }
     }
-
 </script>
 
 <style scoped lang="scss">

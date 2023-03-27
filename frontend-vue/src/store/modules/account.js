@@ -11,7 +11,8 @@ export default {
             accountFollowers: {},
             accountFriends: {},
             accountFriendsCount: {},
-            accountNewsFeed: {}
+            accountNewsFeed: [],
+            nextFrom: null
         }
     },
 
@@ -37,7 +38,11 @@ export default {
         },
 
         addAccountNewsFeed(state, accountNewsFeed) {
-            state.accountNewsFeed = accountNewsFeed
+            state.accountNewsFeed = state.accountNewsFeed.concat(accountNewsFeed)
+        },
+
+        addNextFrom(state, nextFrom) {
+            state.nextFrom = nextFrom
         }
     },
 
@@ -98,17 +103,20 @@ export default {
                     1
                 )
             } catch (error) {
-                console.log(error)
+                console.warn(error)
             }
         },
 
-        async accountNewsfeed({ commit }, accountID) {
+        async accountNewsfeed({ commit }, { accountID, startFrom }) {
             const { data } = await axios.post('http://localhost:8080/api/account/newsfeed', null, {
                 params: {
-                    account_id: accountID
+                    account_id: accountID,
+                    start_from: startFrom
                 }
             })
-            const result = data.response.items.filter(item => item.attachments[0]?.type === 'photo')
+
+            const result = await data.response.items.filter(item => item.attachments[0]?.type === 'photo')
+            commit('addNextFrom', data.response.next_from)
             commit('addAccountNewsFeed', result)
         },
 
@@ -161,6 +169,10 @@ export default {
 
         getAccountNewsFeed(state) {
             return state.accountNewsFeed
+        },
+
+        getNextFrom(state) {
+            return state.nextFrom
         }
     }
 }
