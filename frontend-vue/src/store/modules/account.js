@@ -41,6 +41,10 @@ export default {
             state.accountNewsFeed = state.accountNewsFeed.concat(accountNewsFeed)
         },
 
+        cleanAccountNewsFeed(state) {
+            state.accountNewsFeed = []
+        },
+
         addNextFrom(state, nextFrom) {
             state.nextFrom = nextFrom
         }
@@ -107,7 +111,7 @@ export default {
             }
         },
 
-        async accountNewsfeed({ commit }, { accountID, startFrom }) {
+        async accountNewsfeed({ commit }, { accountID, startFrom = null }) {
             const { data } = await axios.post('http://localhost:8080/api/account/newsfeed', null, {
                 params: {
                     account_id: accountID,
@@ -117,6 +121,8 @@ export default {
 
             const result = await data.response.items.filter(item => item.attachments[0]?.type === 'photo')
             commit('addNextFrom', data.response.next_from)
+
+            if (startFrom === null) commit('cleanAccountNewsFeed')
             commit('addAccountNewsFeed', result)
         },
 

@@ -28,15 +28,17 @@
             </button>
         </div>
     </div>
-    <div class="row justify-content-center mb-5">
-        <div class="col-4">
-            <button class="btn btn-secondary w-100" @click="loadMore">Загрузить еще</button>
+
+    <div class="row justify-content-center mb-5" id="loader" v-if="isLoadingFeed">
+        <div class="feed-spinner spinner-border text-secondary" role="status">
+            <span class="visually-hidden">Загрузка...</span>
         </div>
     </div>
+
 </template>
 
 <script>
-    import { mapActions, mapGetters } from 'vuex'
+    import { mapActions, mapGetters, mapMutations } from 'vuex'
 
     export default {
 
@@ -45,7 +47,8 @@
                 userID: null,
                 loadingStatus: [],
                 newsFeedLoadingStatus: false,
-                nextFrom: null
+                nextFrom: null,
+                isLoadingFeed: false
             }
         },
 
@@ -62,14 +65,38 @@
         },
 
         mounted() {
-            this.accountNewsfeed({
-                accountID: this.userID
-            })
-            this.loadingStatus = new Array(this.newsfeed.length).fill(false)
+            console.log('mounted')
+            if (!this.getNextFrom) {
+                this.accountNewsfeed({
+                    accountID: this.userID,
+                    startFrom: this.getNextFrom
+                })
+                    .then(() => (this.isLoadingFeed = true))
+                    .then(() => {
+                        const loadingObserver = new IntersectionObserver(entries => {
+                            console.log(entries)
+                            /* для каждого наблюдаемого элемента */
+                            entries.forEach(entry => {
+                                console.log(entry.isIntersecting)
+                                if (entry.isIntersecting) {
+                                    this.loadMore()
+                                }
+                            })
+                        }, {
+                            threshold: 0
+                        })
+
+                        /* указываем, что необходимо наблюдать за лоадером */
+                        loadingObserver.observe(document.getElementById('loader'))
+                    })
+
+                this.loadingStatus = new Array(this.newsfeed.length).fill(false)
+            }
         },
 
         methods: {
             ...mapActions('account', ['accountNewsfeed', 'addLike']),
+            ...mapMutations('account', ['addNextFrom']),
 
             async addLikeToPost(ownerId, itemId, index) {
                 this.disableButton(itemId)
@@ -95,7 +122,9 @@
 
             refreshNewsfeed() {
                 this.newsFeedLoadingStatus = true
-                this.accountNewsfeed(this.userID)
+                this.addNextFrom = null
+
+                this.accountNewsfeed({ accountID: this.userID })
                     .finally(() => {
                         this.newsFeedLoadingStatus = false
                     })
@@ -112,7 +141,7 @@
 </script>
 
 <style scoped lang="scss">
-    .grid-container{
+    .grid-container {
         display: grid;
         gap: 10px;
         grid-template-columns: repeat(3, minmax(120px, 1fr));
@@ -136,5 +165,16 @@
 
     .bd-placeholder-img {
         height: auto;
+    }
+
+    #loader {
+        margin-top: -100vh;
+        &:before {
+            content: "";
+            display: block;
+            width: 100%;
+            height: 100vh;
+            //background: black;
+        }
     }
 </style>
