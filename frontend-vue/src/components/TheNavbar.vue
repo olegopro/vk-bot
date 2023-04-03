@@ -1,10 +1,14 @@
 <template>
-    <nav class="nav nav-pills nav-fill">
-        <router-link to="/" :class="['nav-link', addActiveClass]">Аккаунты</router-link>
-        <router-link to="/tasks" class="nav-link">Задачи</router-link>
-        <router-link to="/statistics" class="nav-link">Статистика</router-link>
-        <router-link to="/settings" class="nav-link">Настройки</router-link>
-    </nav>
+    <div class="row">
+       <div class="col-12">
+           <nav class="nav nav-pills nav-fill">
+               <router-link to="/" :class="['nav-link', addActiveClass]">Аккаунты</router-link>
+               <router-link to="/tasks" class="nav-link">Задачи</router-link>
+               <router-link to="/statistics" class="nav-link">Статистика</router-link>
+               <router-link to="/settings" class="nav-link">Настройки</router-link>
+           </nav>
+       </div>
+    </div>
 </template>
 
 <script>

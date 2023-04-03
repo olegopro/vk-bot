@@ -1,5 +1,6 @@
 import axios from 'axios'
 import axiosThrottle from 'axios-request-throttle'
+import Vue, { reactive } from 'vue'
 
 export default {
     namespaced: true,
@@ -37,8 +38,9 @@ export default {
             state.accountFriendsCount = accountFriendCounts
         },
 
-        addAccountNewsFeed(state, accountNewsFeed) {
+        async addAccountNewsFeed(state, accountNewsFeed) {
             state.accountNewsFeed = state.accountNewsFeed.concat(accountNewsFeed)
+            // state.accountNewsFeed = [...state.accountNewsFeed, ...accountNewsFeed]
         },
 
         cleanAccountNewsFeed(state) {

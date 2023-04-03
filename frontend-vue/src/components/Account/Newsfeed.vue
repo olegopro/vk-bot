@@ -8,14 +8,19 @@
         </div>
     </div>
 
-    <div class="grid-container mt-5 mb-5">
-        <div class="item mb-3" v-for="(post, index) in newsfeed" :key="post.source_id">
-            <img class="bd-placeholder-img card-img-top"
-                 width="100%"
-                 height="200"
+    <div v-masonry item-selector=".item" transition-duration="0s" class="row mt-3">
+        <div v-masonry-tile
+             class="col-4 item mb-4"
+             v-for="(post, index) in newsfeed"
+             :key="index"
+        >
+
+            <img class="card-img-top"
                  alt=""
                  :src="post.attachments[0].photo.sizes[2].url"
+                 @dblclick="addLikeToPost(post.owner_id, post.post_id, index)"
             />
+
             <button class="btn btn-danger"
                     type="button"
                     :id="post.post_id"
@@ -26,10 +31,11 @@
                 Лайкнуть
                 <span v-show="loadingStatus[index]" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
             </button>
+
         </div>
     </div>
 
-    <div class="row justify-content-center mb-5" id="loader" v-if="isLoadingFeed">
+    <div class="row justify-content-center mb-3" id="loader" v-if="isLoadingFeed">
         <div class="feed-spinner spinner-border text-secondary" role="status">
             <span class="visually-hidden">Загрузка...</span>
         </div>
@@ -41,7 +47,6 @@
     import { mapActions, mapGetters, mapMutations } from 'vuex'
 
     export default {
-
         data() {
             return {
                 userID: null,
@@ -54,7 +59,6 @@
 
         computed: {
             ...mapGetters('account', ['getAccountNewsFeed', 'getNextFrom']),
-
             newsfeed() {
                 return this.getAccountNewsFeed
             }
@@ -65,7 +69,6 @@
         },
 
         mounted() {
-            console.log('mounted')
             if (!this.getNextFrom) {
                 this.accountNewsfeed({
                     accountID: this.userID,
@@ -74,10 +77,8 @@
                     .then(() => (this.isLoadingFeed = true))
                     .then(() => {
                         const loadingObserver = new IntersectionObserver(entries => {
-                            console.log(entries)
                             /* для каждого наблюдаемого элемента */
                             entries.forEach(entry => {
-                                console.log(entry.isIntersecting)
                                 if (entry.isIntersecting) {
                                     this.loadMore()
                                 }
@@ -85,11 +86,9 @@
                         }, {
                             threshold: 0
                         })
-
                         /* указываем, что необходимо наблюдать за лоадером */
                         loadingObserver.observe(document.getElementById('loader'))
                     })
-
                 this.loadingStatus = new Array(this.newsfeed.length).fill(false)
             }
         },
@@ -100,10 +99,8 @@
 
             async addLikeToPost(ownerId, itemId, index) {
                 this.disableButton(itemId)
-
                 const payload = { accountId: this.userID, ownerId, itemId }
                 this.loadingStatus[index] = true
-
                 await this.addLike(payload)
                     .then(() => {
                         const button = this.$refs.buttons.find(item => +item.id === itemId)
@@ -123,15 +120,14 @@
             refreshNewsfeed() {
                 this.newsFeedLoadingStatus = true
                 this.addNextFrom = null
-
                 this.accountNewsfeed({ accountID: this.userID })
                     .finally(() => {
                         this.newsFeedLoadingStatus = false
                     })
             },
 
-            loadMore() {
-                this.accountNewsfeed({
+            async loadMore() {
+                await this.accountNewsfeed({
                     accountID: this.userID,
                     startFrom: this.getNextFrom
                 })
@@ -141,16 +137,7 @@
 </script>
 
 <style scoped lang="scss">
-    .grid-container {
-        display: grid;
-        gap: 10px;
-        grid-template-columns: repeat(3, minmax(120px, 1fr));
-        grid-template-rows: masonry;
-    }
-
     .item {
-        height: fit-content;
-
         img {
             border-top-left-radius: 6px;
             border-top-right-radius: 6px;
@@ -163,18 +150,15 @@
         }
     }
 
-    .bd-placeholder-img {
-        height: auto;
-    }
-
     #loader {
         margin-top: -100vh;
+
         &:before {
             content: "";
             display: block;
             width: 100%;
             height: 100vh;
-            //background: black;
+            //background: #00000045;
         }
     }
 </style>
