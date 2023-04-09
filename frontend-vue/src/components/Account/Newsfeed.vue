@@ -15,6 +15,20 @@
              :key="index"
         >
 
+            <button class="account-info-btn"
+                    data-bs-target="#accountDetails"
+                    data-bs-toggle="modal"
+                    type="button"
+                    @click="accountInfo(post.owner_id)"
+            >
+
+                <span class="info-icon">
+                    <svg width="28" height="28">
+                        <use xlink:href="#info-icon"></use>
+                    </svg>
+                </span>
+            </button>
+
             <img class="card-img-top"
                  alt=""
                  :src="post.attachments[0].photo.sizes[2].url"
@@ -41,24 +55,32 @@
         </div>
     </div>
 
+    <Teleport to="body">
+        <AccountDetails :account-data="accountDataById" />
+    </Teleport>
+
 </template>
 
 <script>
     import { mapActions, mapGetters, mapMutations } from 'vuex'
+    import AccountDetails from './Modals/AccountDetails.vue'
 
     export default {
+        components: { AccountDetails },
         data() {
             return {
                 userID: null,
                 loadingStatus: [],
                 newsFeedLoadingStatus: false,
                 nextFrom: null,
-                isLoadingFeed: false
+                isLoadingFeed: false,
+                accountDataById: null
             }
         },
 
         computed: {
-            ...mapGetters('account', ['getAccountNewsFeed', 'getNextFrom']),
+            ...mapGetters('account', ['getAccountNewsFeed', 'getNextFrom', 'getAccountDataById']),
+
             newsfeed() {
                 return this.getAccountNewsFeed
             }
@@ -94,7 +116,7 @@
         },
 
         methods: {
-            ...mapActions('account', ['accountNewsfeed', 'addLike']),
+            ...mapActions('account', ['accountNewsfeed', 'addLike', 'accountData']),
             ...mapMutations('account', ['addNextFrom']),
 
             async addLikeToPost(ownerId, itemId, index) {
@@ -131,6 +153,13 @@
                     accountID: this.userID,
                     startFrom: this.getNextFrom
                 })
+            },
+
+            async accountInfo(accountId) {
+                this.accountDataById = null
+                await this.accountData(accountId).then(() => {
+                    this.accountDataById = this.getAccountDataById(accountId)
+                })
             }
         }
     }
@@ -154,11 +183,25 @@
         margin-top: -100vh;
 
         &:before {
-            content: "";
+            content: '';
             display: block;
             width: 100%;
             height: 100vh;
-            //background: #00000045;
         }
     }
+
+    button.account-info-btn {
+        all: unset;
+        cursor: pointer;
+
+        .info-icon {
+            position: absolute;
+            right: 5%;
+            top: .5rem;
+            padding: .2rem;
+            border-radius: 50%;
+            background-color: white;
+        }
+    }
+
 </style>

@@ -24,7 +24,6 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|Account wherePassword($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Account whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Account whereUsername($value)
- * @mixin \Eloquent
  * @property int $account_id
  * @property string $access_token
  * @property string $screen_name
@@ -37,6 +36,7 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|Account whereFirstName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Account whereLastName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Account whereScreenName($value)
+ * @mixin \Eloquent
  */
 class Account extends Model
 {
@@ -45,5 +45,5 @@ class Account extends Model
     protected $fillable = ['account_id', 'access_token', 'screen_name', 'first_name', 'last_name', 'bdate'];
     protected $primaryKey = 'account_id';
     public $timestamps = false;
-    public $incrementing =false;
+    public $incrementing = false;
 }

@@ -1,6 +1,5 @@
 import axios from 'axios'
 import axiosThrottle from 'axios-request-throttle'
-import Vue, { reactive } from 'vue'
 
 export default {
     namespaced: true,
@@ -8,7 +7,7 @@ export default {
     state() {
         return {
             account: [],
-            accountData: {},
+            accountData: [],
             accountFollowers: {},
             accountFriends: {},
             accountFriendsCount: {},
@@ -23,7 +22,18 @@ export default {
         },
 
         addAccountData(state, accountData) {
-            state.accountData = accountData
+            console.log(accountData)
+            const index = state.accountData.findIndex(
+                (item) => item.id === accountData.id
+            )
+
+            if (index !== -1) {
+                // Объект с таким же идентификатором уже существует, обновляем его
+                state.accountData[index] = accountData
+            } else {
+                // Добавляем новый объект в массив
+                state.accountData.push(accountData)
+            }
         },
 
         addAccountFollowers(state, accountFollowers) {
@@ -59,7 +69,14 @@ export default {
         },
 
         async accountData({ commit }, id) {
-            const { data } = await axios.post(`http://localhost:8080/api/account/data/${id}`)
+            let data // объявляем переменную data заранее
+
+            if (id < 0) {
+                ({ data } = await axios.post(`http://localhost:8080/api/group/data/${Math.abs(id)}`))
+            } else {
+                ({ data } = await axios.post(`http://localhost:8080/api/account/data/${id}`))
+            }
+
             commit('addAccountData', data.response[0])
         },
 
@@ -160,7 +177,17 @@ export default {
         },
 
         getAccountData(state) {
+            // return state.accountData.find(user => user.id === 9121607)
             return state.accountData
+        },
+
+        getAccountDataById: (state) => (id) => {
+            if (!state.accountData.length) {
+                console.log('Data is not available yet')
+                return null // или вернуть любое другое значение, которое вы считаете подходящим
+            }
+
+            return state.accountData.find(user => user.id === Math.abs(id))
         },
 
         getAccountFollowers(state) {

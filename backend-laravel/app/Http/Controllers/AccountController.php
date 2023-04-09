@@ -73,6 +73,17 @@ class AccountController extends Controller
         ]);
     }
 
+    public function getGroupData($id)
+    {
+        return (new VkClient())->request('groups.getById', [
+            'group_id' => $id,
+            'fields'   => [
+                'photo_200',
+                'screen_name'
+            ]
+        ]);
+    }
+
     public function getAccountFollowers($id, $limit = 6)
     {
         return (new VkClient())->request('users.getFollowers', [

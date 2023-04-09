@@ -2,20 +2,20 @@
     <div class="row ">
         <div class="col-12">
             <div class="d-flex account">
-                <div v-if="!getAccountData.photo_200" class="stub">
+                <div v-if="!response?.photo_200" class="stub">
                     <div class="spinner-border" style="width: 3rem; height: 3rem;" role="status">
                     </div>
                 </div>
-                <img v-else class="col-3 ps-0 " width="200" height="200" :src="getAccountData.photo_200" alt="">
+                <img v-else class="col-3 ps-0 " width="200" height="200" :src="response?.photo_200" alt="">
                 <div class="col-4 p-3 d-flex flex-column justify-content-between">
                     <div>
-                        <h2>{{ getAccountData.first_name }} {{ getAccountData.last_name }}</h2>
-                        <h3>{{ getAccountData.screen_name }}</h3>
+                        <h2>{{ response?.first_name }} {{ response?.last_name }}</h2>
+                        <h3>{{ response?.screen_name }}</h3>
                     </div>
 
                     <div class="mb-3">
-                        <p>Статус - {{ getAccountData.status }}</p>
-                        <p>Последняя активность - {{ date(getAccountData.last_seen?.time) }}</p>
+                        <p>Статус - {{ response?.status }}</p>
+                        <p>Последняя активность - {{ date(response?.last_seen?.time) }}</p>
                     </div>
                 </div>
                 <div class="col-4 p-3 d-flex flex-column">
@@ -29,17 +29,17 @@
                         <svg width="28" height="28" class="me-3">
                             <use xlink:href="#followers"></use>
                         </svg>
-                        Подписчики - {{ getAccountData.followers_count }}
+                        Подписчики - {{ response?.followers_count }}
                     </h4>
                     <h4>
                         <svg width="28" height="28" class="me-3">
                             <use xlink:href="#address"></use>
                         </svg>
-                        Город - {{ getAccountData.city?.title }}
+                        Город - {{ response?.city?.title }}
                     </h4>
                 </div>
                 <div class="col p-3">
-                    <OnlineStatus :type="getAccountData.online === 0 ? 'offline' : 'online'" />
+                    <OnlineStatus :type="response?.online === 0 ? 'offline' : 'online'" />
                 </div>
             </div>
         </div>
@@ -48,7 +48,6 @@
     <Followers v-if="getSettings.show_followers === 1" />
     <Friends v-if="getSettings.show_friends === 1" />
     <Newsfeed />
-
 </template>
 
 <script>
@@ -64,26 +63,12 @@
         data() {
             return {
                 userID: null,
-
-                items: [
-                    {
-                        title: 'First',
-                        description: 'The first item.'
-                    },
-                    {
-                        title: 'Second',
-                        description: 'The second item.'
-                    },
-                    {
-                        title: 'Second',
-                        description: 'The second item.'
-                    }
-                ]
+                response: null
             }
         },
 
         computed: {
-            ...mapGetters('account', ['getAccount', 'getAccountData', 'getAccountFriendsCount']),
+            ...mapGetters('account', ['getAccount', 'getAccountFriendsCount', 'getAccountDataById']),
             ...mapGetters('settings', ['getSettings'])
         },
 
@@ -92,10 +77,12 @@
             this.settings()
         },
 
-        mounted() {
-            this.account(this.userID)
-            this.accountData(this.userID)
-            this.accountFriendsCount(this.userID)
+        async mounted() {
+            await this.account(this.userID)
+            await this.accountData(this.userID)
+                .then(() => (this.response = this.getAccountDataById(this.getAccount.account_id)))
+
+            await this.accountFriendsCount(this.userID)
         },
 
         methods: {
@@ -105,6 +92,7 @@
             date(timestamp) {
                 return new Date(timestamp * 1000).toLocaleTimeString('ru-RU')
             }
+
         }
     }
 </script>

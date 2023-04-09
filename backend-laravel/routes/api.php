@@ -35,5 +35,8 @@ Route::post('/account/get-posts-for-like', [AccountController::class, 'getNewsfe
 Route::post('/account/add-task-likes', [AccountController::class, 'addLikeTask']);
 Route::post('/account/get-screen-name-by-id', [AccountController::class, 'getScreenNameById']);
 
+Route::post('/group/data/{id}', [AccountController::class, 'getGroupData']);
+
+
 Route::post('/settings', [SettingsController::class, 'settings']);
 Route::post('/settings/save', [SettingsController::class, 'saveSettings']);

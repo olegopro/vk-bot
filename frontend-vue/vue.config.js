@@ -4,7 +4,7 @@ module.exports = defineConfig({
     devServer: {
         // host: 'localhost',
         client: {
-            overlay: false, // fix : ResizeObserver loop limit exceeded
+            // overlay: false, // fix : ResizeObserver loop limit exceeded
             webSocketURL: 'ws://0.0.0.0:3000/ws'
         }
     }

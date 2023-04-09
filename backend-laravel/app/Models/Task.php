@@ -24,7 +24,6 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|Task whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Task wherePayload($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Task whereUpdatedAt($value)
- * @mixin \Eloquent
  * @property-read \App\Models\Account $account
  * @property int $owner_id
  * @property int $item_id
@@ -34,6 +33,11 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|Task whereItemId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Task whereOwnerId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Task whereStatus($value)
+ * @property string $first_name
+ * @property string $last_name
+ * @method static \Illuminate\Database\Eloquent\Builder|Task whereFirstName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Task whereLastName($value)
+ * @mixin \Eloquent
  */
 class Task extends Model
 {
