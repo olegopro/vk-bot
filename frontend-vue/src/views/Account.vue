@@ -68,7 +68,7 @@
         },
 
         computed: {
-            ...mapGetters('account', ['getAccount', 'getAccountFriendsCount', 'getAccountDataById']),
+            ...mapGetters('account', ['getAccount', 'getAccountFriendsCount', 'getOwnerDataById']),
             ...mapGetters('settings', ['getSettings'])
         },
 
@@ -79,14 +79,14 @@
 
         async mounted() {
             await this.account(this.userID)
-            await this.accountData(this.userID)
-                .then(() => (this.response = this.getAccountDataById(this.getAccount.account_id)))
+            await this.ownerData(this.userID)
+                .then(() => (this.response = this.getOwnerDataById(this.getAccount.account_id)))
 
             await this.accountFriendsCount(this.userID)
         },
 
         methods: {
-            ...mapActions('account', ['account', 'accountData', 'accountFriendsCount']),
+            ...mapActions('account', ['account', 'ownerData', 'accountFriendsCount']),
             ...mapActions('settings', ['settings']),
 
             date(timestamp) {

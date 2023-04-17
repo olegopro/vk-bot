@@ -7,7 +7,7 @@ export default {
     state() {
         return {
             account: [],
-            accountData: [],
+            ownerData: [],
             accountFollowers: {},
             accountFriends: {},
             accountFriendsCount: {},
@@ -21,18 +21,18 @@ export default {
             state.account = account
         },
 
-        addAccountData(state, accountData) {
+        addOwnerData(state, accountData) {
             console.log(accountData)
-            const index = state.accountData.findIndex(
+            const index = state.ownerData.findIndex(
                 (item) => item.id === accountData.id
             )
 
             if (index !== -1) {
                 // Объект с таким же идентификатором уже существует, обновляем его
-                state.accountData[index] = accountData
+                state.ownerData[index] = accountData
             } else {
                 // Добавляем новый объект в массив
-                state.accountData.push(accountData)
+                state.ownerData.push(accountData)
             }
         },
 
@@ -68,16 +68,14 @@ export default {
             commit('addAccount', data)
         },
 
-        async accountData({ commit }, id) {
-            let data // объявляем переменную data заранее
+        async ownerData({ commit }, id) {
+            const { data } = await axios.post(`http://localhost:8080/api/account/data/${id}`)
+            commit('addOwnerData', data.response[0])
+        },
 
-            if (id < 0) {
-                ({ data } = await axios.post(`http://localhost:8080/api/group/data/${Math.abs(id)}`))
-            } else {
-                ({ data } = await axios.post(`http://localhost:8080/api/account/data/${id}`))
-            }
-
-            commit('addAccountData', data.response[0])
+        async groupData({ commit }, id) {
+            const { data } = await axios.post(`http://localhost:8080/api/group/data/${Math.abs(id)}`)
+            commit('addOwnerData', data.response[0])
         },
 
         async accountFollowers({ commit }, id) {
@@ -176,18 +174,18 @@ export default {
             return state.account
         },
 
-        getAccountData(state) {
+        getOwnerData(state) {
             // return state.accountData.find(user => user.id === 9121607)
-            return state.accountData
+            return state.ownerData
         },
 
-        getAccountDataById: (state) => (id) => {
-            if (!state.accountData.length) {
+        getOwnerDataById: (state) => (id) => {
+            if (!state.ownerData.length) {
                 console.log('Data is not available yet')
                 return null // или вернуть любое другое значение, которое вы считаете подходящим
             }
 
-            return state.accountData.find(user => user.id === Math.abs(id))
+            return state.ownerData.find(user => user.id === Math.abs(id))
         },
 
         getAccountFollowers(state) {

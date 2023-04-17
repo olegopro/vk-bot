@@ -19,7 +19,7 @@
                     data-bs-target="#accountDetails"
                     data-bs-toggle="modal"
                     type="button"
-                    @click="accountInfo(post.owner_id)"
+                    @click="ownerInfo(post.owner_id)"
             >
 
                 <span class="info-icon">
@@ -56,17 +56,17 @@
     </div>
 
     <Teleport to="body">
-        <AccountDetails :account-data="accountDataById" />
+        <AccountDetails :owner-data="ownerDataById" />
     </Teleport>
 
 </template>
 
 <script>
     import { mapActions, mapGetters, mapMutations } from 'vuex'
-    import AccountDetails from './Modals/AccountDetails.vue'
+    import OwnerDetails from './Modals/OwnerDetails.vue'
 
     export default {
-        components: { AccountDetails },
+        components: { AccountDetails: OwnerDetails },
         data() {
             return {
                 userID: null,
@@ -74,12 +74,12 @@
                 newsFeedLoadingStatus: false,
                 nextFrom: null,
                 isLoadingFeed: false,
-                accountDataById: null
+                ownerDataById: null
             }
         },
 
         computed: {
-            ...mapGetters('account', ['getAccountNewsFeed', 'getNextFrom', 'getAccountDataById']),
+            ...mapGetters('account', ['getAccountNewsFeed', 'getNextFrom', 'getOwnerDataById']),
 
             newsfeed() {
                 return this.getAccountNewsFeed
@@ -116,7 +116,7 @@
         },
 
         methods: {
-            ...mapActions('account', ['accountNewsfeed', 'addLike', 'accountData']),
+            ...mapActions('account', ['accountNewsfeed', 'addLike', 'ownerData', 'groupData']),
             ...mapMutations('account', ['addNextFrom']),
 
             async addLikeToPost(ownerId, itemId, index) {
@@ -155,11 +155,21 @@
                 })
             },
 
-            async accountInfo(accountId) {
-                this.accountDataById = null
-                await this.accountData(accountId).then(() => {
-                    this.accountDataById = this.getAccountDataById(accountId)
-                })
+            async ownerInfo(accountId) {
+                console.log(accountId)
+                this.ownerDataById = null
+
+                if (accountId > 0) {
+                    await this.ownerData(accountId).then(() => {
+                        this.ownerDataById = this.getOwnerDataById(accountId)
+                    })
+                }
+
+                if (accountId < 0) {
+                    await this.groupData(accountId).then(() => {
+                        this.ownerDataById = this.getOwnerDataById(accountId)
+                    })
+                }
             }
         }
     }
@@ -167,6 +177,13 @@
 
 <style scoped lang="scss">
     .item {
+        &:hover {
+            .info-icon {
+                opacity: 1;
+                transition: opacity .2s;
+            }
+        }
+
         img {
             border-top-left-radius: 6px;
             border-top-right-radius: 6px;
@@ -195,13 +212,15 @@
         cursor: pointer;
 
         .info-icon {
+            //display: none;
+            opacity: 0;
             position: absolute;
             right: 5%;
             top: .5rem;
             padding: .2rem;
             border-radius: 50%;
             background-color: white;
+
         }
     }
-
 </style>

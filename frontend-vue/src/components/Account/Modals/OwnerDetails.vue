@@ -3,7 +3,12 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="Add account">{{ accountData?.first_name }} {{ accountData?.last_name }}</h1>
+                    <svg width="28" height="28" class="me-2" v-show="ownerIcon">
+                        <!--suppress HtmlUnknownAttribute -->
+                        <use :xlink:href="'#' + ownerIcon"></use>
+                    </svg>
+
+                    <h1 class="modal-title fs-5" id="Add account">{{ ownerData?.first_name }} {{ ownerData?.last_name }} {{ ownerData?.name }}</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -13,26 +18,26 @@
 
                                 <div class="d-flex">
                                     <div class="position-relative">
-                                        <div v-if="!accountData?.photo_200" class="stub">
+                                        <div v-if="!ownerData?.photo_200" class="stub">
                                             <div class="spinner-border" style="width: 3rem; height: 3rem;" role="status">
                                             </div>
                                         </div>
 
-                                        <img v-else  width="200" height="200" :src="accountData?.photo_200" alt="">
+                                        <img v-else width="200" height="200" :src="ownerData?.photo_200" alt="">
 
-                                        <OnlineStatus v-if="accountData?.photo_200" :type="accountData?.online === 0 ? 'offline' : 'online'" class="online-status" />
+                                        <OnlineStatus v-if="ownerData?.photo_200" :type="ownerData?.online === 0 ? 'offline' : 'online'" class="online-status" />
                                     </div>
 
-                                    <p class="m-3 mt-0"><b>Статус: </b>{{ accountData?.status }}</p>
+                                    <p class="m-3 mt-0"><b>Статус: </b>{{ ownerData?.status }}</p>
                                 </div>
 
                                 <div class="col-12 d-flex flex-column justify-content-between">
                                     <div>
-                                        <h5>{{ accountData?.screen_name }}</h5>
+                                        <h5>{{ ownerData?.screen_name }}</h5>
                                     </div>
 
                                     <div class="mb-3">
-                                        <p>Последняя активность - {{ date(accountData?.last_seen?.time) }}</p>
+                                        <p>Последняя активность - {{ date(ownerData?.last_seen?.time) }}</p>
                                     </div>
                                 </div>
                                 <div class="col-12 d-flex flex-column">
@@ -46,13 +51,13 @@
                                         <svg width="28" height="28" class="me-3">
                                             <use xlink:href="#followers"></use>
                                         </svg>
-                                        Подписчики - {{ accountData?.followers_count }}
+                                        Подписчики - {{ ownerData?.followers_count }}
                                     </h4>
                                     <h4>
                                         <svg width="28" height="28" class="me-3">
                                             <use xlink:href="#address"></use>
                                         </svg>
-                                        Город - {{ accountData?.city?.title }}
+                                        Город - {{ ownerData?.city?.title }}
                                     </h4>
                                 </div>
 
@@ -75,10 +80,24 @@
 
     export default {
         components: { OnlineStatus },
-        props: ['accountData'],
+        props: ['ownerData'],
 
         mounted() {
             this.modal = new Modal(document.getElementById('accountDetails'))
+        },
+
+        computed: {
+            ownerIcon() {
+                if (this.ownerData?.type) {
+                    return 'group'
+                }
+
+                if (this.ownerData?.first_name) {
+                    return 'account'
+                }
+
+                return null
+            }
         },
 
         methods: {
