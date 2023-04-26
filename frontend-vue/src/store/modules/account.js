@@ -10,7 +10,7 @@ export default {
             ownerData: [],
             accountFollowers: {},
             accountFriends: {},
-            accountFriendsCount: {},
+            accountFriendsCount: [],
             accountNewsFeed: [],
             nextFrom: null
         }
@@ -45,7 +45,8 @@ export default {
         },
 
         addAccountFriendsCount(state, accountFriendCounts) {
-            state.accountFriendsCount = accountFriendCounts
+            state.accountFriendsCount = state.accountFriendsCount.concat(accountFriendCounts)
+            // state.accountFriendsCount = accountFriendCounts
         },
 
         async addAccountNewsFeed(state, accountNewsFeed) {
@@ -90,6 +91,7 @@ export default {
 
         async accountFriendsCount({ commit }, id) {
             const { data } = await axios.post(`http://localhost:8080/api/account/friends/count/${id}`)
+            console.log(data)
             commit('addAccountFriendsCount', data.response)
         },
 
@@ -182,7 +184,7 @@ export default {
         getOwnerDataById: (state) => (id) => {
             if (!state.ownerData.length) {
                 console.log('Data is not available yet')
-                return null // или вернуть любое другое значение, которое вы считаете подходящим
+                return null
             }
 
             return state.ownerData.find(user => user.id === Math.abs(id))
@@ -196,8 +198,8 @@ export default {
             return state.accountFriends
         },
 
-        getAccountFriendsCount(state) {
-            return state.accountFriendsCount
+        getAccountFriendsCount: (state) => (id) => {
+            return state.accountFriendsCount.find(user => user.id === id)
         },
 
         getAccountNewsFeed(state) {

@@ -23,7 +23,7 @@
                         <svg width="28" height="28" class="me-3">
                             <use xlink:href="#friends"></use>
                         </svg>
-                        Друзья - {{ getAccountFriendsCount.count }}
+                        Друзья - {{ response?.friends_count }}
                     </h4>
                     <h4 class="mb-3">
                         <svg width="28" height="28" class="me-3">
@@ -82,7 +82,12 @@
             await this.ownerData(this.userID)
                 .then(() => (this.response = this.getOwnerDataById(this.getAccount.account_id)))
 
-            await this.accountFriendsCount(this.userID)
+            this.accountFriendsCount(this.userID).then(() => {
+                this.response = {
+                    ...this.response,
+                    ...{ friends_count: this.getAccountFriendsCount(this.userID).count }
+                }
+            })
         },
 
         methods: {

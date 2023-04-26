@@ -110,10 +110,19 @@ class AccountController extends Controller
 
     public function getAccountCountFriends($id)
     {
-        return (new VkClient())->request('friends.get', [
-            'user_id' => $id,
-            'count'   => 1,
-        ]);
+	    $result = (new VkClient())->request('friends.get', [
+		    'user_id' => $id,
+		    'count'   => 1,
+	    ]);
+
+	    $response = [
+		    'response' => [
+			    'id' => $id,
+			    'count' => $result['response']['count'],
+		    ]
+	    ];
+
+	    return response()->json($response);
     }
 
     public function getAccountInfo($access_token)
