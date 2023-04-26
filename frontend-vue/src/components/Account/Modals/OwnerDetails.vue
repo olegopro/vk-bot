@@ -45,7 +45,7 @@
                                         <svg width="28" height="28" class="me-3">
                                             <use xlink:href="#friends"></use>
                                         </svg>
-                                        <!--Друзья - {{ getAccountFriendsCount.count }}-->
+                                        Друзья - {{ ownerData?.friends_count }}
                                     </h4>
                                     <h4 class="mb-3">
                                         <svg width="28" height="28" class="me-3">

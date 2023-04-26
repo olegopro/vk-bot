@@ -156,7 +156,6 @@
             },
 
             async ownerInfo(accountId) {
-                console.log(accountId)
                 this.ownerDataById = null
 
                 if (accountId > 0) {

@@ -21,18 +21,15 @@ export default {
             state.account = account
         },
 
-        addOwnerData(state, accountData) {
-            console.log(accountData)
-            const index = state.ownerData.findIndex(
-                (item) => item.id === accountData.id
-            )
+        addOwnerData(state, { accountData, friendsCount }) {
+            const index = state.ownerData.findIndex((item) => item.id === accountData.id)
 
             if (index !== -1) {
                 // Объект с таким же идентификатором уже существует, обновляем его
-                state.ownerData[index] = accountData
+                state.ownerData[index] = { ...state.ownerData[index], ...accountData, friends_count: friendsCount }
             } else {
                 // Добавляем новый объект в массив
-                state.ownerData.push(accountData)
+                state.ownerData.push({ ...accountData, friends_count: friendsCount })
             }
         },
 
@@ -46,7 +43,6 @@ export default {
 
         addAccountFriendsCount(state, accountFriendCounts) {
             state.accountFriendsCount = state.accountFriendsCount.concat(accountFriendCounts)
-            // state.accountFriendsCount = accountFriendCounts
         },
 
         async addAccountNewsFeed(state, accountNewsFeed) {
@@ -70,13 +66,19 @@ export default {
         },
 
         async ownerData({ commit }, id) {
-            const { data } = await axios.post(`http://localhost:8080/api/account/data/${id}`)
-            commit('addOwnerData', data.response[0])
+            console.log(id)
+            const [accountDataResponse, friendsCountResponse] = await Promise.all([
+                axios.post(`http://localhost:8080/api/account/data/${id}`),
+                axios.post(`http://localhost:8080/api/account/friends/count/${id}`)
+            ])
+            const accountData = accountDataResponse.data.response[0]
+            const friendsCount = friendsCountResponse.data.response.count
+            commit('addOwnerData', { accountData, friendsCount })
         },
 
         async groupData({ commit }, id) {
             const { data } = await axios.post(`http://localhost:8080/api/group/data/${Math.abs(id)}`)
-            commit('addOwnerData', data.response[0])
+            commit('addOwnerData', { accountData: data.response[0] })
         },
 
         async accountFollowers({ commit }, id) {
@@ -91,7 +93,6 @@ export default {
 
         async accountFriendsCount({ commit }, id) {
             const { data } = await axios.post(`http://localhost:8080/api/account/friends/count/${id}`)
-            console.log(data)
             commit('addAccountFriendsCount', data.response)
         },
 

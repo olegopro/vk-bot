@@ -68,7 +68,7 @@
         },
 
         computed: {
-            ...mapGetters('account', ['getAccount', 'getAccountFriendsCount', 'getOwnerDataById']),
+            ...mapGetters('account', ['getAccount', 'getOwnerDataById']),
             ...mapGetters('settings', ['getSettings'])
         },
 
@@ -81,17 +81,10 @@
             await this.account(this.userID)
             await this.ownerData(this.userID)
                 .then(() => (this.response = this.getOwnerDataById(this.getAccount.account_id)))
-
-            this.accountFriendsCount(this.userID).then(() => {
-                this.response = {
-                    ...this.response,
-                    ...{ friends_count: this.getAccountFriendsCount(this.userID).count }
-                }
-            })
         },
 
         methods: {
-            ...mapActions('account', ['account', 'ownerData', 'accountFriendsCount']),
+            ...mapActions('account', ['account', 'ownerData']),
             ...mapActions('settings', ['settings']),
 
             date(timestamp) {
