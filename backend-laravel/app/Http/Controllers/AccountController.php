@@ -79,7 +79,13 @@ class AccountController extends Controller
             'group_id' => $id,
             'fields'   => [
                 'photo_200',
-                'screen_name'
+                'screen_name',
+	            'country',
+	            'description',
+	            'members_count',
+	            'status',
+	            'activity',
+                'city',
             ]
         ]);
     }

@@ -28,10 +28,9 @@
                     </svg>
                 </span>
             </button>
-
             <img class="card-img-top"
                  alt=""
-                 :src="post.attachments[0].photo.sizes[2].url"
+                 :src="post.attachments[0].photo.sizes[3].url"
                  @dblclick="addLikeToPost(post.owner_id, post.post_id, index)"
             />
 
