@@ -154,11 +154,11 @@ class AccountController extends Controller
     {
         $access_token = $this->getAccessTokenByAccountID($request->input('account_id'));
 
-        return response((new VkClient($access_token))->request('newsfeed.get', [
+        return (new VkClient($access_token))->request('newsfeed.get', [
             'filters' => 'post',
-            'count'   => 100,
+            'count'   => 5,
             'start_from' => $request->input('start_from') ?? null
-        ]));
+        ]);
     }
 
     public function getNewsfeedPosts(Request $request)
@@ -166,39 +166,69 @@ class AccountController extends Controller
         $account_id = $request->input('account_id');
         $access_token = $this->getAccessTokenByAccountID($account_id);
 
-        $result = (new VkClient($access_token))->request('newsfeed.get', [
-            'filters' => 'post',
-            'count'   => 5
-        ]);
+        $createdCount = 0; // Счетчик созданных записей
+        $maxCreatedCount = 30; // Нужное количество записей
+        $failedAttempts = 0; // Счетчик неудачных попыток
 
-        $data = $result['response']['items'];
+        do {
+            $result = $this->getAccountNewsfeed($request);
 
-        foreach ($data as $post) {
+            $data = $result['response']['items'];
+            $next_from = $result['response']['next_from'];
 
-            $username = (new VkClient())->request('users.get', [
-                'fields'  => 'screen_name',
-                'user_id' => $post['owner_id']
-            ]);
+            $attemptFailed = true; // Флаг, указывающий, что текущая попытка не удалась
 
-            //только аккаунты/не группы и оригинальные посты/не репосты
-            if ($post['owner_id'] > 0
-                && !array_key_exists('copy_history', $post)
-                && $post['likes']['user_likes'] === 0
-            ) {
-                Task::create([
-                    'account_id'    => $account_id,
-                    'first_name'    => $username['response'][0]['first_name'],
-                    'last_name'     => $username['response'][0]['last_name'],
-                    'owner_id'      => $post['owner_id'],
-                    'item_id'       => $post['post_id'],
-                    'attempt_count' => 1,
-                    'status'        => 'pending'
-                ]);
+            foreach ($data as $post) {
+                if ($post['owner_id'] > 0
+                    && !array_key_exists('copy_history', $post)
+                    && $post['likes']['user_likes'] === 0
+                    && $createdCount < $maxCreatedCount
+                ) {
+                    $attemptFailed = false;
+
+                    $username = (new VkClient())->request('users.get', [
+                        'fields'  => 'screen_name',
+                        'user_id' => $post['owner_id']
+                    ]);
+
+                    usleep(300000);
+
+                    Task::create([
+                        'account_id'    => $account_id,
+                        'first_name'    => $username['response'][0]['first_name'],
+                        'last_name'     => $username['response'][0]['last_name'],
+                        'owner_id'      => $post['owner_id'],
+                        'item_id'       => $post['post_id'],
+                        'attempt_count' => 1,
+                        'status'        => 'pending'
+                    ]);
+
+                    $createdCount++;
+
+                    if ($createdCount >= $maxCreatedCount) {
+                        break 2;
+                    }
+                }
             }
-        }
+
+            if ($attemptFailed) {
+                $failedAttempts++;
+            } else {
+                $failedAttempts = 0;
+            }
+
+            $request->merge(['start_from' => $next_from]);
+
+            // Проверка на не выполнение условия 3 раза
+            if ($failedAttempts >= 3) {
+                break;
+            }
+
+        } while ($createdCount < $maxCreatedCount && !empty($next_from));
 
         return $this->addLikeTask($access_token);
     }
+
 
     public function addLikeTask($token)
     {
