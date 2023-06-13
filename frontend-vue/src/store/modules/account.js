@@ -12,7 +12,8 @@ export default {
             accountFriends: {},
             accountFriendsCount: [],
             accountNewsFeed: [],
-            nextFrom: null
+            nextFrom: null,
+            previousNextFrom: null
         }
     },
 
@@ -56,6 +57,10 @@ export default {
 
         addNextFrom(state, nextFrom) {
             state.nextFrom = nextFrom
+        },
+
+        addPreviousNextForm(state, nextForm) {
+            state.previousNextFrom = nextForm
         }
     },
 
@@ -66,7 +71,6 @@ export default {
         },
 
         async ownerData({ commit }, id) {
-            console.log(id)
             const [accountDataResponse, friendsCountResponse] = await Promise.all([
                 axios.post(`http://localhost:8080/api/account/data/${id}`),
                 axios.post(`http://localhost:8080/api/account/friends/count/${id}`)
@@ -131,19 +135,33 @@ export default {
             }
         },
 
-        async accountNewsfeed({ commit }, { accountID, startFrom = null }) {
-            const { data } = await axios.post('http://localhost:8080/api/account/newsfeed', null, {
-                params: {
-                    account_id: accountID,
-                    start_from: startFrom
-                }
-            })
+        async accountNewsfeed({ commit, state }, { accountID, startFrom = null }) {
+            if (startFrom !== null && startFrom === state.previousNextFrom) {
+                return // Не выполнять запрос, если startFrom такой же, как в прошлый раз
+            }
 
-            const result = await data.response.items.filter(item => item.attachments[0]?.type === 'photo')
-            commit('addNextFrom', data.response.next_from)
+            commit('addPreviousNextForm', startFrom)
 
-            if (startFrom === null) commit('cleanAccountNewsFeed')
-            commit('addAccountNewsFeed', result)
+            try {
+                const localAxios = axios
+                axiosThrottle.use(localAxios, { requestsPerSecond: 5 })
+
+                const { data } = await localAxios.post('http://localhost:8080/api/account/newsfeed', null, {
+                    params: {
+                        account_id: accountID,
+                        start_from: startFrom
+                    }
+                })
+
+                const result = await data.response.items.filter(item => item.attachments[0]?.type === 'photo')
+                commit('addNextFrom', data.response.next_from)
+
+                if (startFrom === null) commit('cleanAccountNewsFeed')
+                commit('addAccountNewsFeed', result)
+            } catch (error) {
+                console.log(error)
+                await this.accountNewsfeed({ commit, state }, { accountID, startFrom: state.nextFrom })
+            }
         },
 
         async addLike(_, { accountId, ownerId, itemId }) {
@@ -178,7 +196,6 @@ export default {
         },
 
         getOwnerData(state) {
-            // return state.accountData.find(user => user.id === 9121607)
             return state.ownerData
         },
 

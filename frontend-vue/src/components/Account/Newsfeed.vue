@@ -195,13 +195,14 @@
     }
 
     #loader {
-        margin-top: -100vh;
+        //margin-top: -100vh;
 
         &:before {
             content: '';
             display: block;
             width: 100%;
-            height: 100vh;
+            //height: 100vh;
+            height: 100px;
         }
     }
 
