@@ -7,6 +7,7 @@ services:
         restart: always
         depends_on:
             - mysql
+            - redis
         volumes:
             - ./backend-laravel:/var/www/html
             - /var/www/html/vendor/
@@ -21,6 +22,8 @@ services:
             - DB_USERNAME=root
             - DB_PASSWORD=password
             - QUEUE_CONNECTION=database
+            - REDIS_HOST=redis
+            - REDIS_PORT=6379
             - VK_API_URL=https://api.vk.com/method/
             - VK_API_VERSION=5.131
             - VK_API_SERVICE_KEY='Защищённый ключ'
@@ -63,6 +66,19 @@ services:
             - "8181:80"
         environment:
             PMA_HOST: mysql
+
+    redis:
+        image: redis
+        restart: always
+
+    phpredisadmin:
+        image: erikdubbelboer/phpredisadmin
+        depends_on:
+            - redis
+        ports:
+            - "9191:80"
+        environment:
+            - REDIS_1_HOST=redis
 
 
 
