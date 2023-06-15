@@ -21,7 +21,7 @@ services:
             - DB_DATABASE=vk-bot
             - DB_USERNAME=root
             - DB_PASSWORD=password
-            - QUEUE_CONNECTION=database
+            - QUEUE_CONNECTION=redis
             - REDIS_HOST=redis
             - REDIS_PORT=6379
             - VK_API_URL=https://api.vk.com/method/
