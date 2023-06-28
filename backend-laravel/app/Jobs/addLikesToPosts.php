@@ -10,6 +10,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
 
 class addLikesToPosts implements ShouldQueue
 {
@@ -40,11 +41,23 @@ class addLikesToPosts implements ShouldQueue
           ->where('id', '=', $this->task->id)
           ->update(['status' => 'active']);
 
+        // Логирование запроса
+        Log::info('VK API Request', [
+            'token' => $this->token,
+            'task' => [
+                'owner_id' => $this->task->owner_id,
+                'item_id' => $this->task->item_id,
+            ],
+        ]);
+
         $response = (new VkClient($this->token))->request('likes.add', [
             'type'     => 'post',
             'owner_id' => $this->task->owner_id,
             'item_id'  => $this->task->item_id
         ]);
+
+        // Логирование ответа
+        Log::info('VK API Response', ['response' => $response]);
 
         if (response($response)) {
             DB::table('tasks')
