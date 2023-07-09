@@ -5,13 +5,23 @@
             <h1 class="h2">Список задач</h1>
         </div>
         <div class="col">
+
             <button class="btn btn-success btn-action float-end"
                     data-bs-target="#addTask"
                     data-bs-toggle="modal"
                     type="button">
                 Добавить задачу
             </button>
+
+            <button class="btn btn-danger btn-action float-end me-3"
+                    v-if="getTasks.length > 0"
+                    data-bs-target="#deleteAllTasks"
+                    data-bs-toggle="modal"
+                    type="button">
+                Очистить список
+            </button>
         </div>
+
     </div>
 
     <div class="row">
@@ -45,8 +55,9 @@
     </div>
 
     <Teleport to="body">
-        <DeleteTask :taskId="taskId" />
         <AddTask />
+        <DeleteTask :taskId="taskId" />
+        <DeleteAllTasks :tasksCount="getTasks"/>
     </Teleport>
 
 </template>
@@ -56,9 +67,10 @@
     import TableThread from '../components/Tasks/TableThread.vue'
     import DeleteTask from '../components/Tasks/Modals/DeleteTask.vue'
     import AddTask from '../components/Tasks/Modals/AddTask.vue'
+    import DeleteAllTasks from '../components/Tasks/Modals/DeleteAllTasks.vue'
 
     export default {
-        components: { AddTask, DeleteTask, TableThread },
+        components: { DeleteAllTasks, AddTask, DeleteTask, TableThread },
 
         data() {
             return {

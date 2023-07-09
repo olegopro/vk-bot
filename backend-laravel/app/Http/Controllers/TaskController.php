@@ -43,4 +43,11 @@ class TaskController extends Controller
     {
         Task::destroy($id);
     }
+
+    public function deleteAllTasks()
+    {
+        Task::truncate();
+
+        return response()->json(['message' => 'All tasks have been deleted']);
+    }
 }

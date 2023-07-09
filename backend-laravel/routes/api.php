@@ -18,7 +18,15 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::resource('/accounts', AccountController::class);
-Route::resource('/tasks', TaskController::class);
+
+Route::prefix('tasks')->group(function () {
+    // Ресурсные маршруты для задач
+    Route::resource('/', TaskController::class);
+
+    // Маршрут для удаления всех задач
+    Route::delete('/delete-all-tasks', [TaskController::class, 'deleteAllTasks'])->name('tasks.deleteAllTasks');
+});
+
 
 Route::post('/account/task/{taskId}', [AccountController::class, 'accountByTaskId']);
 

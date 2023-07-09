@@ -20,6 +20,10 @@ export default {
 
             // Вариант #2
             state.tasks.splice(state.tasks.findIndex(key => key.id === id), 1)
+        },
+
+        deleteAllTasks(state) {
+            state.tasks = []
         }
     },
 
@@ -34,8 +38,13 @@ export default {
         },
 
         async deleteTask({ commit }, id) {
-            await axios.delete((`http://localhost:8080/api/tasks/${id}`))
+            await axios.delete(`http://localhost:8080/api/tasks/${id}`)
             commit('deleteTask', id)
+        },
+
+        async deleteAllTasks({ commit }) {
+            await axios.delete('http://localhost:8080/api/tasks/delete-all-tasks')
+                .then(() => commit('deleteAllTasks'))
         }
     },
 
