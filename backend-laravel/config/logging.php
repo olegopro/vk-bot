@@ -113,6 +113,11 @@ return [
         'emergency' => [
             'path' => storage_path('logs/laravel.log'),
         ],
+
+        'account_task_likes' => [
+            'driver' => 'single',
+            'level' => 'debug',
+        ],
     ],
 
 ];

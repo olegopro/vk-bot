@@ -6,11 +6,20 @@ use App\Jobs\addLikesToPosts;
 use App\Library\VkClient;
 use App\Models\Account;
 use App\Models\Task;
+use App\Services\LoggingService;
+use App\Services\LoggingServiceInterface;
 use DB;
 use Illuminate\Http\Request;
 
 class AccountController extends Controller
 {
+    private $loggingService;
+
+    public function __construct(LoggingServiceInterface $loggingService)
+    {
+        $this->loggingService = $loggingService;
+    }
+
     public function index()
     {
         //
@@ -80,11 +89,11 @@ class AccountController extends Controller
             'fields'   => [
                 'photo_200',
                 'screen_name',
-	            'country',
-	            'description',
-	            'members_count',
-	            'status',
-	            'activity',
+                'country',
+                'description',
+                'members_count',
+                'status',
+                'activity',
                 'city',
             ]
         ]);
@@ -116,19 +125,19 @@ class AccountController extends Controller
 
     public function getAccountCountFriends($id)
     {
-	    $result = (new VkClient())->request('friends.get', [
-		    'user_id' => $id,
-		    'count'   => 1,
-	    ]);
+        $result = (new VkClient())->request('friends.get', [
+            'user_id' => $id,
+            'count'   => 1,
+        ]);
 
-	    $response = [
-		    'response' => [
-			    'id' => $id,
-			    'count' => $result['response']['count'],
-		    ]
-	    ];
+        $response = [
+            'response' => [
+                'id'    => $id,
+                'count' => $result['response']['count'],
+            ]
+        ];
 
-	    return response()->json($response);
+        return response()->json($response);
     }
 
     public function getAccountInfo($access_token)
@@ -155,8 +164,8 @@ class AccountController extends Controller
         $access_token = $this->getAccessTokenByAccountID($request->input('account_id'));
 
         return (new VkClient($access_token))->request('newsfeed.get', [
-            'filters' => 'post',
-            'count'   => 5,
+            'filters'    => 'post',
+            'count'      => 5,
             'start_from' => $request->input('start_from') ?? null
         ]);
     }
@@ -167,7 +176,7 @@ class AccountController extends Controller
         $access_token = $this->getAccessTokenByAccountID($account_id);
 
         $createdCount = 0; // Счетчик созданных записей
-        $maxCreatedCount = 30; // Нужное количество записей
+        $maxCreatedCount = 1; // Нужное количество записей
         $failedAttempts = 0; // Счетчик неудачных попыток
 
         do {
@@ -229,7 +238,6 @@ class AccountController extends Controller
         return $this->addLikeTask($access_token);
     }
 
-
     public function addLikeTask($token)
     {
         $increase = $pause = DB::table('settings')
@@ -241,7 +249,7 @@ class AccountController extends Controller
                    ->get();
 
         foreach ($tasks as $task) {
-            addLikesToPosts::dispatch($task, $token)->delay(now()->addSeconds($pause));
+            addLikesToPosts::dispatch($task, $token, $this->loggingService)->delay(now()->addSeconds($pause));
             $pause += $increase;
         }
 

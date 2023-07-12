@@ -3,6 +3,8 @@
 namespace App\Jobs;
 
 use App\Library\VkClient;
+use App\Services\LoggingService;
+use App\Services\LoggingServiceInterface;
 use DB;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
@@ -11,6 +13,8 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
+use Monolog\Handler\StreamHandler;
+use Monolog\Logger;
 
 class addLikesToPosts implements ShouldQueue
 {
@@ -18,16 +22,25 @@ class addLikesToPosts implements ShouldQueue
 
     private $task;
     private $token;
+    private $loggingService;
+    private $screenName;
 
     /**
      * Create a new job instance.
      *
-     * @return void
+     * @param $task
+     * @param $token
+     * @param LoggingService $loggingService
      */
-    public function __construct($task, $token)
+    public function __construct($task, $token, LoggingService $loggingService)
     {
         $this->task = $task;
         $this->token = $token;
+        $this->loggingService = $loggingService;
+
+        $this->screenName = DB::table('accounts')
+                              ->where('access_token', $token)
+                              ->value('screen_name');
     }
 
     /**
@@ -42,13 +55,18 @@ class addLikesToPosts implements ShouldQueue
           ->update(['status' => 'active']);
 
         // Логирование запроса
-        Log::info('VK API Request', [
-            'token' => $this->token,
-            'task' => [
-                'owner_id' => $this->task->owner_id,
-                'item_id' => $this->task->item_id,
-            ],
-        ]);
+
+        $this->loggingService->log(
+            'account_task_likes',
+            $this->screenName,
+            'VK API Request',
+            [
+                'token' => $this->token,
+                'task'  => [
+                    'owner_id' => $this->task->owner_id,
+                    'item_id'  => $this->task->item_id,
+                ],
+            ]);
 
         $response = (new VkClient($this->token))->request('likes.add', [
             'type'     => 'post',
@@ -57,7 +75,12 @@ class addLikesToPosts implements ShouldQueue
         ]);
 
         // Логирование ответа
-        Log::info('VK API Response', ['response' => $response]);
+        $this->loggingService->log(
+            'account_task_likes',
+            $this->screenName,
+            'VK API Response',
+            ['response' => $response]
+        );
 
         if (response($response)) {
             DB::table('tasks')

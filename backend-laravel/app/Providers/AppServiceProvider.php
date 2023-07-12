@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Services\LoggingService;
+use App\Services\LoggingServiceInterface;
 use ATehnix\VkClient\Client;
 use Illuminate\Support\ServiceProvider;
 
@@ -14,7 +16,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-       //
+       $this->app->bind(LoggingServiceInterface::class, LoggingService::class);
     }
 
     /**
