@@ -110,10 +110,11 @@ export default {
             rootState.accounts.accounts.push(data)
         },
 
-        async addPostsToLike({ rootState }, accountId) {
+        async addPostsToLike({ rootState }, { accountId, taskCount }) {
             const { data } = await axios.post('http://localhost:8080/api/account/get-posts-for-like', null, {
                 params: {
-                    account_id: accountId
+                    account_id: accountId,
+                    task_count: taskCount
                 }
             })
 

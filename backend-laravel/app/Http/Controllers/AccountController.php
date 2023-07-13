@@ -192,10 +192,11 @@ class AccountController extends Controller
     public function getNewsfeedPosts(Request $request)
     {
         $account_id = $request->input('account_id');
+        $task_count = $request->input('task_count');
         $access_token = $this->getAccessTokenByAccountID($account_id);
 
         $createdCount = 0; // Счетчик созданных записей
-        $maxCreatedCount = 10; // Нужное количество записей
+        $maxCreatedCount = $task_count; // Нужное количество записей
         $failedAttempts = 0; // Счетчик неудачных попыток
 
         do {
