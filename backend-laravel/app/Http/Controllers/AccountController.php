@@ -162,12 +162,31 @@ class AccountController extends Controller
     public function getAccountNewsfeed(Request $request)
     {
         $access_token = $this->getAccessTokenByAccountID($request->input('account_id'));
+        $screen_name = $this->getScreenNameByToken($access_token);
 
-        return (new VkClient($access_token))->request('newsfeed.get', [
+        // Логирование запроса
+        $this->loggingService->log(
+            'account_newsfeed',
+            $screen_name,
+            'VK API Request',
+            ['request' => $request]
+        );
+
+        $response = (new VkClient($access_token))->request('newsfeed.get', [
             'filters'    => 'post',
             'count'      => 5,
             'start_from' => $request->input('start_from') ?? null
         ]);
+
+        // Логирование ответа
+        $this->loggingService->log(
+            'account_newsfeed',
+            $screen_name,
+            'VK API Response',
+            ['response' => $response]
+        );
+
+        return $response;
     }
 
     public function getNewsfeedPosts(Request $request)
@@ -176,7 +195,7 @@ class AccountController extends Controller
         $access_token = $this->getAccessTokenByAccountID($account_id);
 
         $createdCount = 0; // Счетчик созданных записей
-        $maxCreatedCount = 1; // Нужное количество записей
+        $maxCreatedCount = 10; // Нужное количество записей
         $failedAttempts = 0; // Счетчик неудачных попыток
 
         do {
@@ -249,7 +268,8 @@ class AccountController extends Controller
                    ->get();
 
         foreach ($tasks as $task) {
-            addLikesToPosts::dispatch($task, $token, $this->loggingService)->delay(now()->addSeconds($pause));
+            addLikesToPosts::dispatch($task, $token, $this->loggingService)
+                           ->delay(now()->addSeconds($pause));
             $pause += $increase;
         }
 
@@ -262,12 +282,37 @@ class AccountController extends Controller
         $item_id = $request->input('item_id');
 
         $access_token = $this->getAccessTokenByAccountID(request()->input('account_id'));
+        $screen_name = $this->getScreenNameByToken($access_token);
 
-        return (new VkClient($access_token))->request('likes.add', [
+        // Логирование запроса
+        $this->loggingService->log(
+            'account_like',
+            $screen_name,
+            'VK API Request',
+            [
+                'token' => $access_token,
+                'task'  => [
+                    'owner_id' => $owner_id,
+                    'item_id'  => $item_id,
+                ],
+            ]
+        );
+
+        $response = (new VkClient($access_token))->request('likes.add', [
             'type'     => 'post',
             'owner_id' => $owner_id,
             'item_id'  => $item_id
         ]);
+
+        // Логирование ответа
+        $this->loggingService->log(
+            'account_like',
+            $screen_name,
+            'VK API Response',
+            ['response' => $response]
+        );
+
+        return $response;
     }
 
     public function getScreenNameById(Request $request)
@@ -285,6 +330,13 @@ class AccountController extends Controller
         return $account = DB::table('accounts')
                             ->where('account_id', $account_id)
                             ->value('access_token');
+    }
+
+    private function getScreenNameByToken($access_token)
+    {
+        return DB::table('accounts')
+                 ->where('access_token', $access_token)
+                 ->value('screen_name');
     }
 
 }

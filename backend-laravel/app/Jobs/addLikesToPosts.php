@@ -55,7 +55,6 @@ class addLikesToPosts implements ShouldQueue
           ->update(['status' => 'active']);
 
         // Логирование запроса
-
         $this->loggingService->log(
             'account_task_likes',
             $this->screenName,

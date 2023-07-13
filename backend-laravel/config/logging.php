@@ -118,6 +118,16 @@ return [
             'driver' => 'single',
             'level' => 'debug',
         ],
+
+        'account_like' => [
+            'driver' => 'single',
+            'level' => 'debug',
+        ],
+
+        'account_newsfeed' => [
+            'driver' => 'single',
+            'level' => 'debug',
+        ],
     ],
 
 ];
