@@ -20,6 +20,7 @@ class CreateTasksTable extends Migration
             $table->string('first_name');
             $table->string('last_name');
             $table->integer('item_id')->unsigned();
+            $table->unsignedBigInteger('job_id')->nullable();
             $table->integer('attempt_count')->unsigned()->default('0');
             $table->tinyText('status');
             $table->timestamps();

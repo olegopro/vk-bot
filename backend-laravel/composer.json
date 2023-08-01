@@ -10,9 +10,9 @@
         "fruitcake/laravel-cors": "^2.0",
         "guzzlehttp/guzzle": "^7.0.1",
         "laravel/framework": "^8.75",
-        "laravel/horizon": "^5.16",
         "laravel/tinker": "^2.5",
-        "opcodesio/log-viewer": "^2.4"
+        "opcodesio/log-viewer": "^2.4",
+        "predis/predis": "^2.2"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.7",
