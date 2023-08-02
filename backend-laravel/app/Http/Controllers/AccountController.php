@@ -271,16 +271,22 @@ class AccountController extends Controller
         foreach ($tasks as $task) {
             $run_at = now()->addSeconds($pause);
 
-            addLikesToPosts::dispatch($task, $token, $this->loggingService)
-                           ->delay(now()->addSeconds($pause));
-
             // Сохраняем время запуска задачи в базе данных
             DB::table('tasks')
               ->where('id', $task->id)
               ->update(['run_at' => $run_at]);
 
+            // Затем отправляем задачу в очередь
+            addLikesToPosts::dispatch($task, $token, $this->loggingService)
+                           ->delay(now()->addSeconds($pause));
+
             $pause += $increase;
         }
+
+        // Перезапрашиваем задачи из базы данных перед отправкой в ответе
+        $tasks = DB::table('tasks')
+                   ->where('status', '=', 'pending')
+                   ->get();
 
         return response($tasks);
     }
