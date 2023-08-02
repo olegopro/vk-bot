@@ -50,10 +50,6 @@ class addLikesToPosts implements ShouldQueue
      */
     public function handle()
     {
-
-        $jobId = $this->job->getJobId();
-        Log::info('Job ID: ' . $jobId);
-
         DB::table('tasks')
           ->where('id', '=', $this->task->id)
           ->update(['status' => 'active']);

@@ -32,6 +32,7 @@
             </button>
         </td>
 
+        <td>{{ dateFormat(task.run_at) }}</td>
         <td>{{ dateFormat(task.created_at) }}</td>
     </tr>
 </template>
@@ -51,10 +52,13 @@
             ...mapActions('account', ['getScreenNameById']),
 
             dateFormat(date) {
-                return new Date(date).toISOString()
-                    .replace('T', ' ')
-                    .replace('Z', '')
-                    .split('.')[0]
+                const dt = new Date(date)
+                return dt.getFullYear() + '-' +
+                    String(dt.getMonth() + 1).padStart(2, '0') + '-' +
+                    String(dt.getDate()).padStart(2, '0') + ' ' +
+                    String(dt.getHours()).padStart(2, '0') + ':' +
+                    String(dt.getMinutes()).padStart(2, '0') + ':' +
+                    String(dt.getSeconds()).padStart(2, '0')
             },
 
             deleteTask(id) {

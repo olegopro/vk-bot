@@ -34,6 +34,7 @@
                     <th scope="col">Статус</th>
                     <th scope="col">Попытки</th>
                     <th scope="col">Действия</th>
+                    <th scope="col">Старт задачи</th>
                     <th scope="col">Задача создана</th>
                 </tr>
                 </thead>
