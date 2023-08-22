@@ -215,6 +215,8 @@ class AccountController extends Controller
                 if ($post['owner_id'] > 0
                     && !array_key_exists('copy_history', $post)
                     && $post['likes']['user_likes'] === 0
+                    && isset($post['attachments'])
+                    && collect($post['attachments'])->contains('type', 'photo')
                     && $createdCount < $maxCreatedCount
                 ) {
                     $attemptFailed = false;
