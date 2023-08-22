@@ -38,6 +38,10 @@ export default {
             // commit('deleteTask', id)
         },
 
+        deleteLike({ commit }, taskId) {
+            return axios.delete(`http://localhost:8080/api/tasks/delete-like/${taskId}`)
+        },
+
         async deleteTask({ commit }, id) {
             await axios.delete(`http://localhost:8080/api/tasks/delete-task-by-id/${id}`)
             commit('deleteTask', id)

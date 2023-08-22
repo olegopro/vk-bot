@@ -26,7 +26,7 @@ Route::prefix('tasks')->group(function () {
 
     Route::post('/task-info/{taskId}', [TaskController::class, 'taskInfo']);
 
-    // Маршрут для удаления всех задач
+    Route::delete('/delete-like/{taskId}', [TaskController::class, 'deleteLike']);
     Route::delete('/delete-all-tasks', [TaskController::class, 'deleteAllTasks']);
     Route::delete('/delete-task-by-id/{id}', [TaskController::class, 'deleteTaskById']);
 });

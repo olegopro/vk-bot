@@ -74,6 +74,7 @@ class TaskController extends Controller
         list($response) = $postResponse['response'];
 
         $response['liked_users'] = $usersResponse['response']; // Информация о пользователях
+        $response['account_id'] = $taskData->account_id;
 
         return response()->json(['response' => $response]);
     }
@@ -103,6 +104,27 @@ class TaskController extends Controller
         if ($taskStatus === 'pending') {
             $this->deletePendingTask($id);
         }
+    }
+
+    public function deleteLike($taskId)
+    {
+        $taskData = Task::find($taskId);
+
+        if (!$taskData) {
+            return response()->json(['error' => 'Задача не найдена'], 404);
+        }
+
+        $ownerId = $taskData->owner_id;
+        $postId = $taskData->item_id;
+
+        $access_token = $this->getAccessTokenByAccountID($taskData->account_id);
+
+
+        return (new VkClient($access_token))->request('likes.delete', [
+            'type'     => 'post',
+            'owner_id' => $ownerId,
+            'item_id'  => $postId
+        ]);
     }
 
     private function deletePendingTask(int $taskId)

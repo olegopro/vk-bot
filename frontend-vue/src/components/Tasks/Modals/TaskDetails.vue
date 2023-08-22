@@ -3,7 +3,7 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="Delete task">Информация о задаче</h1>
+                    <h1 class="modal-title fs-5" id="Delete task">Информация о задаче #{{ taskId }}</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
 
@@ -47,6 +47,7 @@
                 </div>
 
                 <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" @click="deleteLikeById" v-if="isUserLiked" :disabled="disableSubmit">Отменить лайк</button>
                     <button type="button" class="btn btn-secondary" @click="modalHide">Закрыть</button>
                 </div>
             </div>
@@ -58,7 +59,24 @@
     import { Modal } from 'bootstrap'
 
     export default {
-        props: ['taskData'],
+        props: ['taskData', 'taskId'],
+        emits: ['deleteLike'],
+
+        data() {
+            return {
+                disableSubmit: false
+            }
+        },
+
+        computed: {
+            isUserLiked() {
+                if (this.taskData && this.taskData.liked_users && this.taskData.account_id) {
+                    return this.taskData.liked_users.some(user => user.id === this.taskData.account_id)
+                }
+
+                return false
+            }
+        },
 
         mounted() {
             this.modal = new Modal(document.getElementById('taskDetails'))
@@ -78,6 +96,11 @@
                 const minutes = date.getMinutes()
 
                 return `${year}-${month}-${day} ${hours}:${minutes}`
+            },
+
+            deleteLikeById() {
+                this.$emit('deleteLike', this.taskId)
+                this.disableSubmit = true
             }
         }
     }

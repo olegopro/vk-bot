@@ -60,7 +60,7 @@
         <AddTask />
         <DeleteTask :taskId="taskId" :taskData="taskDetailsData" />
         <DeleteAllTasks :tasksCount="getTasks" />
-        <TaskDetails :taskData="taskDetailsData" />
+        <TaskDetails :taskData="taskDetailsData" :taskId="taskId" @deleteLike="deleteLikeTask" ref="TaskDetailsRef" />
     </Teleport>
 
 </template>
@@ -94,7 +94,7 @@
         },
 
         methods: {
-            ...mapActions('tasks', ['tasks', 'taskDetails']),
+            ...mapActions('tasks', ['tasks', 'taskDetails', 'deleteLike']),
 
             helloFromDeleteTask(data) {
                 console.log(data)
@@ -110,7 +110,17 @@
                 this.taskDetails(this.taskId)
                     .then(({ data }) => {
                         this.taskDetailsData = data.response
-                        console.log(data)
+                        this.$refs.TaskDetailsRef.disableSubmit = false
+                    })
+            },
+
+            async deleteLikeTask(id) {
+                await this.getTaskId(id)
+
+                this.deleteLike(this.taskId)
+                    .then(() => {
+                        this.getTaskDetailsById(this.taskId)
+                        this.$refs.TaskDetailsRef.disableSubmit = true
                     })
             }
         }
