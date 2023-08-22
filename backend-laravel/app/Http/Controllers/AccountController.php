@@ -66,10 +66,14 @@ class AccountController extends Controller
         return Account::destroy($id);
     }
 
-    public function getAccountData($id)
+    public function getAccountData($ids)
     {
+        if (is_array($ids)) {
+            $ids = implode(',', $ids);
+        }
+
         return (new VkClient())->request('users.get', [
-            'user_ids' => $id,
+            'user_ids' => $ids,
             'fields'   => [
                 'photo_200',
                 'status',
@@ -174,7 +178,7 @@ class AccountController extends Controller
 
         $response = (new VkClient($access_token))->request('newsfeed.get', [
             'filters'    => 'post',
-            'count'      => 5,
+            'count'      => 50,
             'start_from' => $request->input('start_from') ?? null
         ]);
 

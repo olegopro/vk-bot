@@ -28,24 +28,25 @@
         <div class="col-12">
             <table v-if="getTasks.length" class="table table-hover mb-4">
                 <thead>
-                <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">Имя и фамилия</th>
-                    <th scope="col">Статус</th>
-                    <th scope="col">Попытки</th>
-                    <th scope="col">Действия</th>
-                    <th scope="col">Старт задачи</th>
-                    <th scope="col">Задача создана</th>
-                </tr>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Имя и фамилия</th>
+                        <th scope="col">Статус</th>
+                        <th scope="col">Попытки</th>
+                        <th scope="col">Действия</th>
+                        <th scope="col">Старт задачи</th>
+                        <th scope="col">Задача создана</th>
+                    </tr>
                 </thead>
                 <tbody>
 
-                <TableThread
-                    v-for="task in getTasks"
-                    :task="task"
-                    :key="task.id"
-                    @deleteTask="idTaskForDelete"
-                />
+                    <TableThread
+                        v-for="task in getTasks"
+                        :task="task"
+                        :key="task.id"
+                        @taskDetails="getTaskDetailsById"
+                        @deleteTask="getTaskId"
+                    />
 
                 </tbody>
             </table>
@@ -57,8 +58,9 @@
 
     <Teleport to="body">
         <AddTask />
-        <DeleteTask :taskId="taskId" />
-        <DeleteAllTasks :tasksCount="getTasks"/>
+        <DeleteTask :taskId="taskId" :taskData="taskDetailsData" />
+        <DeleteAllTasks :tasksCount="getTasks" />
+        <TaskDetails :taskData="taskDetailsData" />
     </Teleport>
 
 </template>
@@ -69,15 +71,17 @@
     import DeleteTask from '../components/Tasks/Modals/DeleteTask.vue'
     import AddTask from '../components/Tasks/Modals/AddTask.vue'
     import DeleteAllTasks from '../components/Tasks/Modals/DeleteAllTasks.vue'
+    import TaskDetails from '../components/Tasks/Modals/TaskDetails.vue'
 
     export default {
-        components: { DeleteAllTasks, AddTask, DeleteTask, TableThread },
+        components: { TaskDetails, DeleteAllTasks, AddTask, DeleteTask, TableThread },
 
         data() {
             return {
                 request: {},
                 username: '',
-                taskId: null
+                taskId: null,
+                taskDetailsData: null
             }
         },
 
@@ -90,14 +94,24 @@
         },
 
         methods: {
-            ...mapActions('tasks', ['tasks']),
+            ...mapActions('tasks', ['tasks', 'taskDetails']),
 
             helloFromDeleteTask(data) {
                 console.log(data)
             },
 
-            idTaskForDelete(id) {
+            getTaskId(id) {
                 this.taskId = id
+            },
+
+            async getTaskDetailsById(id) {
+                await this.getTaskId(id)
+
+                this.taskDetails(this.taskId)
+                    .then(({ data }) => {
+                        this.taskDetailsData = data.response
+                        console.log(data)
+                    })
             }
         }
     }

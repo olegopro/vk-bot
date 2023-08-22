@@ -195,7 +195,7 @@
     }
 
     #loader {
-        //margin-top: -100vh;
+        margin-top: -150vh;
 
         &:before {
             content: '';

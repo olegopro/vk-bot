@@ -7,7 +7,6 @@ services:
         restart: always
         depends_on:
             - mysql
-            - redis
         volumes:
             - ./backend-laravel:/var/www/html
             - /var/www/html/vendor/
@@ -50,6 +49,8 @@ services:
     mysql:
         image: mysql
         restart: always
+        ports:
+            - "3306:3306"
         environment:
             MYSQL_ROOT_PASSWORD: password
             MYSQL_DATABASE: vk-bot
@@ -64,19 +65,3 @@ services:
             - "8181:80"
         environment:
             PMA_HOST: mysql
-
-    redis:
-        image: redis
-        restart: always
-
-    phpredisadmin:
-        image: erikdubbelboer/phpredisadmin
-        depends_on:
-            - redis
-        ports:
-            - "9191:80"
-        environment:
-            - REDIS_1_HOST=redis
-
-
-

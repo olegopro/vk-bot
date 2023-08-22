@@ -11,13 +11,18 @@
         <td>{{ task.attempt_count }}</td>
 
         <td>
-            <!--<router-link custom to="/" v-slot="{navigate}">-->
-            <!--    <a class="btn btn-primary me-2 button-style" @click="navigate">-->
-            <!--        <svg width="16" height="16">-->
-            <!--            <use xlink:href="#info"></use>-->
-            <!--        </svg>-->
-            <!--    </a>-->
-            <!--</router-link>-->
+
+            <button
+                class="btn btn-primary button-style me-2"
+                data-bs-target="#taskDetails"
+                data-bs-toggle="modal"
+                type="button"
+                @click="taskDetails(task.id)"
+            >
+                <svg width="16" height="16">
+                    <use xlink:href="#info"></use>
+                </svg>
+            </button>
 
             <button
                 class="btn btn-danger button-style"
@@ -45,7 +50,7 @@
         components: { TaskStatus },
 
         props: ['task'],
-        emits: ['delete-task'],
+        emits: ['delete-task', 'task-details'],
 
         methods: {
             ...mapActions('tasks', ['accountByTaskId']),
@@ -63,6 +68,10 @@
 
             deleteTask(id) {
                 this.$emit('delete-task', id)
+            },
+
+            taskDetails(id) {
+                this.$emit('task-details', id)
             }
         }
     }

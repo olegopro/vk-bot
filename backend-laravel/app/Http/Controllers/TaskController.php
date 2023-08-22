@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Library\VkClient;
 use App\Models\Task;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
@@ -41,6 +42,43 @@ class TaskController extends Controller
     {
         //
     }
+
+    public function taskInfo($taskId)
+    {
+        $taskData = Task::find($taskId);
+
+        if (!$taskData) {
+            return response()->json(['error' => 'Задача не найдена'], 404);
+        }
+
+        $ownerId = $taskData->owner_id;
+        $postId = $taskData->item_id;
+
+        $access_token = $this->getAccessTokenByAccountID($taskData->account_id);
+
+        $postResponse = (new VkClient($access_token))->request('wall.getById', [
+            'posts' => $ownerId . '_' . $postId,
+        ]);
+
+        $likesResponse = $this->getLikes($access_token, 'post', $ownerId, $postId);
+
+        // Получение ID пользователей, которые поставили лайки
+        $userIds = implode(',', $likesResponse['response']['items']);
+
+        // Получение информации о пользователях
+        $usersResponse = (new VkClient($access_token))->request('users.get', [
+            'user_ids' => $userIds,
+        ]);
+
+        // Деструктуризация 'response' для получения первого элемента
+        list($response) = $postResponse['response'];
+
+        $response['liked_users'] = $usersResponse['response']; // Информация о пользователях
+
+        return response()->json(['response' => $response]);
+    }
+
+    public function likedUsersPost() {}
 
     public function deleteAllTasks()
     {
@@ -99,5 +137,21 @@ class TaskController extends Controller
         DB::table('tasks')->where('id', $taskId)->delete();
 
         return response()->json(['message' => 'Завершенная задача была удалена']);
+    }
+
+    private function getAccessTokenByAccountID($account_id)
+    {
+        return $account = DB::table('accounts')
+                            ->where('account_id', $account_id)
+                            ->value('access_token');
+    }
+
+    private function getLikes($access_token, $type, $owner_id, $item_id)
+    {
+        return (new VkClient($access_token))->request('likes.getList', [
+            'type'     => $type,
+            'owner_id' => $owner_id,
+            'item_id'  => $item_id
+        ]);
     }
 }

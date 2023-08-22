@@ -24,6 +24,8 @@ Route::prefix('tasks')->group(function () {
     // Ресурсные маршруты для задач
     Route::resource('/', TaskController::class);
 
+    Route::post('/task-info/{taskId}', [TaskController::class, 'taskInfo']);
+
     // Маршрут для удаления всех задач
     Route::delete('/delete-all-tasks', [TaskController::class, 'deleteAllTasks']);
     Route::delete('/delete-task-by-id/{id}', [TaskController::class, 'deleteTaskById']);

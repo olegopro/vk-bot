@@ -33,6 +33,11 @@ export default {
             return await axios.post(`http://localhost:8080/api/account/task/${id}`)
         },
 
+         taskDetails({ commit }, taskId) {
+            return axios.post(`http://localhost:8080/api/tasks/task-info/${taskId}`)
+            // commit('deleteTask', id)
+        },
+
         async deleteTask({ commit }, id) {
             await axios.delete(`http://localhost:8080/api/tasks/delete-task-by-id/${id}`)
             commit('deleteTask', id)
