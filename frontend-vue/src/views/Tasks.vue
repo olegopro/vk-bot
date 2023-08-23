@@ -105,6 +105,7 @@
             },
 
             async getTaskDetailsById(id) {
+                this.taskDetailsData = null
                 await this.getTaskId(id)
 
                 this.taskDetails(this.taskId)
