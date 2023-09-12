@@ -116,6 +116,8 @@ fabric.properties
 
 ### Laravel ###
 /vendor/
+backend-laravel/public/vendor
+backend-laravel/public/logs
 node_modules/
 npm-debug.log
 yarn-error.log
