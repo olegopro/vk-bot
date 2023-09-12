@@ -1,8 +1,17 @@
 <template>
     <tr>
         <th scope="row">{{ task.id }}</th>
-        <td>
+        <td class="user-name">
             {{ task.first_name }} {{ task.last_name }}
+            <svg class="ms-1"
+                 width="16"
+                 height="16"
+                 @click="accountDetails(task.owner_id)"
+                 data-bs-target="#accountDetails"
+                 data-bs-toggle="modal"
+            >
+                <use xlink:href="#info" />
+            </svg>
         </td>
         <td>
             <TaskStatus :type="task.status" />
@@ -50,7 +59,7 @@
         components: { TaskStatus },
 
         props: ['task'],
-        emits: ['delete-task', 'task-details'],
+        emits: ['delete-task', 'task-details', 'account-details'],
 
         methods: {
             ...mapActions('tasks', ['accountByTaskId']),
@@ -72,13 +81,20 @@
 
             taskDetails(id) {
                 this.$emit('task-details', id)
+            },
+
+            accountDetails(ownerId) {
+                this.$emit('account-details', ownerId)
             }
         }
     }
 </script>
 
 <style scoped lang="scss">
-    .account-link {
-        cursor: pointer;
+    .user-name {
+        svg {
+            cursor: pointer;
+        }
     }
+
 </style>

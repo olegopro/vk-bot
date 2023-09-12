@@ -81,7 +81,10 @@ class AccountController extends Controller
                 'last_seen',
                 'followers_count',
                 'city',
-                'online'
+                'online',
+                'bdate',
+                'country',
+                'sex'
             ]
         ]);
     }

@@ -46,6 +46,7 @@
                         :key="task.id"
                         @taskDetails="getTaskDetailsById"
                         @deleteTask="getTaskId"
+                        @accountDetails="getAccountDetails"
                     />
 
                 </tbody>
@@ -61,6 +62,7 @@
         <DeleteTask :taskId="taskId" :taskData="taskDetailsData" />
         <DeleteAllTasks :tasksCount="getTasks" />
         <TaskDetails :taskData="taskDetailsData" :taskId="taskId" @deleteLike="deleteLikeTask" ref="TaskDetailsRef" />
+        <AccountDetails :accountData="accountDetailsData" />
     </Teleport>
 
 </template>
@@ -72,16 +74,18 @@
     import AddTask from '../components/Tasks/Modals/AddTask.vue'
     import DeleteAllTasks from '../components/Tasks/Modals/DeleteAllTasks.vue'
     import TaskDetails from '../components/Tasks/Modals/TaskDetails.vue'
+    import AccountDetails from '../components/Tasks/Modals/AccountDetails.vue'
 
     export default {
-        components: { TaskDetails, DeleteAllTasks, AddTask, DeleteTask, TableThread },
+        components: { TaskDetails, DeleteAllTasks, AddTask, DeleteTask, TableThread, AccountDetails },
 
         data() {
             return {
                 request: {},
                 username: '',
                 taskId: null,
-                taskDetailsData: null
+                taskDetailsData: null,
+                accountDetailsData: null
             }
         },
 
@@ -90,11 +94,13 @@
         },
 
         computed: {
-            ...mapGetters('tasks', ['getTasks'])
+            ...mapGetters('tasks', ['getTasks']),
+            ...mapGetters('account', ['getOwnerDataById'])
         },
 
         methods: {
             ...mapActions('tasks', ['tasks', 'taskDetails', 'deleteLike']),
+            ...mapActions('account', ['ownerData']),
 
             helloFromDeleteTask(data) {
                 console.log(data)
@@ -122,6 +128,13 @@
                     .then(() => {
                         this.getTaskDetailsById(this.taskId)
                         this.$refs.TaskDetailsRef.disableSubmit = true
+                    })
+            },
+
+             getAccountDetails(ownerId) {
+                this.ownerData(ownerId)
+                    .then(() => {
+                        this.accountDetailsData = this.getOwnerDataById(ownerId)
                     })
             }
         }
