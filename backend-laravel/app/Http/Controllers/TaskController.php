@@ -11,9 +11,17 @@ use Illuminate\Support\Facades\Queue;
 
 class TaskController extends Controller
 {
-    public function index()
+    public function index($status = null)
     {
-        //
+        $query = Task::query();
+
+        if ($status) {
+            $query->where('status', $status);
+        }
+
+        $tasks = $query->get();
+
+        return response($tasks);
     }
 
     public function create()
@@ -23,9 +31,7 @@ class TaskController extends Controller
 
     public function store(Request $request)
     {
-        $tasks = Task::all();
-
-        return response($tasks);
+        //
     }
 
     public function show($id)
@@ -118,7 +124,6 @@ class TaskController extends Controller
         $postId = $taskData->item_id;
 
         $access_token = $this->getAccessTokenByAccountID($taskData->account_id);
-
 
         return (new VkClient($access_token))->request('likes.delete', [
             'type'     => 'post',

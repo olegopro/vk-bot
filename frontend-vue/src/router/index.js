@@ -15,7 +15,7 @@ const routes = [
         }
     },
     {
-        path: '/tasks',
+        path: '/tasks/:status?',
         name: 'Tasks',
         component: Tasks,
         meta: {

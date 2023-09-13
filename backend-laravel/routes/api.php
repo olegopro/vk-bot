@@ -24,6 +24,9 @@ Route::prefix('tasks')->group(function () {
     // Ресурсные маршруты для задач
     Route::resource('/', TaskController::class);
 
+    // Маршрут для фильтрации по статусу
+    Route::get('/{status}', [TaskController::class, 'index']);
+
     Route::post('/task-info/{taskId}', [TaskController::class, 'taskInfo']);
 
     Route::delete('/delete-like/{taskId}', [TaskController::class, 'deleteLike']);

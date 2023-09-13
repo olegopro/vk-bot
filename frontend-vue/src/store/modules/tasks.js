@@ -24,8 +24,9 @@ export default {
     },
 
     actions: {
-        async tasks({ commit }) {
-            const { data } = await axios.post('http://localhost:8080/api/tasks')
+        async tasks({ commit }, status = null) {
+            const url = status ? `http://localhost:8080/api/tasks/${status}` : 'http://localhost:8080/api/tasks'
+            const { data } = await axios.get(url)
             commit('addTasks', data)
         },
 
@@ -33,7 +34,7 @@ export default {
             return await axios.post(`http://localhost:8080/api/account/task/${id}`)
         },
 
-         taskDetails({ commit }, taskId) {
+        taskDetails({ commit }, taskId) {
             return axios.post(`http://localhost:8080/api/tasks/task-info/${taskId}`)
             // commit('deleteTask', id)
         },

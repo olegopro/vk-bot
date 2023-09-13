@@ -4,22 +4,29 @@
         <div class="col">
             <h1 class="h2">Список задач</h1>
         </div>
-        <div class="col">
+        <div class="col d-flex justify-content-end">
 
-            <button class="btn btn-success btn-action float-end"
+            <select class="form-select me-3 w-auto" @change="filterTasks" v-model="currentStatus">
+                <option value="">Все задачи</option>
+                <option value="pending">В ожидании</option>
+                <option value="done">Завершённые</option>
+            </select>
+
+            <button class="btn btn-danger btn-action me-3"
+                    :disabled="getTasks.length === 0"
+                    data-bs-target="#deleteAllTasks"
+                    data-bs-toggle="modal"
+                    type="button">
+                Очистить список
+            </button>
+
+            <button class="btn btn-success btn-action"
                     data-bs-target="#addTask"
                     data-bs-toggle="modal"
                     type="button">
                 Добавить задачу
             </button>
 
-            <button class="btn btn-danger btn-action float-end me-3"
-                    v-if="getTasks.length > 0"
-                    data-bs-target="#deleteAllTasks"
-                    data-bs-toggle="modal"
-                    type="button">
-                Очистить список
-            </button>
         </div>
 
     </div>
@@ -85,12 +92,14 @@
                 username: '',
                 taskId: null,
                 taskDetailsData: null,
-                accountDetailsData: null
+                accountDetailsData: null,
+                currentStatus: ''
             }
         },
 
         mounted() {
-            this.tasks()
+            this.currentStatus = this.$route.params.status || ''
+            this.tasks(this.currentStatus)
         },
 
         computed: {
@@ -108,6 +117,12 @@
 
             getTaskId(id) {
                 this.taskId = id
+            },
+
+            filterTasks(event) {
+                const status = event.target.value
+                this.$router.push({ name: 'Tasks', params: { status: status } })
+                this.tasks(status)
             },
 
             async getTaskDetailsById(id) {
@@ -131,7 +146,7 @@
                     })
             },
 
-             getAccountDetails(ownerId) {
+            getAccountDetails(ownerId) {
                 this.ownerData(ownerId)
                     .then(() => {
                         this.accountDetailsData = this.getOwnerDataById(ownerId)
