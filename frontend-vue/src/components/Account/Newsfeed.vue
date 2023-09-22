@@ -49,9 +49,9 @@
     </div>
 
     <div class="row justify-content-center mb-3" id="loader" v-if="isLoadingFeed">
-        <div class="feed-spinner spinner-border text-secondary" role="status">
+        <!--<div class="feed-spinner spinner-border text-secondary" role="status">
             <span class="visually-hidden">Загрузка...</span>
-        </div>
+        </div>-->
     </div>
 
     <Teleport to="body">

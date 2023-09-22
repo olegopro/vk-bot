@@ -169,7 +169,7 @@ class TaskController extends Controller
     private function getAccessTokenByAccountID($account_id)
     {
         return $account = DB::table('accounts')
-                            ->where('account_id', $account_id)
+                            ->where('account_id','=',$account_id)
                             ->value('access_token');
     }
 

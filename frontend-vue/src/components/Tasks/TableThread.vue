@@ -3,15 +3,20 @@
         <th scope="row">{{ task.id }}</th>
         <td class="user-name">
             {{ task.first_name }} {{ task.last_name }}
-            <svg class="ms-1"
-                 width="16"
-                 height="16"
+            <div class="button-wrapper"
                  @click="accountDetails(task.owner_id)"
-                 data-bs-target="#accountDetails"
-                 data-bs-toggle="modal"
             >
-                <use xlink:href="#info" />
-            </svg>
+                <i class="bi bi-arrow-left-circle"></i>
+                <!--<svg class=""
+                     width="16"
+                     height="16"
+                     data-bs-target="#accountDetails"
+                     data-bs-toggle="modal"
+                >
+
+                    <use xlink:href="#info" />
+                </svg>-->
+            </div>
         </td>
         <td>
             <TaskStatus :type="task.status" />
@@ -92,9 +97,19 @@
 
 <style scoped lang="scss">
     .user-name {
-        svg {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        .button-wrapper {
+            //padding: 10px;
             cursor: pointer;
+
+            svg {
+
+            }
         }
+
     }
 
 </style>
