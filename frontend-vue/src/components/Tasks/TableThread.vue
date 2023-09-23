@@ -1,23 +1,17 @@
 <template>
     <tr>
         <th scope="row">{{ task.id }}</th>
-        <td class="user-name">
-            {{ task.first_name }} {{ task.last_name }}
-            <div class="button-wrapper"
+        <td class="user-name inner-shadow">
+            <div class="flex-container"
                  @click="accountDetails(task.owner_id)"
+                 data-bs-target="#accountDetails"
+                 data-bs-toggle="modal"
             >
-                <i class="bi bi-arrow-left-circle"></i>
-                <!--<svg class=""
-                     width="16"
-                     height="16"
-                     data-bs-target="#accountDetails"
-                     data-bs-toggle="modal"
-                >
-
-                    <use xlink:href="#info" />
-                </svg>-->
+                {{ task.first_name }} {{ task.last_name }}
+                <i class="bi bi-person-circle ms-2" style="font-size: 20px; opacity: 0.84"/>
             </div>
         </td>
+
         <td>
             <TaskStatus :type="task.status" />
         </td>
@@ -96,20 +90,13 @@
 </script>
 
 <style scoped lang="scss">
-    .user-name {
+    .flex-container {
         display: flex;
-        justify-content: center;
         align-items: center;
-
-        .button-wrapper {
-            //padding: 10px;
-            cursor: pointer;
-
-            svg {
-
-            }
-        }
-
+        justify-content: center;
+        cursor: pointer;
+        width: fit-content;
+        margin-left: auto;
+        margin-right: auto;
     }
-
 </style>

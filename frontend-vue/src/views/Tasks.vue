@@ -147,6 +147,7 @@
             },
 
             getAccountDetails(ownerId) {
+                this.accountDetailsData = null
                 this.ownerData(ownerId)
                     .then(() => {
                         this.accountDetailsData = this.getOwnerDataById(ownerId)
