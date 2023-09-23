@@ -3,8 +3,10 @@
 namespace App\Jobs;
 
 use App\Library\VkClient;
+use App\Models\Task;
 use App\Services\LoggingService;
 use App\Services\LoggingServiceInterface;
+use Carbon\Carbon;
 use DB;
 use Exception;
 use Illuminate\Bus\Queueable;
@@ -51,10 +53,31 @@ class addLikesToPosts implements ShouldQueue
      */
     public function handle()
     {
-        DB::table('tasks')
-          ->where('id', '=', $this->task->id)
-          ->update(['status' => 'active']);
+        $task = Task::find($this->task->id);
 
+        // Проверка задачи на просроченность
+        $deltaSeconds = 10; // разрешенная дельта в секундах
+
+        if ($task->run_at && now()->diffInSeconds(new Carbon($task->run_at)) > $deltaSeconds) {
+            $task->update([
+                'status'        => 'canceled',
+                'error_message' => "Просрочено: должна была запуститься в $task->run_at"
+            ]);
+
+            $this->loggingService->log(
+                'account_task_likes',
+                $this->screenName,
+                "Просрочено: должна была запуститься в $task->run_at",
+                ['task_id' => $this->task->id]
+            );
+
+            return;
+        }
+
+        // Обновление статуса задачи на 'active'
+        $task->update(['status' => 'active']);
+
+        // Выполнение основной логики задачи
         $response = (new VkClient($this->token))->request('likes.add', [
             'type'     => 'post',
             'owner_id' => $this->task->owner_id,
@@ -68,9 +91,8 @@ class addLikesToPosts implements ShouldQueue
             ['response' => $response]
         );
 
-        DB::table('tasks')
-          ->where('id', '=', $this->task->id)
-          ->update(['status' => 'done']);
+        // Обновление статуса задачи на 'done'
+        $task->update(['status' => 'done']);
     }
 
     public function failed(Exception $exception)
@@ -82,16 +104,13 @@ class addLikesToPosts implements ShouldQueue
             ['exception' => $exception->getMessage()]
         );
 
-        DB::table('tasks')
-          ->where('id', '=', $this->task->id)
-          ->update([
-              'status'        => 'failed',
-              'error_message' => $exception->getMessage()
-          ]);
+        // Находим задачу и обновляем её статус и сообщение об ошибке
+        $task = Task::find($this->task->id);
+
+        $task?->update([
+            'status'        => 'failed',
+            'error_message' => $exception->getMessage()
+        ]);
     }
 
-    public function getTask()
-    {
-        return $this->task;
-    }
 }

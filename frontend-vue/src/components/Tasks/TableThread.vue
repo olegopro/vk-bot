@@ -8,7 +8,7 @@
                  data-bs-toggle="modal"
             >
                 {{ task.first_name }} {{ task.last_name }}
-                <i class="bi bi-person-circle ms-2" style="font-size: 20px; opacity: 0.84"/>
+                <i class="bi bi-person-circle ms-2" style="font-size: 16px; opacity: 0.75"/>
             </div>
         </td>
 
@@ -39,9 +39,7 @@
                 type="button"
                 @click="deleteTask(task.id)"
             >
-                <svg width="16" height="16">
-                    <use xlink:href="#delete"></use>
-                </svg>
+                <i class="bi bi-trash3" />
             </button>
         </td>
 

@@ -15,7 +15,7 @@
             return {
                 classMap: {
                     active: 'text-bg-primary',
-                    cancelled: 'text-bg-danger',
+                    canceled: 'text-bg-danger',
                     failed: 'text-bg-danger',
                     done: 'text-bg-success',
                     pending: 'text-bg-secondary'
@@ -24,7 +24,7 @@
                 textMap: {
                     active: 'Выполняется',
                     failed: 'Ошибка',
-                    cancelled: 'Отменена',
+                    canceled: 'Отмена',
                     done: 'Выполнена',
                     pending: 'Ожидание'
                 }
