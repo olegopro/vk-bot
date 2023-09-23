@@ -13,7 +13,7 @@
         </td>
 
         <td>
-            <TaskStatus :type="task.status" />
+            <TaskStatus :type="task.status" :errorMessage="task.error_message"/>
         </td>
 
         <td>{{ task.attempt_count }}</td>

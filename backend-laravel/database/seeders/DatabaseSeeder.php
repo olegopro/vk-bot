@@ -17,12 +17,6 @@ class DatabaseSeeder extends Seeder
     {
         // \App\Models\User::factory(10)->create();
 
-        Account::factory()
-               ->count(10)
-               ->create();
-
-        Task::factory()
-            ->count(100)
-            ->create();
+        $this->call(SettingSeeder::class);
     }
 }

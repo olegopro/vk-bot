@@ -57,7 +57,7 @@ class addLikesToPosts implements ShouldQueue
 
         $response = (new VkClient($this->token))->request('likes.add', [
             'type'     => 'post',
-            'owner_id' => '123123', // или $this->task->owner_id
+            'owner_id' => $this->task->owner_id,
             'item_id'  => $this->task->item_id
         ]);
 
@@ -75,7 +75,6 @@ class addLikesToPosts implements ShouldQueue
 
     public function failed(Exception $exception)
     {
-        // Обработка ошибок
         $this->loggingService->log(
             'account_task_likes',
             $this->screenName,
@@ -85,7 +84,10 @@ class addLikesToPosts implements ShouldQueue
 
         DB::table('tasks')
           ->where('id', '=', $this->task->id)
-          ->update(['status' => 'failed']);
+          ->update([
+              'status'        => 'failed',
+              'error_message' => $exception->getMessage()
+          ]);
     }
 
     public function getTask()

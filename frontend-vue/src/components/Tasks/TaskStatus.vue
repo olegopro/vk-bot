@@ -1,12 +1,15 @@
 <template>
     <span :class="['badge', className]">
 		{{ text }}
+        <i v-if="errorMessage" class="bi bi-info-circle ms-1" data-bs-toggle="tooltip" data-bs-placement="top" :data-bs-title="errorMessage" />
 	</span>
 </template>
 
 <script>
+    import { Tooltip } from 'bootstrap'
+
     export default {
-        props: ['type'],
+        props: ['type', 'errorMessage'],
 
         data() {
             return {
@@ -36,6 +39,11 @@
             text() {
                 return this.textMap[this.type]
             }
+        },
+
+        mounted() {
+            const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+            [...tooltipTriggerList].map(tooltipTriggerEl => new Tooltip(tooltipTriggerEl))
         }
     }
 </script>

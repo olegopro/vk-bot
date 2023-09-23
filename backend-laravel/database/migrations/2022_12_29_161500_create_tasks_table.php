@@ -21,6 +21,7 @@ class CreateTasksTable extends Migration
             $table->string('last_name');
             $table->integer('item_id')->unsigned();
             $table->integer('attempt_count')->unsigned()->default('0');
+            $table->text('error_message')->nullable();
             $table->tinyText('status');
             $table->timestamp('run_at')->nullable();
             $table->timestamps();
