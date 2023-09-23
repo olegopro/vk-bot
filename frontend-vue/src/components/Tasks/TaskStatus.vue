@@ -13,13 +13,15 @@
                 classMap: {
                     active: 'text-bg-primary',
                     cancelled: 'text-bg-danger',
+                    failed: 'text-bg-danger',
                     done: 'text-bg-success',
                     pending: 'text-bg-secondary'
                 },
 
                 textMap: {
                     active: 'Выполняется',
-                    cancelled: 'Ошибка',
+                    failed: 'Ошибка',
+                    cancelled: 'Отменена',
                     done: 'Выполнена',
                     pending: 'Ожидание'
                 }

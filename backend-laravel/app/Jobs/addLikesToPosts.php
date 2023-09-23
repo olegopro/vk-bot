@@ -6,6 +6,7 @@ use App\Library\VkClient;
 use App\Services\LoggingService;
 use App\Services\LoggingServiceInterface;
 use DB;
+use Exception;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -54,26 +55,12 @@ class addLikesToPosts implements ShouldQueue
           ->where('id', '=', $this->task->id)
           ->update(['status' => 'active']);
 
-        // Логирование запроса
-        $this->loggingService->log(
-            'account_task_likes',
-            $this->screenName,
-            'VK API Request',
-            [
-                'token' => $this->token,
-                'task'  => [
-                    'owner_id' => $this->task->owner_id,
-                    'item_id'  => $this->task->item_id,
-                ],
-            ]);
-
         $response = (new VkClient($this->token))->request('likes.add', [
             'type'     => 'post',
-            'owner_id' => $this->task->owner_id,
+            'owner_id' => '123123', // или $this->task->owner_id
             'item_id'  => $this->task->item_id
         ]);
 
-        // Логирование ответа
         $this->loggingService->log(
             'account_task_likes',
             $this->screenName,
@@ -81,15 +68,24 @@ class addLikesToPosts implements ShouldQueue
             ['response' => $response]
         );
 
-        if (response($response)) {
-            DB::table('tasks')
-              ->where('id', '=', $this->task->id)
-              ->update(['status' => 'done']);
-        } else {
-            DB::table('tasks')
-              ->where('id', '=', $this->task->id)
-              ->update(['status' => 'cancelled']);
-        }
+        DB::table('tasks')
+          ->where('id', '=', $this->task->id)
+          ->update(['status' => 'done']);
+    }
+
+    public function failed(Exception $exception)
+    {
+        // Обработка ошибок
+        $this->loggingService->log(
+            'account_task_likes',
+            $this->screenName,
+            'Failed Job Exception',
+            ['exception' => $exception->getMessage()]
+        );
+
+        DB::table('tasks')
+          ->where('id', '=', $this->task->id)
+          ->update(['status' => 'failed']);
     }
 
     public function getTask()

@@ -314,11 +314,13 @@ class AccountController extends Controller
             $screen_name,
             'VK API Request',
             [
-                'token' => $access_token,
-                'task'  => [
-                    'owner_id' => $owner_id,
-                    'item_id'  => $item_id,
-                ],
+                'request' => [
+                    'token' => $access_token,
+                    'task'  => [
+                        'owner_id' => $owner_id,
+                        'item_id'  => $item_id,
+                    ],
+                ]
             ]
         );
 
