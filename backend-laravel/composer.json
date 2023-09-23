@@ -11,7 +11,7 @@
         "guzzlehttp/guzzle": "^7.0.1",
         "laravel/framework": "^8.75",
         "laravel/tinker": "^2.5",
-        "opcodesio/log-viewer": "^2.4",
+        "opcodesio/log-viewer": "^3.0",
         "predis/predis": "^2.2"
     },
     "require-dev": {
