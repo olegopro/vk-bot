@@ -122,12 +122,6 @@
 
             .accordion {
                 .accordion-item {
-                    &:not(:first-child) {
-                        .accordion-button {
-                            //border-radius: 0;
-                        }
-                    }
-
                     .accordion-header {
                         .accordion-button {
                             box-shadow: none;
@@ -141,7 +135,6 @@
                                 border-right: 0;
 
                                 &:first-child {
-                                    //border-top: 0;
                                     border-radius: 0;
                                 }
 

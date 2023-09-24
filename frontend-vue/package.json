@@ -17,6 +17,7 @@
     "chart.js": "^4.2.0",
     "core-js": "^3.8.3",
     "masonry-layout": "^4.2.2",
+    "notyf": "^3.10.0",
     "vue": "^3.2.13",
     "vue-chartjs": "^5.2.0",
     "vue-masonry": "^0.16.0",

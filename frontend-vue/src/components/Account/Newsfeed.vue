@@ -63,6 +63,7 @@
 <script>
     import { mapActions, mapGetters, mapMutations } from 'vuex'
     import OwnerDetails from './Modals/OwnerDetails.vue'
+    import { showSuccessNotification } from '../../helpers/notyfHelper'
 
     export default {
         components: { AccountDetails: OwnerDetails },
@@ -127,6 +128,7 @@
                         const button = this.$refs.buttons.find(item => +item.id === itemId)
                         button.classList.remove('btn-danger')
                         button.classList.add('btn-success')
+                        showSuccessNotification('Лайк успешно поставлен')
                     }).finally(() => {
                         this.loadingStatus[index] = false
                     })

@@ -1,4 +1,3 @@
-
 import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router'
@@ -10,6 +9,7 @@ import 'vue3-perfect-scrollbar/dist/vue3-perfect-scrollbar.css'
 import './assets/scss/main.css'
 import 'bootstrap'
 import 'bootstrap-icons/font/bootstrap-icons.css'
+import 'notyf/notyf.min.css'
 
 createApp(App)
     .use(VueMasonryPlugin)
