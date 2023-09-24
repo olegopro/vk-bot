@@ -1,3 +1,8 @@
 
 @import "bootstrap.scss";
 @import "main-overflow";
+
+
+.notyf__toast {
+	border-radius: var(--bs-border-radius) !important;
+}

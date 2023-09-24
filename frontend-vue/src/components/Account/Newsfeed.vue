@@ -66,7 +66,7 @@
 <script>
     import { mapActions, mapGetters, mapMutations } from 'vuex'
     import OwnerDetails from './Modals/OwnerDetails.vue'
-    import { showSuccessNotification } from '../../helpers/notyfHelper'
+    import { showErrorNotification, showSuccessNotification } from '../../helpers/notyfHelper'
 
     export default {
         components: { AccountDetails: OwnerDetails },
@@ -94,10 +94,12 @@
         },
 
         mounted() {
-            /* Этот подход с throttle будет гарантировать, что функция loadMore не вызывается чаще,
-            чем каждые 300 миллисекунд, при этом не создавая "очередь" из вызовов и не внося
-            дополнительных задержек.
+            /*
+                Этот подход с throttle будет гарантировать, что функция loadMore не вызывается чаще,
+                чем каждые 300 миллисекунд, при этом не создавая "очередь" из вызовов и не внося
+                дополнительных задержек.
             */
+
             let lastCallTime = 0
             const throttleTime = 300 // Задержка в миллисекундах
 
@@ -124,6 +126,8 @@
 
                         loadingObserver.observe(document.getElementById('loader'))
                     })
+                    .catch(error => showErrorNotification(error.message))
+
                 this.loadingStatus = new Array(this.newsfeed.length).fill(false)
             }
         },
@@ -174,6 +178,7 @@
                     accountID: this.userID,
                     startFrom: this.getNextFrom
                 })
+                    .catch(() => showErrorNotification('Лалала'))
                     .finally(() => (this.isLoadingFeed = false))
             },
 

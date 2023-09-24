@@ -1,6 +1,9 @@
 import { Notyf } from 'notyf'
 
-const notyf = new Notyf()
+const notyf = new Notyf({
+    duration: 1500
+    // другие опции
+})
 
 export function showNotification(message, type) {
     if (type === 'success') {

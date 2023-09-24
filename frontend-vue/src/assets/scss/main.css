@@ -10811,4 +10811,8 @@ table tbody:last-child {
   border-top: none;
 }
 
+.notyf__toast {
+  border-radius: var(--bs-border-radius) !important;
+}
+
 /*# sourceMappingURL=main.css.map */

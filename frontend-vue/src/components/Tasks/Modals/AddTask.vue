@@ -36,6 +36,7 @@
 <script>
     import { mapActions, mapGetters } from 'vuex'
     import { Modal } from 'bootstrap'
+    import { showSuccessNotification } from '../../../helpers/notyfHelper'
 
     export default {
         data() {
@@ -81,6 +82,7 @@
                         this.disablePost = false
                         this.loading = false
                         this.accountId = 'selectAccount'
+                        showSuccessNotification('Задача добавлена')
                     })
             }
 
