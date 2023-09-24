@@ -31,10 +31,11 @@
             <img class="card-img-top"
                  alt=""
                  :src="post.attachments[0].photo.sizes[3].url"
-                 @dblclick="addLikeToPost(post.owner_id, post.post_id, index)"
+                 @dblclick="post.likes.user_likes !== 1 && addLikeToPost(post.owner_id, post.post_id, index)"
             />
 
             <button class="btn btn-danger"
+                    :class="{'pe-none': post.likes.user_likes === 1}"
                     type="button"
                     :id="post.post_id"
                     :disabled="post.likes.user_likes === 1"
@@ -50,9 +51,9 @@
 
     <div class="row justify-content-center mb-3" id="loader">
         <transition name="fade">
-                <div class="feed-spinner spinner-border" role="status" v-show="isLoadingFeed">
-                    <span class="visually-hidden">Загрузка...</span>
-                </div>
+            <div class="feed-spinner spinner-border" role="status" v-show="isLoadingFeed">
+                <span class="visually-hidden">Загрузка...</span>
+            </div>
         </transition>
 
     </div>
@@ -125,13 +126,19 @@
                 this.disableButton(itemId)
                 const payload = { accountId: this.userID, ownerId, itemId }
                 this.loadingStatus[index] = true
+
                 await this.addLike(payload)
                     .then(() => {
-                        const button = this.$refs.buttons.find(item => +item.id === itemId)
+                        const button = this.$refs.buttons.find(item => Number(item.id) === itemId)
                         button.classList.remove('btn-danger')
                         button.classList.add('btn-success')
+
                         showSuccessNotification('Лайк успешно поставлен')
-                    }).finally(() => {
+
+                        // Обновление значения post.likes.user_likes
+                        this.newsfeed[index].likes.user_likes = 1
+                    })
+                    .finally(() => {
                         this.loadingStatus[index] = false
                     })
             },
