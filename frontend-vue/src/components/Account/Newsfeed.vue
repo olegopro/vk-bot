@@ -48,10 +48,13 @@
         </div>
     </div>
 
-    <div class="row justify-content-center mb-3" id="loader" v-if="isLoadingFeed">
-        <!--<div class="feed-spinner spinner-border text-secondary" role="status">
-            <span class="visually-hidden">Загрузка...</span>
-        </div>-->
+    <div class="row justify-content-center mb-3" id="loader">
+        <transition name="fade">
+                <div class="feed-spinner spinner-border" role="status" v-show="isLoadingFeed">
+                    <span class="visually-hidden">Загрузка...</span>
+                </div>
+        </transition>
+
     </div>
 
     <Teleport to="body">
@@ -96,7 +99,6 @@
                     accountID: this.userID,
                     startFrom: this.getNextFrom
                 })
-                    .then(() => (this.isLoadingFeed = true))
                     .then(() => {
                         const loadingObserver = new IntersectionObserver(entries => {
                             /* для каждого наблюдаемого элемента */
@@ -150,10 +152,12 @@
             },
 
             async loadMore() {
+                this.isLoadingFeed = true
                 await this.accountNewsfeed({
                     accountID: this.userID,
                     startFrom: this.getNextFrom
                 })
+                    .finally(() => (this.isLoadingFeed = false))
             },
 
             async ownerInfo(accountId) {
@@ -198,13 +202,36 @@
 
     #loader {
         margin-top: -150vh;
+        transition: 0.3s;
 
         &:before {
             content: '';
             display: block;
             width: 100%;
-            //height: 100vh;
             height: 100px;
+        }
+
+        .feed-spinner {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            color: rgba(0, 0, 0, 0.06);
+        }
+
+        .fade-enter-active {
+            transition: opacity .5s;
+        }
+
+        .fade-leave-active {
+            transition: opacity .5s;
+        }
+
+        .fade-enter-from, .fade-leave-active {
+            opacity: 0;
+        }
+
+        .fade-enter-to, .fade-leave-from {
+            opacity: 1;
         }
     }
 
