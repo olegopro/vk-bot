@@ -35,7 +35,6 @@
             />
 
             <button class="btn btn-danger"
-                    :class="{'pe-none': post.likes.user_likes === 1}"
                     type="button"
                     :id="post.post_id"
                     :disabled="post.likes.user_likes === 1"
@@ -95,6 +94,13 @@
         },
 
         mounted() {
+            /* Этот подход с throttle будет гарантировать, что функция loadMore не вызывается чаще,
+            чем каждые 300 миллисекунд, при этом не создавая "очередь" из вызовов и не внося
+            дополнительных задержек.
+            */
+            let lastCallTime = 0
+            const throttleTime = 300 // Задержка в миллисекундах
+
             if (!this.getNextFrom) {
                 this.accountNewsfeed({
                     accountID: this.userID,
@@ -102,16 +108,20 @@
                 })
                     .then(() => {
                         const loadingObserver = new IntersectionObserver(entries => {
-                            /* для каждого наблюдаемого элемента */
                             entries.forEach(entry => {
                                 if (entry.isIntersecting) {
-                                    this.loadMore()
+                                    const currentTime = Date.now()
+
+                                    if (currentTime - lastCallTime >= throttleTime) {
+                                        lastCallTime = currentTime
+                                        this.loadMore()
+                                    }
                                 }
                             })
                         }, {
                             threshold: 0
                         })
-                        /* указываем, что необходимо наблюдать за лоадером */
+
                         loadingObserver.observe(document.getElementById('loader'))
                     })
                 this.loadingStatus = new Array(this.newsfeed.length).fill(false)
