@@ -18,8 +18,8 @@
                         </div>
 
                        <div class="col-6">
-                           <p class="mb-1"><b>Страна:</b> {{ accountData.country.title }}</p>
-                           <p class="mb-1"><b>Город:</b> {{ accountData.city.title }}</p>
+                           <p class="mb-1"><b>Страна:</b> {{ accountData?.country?.title }}</p>
+                           <p class="mb-1"><b>Город:</b> {{ accountData?.city?.title }}</p>
                            <p class="mb-1"><b>Друзья:</b> {{ accountData.friends_count }}</p>
                            <p class="mb-1"><b>Подписчики:</b> {{ accountData.followers_count }}</p>
                            <p class="mb-1"><b>Пол:</b> {{ formattedSex }}</p>

@@ -48,7 +48,7 @@
         </div>
     </div>
 
-    <div class="row justify-content-center mb-3" id="loader">
+    <div class="row justify-content-center" id="loader">
         <transition name="fade">
             <div class="feed-spinner spinner-border" role="status" v-show="isLoadingFeed">
                 <span class="visually-hidden">Загрузка...</span>
@@ -99,9 +99,8 @@
                 чем каждые 300 миллисекунд, при этом не создавая "очередь" из вызовов и не внося
                 дополнительных задержек.
             */
-
             let lastCallTime = 0
-            const throttleTime = 300 // Задержка в миллисекундах
+            const throttleTime = 750 // Задержка в миллисекундах
 
             if (!this.getNextFrom) {
                 this.accountNewsfeed({
@@ -109,6 +108,9 @@
                     startFrom: this.getNextFrom
                 })
                     .then(() => {
+                        const vh = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0)
+                        const rootMarginPixels = Math.floor(vh * 1.5) // для 150vh
+
                         const loadingObserver = new IntersectionObserver(entries => {
                             entries.forEach(entry => {
                                 if (entry.isIntersecting) {
@@ -121,7 +123,8 @@
                                 }
                             })
                         }, {
-                            threshold: 0
+                            threshold: 0,
+                            rootMargin: `${rootMarginPixels}px`
                         })
 
                         loadingObserver.observe(document.getElementById('loader'))
@@ -178,7 +181,7 @@
                     accountID: this.userID,
                     startFrom: this.getNextFrom
                 })
-                    .catch(() => showErrorNotification('Лалала'))
+                    .catch(() => showErrorNotification('Ошибка в loadMore()'))
                     .finally(() => (this.isLoadingFeed = false))
             },
 
@@ -189,6 +192,7 @@
                     await this.ownerData(accountId).then(() => {
                         this.ownerDataById = this.getOwnerDataById(accountId)
                     })
+                        .catch(({ response }) => showErrorNotification(response.data.message))
                 }
 
                 if (accountId < 0) {
@@ -230,7 +234,6 @@
             content: '';
             display: block;
             width: 100%;
-            height: 100px;
         }
 
         .feed-spinner {

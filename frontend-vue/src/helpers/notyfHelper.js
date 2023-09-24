@@ -1,7 +1,7 @@
 import { Notyf } from 'notyf'
 
 const notyf = new Notyf({
-    duration: 1500
+    duration: 3000
     // другие опции
 })
 
