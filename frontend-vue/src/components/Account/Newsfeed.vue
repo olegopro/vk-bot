@@ -22,17 +22,22 @@
                     @click="ownerInfo(post.owner_id)"
             >
 
-                <span class="info-icon">
-                    <svg width="28" height="28">
-                        <use xlink:href="#info-icon"></use>
-                    </svg>
-                </span>
+                <i class="bi bi-info-circle" @mouseover="ownerInfo(post.owner_id)"/>
             </button>
-            <img class="card-img-top"
-                 alt=""
-                 :src="post.attachments[0].photo.sizes[3].url"
-                 @dblclick="post.likes.user_likes !== 1 && addLikeToPost(post.owner_id, post.post_id, index)"
-            />
+
+            <div class="content-wrapper">
+                <img class="card-img-top"
+                     alt=""
+                     :src="post.attachments[0].photo.sizes[3].url"
+                     @dblclick="post.likes.user_likes !== 1 && addLikeToPost(post.owner_id, post.post_id, index)"
+                />
+                <div class="detailed-info">
+                    <p class="mb-1"><b>Страна:</b> {{ ownerDataById?.country?.title }}</p>
+                    <p class="mb-1"><b>Город:</b> {{ ownerDataById?.city?.title }}</p>
+                    <p class="mb-1"><b>Друзья:</b> {{ ownerDataById?.friends_count }}</p>
+                    <p class="mb-1"><b>Подписчики:</b> {{ ownerDataById?.followers_count }}</p>
+                </div>
+            </div>
 
             <button class="btn btn-danger"
                     type="button"
@@ -77,7 +82,8 @@
                 newsFeedLoadingStatus: false,
                 nextFrom: null,
                 isLoadingFeed: false,
-                ownerDataById: null
+                ownerDataById: null,
+                hoveredOwnerId: null
             }
         },
 
@@ -199,6 +205,7 @@
                     await this.groupData(accountId).then(() => {
                         this.ownerDataById = this.getOwnerDataById(accountId)
                     })
+                        .catch(({ response }) => showErrorNotification(response.data.message))
                 }
             }
         }
@@ -208,21 +215,50 @@
 <style scoped lang="scss">
     .item {
         &:hover {
-            .info-icon {
+            button.account-info-btn {
                 opacity: 1;
                 transition: opacity .2s;
             }
-        }
 
-        img {
-            border-top-left-radius: 6px;
-            border-top-right-radius: 6px;
         }
 
         button {
             width: 100%;
             border-top-left-radius: 0;
             border-top-right-radius: 0;
+
+            &.account-info-btn {
+                &:hover {
+                    + .content-wrapper .detailed-info {
+                        opacity: 1;
+                    }
+                }
+            }
+        }
+
+        .content-wrapper {
+            position: relative;
+
+            img {
+                border-top-left-radius: 6px;
+                border-top-right-radius: 6px;
+            }
+
+            .detailed-info {
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                padding: 2rem;
+                color: white;
+                background: rgba(0, 0, 0, 0.4);
+                border-radius: 6px 6px 0 0;
+                opacity: 0;
+                pointer-events: none; // Чтобы не мешал другим элементам
+                transition: opacity .2s ease;
+                font-size: 1.3rem;
+            }
         }
     }
 
@@ -263,16 +299,23 @@
     button.account-info-btn {
         all: unset;
         cursor: pointer;
+        position: absolute;
+        top: .5rem;
+        right: 5%;
+        z-index: 1;
+        opacity: 0;
+        border-radius: 50%;
+        background: white;
 
-        .info-icon {
-            //display: none;
-            opacity: 0;
-            position: absolute;
-            right: 5%;
-            top: .5rem;
-            padding: .2rem;
+        .bi-info-circle {
+            font-size: 28px;
+            width: 28px;
+            height: 28px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             border-radius: 50%;
-            background-color: white;
+            margin: .2rem;
 
         }
     }
