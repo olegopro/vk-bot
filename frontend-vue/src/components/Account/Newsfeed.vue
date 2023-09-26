@@ -22,7 +22,7 @@
                     @click="ownerInfo(post.owner_id)"
             >
 
-                <i class="bi bi-info-circle" @mouseover="ownerInfo(post.owner_id)"/>
+                <i class="bi bi-info-circle" @mouseover="ownerInfo(post.owner_id)" />
             </button>
 
             <div class="content-wrapper">
@@ -32,10 +32,12 @@
                      @dblclick="post.likes.user_likes !== 1 && addLikeToPost(post.owner_id, post.post_id, index)"
                 />
                 <div class="detailed-info">
-                    <p class="mb-1"><b>Страна:</b> {{ ownerDataById?.country?.title }}</p>
-                    <p class="mb-1"><b>Город:</b> {{ ownerDataById?.city?.title }}</p>
-                    <p class="mb-1"><b>Друзья:</b> {{ ownerDataById?.friends_count }}</p>
-                    <p class="mb-1"><b>Подписчики:</b> {{ ownerDataById?.followers_count }}</p>
+                    <h3 class="mb-2" v-if="ownerDataById?.type || ownerDataById?.first_name"><b>{{ ownerDataById?.type ? 'Группа' : 'Аккаунт' }}</b></h3>
+                    <p class="mb-1" v-if="ownerDataById?.country?.title"><b>Страна:</b> {{ ownerDataById?.country?.title }}</p>
+                    <p class="mb-1" v-if="ownerDataById?.city?.title"><b>Город:</b> {{ ownerDataById?.city?.title }}</p>
+                    <p class="mb-1" v-if="ownerDataById?.friends_count"><b>Друзья:</b> {{ ownerDataById?.friends_count }}</p>
+                    <p class="mb-1" v-if="ownerDataById?.followers_count"><b>Подписчики:</b> {{ ownerDataById?.followers_count }}</p>
+                    <p class="mb-1" v-if="ownerDataById?.members_count"><b>Подписчики:</b> {{ ownerDataById?.members_count }}</p>
                 </div>
             </div>
 
