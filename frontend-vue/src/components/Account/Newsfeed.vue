@@ -1,16 +1,15 @@
 <template>
     <div class="row justify-content-end mt-5">
-        <div class="col-3">
-            <button type="button" class="btn btn-secondary w-100" @click="refreshNewsfeed" :disabled="newsFeedLoadingStatus">
-                Обновить ленту
-                <span v-show="newsFeedLoadingStatus" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-            </button>
+        <div class="col-3 d-flex justify-content-end change-grid-columns">
+            <i @click="changeColumnClass('col-6')"  :class="[currentColumnClass === 'col-6' ? 'bi-2-square-fill pe-none' : 'bi-2-square', 'bi', 'me-2']" style="font-size: 2rem;" />
+            <i @click="changeColumnClass('col-4')" :class="[currentColumnClass === 'col-4' ? 'bi-3-square-fill pe-none' : 'bi-3-square', 'bi', 'me-2']" style="font-size: 2rem;" />
+            <i @click="changeColumnClass('col-3')" :class="[currentColumnClass === 'col-3' ? 'bi-4-square-fill pe-none' : 'bi-4-square', 'bi']" style="font-size: 2rem;" />
         </div>
     </div>
 
-    <div v-masonry item-selector=".item" transition-duration="0s" class="row mt-3">
+    <div v-masonry item-selector=".item" v-if="showNewsfeed" transition-duration="0s" class="row mt-3">
         <div v-masonry-tile
-             class="col-4 item mb-4"
+             :class="[currentColumnClass, 'item', 'mb-4']"
              v-for="(post, index) in newsfeed"
              :key="index"
         >
@@ -32,12 +31,29 @@
                      @dblclick="post.likes.user_likes !== 1 && addLikeToPost(post.owner_id, post.post_id, index)"
                 />
                 <div class="detailed-info">
-                    <h3 class="mb-2" v-if="ownerDataById?.type || ownerDataById?.first_name"><b>{{ ownerDataById?.type ? 'Группа' : 'Аккаунт' }}</b></h3>
-                    <p class="mb-1" v-if="ownerDataById?.country?.title"><b>Страна:</b> {{ ownerDataById?.country?.title }}</p>
-                    <p class="mb-1" v-if="ownerDataById?.city?.title"><b>Город:</b> {{ ownerDataById?.city?.title }}</p>
-                    <p class="mb-1" v-if="ownerDataById?.friends_count"><b>Друзья:</b> {{ ownerDataById?.friends_count }}</p>
-                    <p class="mb-1" v-if="ownerDataById?.followers_count"><b>Подписчики:</b> {{ ownerDataById?.followers_count }}</p>
-                    <p class="mb-1" v-if="ownerDataById?.members_count"><b>Подписчики:</b> {{ ownerDataById?.members_count }}</p>
+                    <h3 class="mb-2" v-if="ownerDataById?.type || ownerDataById?.first_name">
+                        <b>{{ ownerDataById?.type ? 'Группа' : 'Аккаунт' }}</b>
+                    </h3>
+
+                    <p class="mb-1" v-if="ownerDataById?.country?.title">
+                        <b>Страна:</b> {{ ownerDataById?.country?.title }}
+                    </p>
+
+                    <p class="mb-1" v-if="ownerDataById?.city?.title">
+                        <b>Город:</b> {{ ownerDataById?.city?.title }}
+                    </p>
+
+                    <p class="mb-1" v-if="ownerDataById?.friends_count">
+                        <b>Друзья:</b> {{ ownerDataById?.friends_count }}
+                    </p>
+
+                    <p class="mb-1" v-if="ownerDataById?.followers_count">
+                        <b>Подписчики:</b> {{ ownerDataById?.followers_count }}
+                    </p>
+
+                    <p class="mb-1" v-if="ownerDataById?.members_count">
+                        <b>Подписчики:</b> {{ ownerDataById?.members_count }}
+                    </p>
                 </div>
             </div>
 
@@ -85,7 +101,9 @@
                 nextFrom: null,
                 isLoadingFeed: false,
                 ownerDataById: null,
-                hoveredOwnerId: null
+                hoveredOwnerId: null,
+                currentColumnClass: 'col-4',
+                showNewsfeed: true
             }
         },
 
@@ -183,6 +201,13 @@
                     })
             },
 
+            async changeColumnClass(newClass) {
+                this.showNewsfeed = false
+                this.currentColumnClass = newClass
+                await this.accountNewsfeed({ accountID: this.userID })
+                    .then(() => (this.showNewsfeed = true))
+            },
+
             async loadMore() {
                 this.isLoadingFeed = true
                 await this.accountNewsfeed({
@@ -215,6 +240,11 @@
 </script>
 
 <style scoped lang="scss">
+    .change-grid-columns {
+        i {
+            cursor: pointer;
+        }
+    }
     .item {
         &:hover {
             button.account-info-btn {
