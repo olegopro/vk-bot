@@ -28,7 +28,7 @@
                 <img class="card-img-top"
                      alt=""
                      :src="post.attachments[0].photo.sizes[3].url"
-                     @dblclick="post.likes.user_likes !== 1 && addLikeToPost(post.owner_id, post.post_id, index)"
+                     @click="post.likes.user_likes !== 1 && addLikeToPost(post.owner_id, post.post_id, index)"
                 />
                 <div class="detailed-info">
                     <h3 class="mb-2" v-if="ownerDataById?.type || ownerDataById?.first_name">
@@ -306,8 +306,8 @@
 
         .feed-spinner {
             position: fixed;
-            top: 1rem;
-            right: 1rem;
+            bottom: 1.10rem;
+            right: 1.25rem;
             color: rgba(0, 0, 0, 0.06);
         }
 
