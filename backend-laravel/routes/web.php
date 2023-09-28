@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\OAuthController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -18,5 +19,5 @@ use Illuminate\Support\Facades\Route;
 // });
 
 
-Route::get('/oauth/vk', 'OAuthController@redirectToProvider');
-Route::get('/oauth/vk/callback', 'OAuthController@handleProviderCallback');
+Route::get('/oauth/vk', [OAuthController::class, 'redirectToProvider']);
+Route::get('/oauth/vk/callback', [OAuthController::class, 'handleProviderCallback']);

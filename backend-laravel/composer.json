@@ -13,7 +13,8 @@
         "laravel/socialite": "^5.9",
         "laravel/tinker": "^2.5",
         "opcodesio/log-viewer": "^3.0",
-        "predis/predis": "^2.2"
+        "predis/predis": "^2.2",
+        "socialiteproviders/vkontakte": "^5.0"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.7",
