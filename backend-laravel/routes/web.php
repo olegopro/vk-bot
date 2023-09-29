@@ -17,7 +17,3 @@ use Illuminate\Support\Facades\Route;
 // Route::get('/', function () {
 //     return view('welcome');
 // });
-
-
-Route::get('/oauth/vk', [OAuthController::class, 'redirectToProvider']);
-Route::get('/oauth/vk/callback', [OAuthController::class, 'handleProviderCallback']);

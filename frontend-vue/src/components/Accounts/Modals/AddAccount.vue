@@ -22,6 +22,7 @@
                     <div v-if="errorMessage" class="alert alert-danger mt-3 mb-0" role="alert">
                         {{ errorMessage }}
                     </div>
+
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" @click="modalHide">Отмена</button>
@@ -79,7 +80,3 @@
         }
     }
 </script>
-
-<style scoped lang="scss">
-
-</style>

@@ -31,13 +31,8 @@ return [
     ],
 
     'vk' => [
-        'client_id'     => env('VK_CLIENT_ID'),
-        'client_secret' => env('VK_CLIENT_SECRET'),
-        'redirect'      => env('VK_REDIRECT_URL'),
-
         'url'     => env('VK_API_URL', 'https://api.vk.com/method/'),
         'token'   => env('VK_API_SERVICE_KEY'),
         'version' => env('VK_API_VERSION', '5.131')
     ]
-
 ];
