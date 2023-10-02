@@ -1,7 +1,7 @@
 <template>
     <div class="row justify-content-end mt-5">
         <div class="col-3 d-flex justify-content-end change-grid-columns">
-            <i @click="changeColumnClass('col-6')"  :class="[currentColumnClass === 'col-6' ? 'bi-2-square-fill pe-none' : 'bi-2-square', 'bi', 'me-2']" style="font-size: 2rem;" />
+            <i @click="changeColumnClass('col-6')" :class="[currentColumnClass === 'col-6' ? 'bi-2-square-fill pe-none' : 'bi-2-square', 'bi', 'me-2']" style="font-size: 2rem;" />
             <i @click="changeColumnClass('col-4')" :class="[currentColumnClass === 'col-4' ? 'bi-3-square-fill pe-none' : 'bi-3-square', 'bi', 'me-2']" style="font-size: 2rem;" />
             <i @click="changeColumnClass('col-3')" :class="[currentColumnClass === 'col-3' ? 'bi-4-square-fill pe-none' : 'bi-4-square', 'bi']" style="font-size: 2rem;" />
         </div>
@@ -103,7 +103,8 @@
                 ownerDataById: null,
                 hoveredOwnerId: null,
                 currentColumnClass: 'col-4',
-                showNewsfeed: true
+                showNewsfeed: true,
+                isAddingLike: false
             }
         },
 
@@ -166,6 +167,10 @@
             ...mapMutations('account', ['addNextFrom']),
 
             async addLikeToPost(ownerId, itemId, index) {
+                if (this.isAddingLike) return
+
+                this.isAddingLike = true
+
                 this.disableButton(itemId)
                 const payload = { accountId: this.userID, ownerId, itemId }
                 this.loadingStatus[index] = true
@@ -175,13 +180,14 @@
                         const button = this.$refs.buttons.find(item => Number(item.id) === itemId)
                         button.classList.remove('btn-danger')
                         button.classList.add('btn-success')
-
                         showSuccessNotification('Лайк успешно поставлен')
 
                         // Обновление значения post.likes.user_likes
                         this.newsfeed[index].likes.user_likes = 1
                     })
+                    .catch(({ response }) => showErrorNotification(response.data.message))
                     .finally(() => {
+                        this.isAddingLike = false
                         this.loadingStatus[index] = false
                     })
             },
@@ -245,6 +251,7 @@
             cursor: pointer;
         }
     }
+
     .item {
         &:hover {
             button.account-info-btn {
