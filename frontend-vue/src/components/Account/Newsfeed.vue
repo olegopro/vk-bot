@@ -1,5 +1,5 @@
 <template>
-    <div class="row justify-content-end mt-5">
+    <div class="row justify-content-end mt-5 mb-3">
         <div class="col-3 d-flex justify-content-end change-grid-columns">
             <i @click="changeColumnClass('col-6')" :class="[currentColumnClass === 'col-6' ? 'bi-2-square-fill pe-none' : 'bi-2-square', 'bi', 'me-2']" style="font-size: 2rem;" />
             <i @click="changeColumnClass('col-4')" :class="[currentColumnClass === 'col-4' ? 'bi-3-square-fill pe-none' : 'bi-3-square', 'bi', 'me-2']" style="font-size: 2rem;" />
@@ -7,21 +7,31 @@
         </div>
     </div>
 
-    <div v-masonry item-selector=".item" v-if="showNewsfeed" transition-duration="0s" class="row mt-3">
+    <div v-masonry item-selector=".item" v-if="showNewsfeed" transition-duration="0s" class="row">
         <div v-masonry-tile
-             :class="[currentColumnClass, 'item', 'mb-4']"
+             :class="[currentColumnClass, 'item', 'mb-4', 'placeholder-glow']"
              v-for="(post, index) in newsfeed"
              :key="index"
         >
+
+            <div class="placeholder-wrapper" v-if="loadingStatus[index]">
+                <transition name="fade">
+                    <span class="placeholder bg-danger" />
+                </transition>
+            </div>
+
+            <button class="like-button">
+                <i :class="post.likes.user_likes === 1 ? 'bi bi-heart-fill text-danger' : ''"></i>
+            </button>
 
             <button class="account-info-btn"
                     data-bs-target="#accountDetails"
                     data-bs-toggle="modal"
                     type="button"
                     @click="ownerInfo(post.owner_id)"
+                    @mouseover="ownerInfo(post.owner_id)"
             >
-
-                <i class="bi bi-info-circle" @mouseover="ownerInfo(post.owner_id)" />
+                <i class="bi bi-info-circle" />
             </button>
 
             <div class="content-wrapper">
@@ -57,27 +67,15 @@
                 </div>
             </div>
 
-            <button class="btn btn-danger"
-                    type="button"
-                    :id="post.post_id"
-                    :disabled="post.likes.user_likes === 1"
-                    @click="addLikeToPost(post.owner_id, post.post_id, index)"
-                    ref="buttons"
-            >
-                Лайкнуть
-                <span v-show="loadingStatus[index]" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-            </button>
-
         </div>
     </div>
 
-    <div class="row justify-content-center" id="loader">
+    <div class="row justify-content-center mt-2 mb-4" id="loader">
         <transition name="fade">
             <div class="feed-spinner spinner-border" role="status" v-show="isLoadingFeed">
                 <span class="visually-hidden">Загрузка...</span>
             </div>
         </transition>
-
     </div>
 
     <Teleport to="body">
@@ -130,6 +128,8 @@
             const throttleTime = 750 // Задержка в миллисекундах
 
             if (!this.getNextFrom) {
+                this.isLoadingFeed = true
+
                 this.accountNewsfeed({
                     accountID: this.userID,
                     startFrom: this.getNextFrom
@@ -171,17 +171,12 @@
 
                 this.isAddingLike = true
 
-                this.disableButton(itemId)
                 const payload = { accountId: this.userID, ownerId, itemId }
                 this.loadingStatus[index] = true
 
                 await this.addLike(payload)
                     .then(() => {
-                        const button = this.$refs.buttons.find(item => Number(item.id) === itemId)
-                        button.classList.remove('btn-danger')
-                        button.classList.add('btn-success')
                         showSuccessNotification('Лайк успешно поставлен')
-
                         // Обновление значения post.likes.user_likes
                         this.newsfeed[index].likes.user_likes = 1
                     })
@@ -190,12 +185,6 @@
                         this.isAddingLike = false
                         this.loadingStatus[index] = false
                     })
-            },
-
-            disableButton(sourceId) {
-                this.$refs
-                    .buttons.find(item => +item.id === sourceId)
-                    .setAttribute('disabled', 'true')
             },
 
             refreshNewsfeed() {
@@ -225,6 +214,7 @@
             },
 
             async ownerInfo(accountId) {
+                console.log('ownerInfo')
                 this.ownerDataById = null
 
                 if (accountId > 0) {
@@ -267,11 +257,69 @@
             border-top-right-radius: 0;
 
             &.account-info-btn {
+                all: unset;
+                cursor: pointer;
+                position: absolute;
+                top: .5rem;
+                right: 5%;
+                z-index: 1;
+                opacity: 0;
+                border-radius: 50%;
+                background: white;
+
+                .bi-info-circle {
+                    font-size: 28px;
+                    width: 28px;
+                    height: 28px;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    border-radius: 50%;
+                    margin: .2rem;
+                }
+
                 &:hover {
                     + .content-wrapper .detailed-info {
-                        opacity: 1;
+                        opacity: 1 !important;
                     }
                 }
+            }
+
+            &.like-button {
+                position: absolute;
+                background: none;
+                top: 3px;
+                left: calc(var(--bs-gutter-x) - 3px);
+                width: fit-content;
+                border: none;
+                z-index: 2;
+
+                i {
+                    font-size: 28px;
+                }
+            }
+        }
+
+        .placeholder-wrapper {
+            .placeholder {
+                position: absolute;
+                width: calc(100% - var(--bs-gutter-x));
+                height: 100%;
+                z-index: 1;
+                border-radius: 6px;
+                opacity: 0;
+            }
+
+            .fade-enter-active, .fade-leave-active {
+                transition: opacity .5s;
+            }
+
+            .fade-enter-from, .fade-leave-active {
+                opacity: 0;
+            }
+
+            .fade-enter-to, .fade-leave-from {
+                opacity: 0.3;
             }
         }
 
@@ -279,8 +327,7 @@
             position: relative;
 
             img {
-                border-top-left-radius: 6px;
-                border-top-right-radius: 6px;
+                border-radius: 6px;
             }
 
             .detailed-info {
@@ -302,7 +349,7 @@
     }
 
     #loader {
-        margin-top: -150vh;
+        //margin-top: -150vh;
         transition: 0.3s;
 
         &:before {
@@ -312,17 +359,16 @@
         }
 
         .feed-spinner {
-            position: fixed;
+            //position: fixed;
             bottom: 1.10rem;
-            right: 1.25rem;
+            margin-left: auto;
+            margin-right: auto;
+            //right: 50%;
+            //transform: translateX(-50%);
             color: rgba(0, 0, 0, 0.06);
         }
 
-        .fade-enter-active {
-            transition: opacity .5s;
-        }
-
-        .fade-leave-active {
+        .fade-enter-active, .fade-leave-active {
             transition: opacity .5s;
         }
 
@@ -332,30 +378,6 @@
 
         .fade-enter-to, .fade-leave-from {
             opacity: 1;
-        }
-    }
-
-    button.account-info-btn {
-        all: unset;
-        cursor: pointer;
-        position: absolute;
-        top: .5rem;
-        right: 5%;
-        z-index: 1;
-        opacity: 0;
-        border-radius: 50%;
-        background: white;
-
-        .bi-info-circle {
-            font-size: 28px;
-            width: 28px;
-            height: 28px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            border-radius: 50%;
-            margin: .2rem;
-
         }
     }
 </style>
