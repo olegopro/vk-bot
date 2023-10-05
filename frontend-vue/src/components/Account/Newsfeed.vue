@@ -34,8 +34,15 @@
                 <i class="bi bi-info-circle" />
             </button>
 
-            <div class="content-wrapper">
+            <div class="content-wrapper"
+                 :class="{'radial-red-background': post.likes.user_likes !== 1 }"
+            >
                 <img class="card-img-top"
+
+                     :style="post.likes.user_likes !== 1
+                          ? {
+                              cursor: 'pointer'}
+                          : {}"
                      alt=""
                      :src="post.attachments[0].photo.sizes[3].url"
                      @click="post.likes.user_likes !== 1 && addLikeToPost(post.owner_id, post.post_id, index)"
@@ -326,6 +333,30 @@
         .content-wrapper {
             position: relative;
 
+            &.radial-red-background {
+                &::before {
+                    content: '';
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    right: 0;
+                    bottom: 0;
+                    box-shadow: 0px 4px 18px 6px rgba(0, 4, 255, 0.24);
+                    //background: radial-gradient(circle at center, transparent, rgba(52, 0, 0, 0.16) 100%);
+                    pointer-events: none;
+                    opacity: 0;
+                    transition: all 0.2s ease-out;
+                    border-radius: 6px;
+                }
+
+                &:hover {
+                    &::before {
+                        transition: all 0.060s ease-in;
+                        opacity: 1;
+                    }
+                }
+            }
+
             img {
                 border-radius: 6px;
             }
@@ -346,6 +377,7 @@
                 font-size: 1.3rem;
             }
         }
+
     }
 
     #loader {
