@@ -108,8 +108,7 @@
                 ownerDataById: null,
                 hoveredOwnerId: null,
                 currentColumnClass: 'col-4',
-                showNewsfeed: true,
-                isAddingLike: false
+                showNewsfeed: true
             }
         },
 
@@ -174,10 +173,6 @@
             ...mapMutations('account', ['addNextFrom']),
 
             async addLikeToPost(ownerId, itemId, index) {
-                if (this.isAddingLike) return
-
-                this.isAddingLike = true
-
                 const payload = { accountId: this.userID, ownerId, itemId }
                 this.loadingStatus[index] = true
 
@@ -189,7 +184,6 @@
                     })
                     .catch(({ response }) => showErrorNotification(response.data.message))
                     .finally(() => {
-                        this.isAddingLike = false
                         this.loadingStatus[index] = false
                     })
             },
