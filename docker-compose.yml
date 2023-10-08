@@ -38,6 +38,7 @@ services:
 
     vue:
         build: ./frontend-vue
+        restart: always
         depends_on:
             - nginx
         ports:
@@ -59,6 +60,7 @@ services:
 
     phpmyadmin:
         image: phpmyadmin
+        restart: always
         depends_on:
             - php
         ports:

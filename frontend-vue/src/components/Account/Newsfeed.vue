@@ -33,18 +33,17 @@
             >
                 <i class="bi bi-info-circle" />
             </button>
-
             <div class="content-wrapper"
+
                  :class="{'radial-red-background': post.likes.user_likes !== 1 }"
             >
                 <img class="card-img-top"
 
                      :style="post.likes.user_likes !== 1
-                          ? {
-                              cursor: 'pointer'}
+                          ? { cursor: 'pointer'}
                           : {}"
                      alt=""
-                     :src="post.attachments[0].photo.sizes[3].url"
+                     :src="getAdjustedQualityImageUrl(post.attachments[0].photo.sizes)"
                      @click="post.likes.user_likes !== 1 && addLikeToPost(post.owner_id, post.post_id, index)"
                 />
                 <div class="detailed-info">
@@ -231,6 +230,27 @@
                     })
                         .catch(({ response }) => showErrorNotification(response.data.message))
                 }
+            },
+
+            getAdjustedQualityImageUrl(sizes) {
+                let requiredType
+
+                switch (this.currentColumnClass) {
+                    case 'col-6':
+                        requiredType = 'w' // оригинал
+                        break
+                    case 'col-4':
+                        requiredType = 'z' // выше среднего
+                        break
+                    case 'col-3':
+                        requiredType = 'x' // ниже среднего
+                        break
+                    default:
+                        requiredType = 'm' // низкое качество (просто на случай, если не подойдет ни одно из условий)
+                }
+
+                const sizeObj = sizes.find(size => size.type === requiredType)
+                return sizeObj ? sizeObj.url : ''
             }
         }
     }
@@ -335,7 +355,7 @@
                     left: 0;
                     right: 0;
                     bottom: 0;
-                    box-shadow: 0px 4px 18px 6px rgba(0, 4, 255, 0.24);
+                    box-shadow: 0 4px 18px 6px rgba(0, 4, 255, 0.24);
                     //background: radial-gradient(circle at center, transparent, rgba(52, 0, 0, 0.16) 100%);
                     pointer-events: none;
                     opacity: 0;
