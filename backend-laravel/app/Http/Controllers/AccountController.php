@@ -181,7 +181,7 @@ class AccountController extends Controller
 
         $response = (new VkClient($access_token))->request('newsfeed.get', [
             'filters'    => 'post',
-            'count'      => 80,
+            'count'      => 40,
             'start_from' => $request->input('start_from') ?? null
         ]);
 

@@ -296,14 +296,19 @@
 
                 let sizeObj = sizes.find(size => size.type === requiredType)
 
+                // Если sizeObj не найден, пытаемся найти размер 'z'
+                if (!sizeObj) {
+                    sizeObj = sizes.find(size => size.type === 'z')
+                }
+
                 // Если sizeObj не найден, пытаемся найти размер 'x'
                 if (!sizeObj) {
                     sizeObj = sizes.find(size => size.type === 'x')
                 }
 
-                // Если sizeObj не найден, пытаемся найти размер 'z'
+                // Если sizeObj не найден, пытаемся найти размер 'm'
                 if (!sizeObj) {
-                    sizeObj = sizes.find(size => size.type === 'z')
+                    sizeObj = sizes.find(size => size.type === 'm')
                 }
 
                 return sizeObj ? sizeObj.url : ''
