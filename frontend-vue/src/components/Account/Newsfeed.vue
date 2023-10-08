@@ -13,6 +13,19 @@
              v-for="(post, index) in newsfeed"
              :key="index"
         >
+            <button class="account-info-btn mr-1"
+                    :class="{ 'opacity-100': showDetailedInfoButton === index || likedPostIndex === index }"
+                    data-bs-target="#accountDetails"
+                    data-bs-toggle="modal"
+                    type="button"
+                    @click="ownerInfo(post.source_id, index)"
+                    @mouseover="ownerInfo(post.source_id, index); showDetailedInfoBtn(index)"
+                    @mouseleave="hideDetailedInfo"
+            >
+                <i class="bi bi-info-circle" v-if="!post.source_id"></i> <!-- стандартная иконка информации -->
+                <i class="bi bi-person-fill" v-if="post.source_id > 0"></i> <!-- иконка человека -->
+                <i class="bi bi-people-fill" v-if="post.source_id < 0"></i> <!-- иконка группы -->
+            </button>
 
             <div class="placeholder-wrapper" v-if="loadingStatus[index]">
                 <transition name="fade">
@@ -24,21 +37,12 @@
                 <i :class="post.likes.user_likes === 1 ? 'bi bi-heart-fill text-danger' : ''"></i>
             </button>
 
-            <button class="account-info-btn"
-                    data-bs-target="#accountDetails"
-                    data-bs-toggle="modal"
-                    type="button"
-                    @click="ownerInfo(post.owner_id)"
-                    @mouseover="ownerInfo(post.owner_id)"
-            >
-                <i class="bi bi-info-circle" />
-            </button>
             <div class="content-wrapper"
-
                  :class="{'radial-red-background': post.likes.user_likes !== 1 }"
+                 @mouseover="showDetailedInfoBtn(index)"
+                 @mouseleave="hideDetailedInfoBtn"
             >
                 <img class="card-img-top"
-
                      :style="post.likes.user_likes !== 1
                           ? { cursor: 'pointer'}
                           : {}"
@@ -46,7 +50,7 @@
                      :src="getAdjustedQualityImageUrl(post.attachments[0].photo.sizes)"
                      @click="post.likes.user_likes !== 1 && addLikeToPost(post.owner_id, post.post_id, index)"
                 />
-                <div class="detailed-info">
+                <div class="detailed-info" :class="{ 'opacity-100': showDetailedInfo === index }">
                     <h3 class="mb-2" v-if="ownerDataById?.type || ownerDataById?.first_name">
                         <b>{{ ownerDataById?.type ? 'Группа' : 'Аккаунт' }}</b>
                     </h3>
@@ -72,7 +76,6 @@
                     </p>
                 </div>
             </div>
-
         </div>
     </div>
 
@@ -107,12 +110,21 @@
                 ownerDataById: null,
                 hoveredOwnerId: null,
                 currentColumnClass: 'col-4',
-                showNewsfeed: true
+                showNewsfeed: true,
+                showDetailedInfo: null,
+                showDetailedInfoButton: null,
+                likedPostIndex: null
             }
         },
 
         computed: {
             ...mapGetters('account', ['getAccountNewsFeed', 'getNextFrom', 'getOwnerDataById']),
+
+            infoIconClass() {
+                console.log('ownerDataById', this.ownerDataById)
+                if (!this.ownerDataById) return 'bi bi-info-circle' // стандартная иконка информации
+                return this.ownerDataById.type ? 'bi bi-group-icon' : 'bi bi-person-icon' // замените 'bi-group-icon' и 'bi-person-icon' на реальные классы иконок группы и человека
+            },
 
             newsfeed() {
                 return this.getAccountNewsFeed
@@ -172,6 +184,7 @@
             ...mapMutations('account', ['addNextFrom']),
 
             async addLikeToPost(ownerId, itemId, index) {
+                this.likedPostIndex = index
                 const payload = { accountId: this.userID, ownerId, itemId }
                 this.loadingStatus[index] = true
 
@@ -213,8 +226,8 @@
                     .finally(() => (this.isLoadingFeed = false))
             },
 
-            async ownerInfo(accountId) {
-                console.log('ownerInfo')
+            async ownerInfo(accountId, index) {
+                this.showDetailedInfo = index
                 this.ownerDataById = null
 
                 if (accountId > 0) {
@@ -230,6 +243,18 @@
                     })
                         .catch(({ response }) => showErrorNotification(response.data.message))
                 }
+            },
+
+            hideDetailedInfo() {
+                this.showDetailedInfo = false
+            },
+
+            showDetailedInfoBtn(index) {
+                this.showDetailedInfoButton = index
+            },
+
+            hideDetailedInfoBtn() {
+                this.showDetailedInfoButton = null
             },
 
             getAdjustedQualityImageUrl(sizes) {
@@ -266,8 +291,7 @@
     .item {
         &:hover {
             button.account-info-btn {
-                opacity: 1;
-                transition: opacity .2s;
+                transition: all 0.060s ease-in;
             }
 
         }
@@ -282,27 +306,18 @@
                 cursor: pointer;
                 position: absolute;
                 top: .5rem;
-                right: 5%;
+                right: calc(var(--bs-gutter-x) - 3px);
                 z-index: 1;
                 opacity: 0;
-                border-radius: 50%;
-                background: white;
+                transition: opacity 0.2s ease-out;
 
-                .bi-info-circle {
-                    font-size: 28px;
-                    width: 28px;
-                    height: 28px;
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
-                    border-radius: 50%;
-                    margin: .2rem;
-                }
-
-                &:hover {
-                    + .content-wrapper .detailed-info {
-                        opacity: 1 !important;
-                    }
+                i {
+                    color: white;
+                    font-size: 18px;
+                    background: rgba(0, 0, 0, 0.29); /* полупрозрачный черный фон */
+                    backdrop-filter: blur(5px); /* размытие заднего фона */
+                    border-radius: 6px;
+                    padding: 4px 10px;
                 }
             }
 
