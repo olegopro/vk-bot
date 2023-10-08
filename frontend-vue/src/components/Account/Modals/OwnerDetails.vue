@@ -1,7 +1,7 @@
 <template>
     <div class="modal fade" id="accountDetails" tabindex="-1" aria-labelledby="Add account" style="display: none;" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
+            <div class="modal-content" v-if="ownerType">
 
                 <Account
                     v-if="ownerType === 'account'"

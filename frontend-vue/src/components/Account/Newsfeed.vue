@@ -38,6 +38,7 @@
             </button>
 
             <div class="content-wrapper"
+                 :style="post.likes.user_likes === 1 ? {'box-shadow': '0 0 0 2px var(--bs-danger)'} : {}"
                  :class="{'radial-red-background': post.likes.user_likes !== 1 }"
                  @mouseover="showDetailedInfoBtn(index)"
                  @mouseleave="hideDetailedInfoBtn"
@@ -51,9 +52,24 @@
                      @click="post.likes.user_likes !== 1 && addLikeToPost(post.owner_id, post.post_id, index)"
                 />
                 <div class="detailed-info" :class="{ 'opacity-100': showDetailedInfo === index }">
-                    <h3 class="mb-2" v-if="ownerDataById?.type || ownerDataById?.first_name">
-                        <b>{{ ownerDataById?.type ? 'Группа' : 'Аккаунт' }}</b>
-                    </h3>
+                    <p class="mb-1 fs-4" v-if="ownerDataById?.first_name">
+                        <b>{{ ownerDataById?.first_name }} {{ ownerDataById?.last_name }}</b>
+                    </p>
+
+                    <p class="mb-1 fs-4" v-if="ownerDataById?.name">
+                        <b>{{ ownerDataById?.name }}</b>
+                    </p>
+                    <p class="mb-1 fs-4" v-if="ownerDataById?.description">
+                        <b>Описание:</b> {{ ownerDataById?.description }}
+                    </p>
+
+                    <p class="mb-1" v-if="ownerDataById?.last_seen?.time">
+                        <b>Онлайн: </b> {{ date(ownerDataById?.last_seen?.time) }}
+                    </p>
+
+                    <p class="mb-1" v-if="ownerDataById?.status">
+                        <b>Статус:</b> {{ ownerDataById?.status }}
+                    </p>
 
                     <p class="mb-1" v-if="ownerDataById?.country?.title">
                         <b>Страна:</b> {{ ownerDataById?.country?.title }}
@@ -152,8 +168,8 @@
                     startFrom: this.getNextFrom
                 })
                     .then(() => {
-                        const vh = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0)
-                        const rootMarginPixels = Math.floor(vh * 1.5) // для 150vh
+                        // const vh = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0)
+                        // const rootMarginPixels = Math.floor(vh * 1.5) // для 150vh
 
                         const loadingObserver = new IntersectionObserver(entries => {
                             entries.forEach(entry => {
@@ -167,8 +183,8 @@
                                 }
                             })
                         }, {
-                            threshold: 0,
-                            rootMargin: `${rootMarginPixels}px`
+                            threshold: 0
+                            // rootMargin: `${rootMarginPixels}px`
                         })
 
                         loadingObserver.observe(document.getElementById('loader'))
@@ -198,6 +214,10 @@
                     .finally(() => {
                         this.loadingStatus[index] = false
                     })
+            },
+
+            date(timestamp) {
+                return new Date(timestamp * 1000).toLocaleTimeString('ru-RU')
             },
 
             refreshNewsfeed() {
@@ -274,9 +294,21 @@
                         requiredType = 'm' // низкое качество (просто на случай, если не подойдет ни одно из условий)
                 }
 
-                const sizeObj = sizes.find(size => size.type === requiredType)
+                let sizeObj = sizes.find(size => size.type === requiredType)
+
+                // Если sizeObj не найден, пытаемся найти размер 'x'
+                if (!sizeObj) {
+                    sizeObj = sizes.find(size => size.type === 'x')
+                }
+
+                // Если sizeObj не найден, пытаемся найти размер 'z'
+                if (!sizeObj) {
+                    sizeObj = sizes.find(size => size.type === 'z')
+                }
+
                 return sizeObj ? sizeObj.url : ''
             }
+
         }
     }
 </script>
@@ -361,6 +393,7 @@
 
         .content-wrapper {
             position: relative;
+            border-radius: 6px;
 
             &.radial-red-background {
                 &::before {
@@ -396,14 +429,15 @@
                 left: 0;
                 right: 0;
                 bottom: 0;
-                padding: 2rem;
+                padding: 2.4rem 2.6rem 2.6rem;
                 color: white;
-                background: rgba(0, 0, 0, 0.4);
-                border-radius: 6px 6px 0 0;
+                background: rgba(0, 0, 0, 0.65);
+                border-radius: 6px;
                 opacity: 0;
                 pointer-events: none; // Чтобы не мешал другим элементам
                 transition: opacity .2s ease;
                 font-size: 1.3rem;
+                //overflow: auto;
             }
         }
 
