@@ -118,7 +118,7 @@ export default {
                 }
             })
 
-            rootState.tasks.tasks = [...data]
+            rootState.tasks.tasks = [...rootState.tasks.tasks, ...data]
         },
 
         async deleteAccount({ rootState, rootMutations }, id) {
