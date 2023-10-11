@@ -82,6 +82,7 @@
     import DeleteAllTasks from '../components/Tasks/Modals/DeleteAllTasks.vue'
     import TaskDetails from '../components/Tasks/Modals/TaskDetails.vue'
     import AccountDetails from '../components/Tasks/Modals/AccountDetails.vue'
+    import { showErrorNotification } from '../helpers/notyfHelper'
 
     export default {
         components: { TaskDetails, DeleteAllTasks, AddTask, DeleteTask, TableThread, AccountDetails },
@@ -152,6 +153,7 @@
                     .then(() => {
                         this.accountDetailsData = this.getOwnerDataById(ownerId)
                     })
+                    .catch(({ response }) => showErrorNotification(response.data.message))
             }
         }
     }
