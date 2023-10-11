@@ -2057,16 +2057,16 @@
         },
         {
             "name": "opcodesio/log-viewer",
-            "version": "v3.1.4",
+            "version": "v3.1.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/opcodesio/log-viewer.git",
-                "reference": "b5922f16e3f9386ddf00d0fa3cd8559d4ba24937"
+                "reference": "69d886a779611da501841148314b03b2c9a52108"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/opcodesio/log-viewer/zipball/b5922f16e3f9386ddf00d0fa3cd8559d4ba24937",
-                "reference": "b5922f16e3f9386ddf00d0fa3cd8559d4ba24937",
+                "url": "https://api.github.com/repos/opcodesio/log-viewer/zipball/69d886a779611da501841148314b03b2c9a52108",
+                "reference": "69d886a779611da501841148314b03b2c9a52108",
                 "shasum": ""
             },
             "require": {
@@ -2129,7 +2129,7 @@
             ],
             "support": {
                 "issues": "https://github.com/opcodesio/log-viewer/issues",
-                "source": "https://github.com/opcodesio/log-viewer/tree/v3.1.4"
+                "source": "https://github.com/opcodesio/log-viewer/tree/v3.1.5"
             },
             "funding": [
                 {
@@ -2141,7 +2141,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2023-09-26T13:06:53+00:00"
+            "time": "2023-10-10T11:42:12+00:00"
         },
         {
             "name": "opcodesio/mail-parser",
@@ -5814,16 +5814,16 @@
         },
         {
             "name": "composer/pcre",
-            "version": "3.1.0",
+            "version": "3.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/composer/pcre.git",
-                "reference": "4bff79ddd77851fe3cdd11616ed3f92841ba5bd2"
+                "reference": "00104306927c7a0919b4ced2aaa6782c1e61a3c9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/composer/pcre/zipball/4bff79ddd77851fe3cdd11616ed3f92841ba5bd2",
-                "reference": "4bff79ddd77851fe3cdd11616ed3f92841ba5bd2",
+                "url": "https://api.github.com/repos/composer/pcre/zipball/00104306927c7a0919b4ced2aaa6782c1e61a3c9",
+                "reference": "00104306927c7a0919b4ced2aaa6782c1e61a3c9",
                 "shasum": ""
             },
             "require": {
@@ -5865,7 +5865,7 @@
             ],
             "support": {
                 "issues": "https://github.com/composer/pcre/issues",
-                "source": "https://github.com/composer/pcre/tree/3.1.0"
+                "source": "https://github.com/composer/pcre/tree/3.1.1"
             },
             "funding": [
                 {
@@ -5881,7 +5881,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2022-11-17T09:50:14+00:00"
+            "time": "2023-10-11T07:11:09+00:00"
         },
         {
             "name": "doctrine/cache",
@@ -5978,16 +5978,16 @@
         },
         {
             "name": "doctrine/dbal",
-            "version": "3.7.0",
+            "version": "3.7.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/dbal.git",
-                "reference": "00d03067f07482f025d41ab55e4ba0db5eca2cdf"
+                "reference": "5b7bd66c9ff58c04c5474ab85edce442f8081cb2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/dbal/zipball/00d03067f07482f025d41ab55e4ba0db5eca2cdf",
-                "reference": "00d03067f07482f025d41ab55e4ba0db5eca2cdf",
+                "url": "https://api.github.com/repos/doctrine/dbal/zipball/5b7bd66c9ff58c04c5474ab85edce442f8081cb2",
+                "reference": "5b7bd66c9ff58c04c5474ab85edce442f8081cb2",
                 "shasum": ""
             },
             "require": {
@@ -6071,7 +6071,7 @@
             ],
             "support": {
                 "issues": "https://github.com/doctrine/dbal/issues",
-                "source": "https://github.com/doctrine/dbal/tree/3.7.0"
+                "source": "https://github.com/doctrine/dbal/tree/3.7.1"
             },
             "funding": [
                 {
@@ -6087,7 +6087,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-09-26T20:56:55+00:00"
+            "time": "2023-10-06T05:06:20+00:00"
         },
         {
             "name": "doctrine/deprecations",
