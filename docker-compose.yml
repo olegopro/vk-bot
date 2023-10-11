@@ -9,7 +9,7 @@ services:
             - mysql
         volumes:
             - ./backend-laravel:/var/www/html
-            - /var/www/html/vendor/
+#            - /var/www/html/vendor/
         environment:
             - APP_ENV=local
             - APP_DEBUG=true
@@ -45,7 +45,7 @@ services:
             - "3000:3000"
         volumes:
             - ./frontend-vue:/app
-            -  /app/node_modules
+#            -  /app/node_modules
 
     mysql:
         image: mysql
