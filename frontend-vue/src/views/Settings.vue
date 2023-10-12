@@ -18,9 +18,8 @@
                 <div class="row align-items-center justify-content-between">
                     <div class="col-6">
                         <div class="form-check form-switch mb-1 d-flex align-items-center">
-
                             <input id="showFriends"
-                                   :checked="getSettings.show_friends === 1"
+                                   :checked="showFriends"
                                    class="form-check-input"
                                    role="switch"
                                    type="checkbox"
@@ -30,7 +29,7 @@
                         </div>
                         <div class="form-check form-switch d-flex align-items-center">
                             <input id="showFollowers"
-                                   :checked="getSettings.show_followers === 1"
+                                   :checked="showFollowers"
                                    class="form-check-input"
                                    role="switch"
                                    type="checkbox"
@@ -53,7 +52,41 @@
 
 </template>
 
-<script>
+<script setup>
+    import { ref, onMounted } from 'vue'
+    import { useSettingsStore } from '@/stores/SettingsStore'
+
+    const settingsStore = useSettingsStore()
+
+    const showFriends = ref(null)
+    const showFollowers = ref(null)
+    const taskTimeout = ref(null)
+    const loadingStatus = ref(false)
+    const saveSettingStatus = ref(false)
+
+    onMounted(async () => {
+        await settingsStore.fetchSettings()
+        loadingStatus.value = true
+
+        showFriends.value = settingsStore.getSettings.show_friends === 1
+        showFollowers.value = settingsStore.getSettings.show_followers === 1
+        taskTimeout.value = settingsStore.getSettings.task_timeout
+    })
+
+    const save = async () => {
+        saveSettingStatus.value = true
+
+        await settingsStore.saveSettings({
+            showFollowers: showFollowers.value === true ? 1 : 0,
+            showFriends: showFriends.value === true ? 1 : 0,
+            taskTimeout: taskTimeout.value
+        })
+
+        saveSettingStatus.value = false
+    }
+</script>
+
+<!--<script>
     import { mapActions, mapGetters } from 'vuex'
 
     export default {
@@ -95,7 +128,7 @@
             }
         }
     }
-</script>
+</script>-->
 
 <style scoped lang="scss">
     .settings {
