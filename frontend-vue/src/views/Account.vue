@@ -1,18 +1,16 @@
 <template>
-    <div class="row ">
+    <div class="row">
         <div class="col-12">
             <div class="d-flex account">
                 <div v-if="!response?.photo_200" class="stub">
-                    <div class="spinner-border" style="width: 3rem; height: 3rem;" role="status">
-                    </div>
+                    <div class="spinner-border" style="width: 3rem; height: 3rem;" role="status"></div>
                 </div>
-                <img v-else class="col-3 ps-0 " width="200" height="200" :src="response?.photo_200" alt="">
+                <img v-else class="col-3 ps-0" width="200" height="200" :src="response?.photo_200" alt="">
                 <div class="col-4 p-3 d-flex flex-column justify-content-between">
                     <div>
                         <h2>{{ response?.first_name }} {{ response?.last_name }}</h2>
                         <h3>{{ response?.screen_name }}</h3>
                     </div>
-
                     <div class="mb-3">
                         <p>Статус - {{ response?.status }}</p>
                         <p>Последняя активность - {{ date(response?.last_seen?.time) }}</p>
@@ -44,55 +42,36 @@
             </div>
         </div>
     </div>
-
-    <Followers v-if="getSettings.show_followers === 1" />
-    <Friends v-if="getSettings.show_friends === 1" />
+    <Followers v-if="settingsStore.getSettings.show_followers === 1" />
+    <Friends v-if="settingsStore.getSettings.show_friends === 1" />
     <Newsfeed />
 </template>
 
-<script>
-    import { mapActions, mapGetters } from 'vuex'
+<script setup>
+    import { ref, onMounted } from 'vue'
+    import { useAccountStore } from '@/stores/AccountStore'
+    import { useRoute } from 'vue-router'
     import Followers from '../components/Account/Followers.vue'
     import Friends from '../components/Account/Friends.vue'
     import OnlineStatus from '../components/Account/OnlineStatus.vue'
     import Newsfeed from '../components/Account/Newsfeed.vue'
+    import { useSettingsStore } from '../stores/SettingsStore'
 
-    export default {
-        components: { OnlineStatus, Followers, Friends, Newsfeed },
+    const accountStore = useAccountStore()
+    const settingsStore = useSettingsStore()
 
-        data() {
-            return {
-                userID: null,
-                response: null
-            }
-        },
+    const route = useRoute()
 
-        computed: {
-            ...mapGetters('account', ['getAccount', 'getOwnerDataById']),
-            ...mapGetters('settings', ['getSettings'])
-        },
+    const userID = route.params.id
+    const response = ref(null)
 
-        created() {
-            this.userID = this.$route.params.id
-            this.settings()
-        },
+    const date = (timestamp) => new Date(timestamp * 1000).toLocaleTimeString('ru-RU')
 
-        async mounted() {
-            await this.account(this.userID)
-            await this.ownerData(this.userID)
-                .then(() => (this.response = this.getOwnerDataById(this.getAccount.account_id)))
-        },
-
-        methods: {
-            ...mapActions('account', ['account', 'ownerData']),
-            ...mapActions('settings', ['settings']),
-
-            date(timestamp) {
-                return new Date(timestamp * 1000).toLocaleTimeString('ru-RU')
-            }
-
-        }
-    }
+    onMounted(async () => {
+        await accountStore.fetchAccount(userID)
+        await accountStore.fetchOwnerData(userID)
+        response.value = accountStore.ownerData
+    })
 </script>
 
 <style scoped lang="scss">
