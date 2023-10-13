@@ -10,7 +10,7 @@
     <div v-masonry item-selector=".item" v-if="showNewsfeed" transition-duration="0s" class="row">
         <div v-masonry-tile
              :class="[currentColumnClass, 'item', 'mb-4', 'placeholder-glow']"
-             v-for="(post, index) in newsfeed"
+             v-for="(post, index) in accountNewsFeed"
              :key="index"
         >
             <button class="account-info-btn mr-1"
@@ -109,211 +109,207 @@
 
 </template>
 
-<script>
-    import { mapActions, mapGetters, mapMutations } from 'vuex'
-    import OwnerDetails from './Modals/OwnerDetails.vue'
+<script setup>
+    import { onMounted, ref } from 'vue'
+    import { useAccountStore } from '@/stores/AccountStore'
     import { showErrorNotification, showSuccessNotification } from '../../helpers/notyfHelper'
+    // import OwnerDetails from './Modals/OwnerDetails.vue'
+    import AccountDetails from '../Tasks/Modals/AccountDetails.vue'
+    import { useRoute } from 'vue-router'
+    // import { computed } from 'vue-demi'
+
+    const accountStore = useAccountStore()
+    const route = useRoute()
+
+    const accountNewsFeed = ref(accountStore.getAccountNewsFeed)
+    const nextFrom = ref(accountStore.getNextFrom)
+    const ownerDataById = ref(accountStore.getOwnerDataById)
+    const userID = ref(null)
+    const loadingStatus = ref([])
+    // const newsFeedLoadingStatus = ref(false)
+    const isLoadingFeed = ref(false)
+    // const hoveredOwnerId = ref(null)
+    const currentColumnClass = ref('col-4')
+    const showNewsfeed = ref(true)
+    const showDetailedInfo = ref(null)
+    const showDetailedInfoButton = ref(null)
+    const likedPostIndex = ref(null)
+
+    // const infoIconClass = computed(() => {
+    //     if (!accountStore.ownerDataById) return 'bi bi-info-circle' // стандартная иконка информации
+    //     return accountStore.ownerDataById.type ? 'bi bi-group-icon' : 'bi bi-person-icon' // замените 'bi-group-icon' и 'bi-person-icon' на реальные классы иконок группы и человека
+    //
+    // })
+
+    const addLikeToPost = async (ownerId, itemId, index) => {
+        this.likedPostIndex = index
+        // const payload = { accountId: this.userID, ownerId, itemId }
+        this.loadingStatus[index] = true
+
+        await accountStore.addLike(this.userID, ownerId, itemId)
+            .then(() => {
+                showSuccessNotification('Лайк успешно поставлен')
+                // Обновление значения post.likes.user_likes
+                this.newsfeed[index].likes.user_likes = 1
+            })
+            .catch(({ response }) => showErrorNotification(response.data.message))
+            .finally(() => {
+                this.loadingStatus[index] = false
+            })
+    }
+
+    const date = (timestamp) => {
+        return new Date(timestamp * 1000).toLocaleTimeString('ru-RU')
+    }
+
+    const hideDetailedInfo = () => {
+        this.showDetailedInfo = false
+    }
+
+    const showDetailedInfoBtn = (index) => {
+        this.showDetailedInfoButton = index
+    }
+
+    const hideDetailedInfoBtn = () => {
+        this.showDetailedInfoButton = null
+    }
+
+    const getAdjustedQualityImageUrl = (sizes) => {
+        let requiredType
+
+        switch (this.currentColumnClass) {
+            case 'col-6':
+                requiredType = 'w' // оригинал
+                break
+            case 'col-4':
+                requiredType = 'z' // выше среднего
+                break
+            case 'col-3':
+                requiredType = 'x' // ниже среднего
+                break
+            default:
+                requiredType = 'm' // низкое качество (просто на случай, если не подойдет ни одно из условий)
+        }
+
+        let sizeObj = sizes.find(size => size.type === requiredType)
+
+        // Если sizeObj не найден, пытаемся найти размер 'z'
+        if (!sizeObj) {
+            sizeObj = sizes.find(size => size.type === 'z')
+        }
+
+        // Если sizeObj не найден, пытаемся найти размер 'x'
+        if (!sizeObj) {
+            sizeObj = sizes.find(size => size.type === 'x')
+        }
+
+        // Если sizeObj не найден, пытаемся найти размер 'm'
+        if (!sizeObj) {
+            sizeObj = sizes.find(size => size.type === 'm')
+        }
+
+        return sizeObj ? sizeObj.url : ''
+    }
+
+    const ownerInfo = async (accountId, index) => {
+        showDetailedInfo.value = index
+        ownerDataById.value = null
+
+        if (accountId > 0) {
+            await accountStore.fetchOwnerData(accountId).then(() => {
+                ownerDataById.value = accountStore.getOwnerDataById(accountId)
+            })
+                .catch(({ response }) => showErrorNotification(response.data.message))
+        }
+
+        if (accountId < 0) {
+            await accountStore.groupData(accountId).then(() => {
+                ownerDataById.value = accountStore.getOwnerDataById(accountId)
+            })
+                .catch(({ response }) => showErrorNotification(response.data.message))
+        }
+    }
+
+    const changeColumnClass = async (newClass) => {
+        showNewsfeed.value = false
+        currentColumnClass.value = newClass
+        await accountStore.fetchAccountNewsFeed(userID.value)
+            .then(() => (showNewsfeed.value = true))
+    }
+
+    const loadMore = async () => {
+        isLoadingFeed.value = true
+        await accountStore.fetchAccountNewsFeed(userID.value, accountStore.getNextFrom)
+            .catch(() => showErrorNotification('Ошибка в loadMore()'))
+            .finally(() => (this.isLoadingFeed = false))
+    }
+
+    /*
+        Этот подход с throttle будет гарантировать, что функция loadMore не вызывается чаще,
+        чем каждые 300 миллисекунд, при этом не создавая "очередь" из вызовов и не внося
+        дополнительных задержек.
+    */
+    onMounted(() => {
+        userID.value = route.params.id
+
+        let lastCallTime = 0
+        const throttleTime = 750 // Задержка в миллисекундах
+
+        if (accountStore.getNextFrom) {
+            this.isLoadingFeed = true
+
+            accountStore.fetchAccountNewsFeed({
+                accountID: this.userID,
+                startFrom: nextFrom
+            })
+                .then(() => {
+                    const loadingObserver = new IntersectionObserver(entries => {
+                        entries.forEach(entry => {
+                            if (entry.isIntersecting) {
+                                const currentTime = Date.now()
+
+                                if (currentTime - lastCallTime >= throttleTime) {
+                                    lastCallTime = currentTime
+                                    loadMore()
+                                }
+                            }
+                        })
+                    }, { threshold: 0 })
+
+                    loadingObserver.observe(document.getElementById('loader'))
+                })
+                .catch(error => showErrorNotification(error.message))
+
+            this.loadingStatus = new Array(this.newsfeed.length).fill(false)
+        }
+    })
+</script>
+
+<script>
+    // import { mapActions, mapGetters, mapMutations } from 'vuex'
 
     export default {
-        components: { AccountDetails: OwnerDetails },
-        data() {
-            return {
-                userID: null,
-                loadingStatus: [],
-                newsFeedLoadingStatus: false,
-                nextFrom: null,
-                isLoadingFeed: false,
-                ownerDataById: null,
-                hoveredOwnerId: null,
-                currentColumnClass: 'col-4',
-                showNewsfeed: true,
-                showDetailedInfo: null,
-                showDetailedInfoButton: null,
-                likedPostIndex: null
-            }
-        },
 
         computed: {
-            ...mapGetters('account', ['getAccountNewsFeed', 'getNextFrom', 'getOwnerDataById']),
+            // ...mapGetters('account', ['getAccountNewsFeed', 'getNextFrom', 'getOwnerDataById']),
 
-            infoIconClass() {
-                console.log('ownerDataById', this.ownerDataById)
-                if (!this.ownerDataById) return 'bi bi-info-circle' // стандартная иконка информации
-                return this.ownerDataById.type ? 'bi bi-group-icon' : 'bi bi-person-icon' // замените 'bi-group-icon' и 'bi-person-icon' на реальные классы иконок группы и человека
-            },
+            // infoIconClass() {
+            //     if (!this.ownerDataById) return 'bi bi-info-circle' // стандартная иконка информации
+            //     return this.ownerDataById.type ? 'bi bi-group-icon' : 'bi bi-person-icon' // замените 'bi-group-icon' и 'bi-person-icon' на реальные классы иконок группы и человека
+            // },
 
-            newsfeed() {
-                return this.getAccountNewsFeed
-            }
+            // newsfeed() {
+            //     return this.getAccountNewsFeed
+            // }
         },
 
-        created() {
-            this.userID = this.$route.params.id
-        },
-
-        mounted() {
-            /*
-                Этот подход с throttle будет гарантировать, что функция loadMore не вызывается чаще,
-                чем каждые 300 миллисекунд, при этом не создавая "очередь" из вызовов и не внося
-                дополнительных задержек.
-            */
-            let lastCallTime = 0
-            const throttleTime = 750 // Задержка в миллисекундах
-
-            if (!this.getNextFrom) {
-                this.isLoadingFeed = true
-
-                this.accountNewsfeed({
-                    accountID: this.userID,
-                    startFrom: this.getNextFrom
-                })
-                    .then(() => {
-                        // const vh = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0)
-                        // const rootMarginPixels = Math.floor(vh * 1.5) // для 150vh
-
-                        const loadingObserver = new IntersectionObserver(entries => {
-                            entries.forEach(entry => {
-                                if (entry.isIntersecting) {
-                                    const currentTime = Date.now()
-
-                                    if (currentTime - lastCallTime >= throttleTime) {
-                                        lastCallTime = currentTime
-                                        this.loadMore()
-                                    }
-                                }
-                            })
-                        }, {
-                            threshold: 0
-                            // rootMargin: `${rootMarginPixels}px`
-                        })
-
-                        loadingObserver.observe(document.getElementById('loader'))
-                    })
-                    .catch(error => showErrorNotification(error.message))
-
-                this.loadingStatus = new Array(this.newsfeed.length).fill(false)
-            }
-        },
+        // created() {
+        //     this.userID = this.$route.params.id
+        // },
 
         methods: {
-            ...mapActions('account', ['accountNewsfeed', 'addLike', 'ownerData', 'groupData']),
-            ...mapMutations('account', ['addNextFrom']),
-
-            async addLikeToPost(ownerId, itemId, index) {
-                this.likedPostIndex = index
-                const payload = { accountId: this.userID, ownerId, itemId }
-                this.loadingStatus[index] = true
-
-                await this.addLike(payload)
-                    .then(() => {
-                        showSuccessNotification('Лайк успешно поставлен')
-                        // Обновление значения post.likes.user_likes
-                        this.newsfeed[index].likes.user_likes = 1
-                    })
-                    .catch(({ response }) => showErrorNotification(response.data.message))
-                    .finally(() => {
-                        this.loadingStatus[index] = false
-                    })
-            },
-
-            date(timestamp) {
-                return new Date(timestamp * 1000).toLocaleTimeString('ru-RU')
-            },
-
-            refreshNewsfeed() {
-                this.newsFeedLoadingStatus = true
-                this.addNextFrom = null
-                this.accountNewsfeed({ accountID: this.userID })
-                    .finally(() => {
-                        this.newsFeedLoadingStatus = false
-                    })
-            },
-
-            async changeColumnClass(newClass) {
-                this.showNewsfeed = false
-                this.currentColumnClass = newClass
-                await this.accountNewsfeed({ accountID: this.userID })
-                    .then(() => (this.showNewsfeed = true))
-            },
-
-            async loadMore() {
-                this.isLoadingFeed = true
-                await this.accountNewsfeed({
-                    accountID: this.userID,
-                    startFrom: this.getNextFrom
-                })
-                    .catch(() => showErrorNotification('Ошибка в loadMore()'))
-                    .finally(() => (this.isLoadingFeed = false))
-            },
-
-            async ownerInfo(accountId, index) {
-                this.showDetailedInfo = index
-                this.ownerDataById = null
-
-                if (accountId > 0) {
-                    await this.ownerData(accountId).then(() => {
-                        this.ownerDataById = this.getOwnerDataById(accountId)
-                    })
-                        .catch(({ response }) => showErrorNotification(response.data.message))
-                }
-
-                if (accountId < 0) {
-                    await this.groupData(accountId).then(() => {
-                        this.ownerDataById = this.getOwnerDataById(accountId)
-                    })
-                        .catch(({ response }) => showErrorNotification(response.data.message))
-                }
-            },
-
-            hideDetailedInfo() {
-                this.showDetailedInfo = false
-            },
-
-            showDetailedInfoBtn(index) {
-                this.showDetailedInfoButton = index
-            },
-
-            hideDetailedInfoBtn() {
-                this.showDetailedInfoButton = null
-            },
-
-            getAdjustedQualityImageUrl(sizes) {
-                let requiredType
-
-                switch (this.currentColumnClass) {
-                    case 'col-6':
-                        requiredType = 'w' // оригинал
-                        break
-                    case 'col-4':
-                        requiredType = 'z' // выше среднего
-                        break
-                    case 'col-3':
-                        requiredType = 'x' // ниже среднего
-                        break
-                    default:
-                        requiredType = 'm' // низкое качество (просто на случай, если не подойдет ни одно из условий)
-                }
-
-                let sizeObj = sizes.find(size => size.type === requiredType)
-
-                // Если sizeObj не найден, пытаемся найти размер 'z'
-                if (!sizeObj) {
-                    sizeObj = sizes.find(size => size.type === 'z')
-                }
-
-                // Если sizeObj не найден, пытаемся найти размер 'x'
-                if (!sizeObj) {
-                    sizeObj = sizes.find(size => size.type === 'x')
-                }
-
-                // Если sizeObj не найден, пытаемся найти размер 'm'
-                if (!sizeObj) {
-                    sizeObj = sizes.find(size => size.type === 'm')
-                }
-
-                return sizeObj ? sizeObj.url : ''
-            }
-
+            // ...mapActions('account', ['accountNewsfeed', 'addLike', 'ownerData', 'groupData']),
+            // ...mapMutations('account', ['addNextFrom']),
         }
     }
 </script>

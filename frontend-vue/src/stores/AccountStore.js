@@ -85,6 +85,23 @@ export const useAccountStore = defineStore('account', {
                 }
             })
             this.accountNewsFeed = [...this.accountNewsFeed, ...data]
+        },
+
+        async groupData(id) {
+            const { data } = await axios.post(`http://localhost:8080/api/group/data/${Math.abs(id)}`)
+            this.addOwnerData(data.response[0])
+        },
+
+        addOwnerData(accountData) {
+            const index = this.ownerData.findIndex((item) => item.id === accountData.id)
+
+            if (index !== -1) {
+                // Объект с таким же идентификатором уже существует, обновляем его
+                this.ownerData[index] = { ...this.ownerData[index], ...accountData }
+            } else {
+                // Добавляем новый объект в массив
+                this.ownerData.push(accountData)
+            }
         }
     },
 
