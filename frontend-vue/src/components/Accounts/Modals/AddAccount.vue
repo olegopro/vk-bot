@@ -1,7 +1,7 @@
 <template>
     <div class="modal fade" id="addAccount" tabindex="-1" aria-labelledby="Add account" style="display: none;" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
-            <form @submit.prevent="account" class="modal-content">
+            <form @submit.prevent="addAccount" class="modal-content">
                 <div class="modal-header">
                     <h1 class="modal-title fs-5" id="Add account">Добавление аккаунта</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -17,10 +17,6 @@
                             type="text"
                             v-model="accessToken"
                         >
-
-                    </div>
-                    <div v-if="errorMessage" class="alert alert-danger mt-3 mb-0" role="alert">
-                        {{ errorMessage }}
                     </div>
 
                 </div>
@@ -33,50 +29,30 @@
     </div>
 </template>
 
-<script>
-    import { mapActions } from 'vuex'
+<script setup>
+    import { computed, onMounted, ref } from 'vue'
+    import { useAccountsStore } from '../../../stores/AccountsStore'
     import { Modal } from 'bootstrap'
 
-    export default {
-        data() {
-            return {
-                accessToken: null,
-                modal: null,
-                showError: false,
-                errorMessage: null,
-                disableSubmit: true
-            }
-        },
+    const accountsStore = useAccountsStore()
+    const accessToken = ref(null)
+    const modal = ref(null)
 
-        watch: {
-            accessToken(data) {
-                data.length > 3
-                    ? this.disableSubmit = false
-                    : this.disableSubmit = true
-            }
-        },
-
-        mounted() {
-            this.modal = new Modal(document.getElementById('addAccount'))
-        },
-
-        methods: {
-            ...mapActions('account', ['addAccount']),
-
-            account() {
-                this.addAccount(this.accessToken)
-                    .then(() => {
-                        this.modal.hide()
-                    })
-                    .catch(error => {
-                        this.errorMessage = error.response.data.message
-                        this.disableSubmit = true
-                    })
-            },
-
-            modalHide() {
-                this.modal.hide()
-            }
-        }
+    const addAccount = async () => {
+        await accountsStore.addAccount(accessToken.value)
+            .then(() => modal.value.hide())
+            .catch(error => {
+                console.log('error', error)
+                disableSubmit.value = true
+            })
     }
+
+    const modalHide = () => modal.value.hide()
+
+    const disableSubmit = computed(() => {
+        return !(accessToken.value && accessToken.value.length > 3)
+    })
+
+    onMounted(() => (modal.value = new Modal(document.getElementById('addAccount'))))
+
 </script>

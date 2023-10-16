@@ -101,14 +101,14 @@ export const useAccountStore = defineStore('account', {
                     user_id: accountId
                 }
             })
-            
+
             return data.response
         },
 
-        async deleteAccount(id) {
-            await axios.delete(`http://localhost:8080/api/accounts/${id}`)
-            this.account = this.account.filter(account => account.id !== id)
-        },
+        // async deleteAccount(id) {
+        //     await axios.delete(`http://localhost:8080/api/accounts/${id}`)
+        //     this.account = this.account.filter(account => account.id !== id)
+        // },
 
         async addPostsToLike(accountId, taskCount) {
             const { data } = await axios.post('http://localhost:8080/api/account/get-posts-for-like', null, {

@@ -16,7 +16,7 @@
 
     <div class="row">
         <div class="col-12">
-            <table class="table table-hover" v-if="getAccounts.length">
+            <table class="table table-hover" v-if="accountsStore.accounts.length">
                 <thead>
                     <tr>
                         <th scope="col">ID</th>
@@ -27,7 +27,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="account in getAccounts" :key="account.account_id">
+                    <tr v-for="account in accountsStore.accounts" :key="account.account_id">
                         <th scope="row">{{ account.account_id }}</th>
                         <td>{{ account.first_name }} {{ account.last_name }}</td>
                         <td>{{ account.screen_name }}</td>
@@ -63,35 +63,24 @@
     </div>
 
     <Teleport to="body">
-        <DeleteAccount ref="popup" />
+        <DeleteAccount :login="selectedAccount.login" :id="selectedAccount.id" />
         <AddAccount />
     </Teleport>
 
 </template>
 
-<script>
-    import { mapActions, mapGetters } from 'vuex'
+<script setup>
+    import { useAccountsStore } from '@/stores/AccountsStore'
     import DeleteAccount from '../components/Accounts/Modals/DeleteAccount.vue'
     import AddAccount from '../components/Accounts/Modals/AddAccount.vue'
+    import { onMounted, ref } from 'vue'
 
-    export default {
-        components: { AddAccount, DeleteAccount },
+    const accountsStore = useAccountsStore()
+    const selectedAccount = ref({ login: '', id: '' })
 
-        computed: {
-            ...mapGetters('accounts', ['getAccounts'])
-        },
-
-        mounted() {
-            this.accounts()
-        },
-
-        methods: {
-            ...mapActions('accounts', ['accounts']),
-
-            getLogin(login, id) {
-                this.$refs.popup.login = login
-                this.$refs.popup.id = id
-            }
-        }
+    const getLogin = (login, id) => {
+        selectedAccount.value = { login, id }
     }
+
+    onMounted(() => accountsStore.fetchAccounts())
 </script>
