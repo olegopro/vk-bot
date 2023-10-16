@@ -209,6 +209,10 @@
     }
 
     const changeColumnClass = async (newClass) => {
+        accountStore.accountNewsFeed = []
+        accountStore.nextFrom = null
+        accountStore.previousNextFrom = null
+
         showNewsfeed.value = false
         currentColumnClass.value = newClass
         await accountStore.fetchAccountNewsFeed(userID.value)
