@@ -10,7 +10,7 @@
     <div v-masonry item-selector=".item" v-if="showNewsfeed" transition-duration="0s" class="row">
         <div v-masonry-tile
              :class="[currentColumnClass, 'item', 'mb-4', 'placeholder-glow']"
-             v-for="(post, index) in accountNewsFeed"
+             v-for="(post, index) in accountStore.getAccountNewsFeed"
              :key="index"
         >
             <button class="account-info-btn mr-1"
@@ -97,14 +97,14 @@
 
     <div class="row justify-content-center mt-2 mb-4" id="loader">
         <transition name="fade">
-            <div class="feed-spinner spinner-border" role="status" v-show="isLoadingFeed">
+            <div class="feed-spinner spinner-border" role="status" v-show="accountStore.isLoadingFeed">
                 <span class="visually-hidden">Загрузка...</span>
             </div>
         </transition>
     </div>
 
     <Teleport to="body">
-        <AccountDetails :owner-data="ownerDataById" />
+        <OwnerDetails :owner-data="ownerDataById" />
     </Teleport>
 
 </template>
@@ -113,71 +113,49 @@
     import { onMounted, ref } from 'vue'
     import { useAccountStore } from '@/stores/AccountStore'
     import { showErrorNotification, showSuccessNotification } from '../../helpers/notyfHelper'
-    // import OwnerDetails from './Modals/OwnerDetails.vue'
-    import AccountDetails from '../Tasks/Modals/AccountDetails.vue'
+    import OwnerDetails from './Modals/OwnerDetails.vue'
     import { useRoute } from 'vue-router'
-    // import { computed } from 'vue-demi'
 
     const accountStore = useAccountStore()
     const route = useRoute()
 
-    const accountNewsFeed = ref(accountStore.getAccountNewsFeed)
     const nextFrom = ref(accountStore.getNextFrom)
-    const ownerDataById = ref(accountStore.getOwnerDataById)
+    const ownerDataById = ref(null)
     const userID = ref(null)
     const loadingStatus = ref([])
-    // const newsFeedLoadingStatus = ref(false)
-    const isLoadingFeed = ref(false)
-    // const hoveredOwnerId = ref(null)
     const currentColumnClass = ref('col-4')
     const showNewsfeed = ref(true)
     const showDetailedInfo = ref(null)
     const showDetailedInfoButton = ref(null)
     const likedPostIndex = ref(null)
 
-    // const infoIconClass = computed(() => {
-    //     if (!accountStore.ownerDataById) return 'bi bi-info-circle' // стандартная иконка информации
-    //     return accountStore.ownerDataById.type ? 'bi bi-group-icon' : 'bi bi-person-icon' // замените 'bi-group-icon' и 'bi-person-icon' на реальные классы иконок группы и человека
-    //
-    // })
-
     const addLikeToPost = async (ownerId, itemId, index) => {
-        this.likedPostIndex = index
-        // const payload = { accountId: this.userID, ownerId, itemId }
-        this.loadingStatus[index] = true
+        likedPostIndex.value = index
+        loadingStatus.value[index] = true
 
-        await accountStore.addLike(this.userID, ownerId, itemId)
+        await accountStore.addLike(userID.value, ownerId, itemId)
             .then(() => {
                 showSuccessNotification('Лайк успешно поставлен')
-                // Обновление значения post.likes.user_likes
-                this.newsfeed[index].likes.user_likes = 1
+                accountStore.accountNewsFeed[index].likes.user_likes = 1
             })
             .catch(({ response }) => showErrorNotification(response.data.message))
-            .finally(() => {
-                this.loadingStatus[index] = false
-            })
+            .finally(() => (loadingStatus.value[index] = false))
     }
 
     const date = (timestamp) => {
         return new Date(timestamp * 1000).toLocaleTimeString('ru-RU')
     }
 
-    const hideDetailedInfo = () => {
-        this.showDetailedInfo = false
-    }
+    const hideDetailedInfo = () => (showDetailedInfo.value = false)
 
-    const showDetailedInfoBtn = (index) => {
-        this.showDetailedInfoButton = index
-    }
+    const showDetailedInfoBtn = index => (showDetailedInfoButton.value = index)
 
-    const hideDetailedInfoBtn = () => {
-        this.showDetailedInfoButton = null
-    }
+    const hideDetailedInfoBtn = () => (showDetailedInfoButton.value = null)
 
     const getAdjustedQualityImageUrl = (sizes) => {
         let requiredType
 
-        switch (this.currentColumnClass) {
+        switch (currentColumnClass.value) {
             case 'col-6':
                 requiredType = 'w' // оригинал
                 break
@@ -226,7 +204,7 @@
             await accountStore.groupData(accountId).then(() => {
                 ownerDataById.value = accountStore.getOwnerDataById(accountId)
             })
-                .catch(({ response }) => showErrorNotification(response.data.message))
+                .catch(data => console.log('response', data))
         }
     }
 
@@ -238,10 +216,9 @@
     }
 
     const loadMore = async () => {
-        isLoadingFeed.value = true
+        accountStore.isLoadingFeed = true
         await accountStore.fetchAccountNewsFeed(userID.value, accountStore.getNextFrom)
             .catch(() => showErrorNotification('Ошибка в loadMore()'))
-            .finally(() => (this.isLoadingFeed = false))
     }
 
     /*
@@ -255,11 +232,11 @@
         let lastCallTime = 0
         const throttleTime = 750 // Задержка в миллисекундах
 
-        if (accountStore.getNextFrom) {
-            this.isLoadingFeed = true
+        if (!accountStore.getNextFrom) {
+            accountStore.isLoadingFeed = true
 
             accountStore.fetchAccountNewsFeed({
-                accountID: this.userID,
+                accountID: userID.value,
                 startFrom: nextFrom
             })
                 .then(() => {
@@ -280,38 +257,9 @@
                 })
                 .catch(error => showErrorNotification(error.message))
 
-            this.loadingStatus = new Array(this.newsfeed.length).fill(false)
+            loadingStatus.value = new Array(accountStore.accountNewsFeed.length).fill(false)
         }
     })
-</script>
-
-<script>
-    // import { mapActions, mapGetters, mapMutations } from 'vuex'
-
-    export default {
-
-        computed: {
-            // ...mapGetters('account', ['getAccountNewsFeed', 'getNextFrom', 'getOwnerDataById']),
-
-            // infoIconClass() {
-            //     if (!this.ownerDataById) return 'bi bi-info-circle' // стандартная иконка информации
-            //     return this.ownerDataById.type ? 'bi bi-group-icon' : 'bi bi-person-icon' // замените 'bi-group-icon' и 'bi-person-icon' на реальные классы иконок группы и человека
-            // },
-
-            // newsfeed() {
-            //     return this.getAccountNewsFeed
-            // }
-        },
-
-        // created() {
-        //     this.userID = this.$route.params.id
-        // },
-
-        methods: {
-            // ...mapActions('account', ['accountNewsfeed', 'addLike', 'ownerData', 'groupData']),
-            // ...mapMutations('account', ['addNextFrom']),
-        }
-    }
 </script>
 
 <style scoped lang="scss">

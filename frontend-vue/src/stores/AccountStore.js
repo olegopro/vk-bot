@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import axios from 'axios'
+import axiosThrottle from 'axios-request-throttle'
 
 export const useAccountStore = defineStore('account', {
     state: () => ({
@@ -10,13 +11,22 @@ export const useAccountStore = defineStore('account', {
         accountFriendsCount: [],
         accountNewsFeed: [],
         nextFrom: null,
-        previousNextFrom: null
+        previousNextFrom: null,
+        isLoadingFeed: false
     }),
 
     actions: {
         async fetchAccount(id) {
             const { data } = await axios.get(`http://localhost:8080/api/accounts/${id}`)
-            this.account = data
+            const index = this.account.findIndex((item) => item.id === data.id)
+
+            if (index !== -1) {
+                // Объект с таким же идентификатором уже существует, обновляем его
+                this.account[index] = { ...this.account[index], ...data }
+            } else {
+                // Добавляем новый объект в массив
+                this.account.push(data)
+            }
         },
 
         async fetchOwnerData(id) {
@@ -26,7 +36,7 @@ export const useAccountStore = defineStore('account', {
             ])
             const accountData = accountDataResponse.data.response[0]
             const friendsCount = friendsCountResponse.data.response.count
-            this.ownerData = { ...accountData, friends_count: friendsCount }
+            this.ownerData.push({ ...accountData, friends_count: friendsCount })
         },
 
         async fetchAccountFollowers(id) {
@@ -44,12 +54,33 @@ export const useAccountStore = defineStore('account', {
             this.accountFriendsCount = data
         },
 
-        async fetchAccountNewsFeed(id, startFrom = null) {
-            const { data } = await axios.get(`http://localhost:8080/api/account/newsfeed/${id}`, {
-                params: { start_from: startFrom }
+        async fetchAccountNewsFeed(accountID, startFrom = null) {
+            if (startFrom !== null && startFrom === this.previousNextFrom) {
+                return
+            }
+
+            this.previousNextFrom = startFrom
+
+            const localAxios = axios
+            axiosThrottle.use(localAxios, { requestsPerSecond: 5 })
+
+            localAxios.post('http://localhost:8080/api/account/newsfeed', {
+                    account_id: accountID,
+                    start_from: startFrom
             })
-            this.accountNewsFeed = data
-            this.nextFrom = data.next_from
+                .then(response => {
+                    const data = response.data
+                    const result = data.response.items.filter(item => item.attachments[0]?.type === 'photo')
+                    this.nextFrom = data.response.next_from
+
+                    if (startFrom === null) {
+                        this.accountNewsFeed = []
+                    }
+
+                    this.accountNewsFeed = [...this.accountNewsFeed, ...result]
+                    this.isLoadingFeed = false
+                })
+                .catch(() => this.fetchAccountNewsFeed(accountID, this.nextFrom))
         },
 
         async addLike(accountId, ownerId, itemId) {
@@ -60,6 +91,7 @@ export const useAccountStore = defineStore('account', {
                     item_id: itemId
                 }
             })
+
             return data
         },
 
@@ -69,6 +101,7 @@ export const useAccountStore = defineStore('account', {
                     user_id: accountId
                 }
             })
+            
             return data.response
         },
 
@@ -109,30 +142,40 @@ export const useAccountStore = defineStore('account', {
         getAccount() {
             return this.account
         },
+
         getOwnerData() {
             return this.ownerData
         },
+
         getAccountFollowers() {
             return this.accountFollowers
         },
         getAccountFriends() {
             return this.accountFriends
         },
+
         getAccountFriendsCount() {
             return this.accountFriendsCount
         },
+
         getAccountNewsFeed() {
             return this.accountNewsFeed
         },
+
         getNextFrom() {
             return this.nextFrom
         },
+
         getPreviousNextFrom() {
             return this.previousNextFrom
         },
 
         getOwnerDataById: (state) => (id) => {
             return state.ownerData.find(user => user.id === Math.abs(id))
+        },
+
+        getAccountById: (state) => (id) => {
+            return state.account.find(account => account.id === Math.abs(id))
         }
     }
 })

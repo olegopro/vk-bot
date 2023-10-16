@@ -2,18 +2,18 @@
     <div class="row">
         <div class="col-12">
             <div class="d-flex account">
-                <div v-if="!response?.photo_200" class="stub">
+                <div v-if="!specificAccount?.photo_200" class="stub">
                     <div class="spinner-border" style="width: 3rem; height: 3rem;" role="status"></div>
                 </div>
-                <img v-else class="col-3 ps-0" width="200" height="200" :src="response?.photo_200" alt="">
+                <img v-else class="col-3 ps-0" width="200" height="200" :src="specificAccount?.photo_200" alt="">
                 <div class="col-4 p-3 d-flex flex-column justify-content-between">
                     <div>
-                        <h2>{{ response?.first_name }} {{ response?.last_name }}</h2>
-                        <h3>{{ response?.screen_name }}</h3>
+                        <h2>{{ specificAccount?.first_name }} {{ specificAccount?.last_name }}</h2>
+                        <h3>{{ specificAccount?.screen_name }}</h3>
                     </div>
                     <div class="mb-3">
-                        <p>Статус - {{ response?.status }}</p>
-                        <p>Последняя активность - {{ date(response?.last_seen?.time) }}</p>
+                        <p>Статус - {{ specificAccount?.status }}</p>
+                        <p>Последняя активность - {{ date(specificAccount?.last_seen?.time) }}</p>
                     </div>
                 </div>
                 <div class="col-4 p-3 d-flex flex-column">
@@ -21,23 +21,23 @@
                         <svg width="28" height="28" class="me-3">
                             <use xlink:href="#friends"></use>
                         </svg>
-                        Друзья - {{ response?.friends_count }}
+                        Друзья - {{ specificAccount?.friends_count }}
                     </h4>
                     <h4 class="mb-3">
                         <svg width="28" height="28" class="me-3">
                             <use xlink:href="#followers"></use>
                         </svg>
-                        Подписчики - {{ response?.followers_count }}
+                        Подписчики - {{ specificAccount?.followers_count }}
                     </h4>
                     <h4>
                         <svg width="28" height="28" class="me-3">
                             <use xlink:href="#address"></use>
                         </svg>
-                        Город - {{ response?.city?.title }}
+                        Город - {{ specificAccount?.city?.title }}
                     </h4>
                 </div>
                 <div class="col p-3">
-                    <OnlineStatus :type="response?.online === 0 ? 'offline' : 'online'" />
+                    <OnlineStatus :type="specificAccount?.online === 0 ? 'offline' : 'online'" />
                 </div>
             </div>
         </div>
@@ -63,15 +63,17 @@
     const route = useRoute()
 
     const userID = route.params.id
-    const response = ref(null)
+    const specificAccount = ref(null)
 
     const date = (timestamp) => new Date(timestamp * 1000).toLocaleTimeString('ru-RU')
 
     onMounted(async () => {
-        await accountStore.fetchAccount(userID)
         await accountStore.fetchOwnerData(userID)
-        response.value = accountStore.ownerData
+        await accountStore.getOwnerDataById(userID)
+        specificAccount.value = accountStore.getOwnerDataById(userID)
+        console.log('Specific Account:', specificAccount)
     })
+
 </script>
 
 <style scoped lang="scss">
