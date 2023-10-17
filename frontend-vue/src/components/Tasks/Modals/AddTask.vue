@@ -10,7 +10,7 @@
 
                     <select class="form-select mb-3" aria-label="Default select example" v-model="accountId">
                         <option disabled selected value="selectAccount">Выберите аккаунт</option>
-                        <option v-for="account in getAccounts" :key="account.id" :value="account.account_id">
+                        <option v-for="account in accountsStore.getAccounts" :key="account.id" :value="account.account_id">
                             {{ account.screen_name }} ({{ account.first_name }} {{ account.last_name }})
                         </option>
                     </select>
@@ -33,7 +33,54 @@
     </div>
 </template>
 
-<script>
+<script setup>
+    import { ref, onMounted, watch } from 'vue'
+    import { useAccountStore } from '@/stores/AccountStore'
+    import { useAccountsStore } from '../../../stores/AccountsStore'
+    import { Modal } from 'bootstrap'
+    import { showSuccessNotification } from '../../../helpers/notyfHelper'
+
+    const accountStore = useAccountStore()
+    const accountsStore = useAccountsStore()
+    const accountId = ref('selectAccount')
+    const disablePost = ref(true)
+    const loading = ref(false)
+    const taskCount = ref(10)
+    let modal
+
+    onMounted(() => {
+        accountsStore.fetchAccounts() // Предполагается, что у вас есть такой метод в хранилище
+        modal = new Modal(document.getElementById('addTask'))
+    })
+
+    watch(accountId, (newVal) => {
+        disablePost.value = newVal === 'selectAccount'
+    })
+
+    const modalHide = () => {
+        modal.hide()
+    }
+
+    const addNewTask = () => {
+        disablePost.value = true
+        loading.value = true
+
+        accountStore.addPostsToLike(accountId.value, taskCount.value)
+            .then(() => {
+                modalHide()
+                disablePost.value = false
+                loading.value = false
+                accountId.value = 'selectAccount'
+                showSuccessNotification('Задача добавлена')
+            })
+            .catch((error) => {
+                // Обработка ошибок
+                console.error('Произошла ошибка:', error)
+            })
+    }
+</script>
+
+<!--<script>
     import { mapActions, mapGetters } from 'vuex'
     import { Modal } from 'bootstrap'
     import { showSuccessNotification } from '../../../helpers/notyfHelper'
@@ -88,8 +135,4 @@
 
         }
     }
-</script>
-
-<style scoped lang="scss">
-
-</style>
+</script>-->

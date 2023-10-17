@@ -18,7 +18,38 @@
     </div>
 </template>
 
-<script>
+<script setup>
+    import { ref, onMounted, defineProps } from 'vue'
+    import { useTasksStore } from '@/stores/TasksStore'
+    import { Modal } from 'bootstrap'
+
+    const props = defineProps(['taskId'])
+
+    const tasksStore = useTasksStore()
+    // const taskId = ref(null)
+    const disable = ref(false)
+    let modal
+
+    const deleteTaskById = () => {
+        disable.value = true
+
+        tasksStore.deleteTask(props.taskId)
+            .then(() => {
+                modal.hide()
+                disable.value = false
+            })
+    }
+
+    const modalHide = () => {
+        modal.hide()
+    }
+
+    onMounted(() => {
+        modal = new Modal(document.getElementById('deleteTask'))
+    })
+</script>
+
+<!--<script>
     import { mapActions } from 'vuex'
     import { Modal } from 'bootstrap'
 
@@ -54,7 +85,7 @@
             }
         }
     }
-</script>
+</script>-->
 
 <style scoped lang="scss">
 

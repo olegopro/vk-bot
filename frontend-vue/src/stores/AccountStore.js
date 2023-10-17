@@ -65,8 +65,8 @@ export const useAccountStore = defineStore('account', {
             axiosThrottle.use(localAxios, { requestsPerSecond: 5 })
 
             localAxios.post('http://localhost:8080/api/account/newsfeed', {
-                    account_id: accountID,
-                    start_from: startFrom
+                account_id: accountID,
+                start_from: startFrom
             })
                 .then(response => {
                     const data = response.data
@@ -135,6 +135,17 @@ export const useAccountStore = defineStore('account', {
                 // Добавляем новый объект в массив
                 this.ownerData.push(accountData)
             }
+        },
+
+        getAccountDetails(ownerId) {
+            axios.get(`http://localhost:8080/api/account/${ownerId}`)
+                .then(response => {
+                    return response.data
+                })
+                .catch(error => {
+                    // Здесь можно вызвать вашу функцию для показа уведомлений
+                    console.error(error.response.data.message)
+                })
         }
     },
 

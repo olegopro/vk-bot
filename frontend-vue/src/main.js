@@ -1,7 +1,6 @@
 import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router'
-import store from './store'
 import PerfectScrollbar from 'vue3-perfect-scrollbar'
 import { VueMasonryPlugin } from 'vue-masonry'
 import { createPinia } from 'pinia'
@@ -16,7 +15,6 @@ const pinia = createPinia()
 
 createApp(App)
     .use(VueMasonryPlugin)
-    .use(store)
     .use(router)
     .use(PerfectScrollbar)
     .use(pinia)
