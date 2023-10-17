@@ -24,8 +24,7 @@
     "vue-demi": "^0.14.6",
     "vue-masonry": "^0.16.0",
     "vue-router": "^4.0.3",
-    "vue3-perfect-scrollbar": "^1.6.1",
-    "vuex": "^4.0.0"
+    "vue3-perfect-scrollbar": "^1.6.1"
   },
   "devDependencies": {
     "@babel/core": "^7.12.16",
