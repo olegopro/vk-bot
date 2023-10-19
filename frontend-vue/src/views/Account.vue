@@ -71,7 +71,6 @@
         await accountStore.fetchOwnerData(userID)
         await accountStore.getOwnerDataById(userID)
         specificAccount.value = accountStore.getOwnerDataById(userID)
-        console.log('Specific Account:', specificAccount)
     })
 
 </script>

@@ -1,14 +1,9 @@
 <template>
     <div class="row mt-5">
         <h1>Подписчики</h1>
-        <div class="col-2" v-for="follower in getAccountFollowers.items" :key="follower.id">
+        <div class="col-2" v-for="follower in followers" :key="follower.id">
             <div class="card">
-                <img class="bd-placeholder-img card-img-top"
-                     width="100%"
-                     height="200"
-                     alt=""
-                     :src="follower.photo_200"
-                />
+                <img class="bd-placeholder-img card-img-top" width="100%" height="200" alt="" :src="follower.photo_200" />
                 <div class="card-body">
                     <p class="card-text">{{ follower.first_name }} {{ follower.last_name }}</p>
                 </div>
@@ -17,28 +12,20 @@
     </div>
 </template>
 
-<script>
-    import { mapActions, mapGetters } from 'vuex'
+<script setup>
+    import { ref, onMounted } from 'vue'
+    import { useRoute } from 'vue-router'
+    import { useAccountStore } from '@/stores/AccountStore'
 
-    export default {
-        data() {
-            return {
-                followers: []
-            }
-        },
+    const route = useRoute()
+    const accountStore = useAccountStore()
+    const followers = ref([])
 
-        mounted() {
-            this.accountFollowers(this.$route.params.id)
-        },
-
-        computed: {
-            ...mapGetters('account', ['getAccountFollowers'])
-        },
-
-        methods: {
-            ...mapActions('account', ['accountFollowers'])
-        }
-    }
+    onMounted(async () => {
+        const id = route.params.id
+        await accountStore.fetchAccountFollowers(id)
+        followers.value = accountStore.getAccountFollowers
+    })
 </script>
 
 <style scoped lang="scss">

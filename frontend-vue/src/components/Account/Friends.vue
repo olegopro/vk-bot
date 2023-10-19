@@ -1,44 +1,36 @@
 <template>
     <div class="row mt-5 mb-5">
         <h1>Друзья</h1>
-        <div class="col-2" v-for="friends in getAccountFriends.items" :key="friends.id">
+        <div class="col-2" v-for="friend in friends" :key="friend.id">
             <div class="card">
                 <img class="bd-placeholder-img card-img-top"
                      width="100%"
                      height="200"
                      alt=""
-                     :src="friends.photo_200"
+                     :src="friend.photo_200"
                 />
                 <div class="card-body">
-                    <p class="card-text">{{ friends.first_name }} {{ friends.last_name }}</p>
+                    <p class="card-text">{{ friend.first_name }} {{ friend.last_name }}</p>
                 </div>
             </div>
         </div>
     </div>
 </template>
 
-<script>
-    import { mapActions, mapGetters } from 'vuex'
+<script setup>
+    import { ref, onMounted } from 'vue'
+    import { useRoute } from 'vue-router'
+    import { useAccountStore } from '@/stores/AccountStore'
 
-    export default {
-        data() {
-            return {
-                friends: []
-            }
-        },
+    const route = useRoute()
+    const accountStore = useAccountStore()
+    const friends = ref([])
 
-        mounted() {
-            this.accountFriends(this.$route.params.id)
-        },
-
-        computed: {
-            ...mapGetters('account', ['getAccountFriends'])
-        },
-
-        methods: {
-            ...mapActions('account', ['accountFriends'])
-        }
-    }
+    onMounted(async () => {
+        const id = route.params.id
+        await accountStore.fetchAccountFriends(id)
+        friends.value = accountStore.getAccountFriends
+    })
 </script>
 
 <style scoped lang="scss">
