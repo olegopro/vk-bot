@@ -51,13 +51,13 @@
 <script setup>
     import { defineProps, defineEmits } from 'vue'
     import TaskStatus from './TaskStatus.vue'
+    import { format } from 'date-fns'
 
     const props = defineProps(['task'])
     const emit = defineEmits(['delete-task', 'task-details', 'account-details'])
 
     const dateFormat = (date) => {
-        const dt = new Date(date)
-        return `${dt.getFullYear()}-${String(dt.getMonth() + 1).padStart(2, '0')}-${String(dt.getDate()).padStart(2, '0')} ${String(dt.getHours()).padStart(2, '0')}:${String(dt.getMinutes()).padStart(2, '0')}:${String(dt.getSeconds()).padStart(2, '0')}`
+        return format(new Date(date), 'yyyy-MM-dd HH:mm:ss')
     }
 
     const deleteTask = (id) => {

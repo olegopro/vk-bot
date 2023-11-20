@@ -40,7 +40,7 @@ export const useAccountStore = defineStore('account', {
         },
 
         async fetchAccountFollowers(id) {
-            const { data } = await axios.get(`http://localhost:8080/api/account/followers/${id}`)
+            const { data } = await axios.post(`http://localhost:8080/api/account/followers/${id}`)
             this.accountFollowers = data
         },
 
