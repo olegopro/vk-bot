@@ -1,22 +1,22 @@
 <template>
     <tr>
-        <th scope="row">{{ props.task.id }}</th>
+        <th scope="row">{{ task.id }}</th>
         <td class="user-name inner-shadow">
             <div class="flex-container"
-                 @click="accountDetails(props.task.owner_id)"
+                 @click="accountDetails(task.owner_id)"
                  data-bs-target="#accountDetails"
                  data-bs-toggle="modal"
             >
-                {{ props.task.first_name }} {{ props.task.last_name }}
+                {{ task.first_name }} {{ task.last_name }}
                 <i class="bi bi-person-circle ms-2" style="font-size: 16px; opacity: 0.75"/>
             </div>
         </td>
 
         <td>
-            <TaskStatus :type="props.task.status" :errorMessage="props.task.error_message"/>
+            <TaskStatus :type="task.status" :errorMessage="task.error_message"/>
         </td>
 
-        <td>{{ props.task.attempt_count }}</td>
+        <td>{{ task.attempt_count }}</td>
 
         <td>
 
@@ -25,7 +25,7 @@
                 data-bs-target="#taskDetails"
                 data-bs-toggle="modal"
                 type="button"
-                @click="taskDetails(props.task.id)"
+                @click="taskDetails(task.id)"
             >
                 <svg width="16" height="16">
                     <use xlink:href="#info"></use>
@@ -37,24 +37,26 @@
                 data-bs-target="#deleteTask"
                 data-bs-toggle="modal"
                 type="button"
-                @click="deleteTask(props.task.id)"
+                @click="deleteTask(task.id)"
             >
                 <i class="bi bi-trash3" />
             </button>
         </td>
 
-        <td>{{ dateFormat(props.task.run_at) }}</td>
-        <td>{{ dateFormat(props.task.created_at) }}</td>
+        <td>{{ dateFormat(task.run_at) }}</td>
+        <td>{{ dateFormat(task.created_at) }}</td>
     </tr>
 </template>
 
 <script setup>
-    import { defineProps, defineEmits } from 'vue'
+    import { defineProps, defineEmits, toRefs } from 'vue'
     import TaskStatus from './TaskStatus.vue'
     import { format } from 'date-fns'
 
     const props = defineProps(['task'])
     const emit = defineEmits(['delete-task', 'task-details', 'account-details'])
+
+    const { task } = toRefs(props)
 
     const dateFormat = (date) => {
         return format(new Date(date), 'yyyy-MM-dd HH:mm:ss')
@@ -72,45 +74,6 @@
         emit('account-details', ownerId)
     }
 </script>
-
-<!--<script>
-    import { mapActions } from 'vuex'
-    import TaskStatus from './TaskStatus.vue'
-
-    export default {
-        components: { TaskStatus },
-
-        props: ['task'],
-        emits: ['delete-task', 'task-details', 'account-details'],
-
-        methods: {
-            ...mapActions('tasks', ['accountByTaskId']),
-            ...mapActions('account', ['getScreenNameById']),
-
-            dateFormat(date) {
-                const dt = new Date(date)
-                return dt.getFullYear() + '-' +
-                    String(dt.getMonth() + 1).padStart(2, '0') + '-' +
-                    String(dt.getDate()).padStart(2, '0') + ' ' +
-                    String(dt.getHours()).padStart(2, '0') + ':' +
-                    String(dt.getMinutes()).padStart(2, '0') + ':' +
-                    String(dt.getSeconds()).padStart(2, '0')
-            },
-
-            deleteTask(id) {
-                this.$emit('delete-task', id)
-            },
-
-            taskDetails(id) {
-                this.$emit('task-details', id)
-            },
-
-            accountDetails(ownerId) {
-                this.$emit('account-details', ownerId)
-            }
-        }
-    }
-</script>-->
 
 <style scoped lang="scss">
     .flex-container {
