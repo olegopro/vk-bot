@@ -18,7 +18,10 @@ module.exports = {
         'space-before-function-paren': 'off',
         'no-trailing-spaces': 'off',
         'vue/require-explicit-emits': 'error',
-        'vue/multi-word-component-names': 'off'
+        'vue/multi-word-component-names': 'off',
+        'no-return-assign': 'off',
+        'quote-props': 'off',
+        'no-unused-vars': 'warn'
     }
 
 }
