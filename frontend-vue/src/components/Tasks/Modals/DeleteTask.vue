@@ -19,74 +19,24 @@
 </template>
 
 <script setup>
-    import { ref, onMounted, defineProps } from 'vue'
+    import { ref, defineProps } from 'vue'
     import { useTasksStore } from '@/stores/TasksStore'
-    import { Modal } from 'bootstrap'
 
-    const props = defineProps(['taskId'])
+    const props = defineProps({
+        modalInstance: Object,
+        taskId: Number
+    })
+
+    const disable = ref(false)
 
     const tasksStore = useTasksStore()
-    // const taskId = ref(null)
-    const disable = ref(false)
-    let modal
 
     const deleteTaskById = () => {
         disable.value = true
-
         tasksStore.deleteTask(props.taskId)
-            .then(() => {
-                modal.hide()
-                disable.value = false
-            })
+            .then(() => props.modalInstance.hide())
+            .finally(() => disable.value = false)
     }
 
-    const modalHide = () => {
-        modal.hide()
-    }
-
-    onMounted(() => {
-        modal = new Modal(document.getElementById('deleteTask'))
-    })
+    const modalHide = () => props.modalInstance.hide()
 </script>
-
-<!--<script>
-    import { mapActions } from 'vuex'
-    import { Modal } from 'bootstrap'
-
-    export default {
-        props: ['taskId'],
-
-        data() {
-            return {
-                modal: null,
-                disable: false
-            }
-        },
-
-        mounted() {
-            this.modal = new Modal(document.getElementById('deleteTask'))
-        },
-
-        methods: {
-            ...mapActions('tasks', ['deleteTask']),
-
-            deleteTaskById() {
-                this.disable = true
-
-                this.deleteTask(this.taskId)
-                    .then(() => {
-                        this.modal.hide()
-                        this.disable = false
-                    })
-            },
-
-            modalHide() {
-                this.modal.hide()
-            }
-        }
-    }
-</script>-->
-
-<style scoped lang="scss">
-
-</style>

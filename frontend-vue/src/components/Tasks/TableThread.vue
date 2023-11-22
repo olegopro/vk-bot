@@ -8,18 +8,17 @@
                  data-bs-toggle="modal"
             >
                 {{ task.first_name }} {{ task.last_name }}
-                <i class="bi bi-person-circle ms-2" style="font-size: 16px; opacity: 0.75"/>
+                <i class="bi bi-person-circle ms-2" style="font-size: 16px; opacity: 0.75" />
             </div>
         </td>
 
         <td>
-            <TaskStatus :type="task.status" :errorMessage="task.error_message"/>
+            <TaskStatus :type="task.status" :errorMessage="task.error_message" />
         </td>
 
         <td>{{ task.attempt_count }}</td>
 
         <td>
-
             <button
                 class="btn btn-primary button-style me-2"
                 data-bs-target="#taskDetails"
@@ -32,13 +31,7 @@
                 </svg>
             </button>
 
-            <button
-                class="btn btn-danger button-style"
-                data-bs-target="#deleteTask"
-                data-bs-toggle="modal"
-                type="button"
-                @click="deleteTask(task.id)"
-            >
+            <button class="btn btn-danger button-style"  @click="props.showDeleteTaskModal(task.id)">
                 <i class="bi bi-trash3" />
             </button>
         </td>
@@ -49,30 +42,22 @@
 </template>
 
 <script setup>
-    import { defineProps, defineEmits, toRefs } from 'vue'
+    import { defineProps, toRefs } from 'vue'
     import TaskStatus from './TaskStatus.vue'
     import { format } from 'date-fns'
+    import { useTasksStore } from '../../stores/TasksStore'
 
-    const props = defineProps(['task'])
-    const emit = defineEmits(['delete-task', 'task-details', 'account-details'])
+    const props = defineProps({
+        task: Object,
+        showDeleteTaskModal: Function
+    })
 
     const { task } = toRefs(props)
+    const tasksStore = useTasksStore()
 
-    const dateFormat = (date) => {
-        return format(new Date(date), 'yyyy-MM-dd HH:mm:ss')
-    }
-
-    const deleteTask = (id) => {
-        emit('delete-task', id)
-    }
-
-    const taskDetails = (id) => {
-        emit('task-details', id)
-    }
-
-    const accountDetails = (ownerId) => {
-        emit('account-details', ownerId)
-    }
+    const dateFormat = (date) => format(new Date(date), 'yyyy-MM-dd HH:mm:ss')
+    const taskDetails = () => tasksStore.fetchTaskDetails(task.id)
+    const accountDetails = () => tasksStore.fetchAccountDetails(task.owner_id)
 </script>
 
 <style scoped lang="scss">

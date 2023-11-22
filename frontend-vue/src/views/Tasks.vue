@@ -44,17 +44,16 @@
                         <th scope="col">Задача создана</th>
                     </tr>
                 </thead>
-                <tbody>
 
+                <tbody>
                     <TableThread
                         v-for="task in tasksStore.getTasks"
                         :task="task"
                         :key="task.id"
                         @taskDetails="getTaskDetailsById"
-                        @deleteTask="getTaskId"
                         @accountDetails="getAccountDetails"
+                        :showDeleteTaskModal="showDeleteTaskModal"
                     />
-
                 </tbody>
             </table>
 
@@ -67,7 +66,7 @@
         <AddTask />
         <TaskDetails :taskData="taskDetailsData" :taskId="taskId" @deleteLike="deleteLikeTask" ref="TaskDetailsRef" />
         <AccountDetails :accountData="accountDetailsData" />
-        <DeleteTask :taskId="taskId" :taskData="taskDetailsData" />
+        <DeleteTask :modalInstance="deleteTaskModal" :taskId="taskId" />
         <DeleteAllTasks :tasksCount="tasksStore.getTasks" />
     </Teleport>
 
@@ -85,22 +84,21 @@
     import TaskDetails from '../components/Tasks/Modals/TaskDetails.vue'
     import DeleteTask from '../components/Tasks/Modals/DeleteTask.vue'
     import DeleteAllTasks from '../components/Tasks/Modals/DeleteAllTasks.vue'
+    import { Modal } from 'bootstrap'
+
+    const deleteTaskModal = ref(null)
 
     const tasksStore = useTasksStore()
     const accountStore = useAccountStore()
     const route = useRoute()
     const router = useRouter()
 
-    const taskId = ref(null)
+    const taskId = ref(0)
 
     const currentStatus = ref(route.params.status || '')
     const accountDetailsData = ref(null)
     const taskDetailsData = ref(null)
     // const taskDetailsRef = ref(null)
-
-    onMounted(() => {
-        tasksStore.fetchTasks(currentStatus.value)
-    })
 
     const filterTasks = (event) => {
         const status = event.target.value
@@ -108,16 +106,11 @@
         tasksStore.fetchTasks(status)
     }
 
-    const getTaskId = (id) => {
-        taskId.value = id
-    }
+    const getTaskId = (id) => taskId.value = id
 
     const getAccountDetails = (ownerId) => {
-        console.log('ownerId', ownerId)
         accountStore.fetchOwnerData(ownerId)
-            .then(() => {
-                accountDetailsData.value = accountStore.getOwnerDataById(ownerId)
-            })
+            .then(() => accountDetailsData.value = accountStore.getOwnerDataById(ownerId))
             .catch(({ response }) => showErrorNotification(response.data.message))
     }
 
@@ -142,4 +135,13 @@
             })
     }
 
+    const showDeleteTaskModal = (id) => {
+        taskId.value = id
+        deleteTaskModal.value.show()
+    }
+
+    onMounted(() => {
+        tasksStore.fetchTasks(currentStatus.value)
+        deleteTaskModal.value = new Modal(document.getElementById('deleteTask'))
+    })
 </script>
