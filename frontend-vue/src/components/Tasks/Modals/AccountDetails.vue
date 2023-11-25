@@ -1,10 +1,9 @@
 <template>
     <div class="modal fade" id="accountDetails" tabindex="-1" aria-labelledby="Task details" style="display: none;" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content" >
-
+            <div class="modal-content">
                 <div class="modal-header" v-if="props.accountData">
-                    <h1 class="modal-title fs-4" >
+                    <h1 class="modal-title fs-4">
                         <span>{{ props.accountData.first_name }} {{ props.accountData.last_name }}</span>
 
                     </h1>
@@ -18,15 +17,17 @@
                             <img :src="props.accountData.photo_200" class="rounded-1 " alt="">
                         </div>
 
-                       <div class="col-6">
-                           <p class="mb-1"><b>Страна:</b> {{ props.accountData?.country?.title }}</p>
-                           <p class="mb-1"><b>Город:</b> {{ props.accountData?.city?.title }}</p>
-                           <p class="mb-1"><b>Друзья:</b> {{ props.accountData.friends_count }}</p>
-                           <p class="mb-1"><b>Подписчики:</b> {{ props.accountData.followers_count }}</p>
-                           <p class="mb-1"><b>Пол:</b> {{ formattedSex }}</p>
-                           <p class="mb-1"><b>День рождения:</b> {{ props.accountData.bdate }}</p>
-                           <p class="mb-0"><b>{{formattedSex === 'Мужской' ? 'Был' : 'Была'}} в сети: </b> {{ date(accountData.last_seen?.time) }}</p>
-                       </div>
+                        <div class="col-6">
+                            <p class="mb-1"><b>Страна:</b> {{ props.accountData?.country?.title }}</p>
+                            <p class="mb-1"><b>Город:</b> {{ props.accountData?.city?.title }}</p>
+                            <p class="mb-1"><b>Друзья:</b> {{ props.accountData.friends_count }}</p>
+                            <p class="mb-1"><b>Подписчики:</b> {{ props.accountData.followers_count }}</p>
+                            <p class="mb-1"><b>Пол:</b> {{ formattedSex }}</p>
+                            <p class="mb-1"><b>День рождения:</b> {{ props.accountData.bdate }}</p>
+                            <p class="mb-0">
+                                <b>{{ formattedSex === 'Мужской' ? 'Был' : 'Была' }} в сети: </b> {{ date(accountData.last_seen?.time) }}
+                            </p>
+                        </div>
                     </div>
 
                     <p class="mb-0"><b>Статус:</b> {{ props.accountData.status }}</p>
@@ -41,18 +42,12 @@
 </template>
 
 <script setup>
-    import { defineProps, onMounted } from 'vue'
-    import { Modal } from 'bootstrap'
+    import { computed, defineProps } from 'vue'
     import OnlineStatus from '../../Account/OnlineStatus.vue'
 
-    const props = defineProps(['accountData'])
-    let modal
+    const props = defineProps(['accountData', 'modalInstance'])
 
-    onMounted(() => {
-        modal = new Modal(document.getElementById('accountDetails'))
-    })
-
-    const formattedSex = () => {
+    const formattedSex = computed(() => {
         switch (props.accountData.sex) {
             case 1:
                 return 'Женский'
@@ -61,53 +56,12 @@
             default:
                 return 'Не указан'
         }
-    }
+    })
 
-    const modalHide = () => {
-        modal.hide()
-    }
+    const modalHide = () => props.modalInstance.hide()
 
-    const date = (timestamp) => {
-        return new Date(timestamp * 1000).toLocaleTimeString('ru-RU')
-    }
+    const date = (timestamp) => new Date(timestamp * 1000).toLocaleTimeString('ru-RU')
 </script>
-
-<!--<script>
-    import { Modal } from 'bootstrap'
-    import OnlineStatus from '../../Account/OnlineStatus.vue'
-
-    export default {
-        components: { OnlineStatus },
-        props: ['accountData'],
-
-        mounted() {
-            this.modal = new Modal(document.getElementById('accountDetails'))
-        },
-
-        computed: {
-            formattedSex() {
-                switch (this.accountData.sex) {
-                    case 1:
-                        return 'Женский'
-                    case 2:
-                        return 'Мужской'
-                    default:
-                        return 'Не указан'
-                }
-            }
-        },
-
-        methods: {
-            modalHide() {
-                this.modal.hide()
-            },
-
-            date(timestamp) {
-                return new Date(timestamp * 1000).toLocaleTimeString('ru-RU')
-            }
-        }
-    }
-</script>-->
 
 <style scoped lang="scss">
     #accountDetails {

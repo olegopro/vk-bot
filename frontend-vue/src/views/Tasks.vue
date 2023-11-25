@@ -49,9 +49,9 @@
                         v-for="task in tasksStore.getTasks"
                         :task="task"
                         :key="task.id"
-                        @accountDetails="getAccountDetails"
                         :showTaskDetailsModal="showTaskDetailsModal"
                         :showDeleteTaskModal="showDeleteTaskModal"
+                        :showAccountDetailsModal="showAccountDetailsModal"
                     />
                 </tbody>
             </table>
@@ -64,9 +64,8 @@
     <Teleport to="body">
         <AddTask />
         <TaskDetails :modalInstance="taskDetailsModal" :taskData="taskDetailsData" />
-        <AccountDetails :accountData="accountDetailsData" />
+        <AccountDetails :modalInstance="accountDetailsModal" :accountData="accountDetailsData" />
         <DeleteTask :modalInstance="deleteTaskModal" :taskId="taskId" />
-
         <DeleteAllTasks :modalInstance="deleteAllTasksModal" />
     </Teleport>
 
@@ -89,6 +88,7 @@
     const taskDetailsModal = ref(null)
     const deleteTaskModal = ref(null)
     const deleteAllTasksModal = ref(null)
+    const accountDetailsModal = ref(null)
 
     const tasksStore = useTasksStore()
     const accountStore = useAccountStore()
@@ -107,10 +107,16 @@
         tasksStore.fetchTasks(status)
     }
 
-    const getAccountDetails = (ownerId) => {
+    const showAccountDetailsModal = (ownerId) => {
+        accountDetailsData.value = null
+        accountDetailsModal.value.show()
+
         accountStore.fetchOwnerData(ownerId)
-            .then(() => accountDetailsData.value = accountStore.getOwnerDataById(ownerId))
-            .catch(({ response }) => showErrorNotification(response.data.message))
+            .then(() => {
+                const ownerData = accountStore.getOwnerDataById(ownerId)
+                accountDetailsData.value = { ...ownerData }
+            })
+            .catch(error => showErrorNotification(error))
     }
 
     const showTaskDetailsModal = async (newTaskId) => {
@@ -133,5 +139,6 @@
         deleteTaskModal.value = new Modal(document.getElementById('deleteTask'))
         taskDetailsModal.value = new Modal(document.getElementById('taskDetails'))
         deleteAllTasksModal.value = new Modal(document.getElementById('deleteAllTasks'))
+        accountDetailsModal.value = new Modal(document.getElementById('accountDetails'))
     })
 </script>

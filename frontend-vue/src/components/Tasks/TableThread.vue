@@ -2,11 +2,7 @@
     <tr>
         <th scope="row">{{ task.id }}</th>
         <td class="user-name inner-shadow">
-            <div class="flex-container"
-                 @click="accountDetails(task.owner_id)"
-                 data-bs-target="#accountDetails"
-                 data-bs-toggle="modal"
-            >
+            <div class="flex-container" @click="showAccountDetailsModal(task.owner_id)" >
                 {{ task.first_name }} {{ task.last_name }}
                 <i class="bi bi-person-circle ms-2" style="font-size: 16px; opacity: 0.75" />
             </div>
@@ -29,7 +25,7 @@
                 </svg>
             </button>
 
-            <button class="btn btn-danger button-style"  @click="props.showDeleteTaskModal(task.id)">
+            <button class="btn btn-danger button-style" @click="props.showDeleteTaskModal(task.id)">
                 <i class="bi bi-trash3" />
             </button>
         </td>
@@ -43,20 +39,18 @@
     import { defineProps, toRefs } from 'vue'
     import TaskStatus from './TaskStatus.vue'
     import { format } from 'date-fns'
-    import { useTasksStore } from '../../stores/TasksStore'
+    // import { useTasksStore } from '../../stores/TasksStore'
 
     const props = defineProps({
         task: Object,
         showTaskDetailsModal: Function,
-        showDeleteTaskModal: Function
+        showDeleteTaskModal: Function,
+        showAccountDetailsModal: Function
     })
 
     const { task } = toRefs(props)
-    const tasksStore = useTasksStore()
 
     const dateFormat = (date) => format(new Date(date), 'yyyy-MM-dd HH:mm:ss')
-    const taskDetails = () => tasksStore.fetchTaskDetails(task.id)
-    const accountDetails = () => tasksStore.fetchAccountDetails(task.owner_id)
 </script>
 
 <style scoped lang="scss">

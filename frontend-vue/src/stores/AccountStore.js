@@ -137,8 +137,8 @@ export const useAccountStore = defineStore('account', {
             }
         },
 
-        getAccountDetails(ownerId) {
-            axios.get(`http://localhost:8080/api/account/${ownerId}`)
+        async getAccountDetails(ownerId) {
+             await axios.get(`http://localhost:8080/api/account/${ownerId}`)
                 .then(response => {
                     return response.data
                 })
@@ -161,6 +161,7 @@ export const useAccountStore = defineStore('account', {
         getAccountFollowers() {
             return this.accountFollowers
         },
+
         getAccountFriends() {
             return this.accountFriends
         },
