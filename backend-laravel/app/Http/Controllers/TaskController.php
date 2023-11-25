@@ -110,6 +110,12 @@ class TaskController extends Controller
         if ($taskStatus === 'pending') {
             $this->deletePendingTask($id);
         }
+
+        // Если задача не выполнена (failed)
+        if ($taskStatus === 'failed') {
+            // Выполнить действия для удаления задачи с статусом failed
+            $this->deleteFailedTask($id);
+        }
     }
 
     public function deleteLike($taskId)
@@ -164,6 +170,14 @@ class TaskController extends Controller
         DB::table('tasks')->where('id', $taskId)->delete();
 
         return response()->json(['message' => 'Завершенная задача была удалена']);
+    }
+
+    private function deleteFailedTask(int $taskId)
+    {
+        // Удаление задачи из таблицы tasks
+        DB::table('tasks')->where('id', $taskId)->delete();
+
+        return response()->json(['message' => 'Невыполненная задача была удалена']);
     }
 
     private function getAccessTokenByAccountID($account_id)
