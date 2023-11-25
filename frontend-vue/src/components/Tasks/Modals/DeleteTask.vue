@@ -34,7 +34,7 @@
     const deleteTaskById = () => {
         disable.value = true
         tasksStore.deleteTask(props.taskId)
-            .then(() => props.modalInstance.hide())
+            .then(() => modalHide())
             .finally(() => disable.value = false)
     }
 

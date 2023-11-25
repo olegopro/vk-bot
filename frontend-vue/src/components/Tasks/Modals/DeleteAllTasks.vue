@@ -1,5 +1,5 @@
 <template>
-    <div class="modal fade" ref="modalRef" tabindex="-1" aria-labelledby="Delete all tasks" style="display: none;" aria-hidden="true">
+    <div class="modal fade" id="deleteAllTasks" tabindex="-1" aria-labelledby="Delete all tasks" style="display: none;" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <form @submit.prevent="deleteTasks" class="modal-content">
                 <div class="modal-header">
@@ -7,7 +7,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <p class="mb-0">Удалить все задачи <strong>({{ tasks.length }})</strong></p>
+                    <p class="mb-0">Удалить все задачи <strong>({{ tasksStore.getTasks.length }})</strong></p>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" @click="modalHide">Отмена</button>
@@ -19,32 +19,23 @@
 </template>
 
 <script setup>
-    import { ref, onMounted } from 'vue'
-    import { Modal } from 'bootstrap'
+    import { ref, defineProps } from 'vue'
     import { useTasksStore } from '@/stores/TasksStore'
 
-    const tasksStore = useTasksStore()
-    const tasks = tasksStore.getTasks
-    const deleteAllTasks = tasksStore.deleteAllTasks
-
-    const disable = ref(false)
-    const modalRef = ref(null)
-    let modal
-
-    onMounted(() => {
-        modal = new Modal(modalRef.value)
+    const props = defineProps({
+        modalInstance: Object
     })
 
-    const deleteTasks = async () => {
+    const disable = ref(false)
+
+    const tasksStore = useTasksStore()
+
+    const deleteTasks = () => {
         disable.value = true
-
-        await deleteAllTasks()
-
-        modalHide()
-        disable.value = false
+        tasksStore.deleteAllTasks()
+            .then(() => modalHide())
+            .finally(() => disable.value = false)
     }
 
-    const modalHide = () => {
-        modal.hide()
-    }
+    const modalHide = () => props.modalInstance.hide()
 </script>

@@ -13,9 +13,8 @@
 
             <button class="btn btn-danger btn-action me-3"
                     :disabled="tasksStore.getTasks.length === 0"
-                    data-bs-target="#deleteAllTasks"
-                    data-bs-toggle="modal"
-                    type="button">
+                    @click="showDeleteAllTasksModal"
+            >
                 Очистить список
             </button>
 
@@ -67,7 +66,8 @@
         <TaskDetails :modalInstance="taskDetailsModal" :taskData="taskDetailsData" />
         <AccountDetails :accountData="accountDetailsData" />
         <DeleteTask :modalInstance="deleteTaskModal" :taskId="taskId" />
-        <DeleteAllTasks :tasksCount="tasksStore.getTasks" />
+
+        <DeleteAllTasks :modalInstance="deleteAllTasksModal" />
     </Teleport>
 
 </template>
@@ -88,6 +88,7 @@
 
     const taskDetailsModal = ref(null)
     const deleteTaskModal = ref(null)
+    const deleteAllTasksModal = ref(null)
 
     const tasksStore = useTasksStore()
     const accountStore = useAccountStore()
@@ -125,9 +126,12 @@
         deleteTaskModal.value.show()
     }
 
+    const showDeleteAllTasksModal = () => deleteAllTasksModal.value.show()
+
     onMounted(() => {
         tasksStore.fetchTasks(currentStatus.value)
         deleteTaskModal.value = new Modal(document.getElementById('deleteTask'))
         taskDetailsModal.value = new Modal(document.getElementById('taskDetails'))
+        deleteAllTasksModal.value = new Modal(document.getElementById('deleteAllTasks'))
     })
 </script>
