@@ -21,10 +21,8 @@
         <td>
             <button
                 class="btn btn-primary button-style me-2"
-                data-bs-target="#taskDetails"
-                data-bs-toggle="modal"
                 type="button"
-                @click="taskDetails(task.id)"
+                @click="showTaskDetailsModal(task.id)"
             >
                 <svg width="16" height="16">
                     <use xlink:href="#info"></use>
@@ -49,6 +47,7 @@
 
     const props = defineProps({
         task: Object,
+        showTaskDetailsModal: Function,
         showDeleteTaskModal: Function
     })
 

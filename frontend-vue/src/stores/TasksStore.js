@@ -17,12 +17,19 @@ export const useTasksStore = defineStore('tasks', {
             return await axios.post(`http://localhost:8080/api/account/task/${id}`)
         },
 
-        taskDetails(taskId) {
-            return axios.post(`http://localhost:8080/api/tasks/task-info/${taskId}`)
+        // taskDetails(taskId) {
+        //     return axios.post(`http://localhost:8080/api/tasks/task-info/${taskId}`)
+        // },
+
+         async taskDetails(taskId) {
+            const response = await axios.post(`http://localhost:8080/api/tasks/task-info/${taskId}`)
+            return response.data
         },
 
-        deleteLike(taskId) {
-            return axios.delete(`http://localhost:8080/api/tasks/delete-like/${taskId}`)
+        async deleteLike(taskId) {
+            await axios.delete(`http://localhost:8080/api/tasks/delete-like/${taskId}`)
+            // После удаления лайка обновляем данные о задаче
+            this.taskDetails(taskId)
         },
 
         async deleteTask(id) {
@@ -43,8 +50,6 @@ export const useTasksStore = defineStore('tasks', {
     },
 
     getters: {
-        getTasks() {
-            return this.tasks
-        }
+        getTasks: state => state.tasks
     }
 })

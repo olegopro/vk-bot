@@ -3,7 +3,7 @@
         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
             <div class="modal-content">
                 <div class="modal-header" v-if="taskData">
-                    <h1 class="modal-title fs-5" id="Delete task">Информация о задаче #{{ taskId }}</h1>
+                    <h1 class="modal-title fs-5" id="Delete task">Информация о задаче #{{ taskData.taskId }}</h1>
                     <!--<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>-->
                 </div>
 
@@ -49,9 +49,15 @@
                     </div>
 
                 </div>
-
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-danger" @click="deleteLikeById" v-if="isUserLiked" :disabled="disableSubmit">Отменить лайк</button>
+                    <button type="button"
+                            class="btn btn-danger"
+                            @click="deleteLikeById"
+                            :disabled="disableSubmit"
+                            v-show="disableSubmit || isUserLiked"
+                    >
+                        Отменить лайк
+                    </button>
                     <button type="button" class="btn btn-secondary" @click="modalHide">Закрыть</button>
                 </div>
             </div>
@@ -59,54 +65,45 @@
     </div>
 </template>
 
-<script>
-    import { Modal } from 'bootstrap'
+<script setup>
+    import { ref, computed, watch, defineProps } from 'vue'
+    import { format } from 'date-fns'
+    import { useTasksStore } from '../../../stores/TasksStore'
+    import { showErrorNotification } from '../../../helpers/notyfHelper'
 
-    export default {
-        props: ['taskData', 'taskId'],
-        emits: ['deleteLike'],
+    const props = defineProps({
+        modalInstance: Object,
+        taskData: Object
+    })
 
-        data() {
-            return {
-                disableSubmit: false
-            }
-        },
+    const tasksStore = useTasksStore()
+    const disableSubmit = ref(false)
 
-        computed: {
-            isUserLiked() {
-                if (this.taskData && this.taskData.liked_users && this.taskData.account_id) {
-                    return this.taskData.liked_users.some(user => user.id === this.taskData.account_id)
-                }
-
-                return false
-            }
-        },
-
-        mounted() {
-            this.modal = new Modal(document.getElementById('taskDetails'))
-        },
-
-        methods: {
-            modalHide() {
-                this.modal.hide()
-            },
-
-            formatData(timestamp) {
-                const date = new Date(timestamp * 1000)
-                const year = date.getFullYear()
-                const month = date.getMonth() + 1 // Месяцы начинаются с 0, поэтому добавляем 1
-                const day = date.getDate()
-                const hours = date.getHours()
-                const minutes = date.getMinutes()
-
-                return `${year}-${month}-${day} ${hours}:${minutes}`
-            },
-
-            deleteLikeById() {
-                this.$emit('deleteLike', this.taskId)
-                this.disableSubmit = true
-            }
+    const isUserLiked = computed(() => {
+        if (props.taskData && props.taskData.liked_users && props.taskData.account_id) {
+            return props.taskData.liked_users.some(user => user.id === props.taskData.account_id)
         }
+
+        return false
+    })
+
+    watch(() => props.taskData, newTaskData => {
+        if (newTaskData && newTaskData.taskId) {
+            tasksStore.taskDetails(newTaskData.taskId)
+                .catch(error => showErrorNotification(error.message))
+        }
+    })
+
+    const modalHide = () => props.modalInstance.hide()
+
+    const formatData = timestamp => format(new Date(timestamp * 1000), 'yyyy-MM-dd HH:mm:ss')
+
+    const deleteLikeById = () => {
+        disableSubmit.value = true
+        tasksStore.deleteLike(props.taskData.taskId)
+            .then(() => tasksStore.taskDetails(props.taskData.taskId))
+            .catch(error => showErrorNotification(error.message))
+            .finally(() => disableSubmit.value = false)
     }
 </script>
 
