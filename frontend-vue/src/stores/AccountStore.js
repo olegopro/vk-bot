@@ -35,6 +35,7 @@ export const useAccountStore = defineStore('account', {
                 axios.post(`http://localhost:8080/api/account/data/${id}`),
                 axios.post(`http://localhost:8080/api/account/friends/count/${id}`)
             ])
+
             const accountData = accountDataResponse.data.response[0]
             const friendsCount = friendsCountResponse.data.response.count
             this.ownerData.push({ ...accountData, friends_count: friendsCount })
@@ -105,11 +106,6 @@ export const useAccountStore = defineStore('account', {
 
             return data.response
         },
-
-        // async deleteAccount(id) {
-        //     await axios.delete(`http://localhost:8080/api/accounts/${id}`)
-        //     this.account = this.account.filter(account => account.id !== id)
-        // },
 
         async addPostsToLike(accountId, taskCount) {
             const { data } = await axios.post('http://localhost:8080/api/account/get-posts-for-like', null, {

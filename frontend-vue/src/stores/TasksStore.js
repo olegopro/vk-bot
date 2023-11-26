@@ -17,10 +17,6 @@ export const useTasksStore = defineStore('tasks', {
             return await axios.post(`http://localhost:8080/api/account/task/${id}`)
         },
 
-        // taskDetails(taskId) {
-        //     return axios.post(`http://localhost:8080/api/tasks/task-info/${taskId}`)
-        // },
-
          async taskDetails(taskId) {
             const response = await axios.post(`http://localhost:8080/api/tasks/task-info/${taskId}`)
             return response.data
