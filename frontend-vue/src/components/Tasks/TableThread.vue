@@ -39,7 +39,6 @@
     import { defineProps, toRefs } from 'vue'
     import TaskStatus from './TaskStatus.vue'
     import { format } from 'date-fns'
-    // import { useTasksStore } from '../../stores/TasksStore'
 
     const props = defineProps({
         task: Object,

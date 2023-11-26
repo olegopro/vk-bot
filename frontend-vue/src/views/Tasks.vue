@@ -19,9 +19,9 @@
             </button>
 
             <button class="btn btn-success btn-action"
-                    data-bs-target="#addTask"
-                    data-bs-toggle="modal"
-                    type="button">
+                    type="button"
+                    @click="showAddTaskModal"
+            >
                 Добавить задачу
             </button>
 
@@ -62,7 +62,7 @@
     </div>
 
     <Teleport to="body">
-        <AddTask />
+        <AddTask :modalInstance="addTasksModal"/>
         <TaskDetails :modalInstance="taskDetailsModal" :taskData="taskDetailsData" />
         <AccountDetails :modalInstance="accountDetailsModal" :accountData="accountDetailsData" />
         <DeleteTask :modalInstance="deleteTaskModal" :taskId="taskId" />
@@ -89,6 +89,7 @@
     const deleteTaskModal = ref(null)
     const deleteAllTasksModal = ref(null)
     const accountDetailsModal = ref(null)
+    const addTasksModal = ref(null)
 
     const tasksStore = useTasksStore()
     const accountStore = useAccountStore()
@@ -133,6 +134,7 @@
     }
 
     const showDeleteAllTasksModal = () => deleteAllTasksModal.value.show()
+    const showAddTaskModal = () => addTasksModal.value.show()
 
     onMounted(() => {
         tasksStore.fetchTasks(currentStatus.value)
@@ -140,5 +142,6 @@
         taskDetailsModal.value = new Modal(document.getElementById('taskDetails'))
         deleteAllTasksModal.value = new Modal(document.getElementById('deleteAllTasks'))
         accountDetailsModal.value = new Modal(document.getElementById('accountDetails'))
+        addTasksModal.value = new Modal(document.getElementById('addTask'))
     })
 </script>

@@ -34,105 +34,44 @@
 </template>
 
 <script setup>
-    import { ref, onMounted, watch } from 'vue'
+    import { ref, onMounted, watch, defineProps } from 'vue'
     import { useAccountStore } from '@/stores/AccountStore'
     import { useAccountsStore } from '../../../stores/AccountsStore'
-    import { Modal } from 'bootstrap'
-    import { showSuccessNotification } from '../../../helpers/notyfHelper'
+    import { showErrorNotification, showSuccessNotification } from '../../../helpers/notyfHelper'
+    import { useTasksStore } from '../../../stores/TasksStore'
+
+    const props = defineProps({
+        modalInstance: Object
+    })
 
     const accountStore = useAccountStore()
     const accountsStore = useAccountsStore()
+    const tasksStore = useTasksStore()
+
     const accountId = ref('selectAccount')
     const disablePost = ref(true)
     const loading = ref(false)
     const taskCount = ref(10)
-    let modal
 
-    onMounted(() => {
-        accountsStore.fetchAccounts() // Предполагается, что у вас есть такой метод в хранилище
-        modal = new Modal(document.getElementById('addTask'))
-    })
-
-    watch(accountId, (newVal) => {
-        disablePost.value = newVal === 'selectAccount'
-    })
-
-    const modalHide = () => {
-        modal.hide()
-    }
+    watch(accountId, newVal => disablePost.value = newVal === 'selectAccount')
 
     const addNewTask = () => {
         disablePost.value = true
         loading.value = true
 
         accountStore.addPostsToLike(accountId.value, taskCount.value)
-            .then(() => {
+            .then(response => {
                 modalHide()
                 disablePost.value = false
                 loading.value = false
                 accountId.value = 'selectAccount'
-                showSuccessNotification('Задача добавлена')
+                showSuccessNotification(response)
+                tasksStore.fetchTasks()
             })
-            .catch((error) => {
-                // Обработка ошибок
-                console.error('Произошла ошибка:', error)
-            })
+            .catch(error => showErrorNotification(error))
     }
+
+    const modalHide = () => props.modalInstance.hide()
+
+    onMounted(() => accountsStore.fetchAccounts())
 </script>
-
-<!--<script>
-    import { mapActions, mapGetters } from 'vuex'
-    import { Modal } from 'bootstrap'
-    import { showSuccessNotification } from '../../../helpers/notyfHelper'
-
-    export default {
-        data() {
-            return {
-                accountId: 'selectAccount',
-                disablePost: true,
-                loading: false,
-                taskCount: 10
-            }
-        },
-
-        computed: {
-            ...mapGetters('accounts', ['getAccounts'])
-        },
-
-        watch: {
-            accountId() {
-                this.accountId === 'selectAccount'
-                    ? this.disablePost = true
-                    : this.disablePost = false
-            }
-        },
-
-        mounted() {
-            this.accounts()
-            this.modal = new Modal(document.getElementById('addTask'))
-        },
-
-        methods: {
-            ...mapActions('accounts', ['accounts']),
-            ...mapActions('account', ['addPostsToLike']),
-
-            modalHide() {
-                this.modal.hide()
-            },
-
-            addNewTask() {
-                this.disablePost = true
-                this.loading = true
-                this.addPostsToLike({ accountId: this.accountId, taskCount: this.taskCount })
-                    .then(() => {
-                        this.modalHide()
-                        this.disablePost = false
-                        this.loading = false
-                        this.accountId = 'selectAccount'
-                        showSuccessNotification('Задача добавлена')
-                    })
-            }
-
-        }
-    }
-</script>-->
