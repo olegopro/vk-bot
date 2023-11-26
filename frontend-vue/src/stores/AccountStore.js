@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import axios from 'axios'
 import axiosThrottle from 'axios-request-throttle'
+import { showErrorNotification } from '../helpers/notyfHelper'
 
 export const useAccountStore = defineStore('account', {
     state: () => ({
@@ -142,10 +143,7 @@ export const useAccountStore = defineStore('account', {
                 .then(response => {
                     return response.data
                 })
-                .catch(error => {
-                    // Здесь можно вызвать вашу функцию для показа уведомлений
-                    console.error(error.response.data.message)
-                })
+                .catch(error => showErrorNotification(error.response.data.message))
         }
     },
 

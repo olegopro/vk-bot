@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import axios from 'axios'
+import { showErrorNotification } from '../helpers/notyfHelper'
 
 export const useAccountsStore = defineStore('accounts', {
     state: () => ({
@@ -15,13 +16,13 @@ export const useAccountsStore = defineStore('accounts', {
         async addAccount(accessToken) {
             await axios.post('http://localhost:8080/api/account/add', { access_token: accessToken })
                 .then(response => this.accounts.push(response.data))
-                .catch(error => console.warn(error))
+                .catch(error => showErrorNotification(error))
         },
 
         async deleteAccount(accountId) {
             await axios.delete(`http://localhost:8080/api/accounts/${accountId}`)
                 .then(() => (this.accounts = this.accounts.filter(account => account.account_id !== accountId)))
-                .catch(error => console.warn(error))
+                .catch(error => showErrorNotification(error))
         }
     },
 
