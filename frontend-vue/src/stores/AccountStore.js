@@ -34,7 +34,7 @@ export const useAccountStore = defineStore('account', {
             const [accountDataResponse, friendsCountResponse] = await Promise.all([
                 axios.post(`http://localhost:8080/api/account/data/${id}`),
                 axios.post(`http://localhost:8080/api/account/friends/count/${id}`)
-            ])
+            ]).catch(error => showErrorNotification(error))
 
             const accountData = accountDataResponse.data.response[0]
             const friendsCount = friendsCountResponse.data.response.count
@@ -86,34 +86,29 @@ export const useAccountStore = defineStore('account', {
         },
 
         async addLike(accountId, ownerId, itemId) {
-            const { data } = await axios.post('http://localhost:8080/api/account/like', null, {
-                params: {
-                    account_id: accountId,
-                    owner_id: ownerId,
-                    item_id: itemId
-                }
+            const { data } = await axios.post('http://localhost:8080/api/account/like', {
+                account_id: accountId,
+                owner_id: ownerId,
+                item_id: itemId
             })
 
             return data
         },
 
         async getScreenNameById(accountId) {
-            const { data } = await axios.post('http://localhost:8080/api/account/get-screen-name-by-id', null, {
-                params: {
-                    user_id: accountId
-                }
+            const { data } = await axios.post('http://localhost:8080/api/account/get-screen-name-by-id', {
+                user_id: accountId
             })
 
             return data.response
         },
 
         async addPostsToLike(accountId, taskCount) {
-            const { data } = await axios.post('http://localhost:8080/api/account/get-posts-for-like', null, {
-                params: {
-                    account_id: accountId,
-                    task_count: taskCount
-                }
+            const { data } = await axios.post('http://localhost:8080/api/account/get-posts-for-like', {
+                account_id: accountId,
+                task_count: taskCount
             })
+
             this.accountNewsFeed = [...this.accountNewsFeed, ...data]
         },
 
@@ -132,14 +127,6 @@ export const useAccountStore = defineStore('account', {
                 // Добавляем новый объект в массив
                 this.ownerData.push(accountData)
             }
-        },
-
-        async getAccountDetails(ownerId) {
-             await axios.get(`http://localhost:8080/api/account/${ownerId}`)
-                .then(response => {
-                    return response.data
-                })
-                .catch(error => showErrorNotification(error.response.data.message))
         }
     },
 
