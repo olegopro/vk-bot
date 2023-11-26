@@ -150,44 +150,15 @@ export const useAccountStore = defineStore('account', {
     },
 
     getters: {
-        getAccount() {
-            return this.account
-        },
-
-        getOwnerData() {
-            return this.ownerData
-        },
-
-        getAccountFollowers() {
-            return this.accountFollowers
-        },
-
-        getAccountFriends() {
-            return this.accountFriends
-        },
-
-        getAccountFriendsCount() {
-            return this.accountFriendsCount
-        },
-
-        getAccountNewsFeed() {
-            return this.accountNewsFeed
-        },
-
-        getNextFrom() {
-            return this.nextFrom
-        },
-
-        getPreviousNextFrom() {
-            return this.previousNextFrom
-        },
-
-        getOwnerDataById: (state) => (id) => {
-            return state.ownerData.find(user => user.id === Math.abs(id))
-        },
-
-        getAccountById: (state) => (id) => {
-            return state.account.find(account => account.id === Math.abs(id))
-        }
+        getAccount: state => () => state.account,
+        getOwnerData: state => () => state.ownerData,
+        getAccountFollowers: state => () => state.accountFollowers,
+        getAccountFriends: state => () => state.accountFriends,
+        getAccountFriendsCount: state => () => state.accountFriendsCount,
+        getAccountNewsFeed: state => () => state.accountNewsFeed,
+        getNextFrom: state => () => state.nextFrom,
+        getPreviousNextFrom: state => () => state.previousNextFrom,
+        getOwnerDataById: state => (id) => state.ownerData.find(user => user.id === Math.abs(id)),
+        getAccountById: state => (id) => state.account.find(account => account.id === Math.abs(id))
     }
 })

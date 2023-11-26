@@ -26,8 +26,6 @@ export const useAccountsStore = defineStore('accounts', {
     },
 
     getters: {
-        getAccounts() {
-            return this.accounts
-        }
+        getAccounts: state => () => state.accounts
     }
 })

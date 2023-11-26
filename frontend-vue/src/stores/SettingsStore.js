@@ -24,8 +24,6 @@ export const useSettingsStore = defineStore('settings', {
     },
 
     getters: {
-        getSettings() {
-            return this.settings
-        }
+        getSettings: state => () => state.settings
     }
 })
