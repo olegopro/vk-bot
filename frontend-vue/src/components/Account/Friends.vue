@@ -1,7 +1,7 @@
 <template>
     <div class="row mt-5 mb-5">
         <h1>Друзья</h1>
-        <div class="col-2" v-for="friend in friends" :key="friend.id">
+        <div class="col-2" v-for="friend in state.friends" :key="friend.id">
             <div class="card">
                 <img class="bd-placeholder-img card-img-top"
                      width="100%"
@@ -18,19 +18,19 @@
 </template>
 
 <script setup>
-    import { ref, onMounted } from 'vue'
+    import { onMounted, computed, reactive } from 'vue'
     import { useRoute } from 'vue-router'
     import { useAccountStore } from '@/stores/AccountStore'
 
     const route = useRoute()
     const accountStore = useAccountStore()
-    const friends = ref([])
 
-    onMounted(async () => {
-        const id = route.params.id
-        await accountStore.fetchAccountFriends(id)
-        friends.value = accountStore.getAccountFriends
+    const state = reactive({
+        id: route.params.id,
+        friends: computed(() => accountStore.getAccountFriends(state.id))
     })
+
+    onMounted(() => accountStore.fetchAccountFriends(state.id))
 </script>
 
 <style scoped lang="scss">

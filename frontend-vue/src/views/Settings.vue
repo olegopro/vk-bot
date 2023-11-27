@@ -86,50 +86,6 @@
     }
 </script>
 
-<!--<script>
-    import { mapActions, mapGetters } from 'vuex'
-
-    export default {
-        data() {
-            return {
-                showFriends: null,
-                showFollowers: null,
-                taskTimeout: null,
-                loadingStatus: false,
-                saveSettingStatus: false
-            }
-        },
-
-        computed: {
-            ...mapGetters('settings', ['getSettings'])
-        },
-
-        async mounted() {
-            await this.settings()
-                .then(() => (this.loadingStatus = true))
-
-            this.showFriends = this.getSettings.show_friends === 1
-            this.showFollowers = this.getSettings.show_followers === 1
-            this.taskTimeout = this.getSettings.task_timeout
-        },
-
-        methods: {
-            ...mapActions('settings', ['settings', 'saveSettings']),
-
-            async save() {
-                this.saveSettingStatus = true
-
-                await this.saveSettings({
-                    showFollowers: this.showFollowers === true ? 1 : 0,
-                    showFriends: this.showFriends === true ? 1 : 0,
-                    taskTimeout: this.taskTimeout
-                })
-                    .finally(() => (this.saveSettingStatus = false))
-            }
-        }
-    }
-</script>-->
-
 <style scoped lang="scss">
     .settings {
         box-shadow: 0 1px 27px 0 rgba(34, 60, 80, 0.2);

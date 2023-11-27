@@ -41,14 +41,14 @@ export const useAccountStore = defineStore('account', {
             this.ownerData.push({ ...accountData, friends_count: friendsCount })
         },
 
-        async fetchAccountFollowers(id) {
-            const { data } = await axios.post(`http://localhost:8080/api/account/followers/${id}`)
-            this.accountFollowers = data
+        async fetchAccountFollowers(accountId) {
+            axios.post(`http://localhost:8080/api/account/followers/${accountId}`)
+                .then(response => this.accountFollowers[accountId] = response.data.response.items)
         },
 
-        async fetchAccountFriends(id) {
-            const { data } = await axios.get(`http://localhost:8080/api/account/friends/${id}`)
-            this.accountFriends = data
+        async fetchAccountFriends(accountId) {
+            axios.post(`http://localhost:8080/api/account/friends/${accountId}`)
+                .then(response => this.accountFriends[accountId] = response.data.response.items)
         },
 
         async fetchAccountFriendsCount(id) {
@@ -141,8 +141,8 @@ export const useAccountStore = defineStore('account', {
     getters: {
         getAccount: state => () => state.account,
         getOwnerData: state => () => state.ownerData,
-        getAccountFollowers: state => () => state.accountFollowers,
-        getAccountFriends: state => () => state.accountFriends,
+        getAccountFollowers: (state) => (accountId) => state.accountFollowers[accountId] || [],
+        getAccountFriends: (state) => (accountId) => state.accountFriends[accountId] || [],
         getAccountFriendsCount: state => () => state.accountFriendsCount,
         getAccountNewsFeed: state => () => state.accountNewsFeed,
         getNextFrom: state => () => state.nextFrom,

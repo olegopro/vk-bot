@@ -42,9 +42,8 @@
             </div>
         </div>
     </div>
-    <!--<Followers v-if="settingsStore.getSettings.show_followers === 1" />-->
-    <Followers />
-    <Friends v-if="settingsStore.getSettings.show_friends === 1" />
+    <Followers v-if="settingsStore.getSettings().show_followers === 1" />
+    <Friends v-if="settingsStore.getSettings().show_friends === 1" />
     <Newsfeed />
 </template>
 
@@ -71,6 +70,7 @@
     onMounted(async () => {
         await accountStore.fetchOwnerData(userID)
         await accountStore.getOwnerDataById(userID)
+        await settingsStore.fetchSettings()
         specificAccount.value = accountStore.getOwnerDataById(userID)
     })
 
