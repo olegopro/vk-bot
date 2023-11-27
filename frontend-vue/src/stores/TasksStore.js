@@ -37,9 +37,5 @@ export const useTasksStore = defineStore('tasks', {
             await axios.delete('http://localhost:8080/api/tasks/delete-all-tasks')
                 .then(() => this.tasks = [])
         }
-    },
-
-    getters: {
-        getTasks: state => state.tasks
     }
 })

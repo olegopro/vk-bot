@@ -10,7 +10,7 @@
     <div v-masonry item-selector=".item" v-if="showNewsfeed" transition-duration="0s" class="row">
         <div v-masonry-tile
              :class="[currentColumnClass, 'item', 'mb-4', 'placeholder-glow']"
-             v-for="(post, index) in accountStore.getAccountNewsFeed()"
+             v-for="(post, index) in accountStore.accountNewsFeed"
              :key="index"
         >
             <button class="account-info-btn mr-1"
@@ -119,7 +119,7 @@
     const accountStore = useAccountStore()
     const route = useRoute()
 
-    const nextFrom = ref(accountStore.getNextFrom())
+    const nextFrom = ref(accountStore.nextForm)
     const ownerDataById = ref(null)
     const userID = ref(null)
     const loadingStatus = ref([])
@@ -221,7 +221,7 @@
 
     const loadMore = async () => {
         accountStore.isLoadingFeed = true
-        await accountStore.fetchAccountNewsFeed(userID.value, accountStore.getNextFrom())
+        await accountStore.fetchAccountNewsFeed(userID.value, accountStore.nextForm)
             .catch(() => showErrorNotification('Ошибка в loadMore()'))
     }
 
@@ -236,7 +236,7 @@
         let lastCallTime = 0
         const throttleTime = 750 // Задержка в миллисекундах
 
-        if (!accountStore.getNextFrom()) {
+        if (!accountStore.nextForm) {
             accountStore.isLoadingFeed = true
 
             accountStore.fetchAccountNewsFeed({

@@ -24,9 +24,5 @@ export const useAccountsStore = defineStore('accounts', {
                 .then(() => (this.accounts = this.accounts.filter(account => account.account_id !== accountId)))
                 .catch(error => showErrorNotification(error))
         }
-    },
-
-    getters: {
-        getAccounts: state => () => state.accounts
     }
 })
