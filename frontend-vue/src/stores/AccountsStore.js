@@ -8,7 +8,7 @@ export const useAccountsStore = defineStore('accounts', {
     }),
 
     actions: {
-        async fetchAccounts() {
+        async   fetchAccounts() {
             const { data } = await axios.post('http://localhost:8080/api/accounts')
             this.accounts = data
         },

@@ -7,10 +7,9 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-
                     <select class="form-select mb-3" aria-label="Default select example" v-model="accountId">
                         <option disabled selected value="selectAccount">Выберите аккаунт</option>
-                        <option v-for="account in accountsStore.getAccounts" :key="account.id" :value="account.account_id">
+                        <option v-for="account in accountsStore.getAccounts()" :key="account.id" :value="account.account_id">
                             {{ account.screen_name }} ({{ account.first_name }} {{ account.last_name }})
                         </option>
                     </select>

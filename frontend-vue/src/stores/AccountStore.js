@@ -127,6 +127,14 @@ export const useAccountStore = defineStore('account', {
                 // Добавляем новый объект в массив
                 this.ownerData.push(accountData)
             }
+        },
+
+        async getAccountDetails(ownerId) {
+            await axios.get(`http://localhost:8080/api/account/${ownerId}`)
+                .then(response => {
+                    return response.data
+                })
+                .catch(error => showErrorNotification(error.response.data.message))
         }
     },
 
