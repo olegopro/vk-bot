@@ -68,9 +68,9 @@
         await settingsStore.fetchSettings()
         loadingStatus.value = true
 
-        showFriends.value = settingsStore.getSettings.show_friends === 1
-        showFollowers.value = settingsStore.getSettings.show_followers === 1
-        taskTimeout.value = settingsStore.getSettings.task_timeout
+        showFriends.value = settingsStore.settings.show_friends === 1
+        showFollowers.value = settingsStore.settings.show_followers === 1
+        taskTimeout.value = settingsStore.settings.task_timeout
     })
 
     const save = async () => {

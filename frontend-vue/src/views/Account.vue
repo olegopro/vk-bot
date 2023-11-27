@@ -42,8 +42,8 @@
             </div>
         </div>
     </div>
-    <Followers v-if="settingsStore.getSettings().show_followers === 1" />
-    <Friends v-if="settingsStore.getSettings().show_friends === 1" />
+    <Followers v-if="settingsStore.settings.show_followers === 1" />
+    <Friends v-if="settingsStore.settings.show_friends === 1" />
     <Newsfeed />
 </template>
 

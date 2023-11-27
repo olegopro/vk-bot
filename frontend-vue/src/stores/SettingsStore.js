@@ -19,9 +19,5 @@ export const useSettingsStore = defineStore('settings', {
             })
             this.settings = { showFollowers, showFriends, taskTimeout }
         }
-    },
-
-    getters: {
-        getSettings: state => () => state.settings
     }
 })
