@@ -1,16 +1,28 @@
+$table-border-radius: calc(var(--bs-border-radius) * 2);
+
 table {
 	box-shadow: 0 1px 27px 0 rgba(34, 60, 80, 0.2);
-	border-radius: 0.675rem;
+	border-radius: $table-border-radius;
 
 	tr, td {
 		text-align: center;
 		vertical-align: middle;
-		padding: 10px;
 	}
 
 	thead {
-		height: 4rem;
 		vertical-align: middle !important;
+
+		tr {
+			height: 55px;
+
+			th:first-child {
+				border-top-left-radius: $table-border-radius;
+			}
+
+			th:last-child {
+				border-top-right-radius: $table-border-radius;
+			}
+		}
 	}
 
 	tbody {
@@ -19,11 +31,11 @@ table {
 				border-color: transparent;
 
 				th:first-child {
-					border-bottom-left-radius: 0.675rem;
+					border-bottom-left-radius: $table-border-radius;
 				}
 
 				td:last-child {
-					border-bottom-right-radius: 0.675rem;
+					border-bottom-right-radius: $table-border-radius;
 				}
 
 				td, th {
@@ -58,6 +70,7 @@ table {
 		.modal-header {
 			border-bottom: none;
 		}
+
 		.modal-footer {
 			border-top: none;
 		}

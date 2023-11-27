@@ -11907,25 +11907,32 @@ textarea.form-control-lg {
 }
 table {
   box-shadow: 0 1px 27px 0 rgba(34, 60, 80, 0.2);
-  border-radius: 0.675rem;
+  border-radius: calc(var(--bs-border-radius) * 2);
 }
 table tr, table td {
   text-align: center;
   vertical-align: middle;
-  padding: 10px;
 }
 table thead {
-  height: 4rem;
   vertical-align: middle !important;
+}
+table thead tr {
+  height: 55px;
+}
+table thead tr th:first-child {
+  border-top-left-radius: calc(var(--bs-border-radius) * 2);
+}
+table thead tr th:last-child {
+  border-top-right-radius: calc(var(--bs-border-radius) * 2);
 }
 table tbody tr:last-child {
   border-color: transparent;
 }
 table tbody tr:last-child th:first-child {
-  border-bottom-left-radius: 0.675rem;
+  border-bottom-left-radius: calc(var(--bs-border-radius) * 2);
 }
 table tbody tr:last-child td:last-child {
-  border-bottom-right-radius: 0.675rem;
+  border-bottom-right-radius: calc(var(--bs-border-radius) * 2);
 }
 table tbody tr:last-child td, table tbody tr:last-child th {
   border-bottom-width: 0;
