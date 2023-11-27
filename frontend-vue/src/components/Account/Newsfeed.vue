@@ -119,7 +119,7 @@
     const accountStore = useAccountStore()
     const route = useRoute()
 
-    const nextFrom = ref(accountStore.nextForm)
+    const nextFrom = ref(accountStore.nextFrom)
     const ownerDataById = ref(null)
     const userID = ref(null)
     const loadingStatus = ref([])
@@ -221,7 +221,7 @@
 
     const loadMore = async () => {
         accountStore.isLoadingFeed = true
-        await accountStore.fetchAccountNewsFeed(userID.value, accountStore.nextForm)
+        await accountStore.fetchAccountNewsFeed(userID.value, accountStore.nextFrom)
             .catch(() => showErrorNotification('Ошибка в loadMore()'))
     }
 
@@ -236,7 +236,7 @@
         let lastCallTime = 0
         const throttleTime = 750 // Задержка в миллисекундах
 
-        if (!accountStore.nextForm) {
+        if (!accountStore.nextFrom) {
             accountStore.isLoadingFeed = true
 
             accountStore.fetchAccountNewsFeed({
