@@ -113,4 +113,7 @@ class addLikesToPosts implements ShouldQueue
         ]);
     }
 
+    public function getTaskStatus() {
+        return $this->task->status;
+    }
 }
