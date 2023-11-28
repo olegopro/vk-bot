@@ -12,7 +12,7 @@
             </select>
 
             <button class="btn btn-danger btn-action me-3"
-                    :disabled="tasksStore.getTasks.length === 0"
+                    :disabled="tasksStore.tasks.length === 0"
                     @click="showDeleteAllTasksModal"
             >
                 Очистить список
@@ -31,7 +31,7 @@
 
     <div class="row">
         <div class="col-12">
-            <table v-if="tasksStore.getTasks.length" class="table table-hover mb-4">
+            <table v-if="tasksStore.tasks.length" class="table table-hover mb-4">
                 <thead>
                     <tr>
                         <th scope="col">#</th>
@@ -46,7 +46,7 @@
 
                 <tbody>
                     <TableThread
-                        v-for="task in tasksStore.getTasks"
+                        v-for="task in tasksStore.tasks"
                         :task="task"
                         :key="task.id"
                         :showTaskDetailsModal="showTaskDetailsModal"
@@ -66,7 +66,7 @@
         <TaskDetails :modalInstance="taskDetailsModal" :taskData="taskDetailsData" />
         <AccountDetails :modalInstance="accountDetailsModal" :accountData="accountDetailsData" />
         <DeleteTask :modalInstance="deleteTaskModal" :taskId="taskId" />
-        <DeleteAllTasks :modalInstance="deleteAllTasksModal" />
+        <DeleteAllTasks :modalInstance="deleteAllTasksModal" :selectedTasksStatus="currentStatus" />
     </Teleport>
 
 </template>

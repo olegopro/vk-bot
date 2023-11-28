@@ -7,7 +7,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <p class="mb-0">Удалить все задачи <strong>({{ tasksStore.getTasks.length }})</strong></p>
+                    <p class="mb-0">Удалить все задачи <strong>({{ tasksStore.tasks.length }})</strong></p>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" @click="modalHide">Отмена</button>
@@ -23,7 +23,8 @@
     import { useTasksStore } from '@/stores/TasksStore'
 
     const props = defineProps({
-        modalInstance: Object
+        modalInstance: Object,
+        selectedTasksStatus: String
     })
 
     const disable = ref(false)
@@ -32,7 +33,7 @@
 
     const deleteTasks = () => {
         disable.value = true
-        tasksStore.deleteAllTasks()
+        tasksStore.deleteAllTasks(props.selectedTasksStatus)
             .then(() => modalHide())
             .finally(() => disable.value = false)
     }

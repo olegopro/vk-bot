@@ -33,8 +33,8 @@ export const useTasksStore = defineStore('tasks', {
                 .then(() => this.tasks = this.tasks.filter(task => task.id !== id))
         },
 
-        async deleteAllTasks() {
-            await axios.delete('http://localhost:8080/api/tasks/delete-all-tasks')
+        async deleteAllTasks(status) {
+            await axios.delete(`http://localhost:8080/api/tasks/delete-all-tasks/${status}`)
                 .then(() => this.tasks = [])
         }
     }
