@@ -7,6 +7,7 @@
 
             <select class="form-select me-3 w-auto" @change="filterTasks" v-model="currentStatus">
                 <option value="">Все задачи</option>
+                <option value="failed">C ошибками</option>
                 <option value="pending">В ожидании</option>
                 <option value="done">Завершённые</option>
             </select>

@@ -88,14 +88,6 @@ class TaskController extends Controller
 
     public function likedUsersPost() {}
 
-    // public function deleteAllTasks()
-    // {
-    //     DB::table('tasks')->truncate(); // Очистка таблицы tasks
-    //     DB::table('jobs')->truncate();  // Очистка таблицы jobs
-    //
-    //     return response()->json(['message' => 'All tasks have been deleted']);
-    // }
-
     public function deleteAllTasks($status = null) {
         // Проверяем, указан ли статус
         if ($status) {
@@ -104,6 +96,10 @@ class TaskController extends Controller
         } else {
             // Удаляем все задачи, если статус не указан
             Task::truncate();
+        }
+
+        if ($status === 'failed') {
+            DB::table('failed_jobs')->truncate();
         }
 
         $this->clearQueueBasedOnStatus($status);
@@ -129,7 +125,7 @@ class TaskController extends Controller
 
         // Если задача не выполнена (failed)
         if ($taskStatus === 'failed') {
-            // Выполнить действия для удаления задачи с статусом failed
+            // Выполнить действия для удаления задачи со статусом failed
             $this->deleteFailedTask($id);
         }
     }
@@ -178,6 +174,12 @@ class TaskController extends Controller
                     }
                 }
             }
+
+        } elseif ($status === 'failed') {
+            // Удаляем задачи со статусом failed из таблицы tasks
+            Task::where('status', 'failed')->delete();
+            // Очищаем таблицу failed_jobs
+            DB::table('failed_jobs')->truncate();
 
         } elseif ($status === null) {
             // Удаляем все задачи из tasks

@@ -31,7 +31,6 @@ Route::prefix('tasks')->group(function () {
 
     Route::delete('/delete-like/{taskId}', [TaskController::class, 'deleteLike']);
 
-    // Route::delete('/delete-all-tasks', [TaskController::class, 'deleteAllTasks']);
     Route::delete('/delete-all-tasks/{status?}', [TaskController::class, 'deleteAllTasks']);
 
     Route::delete('/delete-task-by-id/{id}', [TaskController::class, 'deleteTaskById']);
