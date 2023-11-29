@@ -50,6 +50,7 @@ class addLikesToPosts implements ShouldQueue
      * Execute the job.
      *
      * @return void
+     * @throws Exception
      */
     public function handle()
     {
@@ -71,7 +72,7 @@ class addLikesToPosts implements ShouldQueue
                 ['task_id' => $this->task->id]
             );
 
-            return;
+            throw new Exception("Просрочено: должна была запуститься в " . $task->run_at);
         }
 
         // Обновление статуса задачи на 'active'
