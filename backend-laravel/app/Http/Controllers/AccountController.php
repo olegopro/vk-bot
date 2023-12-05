@@ -20,17 +20,7 @@ final class AccountController extends Controller
         $this->loggingService = $loggingService;
     }
 
-    public function index()
-    {
-        //
-    }
-
-    public function create()
-    {
-        //
-    }
-
-    public function store(Request $request)
+    public function userAccounts(Request $request)
     {
         $accounts = Account::all();
 
@@ -42,23 +32,6 @@ final class AccountController extends Controller
         $account = Task::find($taskId)->account;
 
         return response($account);
-    }
-
-    public function show($id)
-    {
-        $account = Account::find($id);
-
-        return response($account);
-    }
-
-    public function edit($id)
-    {
-        //
-    }
-
-    public function update(Request $request, $id)
-    {
-        //
     }
 
     public function destroy($id)
@@ -364,5 +337,4 @@ final class AccountController extends Controller
                  ->where('access_token', $access_token)
                  ->value('screen_name');
     }
-
 }

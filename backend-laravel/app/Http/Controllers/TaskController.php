@@ -12,7 +12,7 @@ use Illuminate\Support\Str;
 
 final class TaskController extends Controller
 {
-    public function index($status = null)
+    public function taskStatus($status = null)
     {
         $query = Task::query();
 

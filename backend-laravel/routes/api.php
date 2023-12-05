@@ -17,40 +17,40 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::resource('/accounts', AccountController::class);
-
 
 Route::prefix('tasks')->group(function () {
-    // Ресурсные маршруты для задач
-    Route::resource('/', TaskController::class);
-
-    // Маршрут для фильтрации по статусу
-    Route::get('/{status}', [TaskController::class, 'index']);
+    Route::get('/{status?}', [TaskController::class, 'taskStatus']);
     Route::post('/task-info/{taskId}', [TaskController::class, 'taskInfo']);
+    Route::post('/account/task/{taskId}', [AccountController::class, 'accountByTaskId']);
     Route::delete('/delete-like/{taskId}', [TaskController::class, 'deleteLike']);
     Route::delete('/delete-all-tasks/{status?}', [TaskController::class, 'deleteAllTasks']);
     Route::delete('/delete-task-by-id/{id}', [TaskController::class, 'deleteTaskById']);
 });
 
 
-Route::post('/tasks/account/task/{taskId}', [AccountController::class, 'accountByTaskId']);
-Route::post('/account/task/{taskId}', [AccountController::class, 'accountByTaskId']);
+Route::prefix('account')->group(function (){
+    Route::post('/all-accounts', [AccountController::class, 'userAccounts']);
+    Route::post('/task/{taskId}', [AccountController::class, 'accountByTaskId']);
+    Route::post('/data/{id}', [AccountController::class, 'getAccountData']);
+    Route::post('/followers/{id}', [AccountController::class, 'getAccountFollowers']);
+    Route::post('/friends/{id}', [AccountController::class, 'getAccountFriends']);
+    Route::post('/friends/count/{id}', [AccountController::class, 'getAccountCountFriends']);
+    Route::post('/info/{access_token}', [AccountController::class, 'getAccountInfo']);
+    Route::post('/add', [AccountController::class, 'setAccountData']);
+    Route::post('/newsfeed', [AccountController::class, 'getAccountNewsfeed']);
+    Route::post('/like', [AccountController::class, 'addLike']);
+    Route::post('/get-posts-for-like', [AccountController::class, 'getNewsfeedPosts']);
+    Route::post('/add-task-likes', [AccountController::class, 'addLikeTask']);
+    Route::post('/get-screen-name-by-id', [AccountController::class, 'getScreenNameById']);
+});
 
-
-Route::post('/account/data/{id}', [AccountController::class, 'getAccountData']);
-Route::post('/account/followers/{id}', [AccountController::class, 'getAccountFollowers']);
-Route::post('/account/friends/{id}', [AccountController::class, 'getAccountFriends']);
-Route::post('/account/friends/count/{id}', [AccountController::class, 'getAccountCountFriends']);
-Route::post('/account/info/{access_token}', [AccountController::class, 'getAccountInfo']);
-Route::post('/account/add', [AccountController::class, 'setAccountData']);
-Route::post('/account/newsfeed', [AccountController::class, 'getAccountNewsfeed']);
-Route::post('/account/like', [AccountController::class, 'addLike']);
-Route::post('/account/get-posts-for-like', [AccountController::class, 'getNewsfeedPosts']);
-Route::post('/account/add-task-likes', [AccountController::class, 'addLikeTask']);
-Route::post('/account/get-screen-name-by-id', [AccountController::class, 'getScreenNameById']);
 
 Route::post('/group/data/{id}', [AccountController::class, 'getGroupData']);
 
 
-Route::post('/settings', [SettingsController::class, 'settings']);
-Route::post('/settings/save', [SettingsController::class, 'saveSettings']);
+Route::prefix('settings')->group(function () {
+    Route::post('/', [SettingsController::class, 'settings']);
+    Route::post('/save', [SettingsController::class, 'saveSettings']);
+});
+
+
