@@ -11,7 +11,7 @@ use App\Services\LoggingServiceInterface;
 use DB;
 use Illuminate\Http\Request;
 
-class AccountController extends Controller
+final class AccountController extends Controller
 {
     private $loggingService;
 

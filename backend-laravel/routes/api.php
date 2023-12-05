@@ -26,13 +26,9 @@ Route::prefix('tasks')->group(function () {
 
     // Маршрут для фильтрации по статусу
     Route::get('/{status}', [TaskController::class, 'index']);
-
     Route::post('/task-info/{taskId}', [TaskController::class, 'taskInfo']);
-
     Route::delete('/delete-like/{taskId}', [TaskController::class, 'deleteLike']);
-
     Route::delete('/delete-all-tasks/{status?}', [TaskController::class, 'deleteAllTasks']);
-
     Route::delete('/delete-task-by-id/{id}', [TaskController::class, 'deleteTaskById']);
 });
 
@@ -49,7 +45,6 @@ Route::post('/account/info/{access_token}', [AccountController::class, 'getAccou
 Route::post('/account/add', [AccountController::class, 'setAccountData']);
 Route::post('/account/newsfeed', [AccountController::class, 'getAccountNewsfeed']);
 Route::post('/account/like', [AccountController::class, 'addLike']);
-
 Route::post('/account/get-posts-for-like', [AccountController::class, 'getNewsfeedPosts']);
 Route::post('/account/add-task-likes', [AccountController::class, 'addLikeTask']);
 Route::post('/account/get-screen-name-by-id', [AccountController::class, 'getScreenNameById']);

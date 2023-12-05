@@ -23,9 +23,4 @@ class VkClient
     {
         return $this->api->request($method, $parameters);
     }
-
-    // public function getNewsfeedPosts()
-    // {
-    //
-    // }
 }

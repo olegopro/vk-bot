@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Settings;
 use Illuminate\Http\Request;
 
-class SettingsController extends Controller
+final class SettingsController extends Controller
 {
     public function settings()
     {

@@ -7,8 +7,6 @@ use Monolog\Logger;
 
 class LoggingService implements LoggingServiceInterface
 {
-    private $level;
-
     public function log($channel, $account_name, $message, $context = [])
     {
         $logPath = storage_path('logs') . '/' . $account_name;
@@ -21,14 +19,14 @@ class LoggingService implements LoggingServiceInterface
         $logFile = $logPath . '/' . $channel . '.log';
 
         // Устанавливаем уровень логирования в зависимости от ключей в $context
-        $this->level = match (true) {
+        $level = match (true) {
             array_key_exists('exception', $context) => 'error',
             default => 'info',
         };
 
-        $handler = new StreamHandler($logFile, Logger::toMonologLevel($this->level));
+        $handler = new StreamHandler($logFile, Logger::toMonologLevel($level));
         $monolog = new Logger($channel, [$handler]);
 
-        $monolog->log($this->level, $message, $context);
+        $monolog->log($level, $message, $context);
     }
 }

@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Str;
 
-class TaskController extends Controller
+final class TaskController extends Controller
 {
     public function index($status = null)
     {
@@ -23,31 +23,6 @@ class TaskController extends Controller
         $tasks = $query->get();
 
         return response($tasks);
-    }
-
-    public function create()
-    {
-        //
-    }
-
-    public function store(Request $request)
-    {
-        //
-    }
-
-    public function show($id)
-    {
-        //
-    }
-
-    public function edit($id)
-    {
-        //
-    }
-
-    public function update(Request $request, $id)
-    {
-        //
     }
 
     public function taskInfo($taskId)
@@ -86,9 +61,8 @@ class TaskController extends Controller
         return response()->json(['response' => $response]);
     }
 
-    public function likedUsersPost() {}
-
-    public function deleteAllTasks($status = null) {
+    public function deleteAllTasks($status = null)
+    {
         // Проверяем, указан ли статус
         if ($status) {
             // Удаляем задачи с указанным статусом
@@ -150,43 +124,46 @@ class TaskController extends Controller
         ]);
     }
 
-    protected function clearQueueBasedOnStatus($status = null) {
-        if ($status === 'done') {
-            // Удаляем только из таблицы tasks
-            Task::where('status', 'done')->delete();
+    private function clearQueueBasedOnStatus($status = null)
+    {
+        switch ($status) {
+            case 'done':
+                // Удаляем только из таблицы tasks
+                Task::where('status', 'done')->delete();
+                break;
 
-        } elseif ($status === 'pending') {
-            // Удаляем из таблицы tasks
-            Task::where('status', 'pending')->delete();
+            case 'pending':
+                // Удаляем из таблицы tasks
+                Task::where('status', 'pending')->delete();
 
-            // Удаляем также из таблицы jobs
-            $jobs = DB::table('jobs')->get();
-            foreach ($jobs as $job) {
-                $payload = json_decode($job->payload, true);
-                $command = unserialize($payload['data']['command']);
+                // Удаляем также из таблицы jobs
+                $jobs = DB::table('jobs')->get();
+                foreach ($jobs as $job) {
+                    $payload = json_decode($job->payload, true);
+                    $command = unserialize($payload['data']['command']);
 
-                // Используем новый метод getTaskStatus() для получения статуса задачи
-                if (method_exists($command, 'getTaskStatus')) {
-                    $taskStatus = $command->getTaskStatus();
+                    if (method_exists($command, 'getTaskStatus')) {
+                        $taskStatus = $command->getTaskStatus();
 
-                    if (Str::lower($taskStatus) === 'pending') {
-                        DB::table('jobs')->where('id', $job->id)->delete();
+                        if (Str::lower($taskStatus) === 'pending') {
+                            DB::table('jobs')->where('id', $job->id)->delete();
+                        }
                     }
                 }
-            }
+                break;
 
-        } elseif ($status === 'failed') {
-            // Удаляем задачи со статусом failed из таблицы tasks
-            Task::where('status', 'failed')->delete();
-            // Очищаем таблицу failed_jobs
-            DB::table('failed_jobs')->truncate();
+            case 'failed':
+                // Удаляем задачи со статусом failed из таблицы tasks
+                Task::where('status', 'failed')->delete();
+                // Очищаем таблицу failed_jobs
+                DB::table('failed_jobs')->truncate();
+                break;
 
-        } elseif ($status === null) {
-            // Удаляем все задачи из tasks
-            Task::truncate();
-
-            // Удаляем все задачи из jobs
-            DB::table('jobs')->truncate();
+            default:
+                // Удаляем все задачи из tasks и jobs
+                Task::truncate();
+                DB::table('jobs')->truncate();
+                break;
         }
     }
 
@@ -235,7 +212,7 @@ class TaskController extends Controller
     private function getAccessTokenByAccountID($account_id)
     {
         return $account = DB::table('accounts')
-                            ->where('account_id','=',$account_id)
+                            ->where('account_id', '=', $account_id)
                             ->value('access_token');
     }
 
