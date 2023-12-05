@@ -24,15 +24,15 @@ final class AccountController extends Controller
     {
         $accounts = Account::all();
 
-        return response($accounts);
+        return response()->json($accounts);
     }
 
-    public function accountByTaskId($taskId)
-    {
-        $account = Task::find($taskId)->account;
-
-        return response($account);
-    }
+    // public function accountByTaskId($taskId)
+    // {
+    //     $account = Task::find($taskId)->account;
+    //
+    //     return response($account);
+    // }
 
     public function destroy($id)
     {
@@ -166,7 +166,8 @@ final class AccountController extends Controller
             ['response' => $response]
         );
 
-        return $response;
+        // return $response;
+        return response()->json($response);
     }
 
     public function getNewsfeedPosts(Request $request)
@@ -270,7 +271,7 @@ final class AccountController extends Controller
                    ->where('status', '=', 'pending')
                    ->get();
 
-        return response($tasks);
+        return response()->json($tasks);
     }
 
     public function addLike(Request $request)
@@ -311,7 +312,7 @@ final class AccountController extends Controller
             ['response' => $response]
         );
 
-        return $response;
+        return response()->json($response);
     }
 
     public function getScreenNameById(Request $request)

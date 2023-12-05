@@ -22,13 +22,14 @@ final class TaskController extends Controller
 
         $tasks = $query->get();
 
-        return response($tasks);
+        return response()->json($tasks);
     }
 
     public function taskInfo($taskId)
     {
         $taskData = Task::find($taskId);
 
+        // Или использовать неявный findOrFail
         if (!$taskData) {
             return response()->json(['error' => 'Задача не найдена'], 404);
         }
