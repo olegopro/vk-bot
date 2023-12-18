@@ -166,8 +166,8 @@ final class AccountController extends Controller
             ['response' => $response]
         );
 
-        // return $response;
-        return response()->json($response);
+        return $response;
+        // return response()->json($response);
     }
 
     public function getNewsfeedPosts(Request $request)
