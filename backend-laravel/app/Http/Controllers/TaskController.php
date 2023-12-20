@@ -2,17 +2,21 @@
 
 namespace App\Http\Controllers;
 
-use App\Library\VkClient;
 use App\Models\Task;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Artisan;
+use App\Services\VkClient;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Str;
 
 final class TaskController extends Controller
 {
-    public function taskStatus($status = null)
+	protected $vkClient;
+
+	public function __construct(VkClient $vkClient)
+	{
+		$this->vkClient = $vkClient;
+	}
+
+	public function taskStatus($status = null)
     {
         $query = Task::query();
 
@@ -39,7 +43,7 @@ final class TaskController extends Controller
 
         $access_token = $this->getAccessTokenByAccountID($taskData->account_id);
 
-        $postResponse = (new VkClient($access_token))->request('wall.getById', [
+        $postResponse = $this->vkClient->request('wall.getById', [
             'posts' => $ownerId . '_' . $postId,
         ]);
 
@@ -49,7 +53,7 @@ final class TaskController extends Controller
         $userIds = implode(',', $likesResponse['response']['items']);
 
         // Получение информации о пользователях
-        $usersResponse = (new VkClient($access_token))->request('users.get', [
+        $usersResponse = $this->vkClient->request('users.get', [
             'user_ids' => $userIds,
         ]);
 
@@ -118,7 +122,7 @@ final class TaskController extends Controller
 
         $access_token = $this->getAccessTokenByAccountID($taskData->account_id);
 
-        return (new VkClient($access_token))->request('likes.delete', [
+        return $this->vkClient->request('likes.delete', [
             'type'     => 'post',
             'owner_id' => $ownerId,
             'item_id'  => $postId
@@ -219,7 +223,7 @@ final class TaskController extends Controller
 
     private function getLikes($access_token, $type, $owner_id, $item_id)
     {
-        return (new VkClient($access_token))->request('likes.getList', [
+        return $this->vkClient->request('likes.getList', [
             'type'     => $type,
             'owner_id' => $owner_id,
             'item_id'  => $item_id

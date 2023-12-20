@@ -2,22 +2,17 @@
 
 namespace App\Jobs;
 
-use App\Library\VkClient;
 use App\Models\Task;
 use App\Services\LoggingService;
-use App\Services\LoggingServiceInterface;
+use App\Services\VkClient;
 use Carbon\Carbon;
 use DB;
 use Exception;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\Log;
-use Monolog\Handler\StreamHandler;
-use Monolog\Logger;
 
 class addLikesToPosts implements ShouldQueue
 {
@@ -27,19 +22,22 @@ class addLikesToPosts implements ShouldQueue
     private $token;
     private $loggingService;
     private $screenName;
+	protected $vkClient;
 
-    /**
-     * Create a new job instance.
-     *
-     * @param $task
-     * @param $token
-     * @param LoggingService $loggingService
-     */
-    public function __construct($task, $token, LoggingService $loggingService)
+	/**
+	 * Create a new job instance.
+	 *
+	 * @param $task
+	 * @param $token
+	 * @param LoggingService $loggingService
+	 * @param VkClient $vkClient
+	 */
+    public function __construct($task, $token, LoggingService $loggingService, VkClient $vkClient)
     {
         $this->task = $task;
         $this->token = $token;
         $this->loggingService = $loggingService;
+		$this->vkClient = $vkClient;
 
         $this->screenName = DB::table('accounts')
                               ->where('access_token', $token)
@@ -79,7 +77,7 @@ class addLikesToPosts implements ShouldQueue
         $task->update(['status' => 'active']);
 
         // Выполнение основной логики задачи
-        $response = (new VkClient($this->token))->request('likes.add', [
+        $response = $this->vkClient->request('likes.add', [
             'type'     => 'post',
             'owner_id' => $this->task->owner_id,
             'item_id'  => $this->task->item_id

@@ -3,21 +3,22 @@
 namespace App\Http\Controllers;
 
 use App\Jobs\addLikesToPosts;
-use App\Library\VkClient;
 use App\Models\Account;
 use App\Models\Task;
-use App\Services\LoggingService;
 use App\Services\LoggingServiceInterface;
+use App\Services\VkClient;
 use DB;
 use Illuminate\Http\Request;
 
 final class AccountController extends Controller
 {
     private $loggingService;
+	protected $vkClient;
 
-    public function __construct(LoggingServiceInterface $loggingService)
+    public function __construct(LoggingServiceInterface $loggingService, VkClient $vkClient)
     {
         $this->loggingService = $loggingService;
+		$this->vkClient = $vkClient;
     }
 
     public function userAccounts(Request $request)
@@ -26,13 +27,6 @@ final class AccountController extends Controller
 
         return response()->json($accounts);
     }
-
-    // public function accountByTaskId($taskId)
-    // {
-    //     $account = Task::find($taskId)->account;
-    //
-    //     return response($account);
-    // }
 
     public function destroy($id)
     {
