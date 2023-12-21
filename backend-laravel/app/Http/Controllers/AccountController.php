@@ -39,7 +39,7 @@ final class AccountController extends Controller
             $ids = implode(',', $ids);
         }
 
-        return (new VkClient())->request('users.get', [
+        return $this->vkClient->request('users.get', [
             'user_ids' => $ids,
             'fields'   => [
                 'photo_200',
@@ -58,7 +58,7 @@ final class AccountController extends Controller
 
     public function getGroupData($id)
     {
-        return (new VkClient())->request('groups.getById', [
+        return $this->vkClient->request('groups.getById', [
             'group_id' => $id,
             'fields'   => [
                 'photo_200',
@@ -75,7 +75,7 @@ final class AccountController extends Controller
 
     public function getAccountFollowers($id, $limit = 6)
     {
-        return (new VkClient())->request('users.getFollowers', [
+        return $this->vkClient->request('users.getFollowers', [
             'user_id' => $id,
             'count'   => $limit,
             'fields'  => [
@@ -87,7 +87,7 @@ final class AccountController extends Controller
 
     public function getAccountFriends($id, $limit = 6)
     {
-        return (new VkClient())->request('friends.get', [
+        return $this->vkClient->request('friends.get', [
             'user_id' => $id,
             'count'   => $limit,
             'fields'  => [
@@ -99,7 +99,7 @@ final class AccountController extends Controller
 
     public function getAccountCountFriends($id)
     {
-        $result = (new VkClient())->request('friends.get', [
+        $result = $this->vkClient->request('friends.get', [
             'user_id' => $id,
             'count'   => 1,
         ]);
@@ -116,7 +116,7 @@ final class AccountController extends Controller
 
     public function getAccountInfo($access_token)
     {
-        return (new VkClient($access_token))->request('account.getProfileInfo');
+        return $this->vkClient->request('account.getProfileInfo');
     }
 
     public function setAccountData(Request $request)
@@ -313,7 +313,7 @@ final class AccountController extends Controller
     {
         $user_id = $request->input('user_id');
 
-        return (new VkClient())->request('users.get', [
+        return $this->vkClient->request('users.get', [
             'fields'  => 'screen_name',
             'user_id' => $user_id
         ]);
