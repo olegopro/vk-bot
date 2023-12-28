@@ -146,7 +146,7 @@ final class AccountController extends Controller
             ['request' => $request]
         );
 
-        $response = (new VkClient($access_token))->request('newsfeed.get', [
+        $response = $this->vkClient->request('newsfeed.get', [
             'filters'    => 'post',
             'count'      => 40,
             'start_from' => $request->input('start_from') ?? null
@@ -192,7 +192,7 @@ final class AccountController extends Controller
                 ) {
                     $attemptFailed = false;
 
-                    $username = (new VkClient())->request('users.get', [
+                    $username = $this->vkClient->request('users.get', [
                         'fields'  => 'screen_name',
                         'user_id' => $post['owner_id']
                     ]);
@@ -292,7 +292,7 @@ final class AccountController extends Controller
             ]
         );
 
-        $response = (new VkClient($access_token))->request('likes.add', [
+        $response = $this->vkClient->request('likes.add', [
             'type'     => 'post',
             'owner_id' => $owner_id,
             'item_id'  => $item_id
