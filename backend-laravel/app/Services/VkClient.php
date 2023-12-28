@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use ATehnix\VkClient\Client;
+use Illuminate\Support\Facades\Log;
 
 class VkClient
 {
@@ -11,16 +12,16 @@ class VkClient
 
     public function __construct($account_access_token = null)
     {
-        $this->api = new Client(config('services.vk.version'));
-        $this->api->setDefaultToken(
-            $account_access_token === null
-                ? config('services.vk.token')
-                : $account_access_token
-        );
+	    $this->api = new Client(config('services.vk.version'));
+	    $this->api->setDefaultToken(config('services.vk.token'));
     }
 
-    public function request($method, $parameters = [])
-    {
-        return $this->api->request($method, $parameters);
-    }
+	public function request($method, $parameters = [], $token = null)
+	{
+		if ($token !== null) {
+			$this->api->setDefaultToken($token);
+		}
+
+		return $this->api->request($method, $parameters);
+	}
 }

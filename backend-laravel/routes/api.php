@@ -40,6 +40,7 @@ Route::prefix('account')->group(function (){
     Route::post('/get-posts-for-like', [AccountController::class, 'getNewsfeedPosts']);
     Route::post('/add-task-likes', [AccountController::class, 'addLikeTask']);
     Route::post('/get-screen-name-by-id', [AccountController::class, 'getScreenNameById']);
+	Route::delete('/delete-account/{id}', [AccountController::class, 'deleteAccount']);
 });
 
 

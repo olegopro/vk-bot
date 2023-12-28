@@ -22,7 +22,7 @@ class addLikesToPosts implements ShouldQueue
     private $token;
     private $loggingService;
     private $screenName;
-	protected $vkClient;
+	private $vkClient;
 
 	/**
 	 * Create a new job instance.
@@ -30,14 +30,12 @@ class addLikesToPosts implements ShouldQueue
 	 * @param $task
 	 * @param $token
 	 * @param LoggingService $loggingService
-	 * @param VkClient $vkClient
 	 */
-    public function __construct($task, $token, LoggingService $loggingService, VkClient $vkClient)
+    public function __construct($task, $token, LoggingService $loggingService)
     {
         $this->task = $task;
         $this->token = $token;
         $this->loggingService = $loggingService;
-		$this->vkClient = $vkClient;
 
         $this->screenName = DB::table('accounts')
                               ->where('access_token', $token)
@@ -77,11 +75,11 @@ class addLikesToPosts implements ShouldQueue
         $task->update(['status' => 'active']);
 
         // Выполнение основной логики задачи
-        $response = $this->vkClient->request('likes.add', [
+        $response = $response = (new VkClient())->request('likes.add', [
             'type'     => 'post',
             'owner_id' => $this->task->owner_id,
             'item_id'  => $this->task->item_id
-        ]);
+        ], $this->token);
 
         $this->loggingService->log(
             'account_task_likes',

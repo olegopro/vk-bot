@@ -10,6 +10,7 @@ use App\Services\LoggingServiceInterface;
 use App\Services\VkClient;
 use DB;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 final class AccountController extends Controller
 {
@@ -117,7 +118,7 @@ final class AccountController extends Controller
 
 	public function getAccountInfo($access_token)
 	{
-		return $this->vkClient->request('account.getProfileInfo');
+		return $this->vkClient->request('account.getProfileInfo', [], $access_token);
 	}
 
 	public function setAccountData(Request $request)
@@ -151,7 +152,7 @@ final class AccountController extends Controller
 			'filters'    => 'post',
 			'count'      => 40,
 			'start_from' => $request->input('start_from') ?? null
-		]);
+		], $access_token);
 
 		// Логирование ответа
 		$this->loggingService->log(
@@ -297,7 +298,7 @@ final class AccountController extends Controller
 			'type'     => 'post',
 			'owner_id' => $owner_id,
 			'item_id'  => $item_id
-		]);
+		], $access_token);
 
 		// Логирование ответа
 		$this->loggingService->log(

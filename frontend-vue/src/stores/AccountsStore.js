@@ -20,7 +20,7 @@ export const useAccountsStore = defineStore('accounts', {
         },
 
         async deleteAccount(accountId) {
-            await axios.delete(`http://localhost:8080/api/accounts/${accountId}`)
+            await axios.delete(`http://localhost:8080/api/account/delete-account/${accountId}`)
                 .then(() => (this.accounts = this.accounts.filter(account => account.account_id !== accountId)))
                 .catch(error => showErrorNotification(error))
         }
