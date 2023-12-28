@@ -21,7 +21,6 @@ use Illuminate\Support\Facades\Route;
 Route::prefix('tasks')->group(function () {
     Route::get('/{status?}', [TaskController::class, 'taskStatus']);
     Route::post('/task-info/{taskId}', [TaskController::class, 'taskInfo']);
-    // Route::post('/account/task/{taskId}', [AccountController::class, 'accountByTaskId']);
     Route::delete('/delete-like/{taskId}', [TaskController::class, 'deleteLike']);
     Route::delete('/delete-all-tasks/{status?}', [TaskController::class, 'deleteAllTasks']);
     Route::delete('/delete-task-by-id/{id}', [TaskController::class, 'deleteTaskById']);
@@ -30,7 +29,6 @@ Route::prefix('tasks')->group(function () {
 
 Route::prefix('account')->group(function (){
     Route::post('/all-accounts', [AccountController::class, 'userAccounts']);
-    // Route::post('/task/{taskId}', [AccountController::class, 'accountByTaskId']);
     Route::post('/data/{id}', [AccountController::class, 'getAccountData']);
     Route::post('/followers/{id}', [AccountController::class, 'getAccountFollowers']);
     Route::post('/friends/{id}', [AccountController::class, 'getAccountFriends']);
