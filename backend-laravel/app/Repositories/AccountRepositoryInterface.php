@@ -4,9 +4,9 @@ namespace App\Repositories;
 
 interface AccountRepositoryInterface
 {
-	public function getAll();
-	public function findById($id);
-	public function create(array $data);
-	public function update($id, array $data);
-	public function delete($id);
+	public function getAllAccounts();
+	public function createAccount(array $data);
+	public function deleteAccount($id);
+	public function getAccessTokenByAccountID($account_id);
+	public function getScreenNameByToken($access_token);
 }

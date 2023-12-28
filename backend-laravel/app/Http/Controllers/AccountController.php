@@ -24,16 +24,14 @@ final class AccountController extends Controller
 		$this->vkClient = $vkClient;
 	}
 
-	public function userAccounts(Request $request)
+	public function allAccounts(Request $request)
 	{
-		$accounts = Account::all();
-
-		return response()->json($accounts);
+		return $this->accountRepository->getAllAccounts();
 	}
 
-	public function destroy($id)
+	public function deleteAccount($id)
 	{
-		return Account::destroy($id);
+		$this->accountRepository->deleteAccount($id);
 	}
 
 	public function getAccountData($ids)
@@ -126,7 +124,7 @@ final class AccountController extends Controller
 	{
 		$accountData = $this->getAccountInfo($request['access_token']);
 
-		return Account::create([
+		return $this->accountRepository->createAccount([
 			'access_token' => $request['access_token'],
 			'account_id'   => $accountData['response']['id'],
 			'screen_name'  => $accountData['response']['screen_name'],
@@ -324,15 +322,11 @@ final class AccountController extends Controller
 
 	private function getAccessTokenByAccountID($account_id)
 	{
-		return $account = DB::table('accounts')
-		                    ->where('account_id', $account_id)
-		                    ->value('access_token');
+		return $this->accountRepository->getAccessTokenByAccountID($account_id);
 	}
 
 	private function getScreenNameByToken($access_token)
 	{
-		return DB::table('accounts')
-		         ->where('access_token', $access_token)
-		         ->value('screen_name');
+		return $this->accountRepository->getScreenNameByToken($access_token);
 	}
 }

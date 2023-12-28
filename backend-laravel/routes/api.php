@@ -28,7 +28,7 @@ Route::prefix('tasks')->group(function () {
 
 
 Route::prefix('account')->group(function (){
-    Route::post('/all-accounts', [AccountController::class, 'userAccounts']);
+    Route::post('/all-accounts', [AccountController::class, 'allAccounts']);
     Route::post('/data/{id}', [AccountController::class, 'getAccountData']);
     Route::post('/followers/{id}', [AccountController::class, 'getAccountFollowers']);
     Route::post('/friends/{id}', [AccountController::class, 'getAccountFriends']);
