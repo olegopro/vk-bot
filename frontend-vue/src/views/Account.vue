@@ -68,7 +68,7 @@
     const date = (timestamp) => new Date(timestamp * 1000).toLocaleTimeString('ru-RU')
 
     onMounted(async () => {
-        await accountStore.fetchOwnerData(userID)
+        await accountStore.fetchOwnerData(userID, userID)
         await accountStore.getOwnerDataById(userID)
         await settingsStore.fetchSettings()
         specificAccount.value = accountStore.getOwnerDataById(userID)
