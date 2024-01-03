@@ -4,6 +4,8 @@ namespace App\Providers;
 
 use App\Repositories\AccountRepositoryInterface;
 use App\Repositories\AccountRepository;
+use App\Repositories\TaskRepository;
+use App\Repositories\TaskRepositoryInterface;
 use App\Services\LoggingService;
 use App\Services\LoggingServiceInterface;
 use App\Services\VkClient;
@@ -21,6 +23,7 @@ class AppServiceProvider extends ServiceProvider
 	{
 		$this->app->bind(LoggingServiceInterface::class, LoggingService::class);
 		$this->app->bind(AccountRepositoryInterface::class, AccountRepository::class);
+		$this->app->bind(TaskRepositoryInterface::class, TaskRepository::class);
 
 		// Регистрация VkClient как сервиса
 		$this->app->singleton(VkClient::class, function ($app) {
