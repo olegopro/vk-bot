@@ -8,6 +8,7 @@ use App\Repositories\TaskRepositoryInterface;
 use App\Services\VkClient;
 use Exception;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 final class TaskController extends Controller
@@ -30,43 +31,37 @@ final class TaskController extends Controller
 		return response()->json($tasks);
 	}
 
-    public function taskInfo($taskId)
-    {
-		try {
-			$taskData = $this->taskRepository->findTask($taskId);
+	public function taskInfo($taskId)
+	{
+		$taskData = $this->taskRepository->findTask($taskId);
 
-			$ownerId = $taskData->owner_id;
-			$postId = $taskData->item_id;
+		$ownerId = $taskData->owner_id;
+		$postId = $taskData->item_id;
 
-			$access_token = $this->accountRepository->getAccessTokenByAccountID($taskData->account_id);
+		$access_token = $this->accountRepository->getAccessTokenByAccountID($taskData->account_id);
 
-			$postResponse = $this->vkClient->request('wall.getById', [
-				'posts' => $ownerId . '_' . $postId,
-			]);
+		$postResponse = $this->vkClient->request('wall.getById', [
+			'posts' => $ownerId . '_' . $postId,
+		], $access_token);
 
-			$likesResponse = $this->getLikes($access_token, 'post', $ownerId, $postId);
+		$likesResponse = $this->getLikes($access_token, 'post', $ownerId, $postId);
 
-			// Получение ID пользователей, которые поставили лайки
-			$userIds = implode(',', $likesResponse['response']['items']);
+		// Получение ID пользователей, которые поставили лайки
+		$userIds = implode(',', $likesResponse['response']['items']);
 
-			// Получение информации о пользователях
-			$usersResponse = $this->vkClient->request('users.get', [
-				'user_ids' => $userIds,
-			]);
+		// Получение информации о пользователях
+		$usersResponse = $this->vkClient->request('users.get', [
+			'user_ids' => $userIds,
+		]);
 
-			// Деструктуризация 'response' для получения первого элемента
-			list($response) = $postResponse['response'];
+		// Деструктуризация 'response' для получения первого элемента
+		list($response) = $postResponse['response'];
 
-			$response['liked_users'] = $usersResponse['response']; // Информация о пользователях
-			$response['account_id'] = $taskData->account_id;
+		$response['liked_users'] = $usersResponse['response']; // Информация о пользователях
+		$response['account_id'] = $taskData->account_id;
 
-			return response()->json(['response' => $response]);
-
-		} catch (Exception $error) {
-			return response()->json(['error' => $error->getMessage()], $error->getCode());
-		}
-
-    }
+		return response()->json(['response' => $response]);
+	}
 
 	public function deleteAllTasks($status = null)
 	{
@@ -102,29 +97,29 @@ final class TaskController extends Controller
 		return response()->json(['message' => 'Task deleted successfully']);
 	}
 
-    public function deleteLike($taskId)
-    {
-        $taskData = $this->taskRepository->findTask($taskId);
+	public function deleteLike($taskId)
+	{
+		$taskData = $this->taskRepository->findTask($taskId);
 
-        if (!$taskData) {
-            return response()->json(['error' => 'Задача не найдена'], 404);
-        }
+		if (!$taskData) {
+			return response()->json(['error' => 'Задача не найдена'], 404);
+		}
 
-        $access_token = $this->accountRepository->getAccessTokenByAccountID($taskData->account_id);
+		$access_token = $this->accountRepository->getAccessTokenByAccountID($taskData->account_id);
 
-        return $this->vkClient->request('likes.delete', [
-            'type'     => 'post',
-            'owner_id' => $taskData->owner_id,
-            'item_id'  =>$taskData->item_id
-        ]);
-    }
+		return $this->vkClient->request('likes.delete', [
+			'type'     => 'post',
+			'owner_id' => $taskData->owner_id,
+			'item_id'  => $taskData->item_id
+		]);
+	}
 
-    private function getLikes($access_token, $type, $owner_id, $item_id)
-    {
-        return $this->vkClient->request('likes.getList', [
-            'type'     => $type,
-            'owner_id' => $owner_id,
-            'item_id'  => $item_id
-        ]);
-    }
+	private function getLikes($access_token, $type, $owner_id, $item_id)
+	{
+		return $this->vkClient->request('likes.getList', [
+			'type'     => $type,
+			'owner_id' => $owner_id,
+			'item_id'  => $item_id
+		], $access_token);
+	}
 }
