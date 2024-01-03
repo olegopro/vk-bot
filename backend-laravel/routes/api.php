@@ -32,7 +32,7 @@ Route::prefix('account')->group(function (){
     Route::post('/data/{id}', [AccountController::class, 'getAccountData']);
     Route::post('/followers/{id}', [AccountController::class, 'getAccountFollowers']);
     Route::post('/friends/{id}', [AccountController::class, 'getAccountFriends']);
-    Route::post('/friends/count/{id}', [AccountController::class, 'getAccountCountFriends']);
+    Route::post('/friends/count/{accountId}/{ownerId}', [AccountController::class, 'getAccountCountFriends']);
     Route::post('/info/{access_token}', [AccountController::class, 'getAccountInfo']);
     Route::post('/add', [AccountController::class, 'setAccountData']);
     Route::post('/newsfeed', [AccountController::class, 'getAccountNewsfeed']);

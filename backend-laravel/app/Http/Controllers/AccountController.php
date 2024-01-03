@@ -99,16 +99,17 @@ final class AccountController extends Controller
 		]);
 	}
 
-	public function getAccountCountFriends($id)
+	public function getAccountCountFriends($accountId, $ownerId)
 	{
+		$accessToken = $this->accountRepository->getAccessTokenByAccountID($accountId);
 		$result = $this->vkClient->request('friends.get', [
-			'user_id' => $id,
+			'user_id' => $ownerId,
 			'count'   => 1,
-		]);
+		], $accessToken);
 
 		$response = [
 			'response' => [
-				'id'    => $id,
+				'id'    => $ownerId,
 				'count' => $result['response']['count'],
 			]
 		];

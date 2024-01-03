@@ -109,11 +109,11 @@
         tasksStore.fetchTasks(status)
     }
 
-    const showAccountDetailsModal = (ownerId) => {
+    const showAccountDetailsModal = (accountId, ownerId) => {
         accountDetailsData.value = null
         accountDetailsModal.value.show()
 
-        accountStore.fetchOwnerData(ownerId)
+        accountStore.fetchOwnerData(accountId, ownerId)
             .then(() => {
                 const ownerData = accountStore.getOwnerDataById(ownerId)
                 accountDetailsData.value = { ...ownerData }

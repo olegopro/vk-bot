@@ -30,10 +30,10 @@ export const useAccountStore = defineStore('account', {
             }
         },
 
-        async fetchOwnerData(id) {
+        async fetchOwnerData(accountId, ownerId) {
             const [accountDataResponse, friendsCountResponse] = await Promise.all([
-                axios.post(`http://localhost:8080/api/account/data/${id}`),
-                axios.post(`http://localhost:8080/api/account/friends/count/${id}`)
+                axios.post(`http://localhost:8080/api/account/data/${ownerId}`),
+                axios.post(`http://localhost:8080/api/account/friends/count/${accountId}/${ownerId}`)
             ]).catch(error => showErrorNotification(error))
 
             const accountData = accountDataResponse.data.response[0]
