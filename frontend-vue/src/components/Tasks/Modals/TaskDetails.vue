@@ -102,7 +102,7 @@
         disableSubmit.value = true
         tasksStore.deleteLike(props.taskData.taskId)
             .then(() => tasksStore.taskDetails(props.taskData.taskId))
-            .catch(error => showErrorNotification(error.message))
+            .catch(data => showErrorNotification(data.response.data.message))
             .finally(() => disableSubmit.value = false)
     }
 </script>
