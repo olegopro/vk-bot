@@ -194,7 +194,7 @@
         ownerDataById.value = null
 
         if (accountId > 0) {
-            await accountStore.fetchOwnerData(accountId).then(() => {
+            await accountStore.fetchOwnerData(accountId, accountId).then(() => {
                 ownerDataById.value = accountStore.getOwnerDataById(accountId)
             })
                 .catch(({ response }) => showErrorNotification(response.data.message))

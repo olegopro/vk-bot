@@ -41,7 +41,7 @@ final class AccountController extends Controller
 			$ids = implode(',', $ids);
 		}
 
-		return $this->vkClient->request('users.get', [
+		$response = $this->vkClient->request('users.get', [
 			'user_ids' => $ids,
 			'fields'   => [
 				'photo_200',
@@ -56,11 +56,13 @@ final class AccountController extends Controller
 				'sex'
 			]
 		]);
+
+		return response()->json($response);
 	}
 
 	public function getGroupData($id)
 	{
-		return $this->vkClient->request('groups.getById', [
+		$response = $this->vkClient->request('groups.getById', [
 			'group_id' => $id,
 			'fields'   => [
 				'photo_200',
@@ -73,11 +75,13 @@ final class AccountController extends Controller
 				'city',
 			]
 		]);
+
+		return response()->json($response);
 	}
 
 	public function getAccountFollowers($id, $limit = 6)
 	{
-		return $this->vkClient->request('users.getFollowers', [
+		$response = $this->vkClient->request('users.getFollowers', [
 			'user_id' => $id,
 			'count'   => $limit,
 			'fields'  => [
@@ -85,11 +89,13 @@ final class AccountController extends Controller
 				'photo_200'
 			]
 		]);
+
+		return response()->json($response);
 	}
 
 	public function getAccountFriends($id, $limit = 6)
 	{
-		return $this->vkClient->request('friends.get', [
+		$response = $this->vkClient->request('friends.get', [
 			'user_id' => $id,
 			'count'   => $limit,
 			'fields'  => [
@@ -97,6 +103,8 @@ final class AccountController extends Controller
 				'photo_200'
 			]
 		]);
+
+		return response()->json($response);
 	}
 
 	public function getAccountCountFriends($accountId, $ownerId)
@@ -121,14 +129,16 @@ final class AccountController extends Controller
 
 	public function getAccountInfo($access_token)
 	{
-		return $this->vkClient->request('account.getProfileInfo', [], $access_token);
+		$response = $this->vkClient->request('account.getProfileInfo', [], $access_token);
+
+		return response()->json($response);
 	}
 
 	public function setAccountData(Request $request)
 	{
 		$accountData = $this->getAccountInfo($request['access_token']);
 
-		return $this->accountRepository->createAccount([
+		$response = $this->accountRepository->createAccount([
 			'access_token' => $request['access_token'],
 			'account_id'   => $accountData['response']['id'],
 			'screen_name'  => $accountData['response']['screen_name'],
@@ -136,6 +146,8 @@ final class AccountController extends Controller
 			'last_name'    => $accountData['response']['last_name'],
 			'bdate'        => $accountData['response']['bdate']
 		]);
+
+		return response()->json($response);
 	}
 
 	public function getAccountNewsfeed(Request $request)
@@ -318,10 +330,12 @@ final class AccountController extends Controller
 	{
 		$user_id = $request->input('user_id');
 
-		return $this->vkClient->request('users.get', [
+		$response = $this->vkClient->request('users.get', [
 			'fields'  => 'screen_name',
 			'user_id' => $user_id
 		]);
+
+		return response()->json($response);
 	}
 
 	private function getAccessTokenByAccountID($account_id)

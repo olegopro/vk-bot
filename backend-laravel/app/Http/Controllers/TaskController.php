@@ -60,7 +60,7 @@ final class TaskController extends Controller
 		$response['liked_users'] = $usersResponse['response']; // Информация о пользователях
 		$response['account_id'] = $taskData->account_id;
 
-		return response()->json(['response' => $response]);
+		return response()->json($response);
 	}
 
 	public function deleteAllTasks($status = null)
