@@ -21,7 +21,7 @@ module.exports = {
         'vue/multi-word-component-names': 'off',
         'no-return-assign': 'off',
         'quote-props': 'off',
-        'no-unused-vars': 'warn'
+        'no-unused-vars': 'warn',
+        'no-mixed-spaces-and-tabs': 'off'
     }
-
 }

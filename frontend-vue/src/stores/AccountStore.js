@@ -1,147 +1,167 @@
 import { defineStore } from 'pinia'
 import axios from 'axios'
 import axiosThrottle from 'axios-request-throttle'
-import { showErrorNotification } from '../helpers/notyfHelper'
+import { showErrorNotification, showSuccessNotification } from '../helpers/notyfHelper'
 
 export const useAccountStore = defineStore('account', {
-    state: () => ({
-        account: [],
-        ownerData: [],
-        accountFollowers: {},
-        accountFriends: {},
-        accountFriendsCount: [],
-        accountNewsFeed: [],
-        nextFrom: null,
-        previousNextFrom: null,
-        isLoadingFeed: false
-    }),
+	state: () => ({
+		account: [],
+		ownerData: [],
+		accountFollowers: {},
+		accountFriends: {},
+		accountFriendsCount: [],
+		accountNewsFeed: [],
+		nextFrom: null,
+		previousNextFrom: null,
+		isLoadingFeed: false
+	}),
 
-    actions: {
-        async fetchAccount(id) {
-            const { data } = await axios.get(`http://localhost:8080/api/accounts/${id}`)
-            const index = this.account.findIndex((item) => item.id === data.id)
+	actions: {
+		async fetchAccount(id) {
+			const { data } = await axios.get(`http://localhost:8080/api/accounts/${id}`)
+			const index = this.account.findIndex((item) => item.id === data.id)
 
-            if (index !== -1) {
-                // Объект с таким же идентификатором уже существует, обновляем его
-                this.account[index] = { ...this.account[index], ...data }
-            } else {
-                // Добавляем новый объект в массив
-                this.account.push(data)
-            }
-        },
+			if (index !== -1) {
+				// Объект с таким же идентификатором уже существует, обновляем его
+				this.account[index] = { ...this.account[index], ...data }
+			} else {
+				// Добавляем новый объект в массив
+				this.account.push(data)
+			}
+		},
 
-        async fetchOwnerData(accountId, ownerId) {
-            const [accountDataResponse, friendsCountResponse] = await Promise.all([
-                axios.post(`http://localhost:8080/api/account/data/${ownerId}`),
-                axios.post(`http://localhost:8080/api/account/friends/count/${accountId}/${ownerId}`)
-            ]).catch(error => showErrorNotification(error))
+		async fetchOwnerData(accountId, ownerId) {
+			const [accountDataResponse, friendsCountResponse] = await Promise.all([
+				axios.post(`http://localhost:8080/api/account/data/${ownerId}`),
+				axios.post(`http://localhost:8080/api/account/friends/count/${accountId}/${ownerId}`)
+			]).catch(error => showErrorNotification(error))
 
-            const accountData = accountDataResponse.data.response[0]
-            const friendsCount = friendsCountResponse.data.response.count
-            this.ownerData.push({ ...accountData, friends_count: friendsCount })
-        },
+			const accountData = accountDataResponse.data.response[0]
+			const friendsCount = friendsCountResponse.data.response.count
+			this.ownerData.push({ ...accountData, friends_count: friendsCount })
+		},
 
-        async fetchAccountFollowers(accountId) {
-            axios.post(`http://localhost:8080/api/account/followers/${accountId}`)
-                .then(response => this.accountFollowers[accountId] = response.data.response.items)
-        },
+		async fetchAccountFollowers(accountId) {
+			axios.post(`http://localhost:8080/api/account/followers/${accountId}`)
+				.then(response => this.accountFollowers[accountId] = response.data.response.items)
+		},
 
-        async fetchAccountFriends(accountId) {
-            axios.post(`http://localhost:8080/api/account/friends/${accountId}`)
-                .then(response => this.accountFriends[accountId] = response.data.response.items)
-        },
+		async fetchAccountFriends(accountId) {
+			axios.post(`http://localhost:8080/api/account/friends/${accountId}`)
+				.then(response => this.accountFriends[accountId] = response.data.response.items)
+		},
 
-        async fetchAccountFriendsCount(id) {
-            const { data } = await axios.get(`http://localhost:8080/api/account/friends/count/${id}`)
-            this.accountFriendsCount = data
-        },
+		async fetchAccountFriendsCount(id) {
+			const { data } = await axios.get(`http://localhost:8080/api/account/friends/count/${id}`)
+			this.accountFriendsCount = data
+		},
 
-        async fetchAccountNewsFeed(accountID, startFrom = null) {
-            if (startFrom !== null && startFrom === this.previousNextFrom) {
-                return
-            }
+		async fetchAccountNewsFeed(accountID, startFrom = null) {
+			if (startFrom !== null && startFrom === this.previousNextFrom) {
+				return
+			}
 
-            this.previousNextFrom = startFrom
+			this.previousNextFrom = startFrom
 
-            const localAxios = axios
-            axiosThrottle.use(localAxios, { requestsPerSecond: 5 })
+			const localAxios = axios
+			axiosThrottle.use(localAxios, { requestsPerSecond: 5 })
 
-            localAxios.post('http://localhost:8080/api/account/newsfeed', {
-                account_id: accountID,
-                start_from: startFrom
-            })
-                .then(response => {
-                    const data = response.data
-                    const result = data.response.items.filter(item => item.attachments[0]?.type === 'photo')
-                    this.nextFrom = data.response.next_from
+			localAxios.post('http://localhost:8080/api/account/newsfeed', {
+				account_id: accountID,
+				start_from: startFrom
+			})
+				.then(({ data: { data: { response }, message } }) => {
+					// деструктуризация ответа от сервера для извлечения response и message из data
 
-                    if (startFrom === null) {
-                        this.accountNewsFeed = []
-                    }
+					// фильтрация массива items, оставляя только те элементы, у которых первое вложение имеет тип 'photo'
+					const result = response.items.filter(item => item.attachments[0]?.type === 'photo')
 
-                    this.accountNewsFeed = [...this.accountNewsFeed, ...result]
-                    this.isLoadingFeed = false
-                })
-                .catch(() => this.fetchAccountNewsFeed(accountID, this.nextFrom))
-        },
+					// сохранение маркера для следующего запроса новостей из response
+					this.nextFrom = response.next_from
 
-        async addLike(accountId, ownerId, itemId) {
-            const { data } = await axios.post('http://localhost:8080/api/account/like', {
-                account_id: accountId,
-                owner_id: ownerId,
-                item_id: itemId
-            })
+					// если начальный маркер равен null, очистить ленту новостей
+					if (startFrom === null) {
+						this.accountNewsFeed = []
+					}
 
-            return data
-        },
+					// добавление отфильтрованных новостей к текущему списку новостей в аккаунте
+					this.accountNewsFeed = [...this.accountNewsFeed, ...result]
 
-        async getScreenNameById(accountId) {
-            const { data } = await axios.post('http://localhost:8080/api/account/get-screen-name-by-id', {
-                user_id: accountId
-            })
+					// установка флага загрузки в false, т.е. загрузка завершена
+					this.isLoadingFeed = false
 
-            return data.response
-        },
+					showSuccessNotification(message)
+				})
+				.catch(() => {
+					this.fetchAccountNewsFeed(accountID, this.nextFrom)
+					// повторный запрос новостей для аккаунта в случае ошибки
 
-        async addPostsToLike(accountId, taskCount) {
-            const { data } = await axios.post('http://localhost:8080/api/account/get-posts-for-like', {
-                account_id: accountId,
-                task_count: taskCount
-            })
+					showErrorNotification('Новые данные ленты не получены')
+				})
+		},
 
-            this.accountNewsFeed = [...this.accountNewsFeed, ...data]
-        },
+		async addLike(accountId, ownerId, itemId) {
+			await axios.post('http://localhost:8080/api/account/like', {
+				account_id: accountId,
+				owner_id: ownerId,
+				item_id: itemId
+			})
+				.then(({ data }) => showSuccessNotification(data.message))
+				.catch(({ data }) => showErrorNotification(data.error))
+		},
 
-        async groupData(id) {
-            const { data } = await axios.post(`http://localhost:8080/api/group/data/${Math.abs(id)}`)
-            this.addOwnerData(data.response[0])
-        },
+		// TODO: Нигде не используется
+		async getScreenNameById(accountId) {
+			const { data } = await axios.post('http://localhost:8080/api/account/get-screen-name-by-id', {
+				user_id: accountId
+			})
 
-        addOwnerData(accountData) {
-            const index = this.ownerData.findIndex((item) => item.id === accountData.id)
+			return data.response
+		},
 
-            if (index !== -1) {
-                // Объект с таким же идентификатором уже существует, обновляем его
-                this.ownerData[index] = { ...this.ownerData[index], ...accountData }
-            } else {
-                // Добавляем новый объект в массив
-                this.ownerData.push(accountData)
-            }
-        },
+		async addPostsToLike(accountId, taskCount) {
+			await axios.post('http://localhost:8080/api/account/get-posts-for-like', {
+				account_id: accountId,
+				task_count: taskCount
+			})
+				.then(({ data }) => {
+					console.log('addPostsToLike data', data.data)
+					this.accountNewsFeed = [...this.accountNewsFeed, ...data.data]
+					showSuccessNotification(data.message)
+				})
+				.catch(error => showErrorNotification(error))
+		},
 
-        async getAccountDetails(ownerId) {
-            await axios.get(`http://localhost:8080/api/account/${ownerId}`)
-                .then(response => {
-                    return response.data
-                })
-                .catch(error => showErrorNotification(error.response.data.message))
-        }
-    },
+		async groupData(id) {
+			const { data } = await axios.post(`http://localhost:8080/api/group/data/${Math.abs(id)}`)
+			this.addOwnerData(data.response[0])
+		},
 
-    getters: {
-        getAccountFollowers: (state) => (accountId) => state.accountFollowers[accountId] || [],
-        getAccountFriends: (state) => (accountId) => state.accountFriends[accountId] || [],
-        getOwnerDataById: state => (id) => state.ownerData.find(user => user.id === Math.abs(id)),
-        getAccountById: state => (id) => state.account.find(account => account.id === Math.abs(id))
-    }
+		addOwnerData(accountData) {
+			const index = this.ownerData.findIndex((item) => item.id === accountData.id)
+
+			if (index !== -1) {
+				// Объект с таким же идентификатором уже существует, обновляем его
+				this.ownerData[index] = { ...this.ownerData[index], ...accountData }
+			} else {
+				// Добавляем новый объект в массив
+				this.ownerData.push(accountData)
+			}
+		},
+
+		async getAccountDetails(ownerId) {
+			await axios.get(`http://localhost:8080/api/account/${ownerId}`)
+				.then(response => {
+					return response.data
+				})
+				.catch(error => showErrorNotification(error.response.data.message))
+		}
+	},
+
+	getters: {
+		getAccountFollowers: (state) => (accountId) => state.accountFollowers[accountId] || [],
+		getAccountFriends: (state) => (accountId) => state.accountFriends[accountId] || [],
+		getOwnerDataById: state => (id) => state.ownerData.find(user => user.id === Math.abs(id)),
+		getAccountById: state => (id) => state.account.find(account => account.id === Math.abs(id))
+	}
 })

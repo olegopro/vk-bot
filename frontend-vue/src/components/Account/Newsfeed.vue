@@ -112,7 +112,7 @@
 <script setup>
     import { onMounted, ref } from 'vue'
     import { useAccountStore } from '@/stores/AccountStore'
-    import { showErrorNotification, showSuccessNotification } from '../../helpers/notyfHelper'
+    import { showErrorNotification } from '../../helpers/notyfHelper'
     import OwnerDetails from './Modals/OwnerDetails.vue'
     import { useRoute } from 'vue-router'
 
@@ -134,10 +134,7 @@
         loadingStatus.value[index] = true
 
         await accountStore.addLike(userID.value, ownerId, itemId)
-            .then(() => {
-                showSuccessNotification('Лайк успешно поставлен')
-                accountStore.accountNewsFeed[index].likes.user_likes = 1
-            })
+            .then(() => accountStore.accountNewsFeed[index].likes.user_likes = 1)
             .catch(({ response }) => showErrorNotification(response.data.message))
             .finally(() => (loadingStatus.value[index] = false))
     }

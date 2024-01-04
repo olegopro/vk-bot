@@ -9,9 +9,7 @@ class AccountRepository implements AccountRepositoryInterface
 {
 	public function getAllAccounts()
 	{
-		$accounts = Account::all();
-
-		return response()->json($accounts);
+		return $accounts = Account::all();
 	}
 
 	public function createAccount(array $data)

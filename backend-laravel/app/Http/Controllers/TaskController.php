@@ -28,7 +28,12 @@ final class TaskController extends Controller
 	{
 		$tasks = $this->taskRepository->taskStatus($status);
 
-		return response()->json($tasks);
+		return response()->json([
+			'success' => true,
+			'data'    => $tasks,
+			'message' => 'Список задач получен'
+
+		]);
 	}
 
 	public function taskInfo($taskId)
@@ -60,7 +65,11 @@ final class TaskController extends Controller
 		$response['liked_users'] = $usersResponse['response']; // Информация о пользователях
 		$response['account_id'] = $taskData->account_id;
 
-		return response()->json($response);
+		return response()->json([
+			'success' => true,
+			'data'    => $response,
+			'message' => 'Данные о задаче получены'
+		]);
 	}
 
 	public function deleteAllTasks($status = null)
@@ -73,7 +82,10 @@ final class TaskController extends Controller
 
 		$this->taskRepository->clearQueueBasedOnStatus($status);
 
-		return response()->json(['message' => 'Tasks deleted successfully']);
+		return response()->json([
+			'success' => true,
+			'message' => 'Задачи успешно удалены'
+		]);
 	}
 
 	public function deleteTaskById($id)
@@ -94,7 +106,10 @@ final class TaskController extends Controller
 				break;
 		}
 
-		return response()->json(['message' => 'Task deleted successfully']);
+		return response()->json([
+			'success' => true,
+			'message' => "Задача с id = $id удалена"
+		]);
 	}
 
 	public function deleteLike($taskId)
@@ -106,11 +121,16 @@ final class TaskController extends Controller
 			return response()->json(['error' => 'Задача не найдена'], 404);
 		}
 
-		return $this->vkClient->request('likes.delete', [
+		$response = $this->vkClient->request('likes.delete', [
 			'type'     => 'post',
 			'owner_id' => $taskData->owner_id,
 			'item_id'  => $taskData->item_id
 		], $access_token);
+
+		return response()->json([
+			'success' => true,
+			'message' => "Лайк отменён"
+		]);
 	}
 
 	private function getLikes($access_token, $type, $owner_id, $item_id)

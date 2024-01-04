@@ -27,12 +27,23 @@ final class AccountController extends Controller
 
 	public function allAccounts(Request $request)
 	{
-		return $this->accountRepository->getAllAccounts();
+		$accounts = $this->accountRepository->getAllAccounts();
+
+		return response()->json([
+			'success' => true,
+			'data'    => $accounts,
+			'message' => 'Список аккаунтов получен'
+		]);
 	}
 
 	public function deleteAccount($id)
 	{
 		$this->accountRepository->deleteAccount($id);
+
+		return response()->json([
+			'success' => true,
+			'message' => 'Аккаунт удален'
+		]);
 	}
 
 	public function getAccountData($ids)
@@ -131,23 +142,36 @@ final class AccountController extends Controller
 	{
 		$response = $this->vkClient->request('account.getProfileInfo', [], $access_token);
 
-		return response()->json($response);
+		return response()->json([
+			'success' => true,
+			'data' => $response,
+			'message' => 'Информация о профиле получена'
+		]);
 	}
 
 	public function setAccountData(Request $request)
 	{
-		$accountData = $this->getAccountInfo($request['access_token']);
+		// Получаем JsonResponse
+		$accountDataJson = $this->getAccountInfo($request['access_token']);
+
+		// Извлекаем из JsonResponse
+		$accountData = $accountDataJson->getData(true);
 
 		$response = $this->accountRepository->createAccount([
 			'access_token' => $request['access_token'],
-			'account_id'   => $accountData['response']['id'],
-			'screen_name'  => $accountData['response']['screen_name'],
-			'first_name'   => $accountData['response']['first_name'],
-			'last_name'    => $accountData['response']['last_name'],
-			'bdate'        => $accountData['response']['bdate']
+			'account_id'   => $accountData['data']['response']['id'],
+			'screen_name'  => $accountData['data']['response']['screen_name'],
+			'first_name'   => $accountData['data']['response']['first_name'],
+			'last_name'    => $accountData['data']['response']['last_name'],
+			'bdate'        => $accountData['data']['response']['bdate']
 		]);
 
-		return response()->json($response);
+		return response()->json([
+				'success' => true,
+				'data'    => $response,
+				'message' => 'Аккаунт ' . $accountData['data']['response']['screen_name'] . ' добавлен'
+			]
+		);
 	}
 
 	public function getAccountNewsfeed(Request $request)
@@ -177,8 +201,12 @@ final class AccountController extends Controller
 			['response' => $response]
 		);
 
-		return $response;
-		// return response()->json($response);
+		return response()->json([
+				'success' => true,
+				'data'    => $response,
+				'message' => 'Получены новые данные ленты'
+			]
+		);
 	}
 
 	public function getNewsfeedPosts(Request $request)
@@ -192,7 +220,9 @@ final class AccountController extends Controller
 		$failedAttempts = 0; // Счетчик неудачных попыток
 
 		do {
-			$result = $this->getAccountNewsfeed($request);
+			$result = $this->getAccountNewsfeed($request)->getData(true);
+
+			// Log::info('getNewsfeedPosts - $result ' . var_dump($result['response']));
 
 			$data = $result['response']['items'];
 			$next_from = $result['response']['next_from'];
@@ -282,7 +312,11 @@ final class AccountController extends Controller
 		           ->where('status', '=', 'pending')
 		           ->get();
 
-		return response()->json($tasks);
+		return response()->json([
+			'success' => true,
+			'data'    => $tasks,
+			'message' => 'Задачи успешно созданы'
+		]);
 	}
 
 	public function addLike(Request $request)
@@ -323,9 +357,14 @@ final class AccountController extends Controller
 			['response' => $response]
 		);
 
-		return response()->json($response);
+		return response()->json([
+			'success' => true,
+			'data' => $response,
+			'message' => 'Лайк успешно поставлен'
+		]);
 	}
 
+	// TODO: Нигде не используется
 	public function getScreenNameById(Request $request)
 	{
 		$user_id = $request->input('user_id');
@@ -335,7 +374,11 @@ final class AccountController extends Controller
 			'user_id' => $user_id
 		]);
 
-		return response()->json($response);
+		return response()->json([
+			'success' => true,
+			'data' => $response,
+			'message' => 'Отображаемое имя получено'
+		]);
 	}
 
 	private function getAccessTokenByAccountID($account_id)

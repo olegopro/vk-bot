@@ -39,7 +39,10 @@ Route::prefix('account')->group(function (){
     Route::post('/like', [AccountController::class, 'addLike']);
     Route::post('/get-posts-for-like', [AccountController::class, 'getNewsfeedPosts']);
     Route::post('/add-task-likes', [AccountController::class, 'addLikeTask']);
+
+	// TODO: Нигде не используется
     Route::post('/get-screen-name-by-id', [AccountController::class, 'getScreenNameById']);
+
 	Route::delete('/delete-account/{id}', [AccountController::class, 'deleteAccount']);
 });
 
