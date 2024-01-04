@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Facades\VkClient;
 use App\Models\Task;
 use App\Repositories\AccountRepositoryInterface;
 use App\Repositories\TaskRepositoryInterface;
-use App\Services\VkClient;
+use App\Services\VkClientService;
 use Exception;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 final class TaskController extends Controller
@@ -17,7 +17,7 @@ final class TaskController extends Controller
 	protected $taskRepository;
 	protected $accountRepository;
 
-	public function __construct(VkClient $vkClient, TaskRepositoryInterface $taskRepository, AccountRepositoryInterface $accountRepository)
+	public function __construct(VkClientService $vkClient, TaskRepositoryInterface $taskRepository, AccountRepositoryInterface $accountRepository)
 	{
 		$this->vkClient = $vkClient;
 		$this->taskRepository = $taskRepository;
@@ -42,8 +42,9 @@ final class TaskController extends Controller
 
 		$ownerId = $taskData->owner_id;
 		$postId = $taskData->item_id;
+		$accountId = $taskData->account_id;
 
-		$access_token = $this->accountRepository->getAccessTokenByAccountID($taskData->account_id);
+		$access_token = $this->accountRepository->getAccessTokenByAccountID($accountId);
 
 		$postResponse = $this->vkClient->request('wall.getById', [
 			'posts' => $ownerId . '_' . $postId,
@@ -54,16 +55,16 @@ final class TaskController extends Controller
 		// Получение ID пользователей, которые поставили лайки
 		$userIds = implode(',', $likesResponse['response']['items']);
 
-		// Получение информации о пользователях
-		$usersResponse = $this->vkClient->request('users.get', [
+		$usersResponse = VkClient::request('users.get', [
 			'user_ids' => $userIds,
 		]);
+
 
 		// Деструктуризация 'response' для получения первого элемента
 		list($response) = $postResponse['response'];
 
 		$response['liked_users'] = $usersResponse['response']; // Информация о пользователях
-		$response['account_id'] = $taskData->account_id;
+		$response['account_id'] = $accountId;
 
 		return response()->json([
 			'success' => true,

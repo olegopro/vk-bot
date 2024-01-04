@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Facades\VkClient;
 use App\Jobs\addLikesToPosts;
 use App\Models\Account;
 use App\Models\Task;
 use App\Repositories\AccountRepositoryInterface;
 use App\Services\LoggingServiceInterface;
-use App\Services\VkClient;
+use App\Services\VkClientService;
 use DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -18,7 +19,7 @@ final class AccountController extends Controller
 	private $accountRepository;
 	protected $vkClient;
 
-	public function __construct(LoggingServiceInterface $loggingService, VkClient $vkClient, AccountRepositoryInterface $accountRepository)
+	public function __construct(LoggingServiceInterface $loggingService, VkClientService $vkClient, AccountRepositoryInterface $accountRepository)
 	{
 		$this->loggingService = $loggingService;
 		$this->accountRepository = $accountRepository;
@@ -144,7 +145,7 @@ final class AccountController extends Controller
 
 		return response()->json([
 			'success' => true,
-			'data' => $response,
+			'data'    => $response,
 			'message' => 'Информация о профиле получена'
 		]);
 	}
@@ -359,7 +360,7 @@ final class AccountController extends Controller
 
 		return response()->json([
 			'success' => true,
-			'data' => $response,
+			'data'    => $response,
 			'message' => 'Лайк успешно поставлен'
 		]);
 	}
@@ -376,7 +377,7 @@ final class AccountController extends Controller
 
 		return response()->json([
 			'success' => true,
-			'data' => $response,
+			'data'    => $response,
 			'message' => 'Отображаемое имя получено'
 		]);
 	}

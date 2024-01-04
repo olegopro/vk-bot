@@ -4,7 +4,7 @@ namespace App\Jobs;
 
 use App\Models\Task;
 use App\Services\LoggingService;
-use App\Services\VkClient;
+use App\Services\VkClientService;
 use Carbon\Carbon;
 use DB;
 use Exception;
@@ -75,7 +75,7 @@ class addLikesToPosts implements ShouldQueue
         $task->update(['status' => 'active']);
 
         // Выполнение основной логики задачи
-        $response = $response = (new VkClient())->request('likes.add', [
+        $response = $response = (new VkClientService())->request('likes.add', [
             'type'     => 'post',
             'owner_id' => $this->task->owner_id,
             'item_id'  => $this->task->item_id

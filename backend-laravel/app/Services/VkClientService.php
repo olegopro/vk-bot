@@ -3,9 +3,8 @@
 namespace App\Services;
 
 use ATehnix\VkClient\Client;
-use Illuminate\Support\Facades\Log;
 
-class VkClient
+class VkClientService
 {
     private $api;
 
