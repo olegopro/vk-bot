@@ -224,8 +224,8 @@ final class AccountController extends Controller
 
 			// Log::info('getNewsfeedPosts - $result ' . var_dump($result['response']));
 
-			$data = $result['response']['items'];
-			$next_from = $result['response']['next_from'];
+			$data = $result['data']['response']['items'];
+			$next_from = $result['data']['response']['next_from'];
 
 			$attemptFailed = true; // Флаг, указывающий, что текущая попытка не удалась
 

@@ -72,5 +72,5 @@
 
     const modalHide = () => props.modalInstance.hide()
 
-    onMounted(() => accountsStore.fetchAccounts())
+    // onMounted(() => accountsStore.fetchAccounts())
 </script>

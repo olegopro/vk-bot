@@ -85,6 +85,7 @@
 	import DeleteTask from '../components/Tasks/Modals/DeleteTask.vue'
 	import DeleteAllTasks from '../components/Tasks/Modals/DeleteAllTasks.vue'
 	import { Modal } from 'bootstrap'
+    import { useAccountsStore } from '../stores/AccountsStore'
 
 	const taskDetailsModal = ref(null)
 	const deleteTaskModal = ref(null)
@@ -93,6 +94,7 @@
 	const addTasksModal = ref(null)
 
 	const tasksStore = useTasksStore()
+	const accountsStore = useAccountsStore()
 	const accountStore = useAccountStore()
 	const route = useRoute()
 	const router = useRouter()
@@ -135,7 +137,11 @@
 	}
 
 	const showDeleteAllTasksModal = () => deleteAllTasksModal.value.show()
-	const showAddTaskModal = () => addTasksModal.value.show()
+
+	const showAddTaskModal = () => {
+        accountsStore.fetchAccounts()
+        addTasksModal.value.show()
+    }
 
 	onMounted(() => {
 		tasksStore.fetchTasks(currentStatus.value)
