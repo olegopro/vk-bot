@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Facades\VkClient;
 use App\Models\Task;
 use App\Services\LoggingService;
 use App\Services\VkClientService;
@@ -13,6 +14,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Throwable;
 
 class addLikesToPosts implements ShouldQueue
 {
@@ -75,7 +77,7 @@ class addLikesToPosts implements ShouldQueue
         $task->update(['status' => 'active']);
 
         // Выполнение основной логики задачи
-        $response = $response = (new VkClientService())->request('likes.add', [
+        $response = $response = VkClient::request('likes.add', [
             'type'     => 'post',
             'owner_id' => $this->task->owner_id,
             'item_id'  => $this->task->item_id
@@ -92,7 +94,7 @@ class addLikesToPosts implements ShouldQueue
         $task->update(['status' => 'done']);
     }
 
-    public function failed(Exception $exception)
+    public function failed(Throwable $exception)
     {
         $this->loggingService->log(
             'account_task_likes',
