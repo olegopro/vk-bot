@@ -24,15 +24,15 @@ class addLikesToPosts implements ShouldQueue
     private $token;
     private $loggingService;
     private $screenName;
-	private $vkClient;
+    private $vkClient;
 
-	/**
-	 * Create a new job instance.
-	 *
-	 * @param $task
-	 * @param $token
-	 * @param LoggingService $loggingService
-	 */
+    /**
+     * Create a new job instance.
+     *
+     * @param $task
+     * @param $token
+     * @param LoggingService $loggingService
+     */
     public function __construct($task, $token, LoggingService $loggingService)
     {
         $this->task = $task;
@@ -57,6 +57,16 @@ class addLikesToPosts implements ShouldQueue
         // Проверка задачи на просроченность
         $deltaSeconds = 10; // разрешенная дельта в секундах
 
+        /*
+            $task->run_at проверяет, установлено ли в объекте задачи свойство run_at, которое обычно содержит временную метку, когда задача должна быть выполнена.
+            now() получает текущее время и дату в виде экземпляра Carbon, который является расширением класса DateTime в PHP.
+            new Carbon($task->run_at) создает новый экземпляр Carbon на основе времени, когда задача должна была быть запущена.
+            diffInSeconds(...) сравнивает два объекта Carbon и возвращает разницу в секундах между ними.
+            > $deltaSeconds проверяет, превышает ли разница установленное значение deltaSeconds, которое является допустимым временным интервалом для начала выполнения задачи. Если разница больше, значит задача считается просроченной.
+
+            Если условие истинно (задача просрочена), тогда выполняется код внутри блока if, обновляющий статус задачи на 'canceled' и записывающий сообщение об ошибке.
+            Затем генерируется исключение, чтобы сообщить о просроченной задаче.
+        */
         if ($task->run_at && now()->diffInSeconds(new Carbon($task->run_at)) > $deltaSeconds) {
             $task->update([
                 'status'        => 'canceled',
@@ -112,7 +122,8 @@ class addLikesToPosts implements ShouldQueue
         ]);
     }
 
-    public function getTaskStatus() {
+    public function getTaskStatus()
+    {
         return $this->task->status;
     }
 }
