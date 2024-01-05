@@ -3,17 +3,18 @@
 namespace App\Providers;
 
 use App\Facades\VkClient;
+use App\Repositories\AccountRepositoryInterface;
 use Illuminate\Support\ServiceProvider;
 use App\Services\VkClientService;
 
 class VkClientServiceProvider extends ServiceProvider
 {
-	public function register()
-	{
-		$this->app->singleton('VkClientService', function ($app) {
-			return new VkClientService();
-		});
-	}
+    public function register()
+    {
+        $this->app->singleton('VkClientService', function ($app) {
+            return new VkClientService($app->make(AccountRepositoryInterface::class));
+        });
+    }
 
 	public function boot()
 	{
