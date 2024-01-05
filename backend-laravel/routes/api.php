@@ -37,8 +37,10 @@ Route::prefix('account')->group(function (){
     Route::post('/add', [AccountController::class, 'setAccountData']);
     Route::post('/newsfeed', [AccountController::class, 'getAccountNewsfeed']);
     Route::post('/like', [AccountController::class, 'addLike']);
-    Route::post('/get-posts-for-like', [AccountController::class, 'getNewsfeedPosts']);
-    Route::post('/add-task-likes', [AccountController::class, 'addLikeTask']);
+
+    // Перенести в tasks
+    Route::post('/get-posts-for-like', [TaskController::class, 'getNewsfeedPosts']);
+    Route::post('/add-task-likes', [TaskController::class, 'addLikeTask']);
 
 	// TODO: Нигде не используется
     Route::post('/get-screen-name-by-id', [AccountController::class, 'getScreenNameById']);

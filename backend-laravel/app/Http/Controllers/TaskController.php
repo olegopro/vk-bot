@@ -3,143 +3,250 @@
 namespace App\Http\Controllers;
 
 use App\Facades\VkClient;
+use App\Jobs\addLikesToPosts;
 use App\Models\Task;
 use App\Repositories\AccountRepositoryInterface;
 use App\Repositories\TaskRepositoryInterface;
+use App\Services\LoggingServiceInterface;
 use App\Services\VkClientService;
 use Exception;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 final class TaskController extends Controller
 {
-	protected $vkClient;
-	protected $taskRepository;
-	protected $accountRepository;
+    public function __construct(
+        private readonly LoggingServiceInterface    $loggingService,
+        private readonly VkClientService            $vkClient,
+        private readonly TaskRepositoryInterface    $taskRepository,
+        private readonly AccountRepositoryInterface $accountRepository,
+        private readonly AccountController          $accountController
+    ) {}
 
-	public function __construct(VkClientService $vkClient, TaskRepositoryInterface $taskRepository, AccountRepositoryInterface $accountRepository)
-	{
-		$this->vkClient = $vkClient;
-		$this->taskRepository = $taskRepository;
-		$this->accountRepository = $accountRepository;
-	}
+    public function taskStatus($status = null)
+    {
+        $tasks = $this->taskRepository->taskStatus($status);
 
-	public function taskStatus($status = null)
-	{
-		$tasks = $this->taskRepository->taskStatus($status);
+        return response()->json([
+            'success' => true,
+            'data'    => $tasks,
+            'message' => 'Список задач получен'
 
-		return response()->json([
-			'success' => true,
-			'data'    => $tasks,
-			'message' => 'Список задач получен'
+        ]);
+    }
 
-		]);
-	}
+    public function taskInfo($taskId)
+    {
+        $taskData = $this->taskRepository->findTask($taskId);
 
-	public function taskInfo($taskId)
-	{
-		$taskData = $this->taskRepository->findTask($taskId);
+        $ownerId = $taskData->owner_id;
+        $postId = $taskData->item_id;
+        $accountId = $taskData->account_id;
 
-		$ownerId = $taskData->owner_id;
-		$postId = $taskData->item_id;
-		$accountId = $taskData->account_id;
+        $access_token = $this->accountRepository->getAccessTokenByAccountID($accountId);
 
-		$access_token = $this->accountRepository->getAccessTokenByAccountID($accountId);
+        $postResponse = $this->vkClient->request('wall.getById', [
+            'posts' => $ownerId . '_' . $postId,
+        ], $access_token);
 
-		$postResponse = $this->vkClient->request('wall.getById', [
-			'posts' => $ownerId . '_' . $postId,
-		], $access_token);
+        $likesResponse = $this->getLikes($access_token, 'post', $ownerId, $postId);
 
-		$likesResponse = $this->getLikes($access_token, 'post', $ownerId, $postId);
+        // Получение ID пользователей, которые поставили лайки
+        $userIds = implode(',', $likesResponse['response']['items']);
 
-		// Получение ID пользователей, которые поставили лайки
-		$userIds = implode(',', $likesResponse['response']['items']);
+        $usersResponse = VkClient::request('users.get', [
+            'user_ids' => $userIds,
+        ]);
 
-		$usersResponse = VkClient::request('users.get', [
-			'user_ids' => $userIds,
-		]);
+        // Деструктуризация 'response' для получения первого элемента
+        list($response) = $postResponse['response'];
 
+        $response['liked_users'] = $usersResponse['response']; // Информация о пользователях
+        $response['account_id'] = $accountId;
 
-		// Деструктуризация 'response' для получения первого элемента
-		list($response) = $postResponse['response'];
+        return response()->json([
+            'success' => true,
+            'data'    => $response,
+            'message' => 'Данные о задаче получены'
+        ]);
+    }
 
-		$response['liked_users'] = $usersResponse['response']; // Информация о пользователях
-		$response['account_id'] = $accountId;
+    public function getNewsfeedPosts(Request $request)
+    {
+        $account_id = $request->input('account_id');
+        $task_count = $request->input('task_count');
+        $access_token = VkClient::getAccessTokenByAccountID($account_id);
 
-		return response()->json([
-			'success' => true,
-			'data'    => $response,
-			'message' => 'Данные о задаче получены'
-		]);
-	}
+        $createdCount = 0; // Счетчик созданных записей
+        $maxCreatedCount = $task_count; // Нужное количество записей
+        $failedAttempts = 0; // Счетчик неудачных попыток
 
-	public function deleteAllTasks($status = null)
-	{
-		$this->taskRepository->deleteAllTasks($status);
+        do {
+            $result = $this->accountController->getAccountNewsfeed($request)->getData(true);
 
-		if ($status === 'failed') {
-			DB::table('failed_jobs')->truncate();
-		}
+            $data = $result['data']['response']['items'];
+            $next_from = $result['data']['response']['next_from'];
 
-		$this->taskRepository->clearQueueBasedOnStatus($status);
+            $attemptFailed = true; // Флаг, указывающий, что текущая попытка не удалась
 
-		return response()->json([
-			'success' => true,
-			'message' => 'Задачи успешно удалены'
-		]);
-	}
+            foreach ($data as $post) {
+                if ($post['owner_id'] > 0
+                    && !array_key_exists('copy_history', $post)
+                    && $post['likes']['user_likes'] === 0
+                    && isset($post['attachments'])
+                    && collect($post['attachments'])->contains('type', 'photo')
+                    && $createdCount < $maxCreatedCount
+                ) {
+                    $attemptFailed = false;
 
-	public function deleteTaskById($id)
-	{
-		$taskStatus = $this->taskRepository->getTaskStatusById($id);
+                    $username = $this->vkClient->request('users.get', [
+                        'fields'  => 'screen_name',
+                        'user_id' => $post['owner_id']
+                    ]);
 
-		switch ($taskStatus) {
-			case 'done':
-				$this->taskRepository->deleteCompletedTask($id);
-				break;
+                    usleep(300000);
 
-			case 'pending':
-				$this->taskRepository->deletePendingTask($id);
-				break;
+                    Task::create([
+                        'account_id'    => $account_id,
+                        'first_name'    => $username['response'][0]['first_name'],
+                        'last_name'     => $username['response'][0]['last_name'],
+                        'owner_id'      => $post['owner_id'],
+                        'item_id'       => $post['post_id'],
+                        'attempt_count' => 1,
+                        'status'        => 'pending'
+                    ]);
 
-			case 'failed':
-				$this->taskRepository->deleteFailedTask($id);
-				break;
-		}
+                    $createdCount++;
 
-		return response()->json([
-			'success' => true,
-			'message' => "Задача с id = $id удалена"
-		]);
-	}
+                    if ($createdCount >= $maxCreatedCount) {
+                        break 2;
+                    }
+                }
+            }
 
-	public function deleteLike($taskId)
-	{
-		$taskData = $this->taskRepository->findTask($taskId);
-		$access_token = $this->accountRepository->getAccessTokenByAccountID($taskData->account_id);
+            if ($attemptFailed) {
+                $failedAttempts++;
+            } else {
+                $failedAttempts = 0;
+            }
 
-		if (!$taskData) {
-			return response()->json(['error' => 'Задача не найдена'], 404);
-		}
+            $request->merge(['start_from' => $next_from]);
 
-		$response = $this->vkClient->request('likes.delete', [
-			'type'     => 'post',
-			'owner_id' => $taskData->owner_id,
-			'item_id'  => $taskData->item_id
-		], $access_token);
+            // Проверка на не выполнение условия 3 раза
+            if ($failedAttempts >= 3) {
+                break;
+            }
 
-		return response()->json([
-			'success' => true,
-			'message' => "Лайк отменён"
-		]);
-	}
+        } while ($createdCount < $maxCreatedCount && !empty($next_from));
 
-	private function getLikes($access_token, $type, $owner_id, $item_id)
-	{
-		return $this->vkClient->request('likes.getList', [
-			'type'     => $type,
-			'owner_id' => $owner_id,
-			'item_id'  => $item_id
-		], $access_token);
-	}
+        return $this->addLikeTask($access_token);
+    }
+
+    public function addLikeTask($token)
+    {
+        $increase = $pause = DB::table('settings')
+                               ->where('id', '=', '1')
+                               ->value('task_timeout');
+
+        $tasks = DB::table('tasks')
+                   ->where('status', '=', 'pending')
+                   ->get();
+
+        foreach ($tasks as $task) {
+            $run_at = now()->addSeconds($pause);
+
+            // Сохраняем время запуска задачи в базе данных
+            DB::table('tasks')
+              ->where('id', $task->id)
+              ->update(['run_at' => $run_at]);
+
+            // Затем отправляем задачу в очередь
+            addLikesToPosts::dispatch($task, $token, $this->loggingService)
+                           ->delay(now()->addSeconds($pause));
+
+            $pause += $increase;
+        }
+
+        // Перезапрашиваем задачи из базы данных перед отправкой в ответе
+        $tasks = DB::table('tasks')
+                   ->where('status', '=', 'pending')
+                   ->get();
+
+        return response()->json([
+            'success' => true,
+            'data'    => $tasks,
+            'message' => 'Задачи успешно созданы'
+        ]);
+    }
+
+    public function deleteAllTasks($status = null)
+    {
+        $this->taskRepository->deleteAllTasks($status);
+
+        if ($status === 'failed') {
+            DB::table('failed_jobs')->truncate();
+        }
+
+        $this->taskRepository->clearQueueBasedOnStatus($status);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Задачи успешно удалены'
+        ]);
+    }
+
+    public function deleteTaskById($id)
+    {
+        $taskStatus = $this->taskRepository->getTaskStatusById($id);
+
+        switch ($taskStatus) {
+            case 'done':
+                $this->taskRepository->deleteCompletedTask($id);
+                break;
+
+            case 'pending':
+                $this->taskRepository->deletePendingTask($id);
+                break;
+
+            case 'failed':
+                $this->taskRepository->deleteFailedTask($id);
+                break;
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => "Задача с id = $id удалена"
+        ]);
+    }
+
+    public function deleteLike($taskId)
+    {
+        $taskData = $this->taskRepository->findTask($taskId);
+        $access_token = $this->accountRepository->getAccessTokenByAccountID($taskData->account_id);
+
+        if (!$taskData) {
+            return response()->json(['error' => 'Задача не найдена'], 404);
+        }
+
+        $response = $this->vkClient->request('likes.delete', [
+            'type'     => 'post',
+            'owner_id' => $taskData->owner_id,
+            'item_id'  => $taskData->item_id
+        ], $access_token);
+
+        return response()->json([
+            'success' => true,
+            'message' => "Лайк отменён"
+        ]);
+    }
+
+    private function getLikes($access_token, $type, $owner_id, $item_id)
+    {
+        return $this->vkClient->request('likes.getList', [
+            'type'     => $type,
+            'owner_id' => $owner_id,
+            'item_id'  => $item_id
+        ], $access_token);
+    }
 }
