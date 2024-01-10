@@ -26,6 +26,27 @@ class VkClientService
         return $this->api->request($method, $parameters);
     }
 
+    public function allAccounts()
+    {
+        $data = $this->accountRepository->getAllAccounts();
+
+        return [
+            'success' => true,
+            'data'    => $data,
+            'message' => 'Список аккаунтов получен'
+        ];
+    }
+
+    public function deleteAccount($id)
+    {
+        $this->accountRepository->deleteAccount($id);
+
+        return [
+            'success' => true,
+            'message' => 'Аккаунт удален'
+        ];
+    }
+
     public function getAccountData($ids)
     {
         if (is_array($ids)) {

@@ -26,24 +26,14 @@ final class AccountController extends Controller
         $this->vkClient = $vkClient;
     }
 
-    public function allAccounts(Request $request)
+    public function allAccounts()
     {
-
-        return response()->json([
-            'success' => true,
-            'data'    => $this->accountRepository->getAllAccounts(),
-            'message' => 'Список аккаунтов получен'
-        ]);
+        return response()->json(VkClient::allAccounts());
     }
 
     public function deleteAccount($id)
     {
-        $this->accountRepository->deleteAccount($id);
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Аккаунт удален'
-        ]);
+        return response()->json(VkClient::deleteAccount($id));
     }
 
     public function getAccountData($ids)
@@ -90,13 +80,11 @@ final class AccountController extends Controller
 
     public function getAccountNewsfeed(Request $request)
     {
-        return response()->json(
-            VkClient::getAccountNewsfeed(
-                $request->input('account_id'),
-                $request->input('start_from'),
-                $this->loggingService
-            )
-        );
+        return response()->json(VkClient::getAccountNewsfeed(
+            $request->input('account_id'),
+            $request->input('start_from'),
+            $this->loggingService
+        ));
     }
 
     public function addLike(Request $request)
