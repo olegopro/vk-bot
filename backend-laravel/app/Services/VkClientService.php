@@ -32,7 +32,7 @@ class VkClientService
             $ids = implode(',', $ids);
         }
 
-        return $this->request('users.get', [
+        $response = $this->request('users.get', [
             'user_ids' => $ids,
             'fields'   => [
                 'photo_200',
@@ -47,6 +47,12 @@ class VkClientService
                 'sex'
             ]
         ]);
+
+        return [
+            'success' => true,
+            'data'    => $response,
+            'message' => 'Информация о профиле получена'
+        ];
     }
 
     public function getGroupData($id)

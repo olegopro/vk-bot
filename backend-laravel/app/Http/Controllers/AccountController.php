@@ -71,7 +71,11 @@ final class AccountController extends Controller
         $accessToken = $this->accountRepository->getAccessTokenByAccountID($accountId);
         $response = VkClient::getAccountCountFriends($accountId, $ownerId, $accessToken);
 
-        return response()->json($response);
+        return response()->json([
+            'success' => true,
+            'data'    => $response,
+            'message' => 'Количество друзей аккаунта получено'
+        ]);
     }
 
     public function getAccountInfo($access_token)

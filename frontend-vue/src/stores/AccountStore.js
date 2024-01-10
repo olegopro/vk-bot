@@ -31,14 +31,28 @@ export const useAccountStore = defineStore('account', {
 		},
 
 		async fetchOwnerData(accountId, ownerId) {
-			const [accountDataResponse, friendsCountResponse] = await Promise.all([
+			await Promise.all([
 				axios.post(`http://localhost:8080/api/account/data/${ownerId}`),
 				axios.post(`http://localhost:8080/api/account/friends/count/${accountId}/${ownerId}`)
-			]).catch(error => showErrorNotification(error))
+			]).then(responses => {
+				const ownerDataResponse = responses[0]
+				const friendsCountResponse = responses[1]
 
-			const accountData = accountDataResponse.data.response[0]
-			const friendsCount = friendsCountResponse.data.response.count
-			this.ownerData.push({ ...accountData, friends_count: friendsCount })
+				//  Данные владельца в первом ответе находятся в response.data.data.response[0]
+				const accountData = ownerDataResponse.data.data.response[0]
+
+				// Количество друзей находится в response.data.response.count
+				const friendsCount = friendsCountResponse.data.data.response.count
+
+				// Объединяем данные
+				this.ownerData.push({ ...accountData, friends_count: friendsCount })
+
+				// Отображаем уведомления об успехе
+				showSuccessNotification(ownerDataResponse.data.message)
+				showSuccessNotification(friendsCountResponse.data.message)
+			}).catch(error => {
+				showErrorNotification(error)
+			})
 		},
 
 		async fetchAccountFollowers(accountId) {
