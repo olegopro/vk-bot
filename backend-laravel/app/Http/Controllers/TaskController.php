@@ -238,13 +238,4 @@ final class TaskController extends Controller
             'message' => "Лайк отменён"
         ]);
     }
-
-    private function getLikes($access_token, $type, $owner_id, $item_id)
-    {
-        return $this->vkClient->request('likes.getList', [
-            'type'     => $type,
-            'owner_id' => $owner_id,
-            'item_id'  => $item_id
-        ], $access_token);
-    }
 }
