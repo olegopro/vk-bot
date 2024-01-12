@@ -282,5 +282,24 @@ class VkClientService
         ];
     }
 
+    public function deleteLike($accessToken, $type, $owner_id, $item_id)
+    {
+        $response = $this->request('likes.delete', [
+            'type'     => $type,
+            'owner_id' => $owner_id,
+            'item_id'  => $item_id
+        ], $accessToken);
 
+        if (isset($response['error'])) {
+            return [
+                'success' => false,
+                'error'   => $response['error']['error_msg']
+            ];
+        }
+
+        return [
+            'success' => true,
+            'message' => 'Лайк отменён'
+        ];
+    }
 }

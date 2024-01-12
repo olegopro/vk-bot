@@ -221,21 +221,20 @@ final class TaskController extends Controller
     public function deleteLike($taskId)
     {
         $taskData = $this->taskRepository->findTask($taskId);
-        $access_token = $this->accountRepository->getAccessTokenByAccountID($taskData->account_id);
 
         if (!$taskData) {
-            return response()->json(['error' => 'Задача не найдена'], 404);
+            return ['success' => false, 'error' => 'Задача не найдена'];
         }
 
-        $response = $this->vkClient->request('likes.delete', [
-            'type'     => 'post',
-            'owner_id' => $taskData->owner_id,
-            'item_id'  => $taskData->item_id
-        ], $access_token);
+        $accessToken = $this->accountRepository->getAccessTokenByAccountID($taskData->account_id);
 
-        return response()->json([
-            'success' => true,
-            'message' => "Лайк отменён"
-        ]);
+        return response()->json(
+            VkClient::deleteLike(
+                $accessToken,
+                'post',
+                $taskData->owner_id,
+                $taskData->item_id
+            )
+        );
     }
 }
