@@ -259,4 +259,28 @@ class VkClientService
     {
         return $this->accountRepository->getScreenNameByToken($access_token);
     }
+
+    public function getLikes($access_token, $type, $owner_id, $item_id)
+    {
+        return $this->request('likes.getList', [
+            'type'     => $type,
+            'owner_id' => $owner_id,
+            'item_id'  => $item_id
+        ], $access_token);
+    }
+
+    public function getUsers($users_ids)
+    {
+        $response = $this->request('users.get', [
+            'user_ids' => $users_ids,
+        ]);
+
+        return [
+            'success' => true,
+            'data'    => $response,
+            'message' => 'Пользователи получены'
+        ];
+    }
+
+
 }

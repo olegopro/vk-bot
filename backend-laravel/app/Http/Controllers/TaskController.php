@@ -50,19 +50,17 @@ final class TaskController extends Controller
             'posts' => $ownerId . '_' . $postId,
         ], $access_token);
 
-        $likesResponse = $this->getLikes($access_token, 'post', $ownerId, $postId);
+        $likesResponse = VkClient::getLikes($access_token, 'post', $ownerId, $postId);
 
         // Получение ID пользователей, которые поставили лайки
         $userIds = implode(',', $likesResponse['response']['items']);
 
-        $usersResponse = VkClient::request('users.get', [
-            'user_ids' => $userIds,
-        ]);
+        $usersResponse = VkClient::getUsers($userIds);
 
         // Деструктуризация 'response' для получения первого элемента
         list($response) = $postResponse['response'];
 
-        $response['liked_users'] = $usersResponse['response']; // Информация о пользователях
+        $response['liked_users'] = $usersResponse['data']['response']; // Информация о пользователях
         $response['account_id'] = $accountId;
 
         return response()->json([
