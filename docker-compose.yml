@@ -21,6 +21,7 @@ services:
             - DB_USERNAME=root
             - DB_PASSWORD=password
             - QUEUE_CONNECTION=database
+            - PHP_IDE_CONFIG="serverName=DockerServer"
             - VK_API_URL=https://api.vk.com/method/
             - VK_API_VERSION=5.131
             - VK_API_SERVICE_KEY=service-key
