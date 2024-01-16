@@ -15,16 +15,11 @@ use Illuminate\Support\Facades\Log;
 
 final class AccountController extends Controller
 {
-    private $loggingService;
-    private $accountRepository;
-    protected $vkClient;
-
-    public function __construct(LoggingServiceInterface $loggingService, VkClientService $vkClient, AccountRepositoryInterface $accountRepository)
-    {
-        $this->loggingService = $loggingService;
-        $this->accountRepository = $accountRepository;
-        $this->vkClient = $vkClient;
-    }
+    public function __construct(
+        private readonly LoggingServiceInterface    $loggingService,
+        private readonly VkClientService            $vkClient,
+        private readonly AccountRepositoryInterface $accountRepository
+    ) {}
 
     public function allAccounts()
     {
