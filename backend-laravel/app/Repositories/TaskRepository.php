@@ -9,16 +9,20 @@ use Illuminate\Support\Str;
 
 class TaskRepository implements TaskRepositoryInterface
 {
-	public function taskStatus($status)
-	{
-		$query = Task::query();
+    public function taskStatus($status = null, $accountId = null)
+    {
+        $query = Task::query();
 
-		if ($status) {
-			$query->where('status', $status);
-		}
+        if (!is_null($status)) {
+            $query->where('status', $status);
+        }
 
-		return $query->get();
-	}
+        if (!is_null($accountId)) {
+            $query->where('account_id', $accountId);
+        }
+
+        return $query->get();
+    }
 
 	public function findTask($taskId)
 	{

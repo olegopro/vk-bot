@@ -24,15 +24,31 @@ final class TaskController extends Controller
         private readonly AccountController          $accountController
     ) {}
 
-    public function taskStatus($status = null)
+    // public function taskStatus($status = null, $accountId = null)
+    // {
+    //     $tasks = $this->taskRepository->taskStatus($status, $accountId);
+    //
+    //     return response()->json([
+    //         'success' => true,
+    //         'data'    => $tasks,
+    //         'message' => 'Список задач получен'
+    //     ]);
+    // }
+
+    public function taskStatus($status = null, $accountId = null)
     {
-        $tasks = $this->taskRepository->taskStatus($status);
+        // Проверяем, является ли первый параметр числом (accountId)
+        if (is_numeric($status)) {
+            $accountId = $status;
+            $status = null;
+        }
+
+        $tasks = $this->taskRepository->taskStatus($status, $accountId);
 
         return response()->json([
             'success' => true,
             'data'    => $tasks,
             'message' => 'Список задач получен'
-
         ]);
     }
 

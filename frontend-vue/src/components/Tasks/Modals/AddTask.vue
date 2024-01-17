@@ -33,7 +33,7 @@
 </template>
 
 <script setup>
-    import { ref, onMounted, watch, defineProps } from 'vue'
+    import { ref, watch, defineProps } from 'vue'
     import { useAccountStore } from '@/stores/AccountStore'
     import { useAccountsStore } from '../../../stores/AccountsStore'
     import { showErrorNotification, showSuccessNotification } from '../../../helpers/notyfHelper'
@@ -71,6 +71,4 @@
     }
 
     const modalHide = () => props.modalInstance.hide()
-
-    // onMounted(() => accountsStore.fetchAccounts())
 </script>

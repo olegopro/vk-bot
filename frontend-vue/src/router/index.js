@@ -15,7 +15,7 @@ const routes = [
         }
     },
     {
-        path: '/tasks/:status?',
+        path: '/tasks/:status?/:accountId?',
         name: 'Tasks',
         component: Tasks,
         meta: {
