@@ -188,8 +188,11 @@ final class TaskController extends Controller
               ]);
 
             // Затем отправляем задачу в очередь
-            addLikesToPosts::dispatch($task, $token, $this->loggingService)
-                           ->delay(now()->addSeconds($pause));
+            $job = addLikesToPosts::dispatch($task, $token, $this->loggingService)
+                                  ->delay(now()->addSeconds($pause));
+
+            // Получаем идентификатор задачи
+            // $jobId = $job->all()[0]->job->getJobId();
 
             $pause += $increase;
         }
