@@ -50,8 +50,14 @@ export const useTasksStore = defineStore('tasks', {
 				.then(() => this.tasks = this.tasks.filter(task => task.id !== id))
 		},
 
-		async deleteAllTasks(status) {
-			await axios.delete(`http://localhost:8080/api/tasks/delete-all-tasks/${status}`)
+		async deleteAllTasks(status, accountId) {
+			// Проверяем, определены ли параметры status и accountId
+			const statusPart = status ? `/${status}` : '/null' // Если status не определен, используем '/null'
+			const accountIdPart = accountId ? `/${accountId}` : '' // Если accountId не определен, не добавляем его в URL
+
+			const url = `http://localhost:8080/api/tasks/delete-all-tasks${statusPart}${accountIdPart}`
+
+			await axios.delete(url)
 				.then(({ data }) => {
 					this.tasks = []
 					showSuccessNotification(data.message)

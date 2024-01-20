@@ -126,4 +126,8 @@ class addLikesToPosts implements ShouldQueue
     {
         return $this->task->status;
     }
+
+    public function getAccountId() {
+        return $this->task->account_id;
+    }
 }

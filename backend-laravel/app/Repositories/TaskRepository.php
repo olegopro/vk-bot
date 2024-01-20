@@ -24,115 +24,156 @@ class TaskRepository implements TaskRepositoryInterface
         return $query->get();
     }
 
-	public function findTask($taskId)
-	{
-		$task = Task::find($taskId);
+    public function findTask($taskId)
+    {
+        $task = Task::find($taskId);
 
-		if (!$task) {
-			throw new Exception('Задача не найдена', 404);
-		}
+        if (!$task) {
+            throw new Exception('Задача не найдена', 404);
+        }
 
-		return $task;
-	}
+        return $task;
+    }
 
-	public function getTaskStatusById($taskId)
-	{
-		return Task::where('id', $taskId)->value('status');
-	}
+    public function getTaskStatusById($taskId)
+    {
+        return Task::where('id', $taskId)->value('status');
+    }
 
-	public function deleteAllTasks($status)
-	{
-		if ($status) {
-			return Task::where('status', $status)->delete();
-		} else {
-			Task::truncate();
-		}
-	}
+    public function deleteCompletedTask($taskId)
+    {
+        // Удаление завершенной задачи
+        return Task::where('id', $taskId)
+                   ->where('status', 'done')
+                   ->delete();
+    }
 
-	public function deleteCompletedTask($taskId)
-	{
-		// Удаление завершенной задачи
-		return Task::where('id', $taskId)
-		           ->where('status', 'done')
-		           ->delete();
-	}
+    public function deletePendingTask($taskId)
+    {
+        // Удаление ожидающей задачи
+        // Сначала удаляем задачу из очереди
+        DB::table('jobs')->orderBy('id')->chunk(100, function ($jobs) use ($taskId) {
+            foreach ($jobs as $job) {
+                $payload = json_decode($job->payload, true);
+                $command = unserialize($payload['data']['command']);
+                $commandTaskId = method_exists($command, 'getTask') ? $command->getTask()->id : null;
 
-	public function deletePendingTask($taskId)
-	{
-		// Удаление ожидающей задачи
-		// Сначала удаляем задачу из очереди
-		DB::table('jobs')->orderBy('id')->chunk(100, function ($jobs) use ($taskId) {
-			foreach ($jobs as $job) {
-				$payload = json_decode($job->payload, true);
-				$command = unserialize($payload['data']['command']);
-				$commandTaskId = method_exists($command, 'getTask') ? $command->getTask()->id : null;
+                if ($commandTaskId === $taskId) {
+                    DB::table('jobs')->where('id', $job->id)->delete();
+                }
+            }
+        });
 
-				if ($commandTaskId === $taskId) {
-					DB::table('jobs')->where('id', $job->id)->delete();
-				}
-			}
-		});
+        // Затем удаляем задачу из таблицы задач
+        return Task::where('id', $taskId)
+                   ->where('status', 'pending')
+                   ->delete();
+    }
 
-		// Затем удаляем задачу из таблицы задач
-		return Task::where('id', $taskId)
-		           ->where('status', 'pending')
-		           ->delete();
-	}
+    public function deleteFailedTask($taskId)
+    {
+        // Удаление неуспешной задачи
+        return Task::where('id', $taskId)
+                   ->where('status', 'failed')
+                   ->delete();
+    }
 
-	public function deleteFailedTask($taskId)
-	{
-		// Удаление неуспешной задачи
-		return Task::where('id', $taskId)
-		           ->where('status', 'failed')
-		           ->delete();
-	}
+    public function clearQueueBasedOnStatus($status = null, $accountId = null)
+    {
+        switch ($status) {
+            case 'done':
+                // Удаляем задачи со статусом 'done' с учетом accountId
+                $query = Task::where('status', 'done');
 
-	public function clearQueueBasedOnStatus($status = null)
-	{
-		switch ($status) {
-			case 'done':
-				// Удаляем только из таблицы tasks
-				Task::where('status', 'done')->delete();
-				break;
+                if ($accountId) {
+                    $query->where('account_id', $accountId);
+                }
 
-			case 'pending':
-				// Удаляем из таблицы tasks
-				Task::where('status', 'pending')->delete();
+                $query->delete();
 
-				// Удаляем также из таблицы jobs
-				$this->deleteJobsByStatus('pending');
-				break;
+                break;
 
-			case 'failed':
-				// Удаляем задачи со статусом failed из таблицы tasks
-				Task::where('status', 'failed')->delete();
+            case 'queued':
+                // Удаляем задачи со статусом 'pending' с учетом accountId
+                $query = Task::where('status', 'queued');
 
-				// Очищаем таблицу failed_jobs
-				DB::table('failed_jobs')->truncate();
-				break;
+                if ($accountId) {
+                    $query->where('account_id', $accountId);
+                }
 
-			default:
-				// Удаляем все задачи из tasks и jobs
-				Task::truncate();
-				DB::table('jobs')->truncate();
-				break;
-		}
-	}
+                $query->delete();
 
-	public function deleteJobsByStatus($status)
-	{
-		$jobs = DB::table('jobs')->get();
-		foreach ($jobs as $job) {
-			$payload = json_decode($job->payload, true);
-			$command = unserialize($payload['data']['command']);
+                $this->deleteJobsByStatus('queued', $accountId);
 
-			if (method_exists($command, 'getTaskStatus')) {
-				$taskStatus = $command->getTaskStatus();
+                break;
 
-				if (Str::lower($taskStatus) === Str::lower($status)) {
-					DB::table('jobs')->where('id', $job->id)->delete();
-				}
-			}
-		}
-	}
+            case 'failed':
+                // Удаляем задачи со статусом 'failed' с учетом accountId
+                $query = Task::where('status', 'failed');
+
+                if ($accountId) {
+                    $query->where('account_id', $accountId);
+                }
+
+                $query->delete();
+
+                $this->deleteJobsByStatus('failed', $accountId);
+
+                // Очищаем таблицу failed_jobs с учетом accountId
+                if (!$accountId) {
+                    DB::table('failed_jobs')->truncate();
+                }
+
+                break;
+
+            default:
+                // Если указан accountId, удаляем задачи только для этого accountId
+                if ($accountId) {
+                    // Удаляем задачи только для accountId
+                    Task::where('account_id', $accountId)->delete();
+                    // Удаляем задачи из jobs для accountId
+                    $this->deleteJobsByStatus(null, $accountId);
+                } else {
+                    // Если accountId не указан, удаляем все задачи
+                    Task::query()->truncate();
+                    DB::table('jobs')->truncate();
+                    DB::table('failed_jobs')->truncate();
+                }
+
+                break;
+        }
+    }
+
+    public function deleteJobsByStatus($status, $accountId = null)
+    {
+        // В jobs задача находится со статусом pending, в таблице tasks со статусом queued
+        $status = ($status === 'queued') ? 'pending' : $status;
+
+        DB::table('jobs')->orderBy('id')->chunk(100, function ($jobs) use ($status, $accountId) {
+            foreach ($jobs as $job) {
+                $payload = json_decode($job->payload, true);
+                $command = unserialize($payload['data']['command']);
+
+                // Используем метод getAccountId() для получения account_id, если он доступен
+                $commandAccountId = method_exists($command, 'getAccountId')
+                    ? $command->getAccountId()
+                    : null;
+
+                // Приводим оба account_id к типу int перед сравнением
+                $commandAccountId = (int) $commandAccountId;
+                $accountId = $accountId !== null ? (int) $accountId : null;
+
+                if ($accountId !== null && $commandAccountId !== $accountId) {
+                    // Пропускаем задачу, если account_id не совпадает
+                    continue;
+                }
+
+                // Если статус не указан, удаляем задачи всех статусов для данного accountId
+                if ($status === null || Str::lower($status) === Str::lower($command->getTaskStatus())) {
+                    DB::table('jobs')->where('id', $job->id)->delete();
+                }
+            }
+        });
+    }
+
 }

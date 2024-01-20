@@ -9,7 +9,7 @@
                 <select class="form-select me-3 w-auto" @change="filterTasks" v-model="currentStatus">
                     <option value="">Все задачи</option>
                     <option value="failed">C ошибками</option>
-                    <option value="pending">В ожидании</option>
+                    <option value="queued">В ожидании</option>
                     <option value="done">Завершённые</option>
                 </select>
 
@@ -76,7 +76,7 @@
         <TaskDetails :modalInstance="taskDetailsModal" :taskData="taskDetailsData" />
         <AccountDetails :modalInstance="accountDetailsModal" :accountData="accountDetailsData" />
         <DeleteTask :modalInstance="deleteTaskModal" :taskId="taskId" />
-        <DeleteAllTasks :modalInstance="deleteAllTasksModal" :selectedTasksStatus="currentStatus" />
+        <DeleteAllTasks :modalInstance="deleteAllTasksModal" :selectedTasksStatus="currentStatus" :selectedAccountId="selectedAccountId" />
     </Teleport>
 
 </template>

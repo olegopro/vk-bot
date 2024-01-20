@@ -24,7 +24,8 @@
 
     const props = defineProps({
         modalInstance: Object,
-        selectedTasksStatus: String
+        selectedTasksStatus: String,
+        selectedAccountId: String
     })
 
     const disable = ref(false)
@@ -33,7 +34,7 @@
 
     const deleteTasks = () => {
         disable.value = true
-        tasksStore.deleteAllTasks(props.selectedTasksStatus)
+        tasksStore.deleteAllTasks(props.selectedTasksStatus, props.selectedAccountId)
             .then(() => modalHide())
             .finally(() => disable.value = false)
     }

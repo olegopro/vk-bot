@@ -114,6 +114,15 @@ final class TaskController extends Controller
                 ) {
                     $attemptFailed = false;
 
+                    // Проверяем, нет ли уже такой задачи в процессе
+                    $existingTask = Task::where('owner_id', $post['owner_id'])
+                                        ->where('item_id', $post['post_id'])
+                                        ->first();
+
+                    if ($existingTask) {
+                        continue; // Пропускаем, если такая задача уже существует
+                    }
+
                     $username = $this->vkClient->request('users.get', [
                         'fields'  => 'screen_name',
                         'user_id' => $post['owner_id']
@@ -147,8 +156,8 @@ final class TaskController extends Controller
 
             $request->merge(['start_from' => $next_from]);
 
-            // Проверка на не выполнение условия 3 раза
-            if ($failedAttempts >= 3) {
+            // Проверка на не выполнение условия 10 раза
+            if ($failedAttempts >= 10) {
                 break;
             }
 
@@ -170,10 +179,13 @@ final class TaskController extends Controller
         foreach ($tasks as $task) {
             $run_at = now()->addSeconds($pause);
 
-            // Сохраняем время запуска задачи в базе данных
+            // Обновляем время запуска и статус задачи
             DB::table('tasks')
               ->where('id', $task->id)
-              ->update(['run_at' => $run_at]);
+              ->update([
+                  'run_at' => $run_at,
+                  'status' => 'queued' // Обновляем статус на 'queued'
+              ]);
 
             // Затем отправляем задачу в очередь
             addLikesToPosts::dispatch($task, $token, $this->loggingService)
@@ -194,15 +206,9 @@ final class TaskController extends Controller
         ]);
     }
 
-    public function deleteAllTasks($status = null)
+    public function deleteAllTasks($status = null, $accountId = null)
     {
-        $this->taskRepository->deleteAllTasks($status);
-
-        if ($status === 'failed') {
-            DB::table('failed_jobs')->truncate();
-        }
-
-        $this->taskRepository->clearQueueBasedOnStatus($status);
+        $this->taskRepository->clearQueueBasedOnStatus($status, $accountId);
 
         return response()->json([
             'success' => true,

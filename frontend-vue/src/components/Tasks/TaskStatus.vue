@@ -18,7 +18,8 @@
                     canceled: 'text-bg-danger',
                     failed: 'text-bg-danger',
                     done: 'text-bg-success',
-                    pending: 'text-bg-secondary'
+                    pending: 'text-bg-secondary',
+                    queued: 'text-bg-secondary'
                 },
 
                 textMap: {
@@ -26,7 +27,8 @@
                     failed: 'Ошибка',
                     canceled: 'Отмена',
                     done: 'Выполнена',
-                    pending: 'Ожидание'
+                    pending: 'Обрабатывается',
+                    queued: 'Ожидание'
                 }
             }
         },
