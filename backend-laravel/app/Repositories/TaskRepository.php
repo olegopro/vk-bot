@@ -48,7 +48,8 @@ class TaskRepository implements TaskRepositoryInterface
                    ->delete();
     }
 
-    public function deleteQueuedTask($taskId) {
+    public function deleteQueuedTask($taskId)
+    {
         // Находим задачу в таблице tasks
         $task = Task::find($taskId);
 
@@ -96,9 +97,8 @@ class TaskRepository implements TaskRepositoryInterface
                     $query->where('account_id', $accountId);
                 }
 
-                $query->delete();
-
                 $this->deleteJobsByStatus('queued', $accountId);
+                $query->delete();
 
                 break;
 
@@ -110,9 +110,8 @@ class TaskRepository implements TaskRepositoryInterface
                     $query->where('account_id', $accountId);
                 }
 
-                $query->delete();
-
                 $this->deleteJobsByStatus('failed', $accountId);
+                $query->delete();
 
                 // Очищаем таблицу failed_jobs с учетом accountId
                 if (!$accountId) {
@@ -141,34 +140,23 @@ class TaskRepository implements TaskRepositoryInterface
 
     public function deleteJobsByStatus($status, $accountId = null)
     {
-        // В jobs задача находится со статусом pending, в таблице tasks со статусом queued
-        $status = ($status === 'queued') ? 'pending' : $status;
+        // Получаем список job_id из таблицы tasks, соответствующих условиям
+        $tasks = Task::query()
+                     ->when($status, function ($query) use ($status) {
+                         // Здесь $query это объект построителя запросов, который Laravel передаёт в функцию.
+                         // Мы используем этот объект, чтобы добавить условие where к нашему запросу.
+                         // Это ограничение будет применено, если $status не null
+                         return $query->where('status', $status);
+                     })
+                     ->when($accountId, function ($query) use ($accountId) {
+                         // И снова Laravel передаёт объект построителя запросов ($query) в функцию.
+                         // Если $accountId не null, мы добавляем дополнительное условие where.
+                         // Это ограничение будет применено, если $accountId не null
+                         return $query->where('account_id', $accountId);
+                     })
+                     ->pluck('job_id'); // Извлекаем массив идентификаторов заданий (job_id) из записей таблицы tasks,
 
-        DB::table('jobs')->orderBy('id')->chunk(100, function ($jobs) use ($status, $accountId) {
-            foreach ($jobs as $job) {
-                $payload = json_decode($job->payload, true);
-                $command = unserialize($payload['data']['command']);
-
-                // Используем метод getAccountId() для получения account_id, если он доступен
-                $commandAccountId = method_exists($command, 'getAccountId')
-                    ? $command->getAccountId()
-                    : null;
-
-                // Приводим оба account_id к типу int перед сравнением
-                $commandAccountId = (int) $commandAccountId;
-                $accountId = $accountId !== null ? (int) $accountId : null;
-
-                if ($accountId !== null && $commandAccountId !== $accountId) {
-                    // Пропускаем задачу, если account_id не совпадает
-                    continue;
-                }
-
-                // Если статус не указан, удаляем задачи всех статусов для данного accountId
-                if ($status === null || Str::lower($status) === Str::lower($command->getTaskStatus())) {
-                    DB::table('jobs')->where('id', $job->id)->delete();
-                }
-            }
-        });
+        // Удаляем задачи из таблицы jobs
+        DB::table('jobs')->whereIn('id', $tasks)->delete();
     }
-
 }
