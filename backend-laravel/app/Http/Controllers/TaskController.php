@@ -188,11 +188,8 @@ final class TaskController extends Controller
               ]);
 
             // Затем отправляем задачу в очередь
-            $job = addLikesToPosts::dispatch($task, $token, $this->loggingService)
+            addLikesToPosts::dispatch($task, $token, $this->loggingService)
                                   ->delay(now()->addSeconds($pause));
-
-            // Получаем идентификатор задачи
-            // $jobId = $job->all()[0]->job->getJobId();
 
             $pause += $increase;
         }
@@ -228,8 +225,8 @@ final class TaskController extends Controller
                 $this->taskRepository->deleteCompletedTask($id);
                 break;
 
-            case 'pending':
-                $this->taskRepository->deletePendingTask($id);
+            case 'queued':
+                $this->taskRepository->deleteQueuedTask($id);
                 break;
 
             case 'failed':

@@ -48,26 +48,21 @@ class TaskRepository implements TaskRepositoryInterface
                    ->delete();
     }
 
-    public function deletePendingTask($taskId)
-    {
-        // Удаление ожидающей задачи
-        // Сначала удаляем задачу из очереди
-        DB::table('jobs')->orderBy('id')->chunk(100, function ($jobs) use ($taskId) {
-            foreach ($jobs as $job) {
-                $payload = json_decode($job->payload, true);
-                $command = unserialize($payload['data']['command']);
-                $commandTaskId = method_exists($command, 'getTask') ? $command->getTask()->id : null;
+    public function deleteQueuedTask($taskId) {
+        // Находим задачу в таблице tasks
+        $task = Task::find($taskId);
 
-                if ($commandTaskId === $taskId) {
-                    DB::table('jobs')->where('id', $job->id)->delete();
-                }
-            }
-        });
+        if (!$task) {
+            throw new Exception('Задача не найдена', 404);
+        }
+
+        // Удаляем задачу из очереди jobs, используя job_id из таблицы tasks
+        if ($task->job_id) {
+            DB::table('jobs')->where('id', $task->job_id)->delete();
+        }
 
         // Затем удаляем задачу из таблицы задач
-        return Task::where('id', $taskId)
-                   ->where('status', 'pending')
-                   ->delete();
+        return $task->delete();
     }
 
     public function deleteFailedTask($taskId)

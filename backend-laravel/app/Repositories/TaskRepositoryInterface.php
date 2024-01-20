@@ -14,7 +14,7 @@ interface TaskRepositoryInterface
 
 	public function deleteCompletedTask($taskId);
 
-	public function deletePendingTask($taskId);
+	public function deleteQueuedTask($taskId);
 
 	public function deleteFailedTask($taskId);
 
