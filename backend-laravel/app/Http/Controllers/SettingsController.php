@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 
 final class SettingsController extends Controller
 {
-    public function settings()
+    public function getSettings()
     {
         $settings = Settings::all();
 

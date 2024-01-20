@@ -9,7 +9,18 @@ use Illuminate\Support\Str;
 
 class TaskRepository implements TaskRepositoryInterface
 {
-    public function taskStatus($status = null, $accountId = null)
+    public function findTask($taskId)
+    {
+        $task = Task::find($taskId);
+
+        if (!$task) {
+            throw new Exception('Задача не найдена', 404);
+        }
+
+        return $task;
+    }
+
+    public function getTaskStatus($status = null, $accountId = null)
     {
         $query = Task::query();
 
@@ -24,54 +35,9 @@ class TaskRepository implements TaskRepositoryInterface
         return $query->get();
     }
 
-    public function findTask($taskId)
-    {
-        $task = Task::find($taskId);
-
-        if (!$task) {
-            throw new Exception('Задача не найдена', 404);
-        }
-
-        return $task;
-    }
-
     public function getTaskStatusById($taskId)
     {
         return Task::where('id', $taskId)->value('status');
-    }
-
-    public function deleteCompletedTask($taskId)
-    {
-        // Удаление завершенной задачи
-        return Task::where('id', $taskId)
-                   ->where('status', 'done')
-                   ->delete();
-    }
-
-    public function deleteQueuedTask($taskId)
-    {
-        // Находим задачу в таблице tasks
-        $task = Task::find($taskId);
-
-        if (!$task) {
-            throw new Exception('Задача не найдена', 404);
-        }
-
-        // Удаляем задачу из очереди jobs, используя job_id из таблицы tasks
-        if ($task->job_id) {
-            DB::table('jobs')->where('id', $task->job_id)->delete();
-        }
-
-        // Затем удаляем задачу из таблицы задач
-        return $task->delete();
-    }
-
-    public function deleteFailedTask($taskId)
-    {
-        // Удаление неуспешной задачи
-        return Task::where('id', $taskId)
-                   ->where('status', 'failed')
-                   ->delete();
     }
 
     public function clearQueueBasedOnStatus($status = null, $accountId = null)
@@ -136,6 +102,40 @@ class TaskRepository implements TaskRepositoryInterface
 
                 break;
         }
+    }
+
+    public function deleteCompletedTask($taskId)
+    {
+        // Удаление завершенной задачи
+        return Task::where('id', $taskId)
+                   ->where('status', 'done')
+                   ->delete();
+    }
+
+    public function deleteQueuedTask($taskId)
+    {
+        // Находим задачу в таблице tasks
+        $task = Task::find($taskId);
+
+        if (!$task) {
+            throw new Exception('Задача не найдена', 404);
+        }
+
+        // Удаляем задачу из очереди jobs, используя job_id из таблицы tasks
+        if ($task->job_id) {
+            DB::table('jobs')->where('id', $task->job_id)->delete();
+        }
+
+        // Затем удаляем задачу из таблицы задач
+        return $task->delete();
+    }
+
+    public function deleteFailedTask($taskId)
+    {
+        // Удаление неуспешной задачи
+        return Task::where('id', $taskId)
+                   ->where('status', 'failed')
+                   ->delete();
     }
 
     public function deleteJobsByStatus($status, $accountId = null)

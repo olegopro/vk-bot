@@ -26,7 +26,7 @@ class VkClientService
         return $this->api->request($method, $parameters);
     }
 
-    public function allAccounts()
+    public function fetchAllAccounts()
     {
         $data = $this->accountRepository->getAllAccounts();
 
@@ -37,17 +37,7 @@ class VkClientService
         ];
     }
 
-    public function deleteAccount($id)
-    {
-        $this->accountRepository->deleteAccount($id);
-
-        return [
-            'success' => true,
-            'message' => 'Аккаунт удален'
-        ];
-    }
-
-    public function getAccountData($ids)
+    public function fetchAccountData($ids)
     {
         if (is_array($ids)) {
             $ids = implode(',', $ids);
@@ -76,7 +66,7 @@ class VkClientService
         ];
     }
 
-    public function getGroupData($id)
+    public function fetchGroupData($id)
     {
         return $this->request('groups.getById', [
             'group_id' => $id,
@@ -94,7 +84,7 @@ class VkClientService
 
     }
 
-    public function getAccountFollowers($id, $limit)
+    public function fetchAccountFollowers($id, $limit)
     {
         return $this->request('users.getFollowers', [
             'user_id' => $id,
@@ -106,7 +96,7 @@ class VkClientService
         ]);
     }
 
-    public function getAccountFriends($id, $limit = 6)
+    public function fetchAccountFriends($id, $limit = 6)
     {
         return $this->request('friends.get', [
             'user_id' => $id,
@@ -118,7 +108,7 @@ class VkClientService
         ]);
     }
 
-    public function getAccountCountFriends($accountId, $ownerId, $token)
+    public function fetchAccountCountFriends($accountId, $ownerId, $token)
     {
         $ownerId = $ownerId === 'undefined' ? $accountId : $ownerId;
 
@@ -135,7 +125,7 @@ class VkClientService
         ];
     }
 
-    public function getAccountInfo($token)
+    public function fetchAccountInfo($token)
     {
         $response = $this->request('account.getProfileInfo', [], $token);
 
@@ -146,36 +136,7 @@ class VkClientService
         ];
     }
 
-    public function setAccountData($token, $accountRepository)
-    {
-        $accountInfoResponse = $this->getAccountInfo($token);
-
-        if ($accountInfoResponse['success'] && isset($accountInfoResponse['data']['response'])) {
-            $accountData = [
-                'access_token' => $token,
-                'account_id'   => $accountInfoResponse['data']['response']['id'],
-                'screen_name'  => $accountInfoResponse['data']['response']['screen_name'],
-                'first_name'   => $accountInfoResponse['data']['response']['first_name'],
-                'last_name'    => $accountInfoResponse['data']['response']['last_name'],
-                'bdate'        => $accountInfoResponse['data']['response']['bdate']
-            ];
-
-            $response = $accountRepository->createAccount($accountData);
-
-            return [
-                'success' => true,
-                'data'    => $response,
-                'message' => 'Аккаунт ' . $accountData['screen_name'] . ' добавлен'
-            ];
-        }
-
-        return [
-            'success' => false,
-            'message' => 'Ошибка получения данных аккаунта'
-        ];
-    }
-
-    public function getAccountNewsfeed($accountId, $startFrom, $loggingService)
+    public function fetchAccountNewsfeed($accountId, $startFrom, $loggingService)
     {
         $access_token = $this->getAccessTokenByAccountID($accountId);
         $screen_name = $this->getScreenNameByToken($access_token);
@@ -206,6 +167,67 @@ class VkClientService
             'success' => true,
             'data'    => $response,
             'message' => 'Получены новые данные ленты'
+        ];
+    }
+
+    public function fetchLikes($access_token, $type, $owner_id, $item_id)
+    {
+        return $this->request('likes.getList', [
+            'type'     => $type,
+            'owner_id' => $owner_id,
+            'item_id'  => $item_id
+        ], $access_token);
+    }
+
+    public function fetchUsers($users_ids)
+    {
+        $response = $this->request('users.get', [
+            'user_ids' => $users_ids,
+        ]);
+
+        return [
+            'success' => true,
+            'data'    => $response,
+            'message' => 'Пользователи получены'
+        ];
+    }
+
+    public function getAccessTokenByAccountID($account_id)
+    {
+        return $this->accountRepository->getAccessTokenByAccountID($account_id);
+    }
+
+    public function getScreenNameByToken($access_token)
+    {
+        return $this->accountRepository->getScreenNameByToken($access_token);
+    }
+
+    public function setAccountData($token, $accountRepository)
+    {
+        $accountInfoResponse = $this->fetchAccountInfo($token);
+
+        if ($accountInfoResponse['success'] && isset($accountInfoResponse['data']['response'])) {
+            $accountData = [
+                'access_token' => $token,
+                'account_id'   => $accountInfoResponse['data']['response']['id'],
+                'screen_name'  => $accountInfoResponse['data']['response']['screen_name'],
+                'first_name'   => $accountInfoResponse['data']['response']['first_name'],
+                'last_name'    => $accountInfoResponse['data']['response']['last_name'],
+                'bdate'        => $accountInfoResponse['data']['response']['bdate']
+            ];
+
+            $response = $accountRepository->createAccount($accountData);
+
+            return [
+                'success' => true,
+                'data'    => $response,
+                'message' => 'Аккаунт ' . $accountData['screen_name'] . ' добавлен'
+            ];
+        }
+
+        return [
+            'success' => false,
+            'message' => 'Ошибка получения данных аккаунта'
         ];
     }
 
@@ -250,35 +272,13 @@ class VkClientService
         ];
     }
 
-    public function getAccessTokenByAccountID($account_id)
+    public function deleteAccount($id)
     {
-        return $this->accountRepository->getAccessTokenByAccountID($account_id);
-    }
-
-    public function getScreenNameByToken($access_token)
-    {
-        return $this->accountRepository->getScreenNameByToken($access_token);
-    }
-
-    public function getLikes($access_token, $type, $owner_id, $item_id)
-    {
-        return $this->request('likes.getList', [
-            'type'     => $type,
-            'owner_id' => $owner_id,
-            'item_id'  => $item_id
-        ], $access_token);
-    }
-
-    public function getUsers($users_ids)
-    {
-        $response = $this->request('users.get', [
-            'user_ids' => $users_ids,
-        ]);
+        $this->accountRepository->deleteAccount($id);
 
         return [
             'success' => true,
-            'data'    => $response,
-            'message' => 'Пользователи получены'
+            'message' => 'Аккаунт удален'
         ];
     }
 

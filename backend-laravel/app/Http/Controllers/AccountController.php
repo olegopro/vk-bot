@@ -21,40 +21,35 @@ final class AccountController extends Controller
         private readonly AccountRepositoryInterface $accountRepository
     ) {}
 
-    public function allAccounts()
+    public function fetchAllAccounts()
     {
-        return response()->json(VkClient::allAccounts());
+        return response()->json(VkClient::fetchAllAccounts());
     }
 
-    public function deleteAccount($id)
+    public function fetchAccountData($ids)
     {
-        return response()->json(VkClient::deleteAccount($id));
+        return response()->json(VkClient::fetchAccountData($ids));
     }
 
-    public function getAccountData($ids)
+    public function fetchGroupData($id)
     {
-        return response()->json(VkClient::getAccountData($ids));
+        return response()->json(VkClient::fetchGroupData($id));
     }
 
-    public function getGroupData($id)
+    public function fetchAccountFollowers($id, $limit = 6)
     {
-        return response()->json(VkClient::getGroupData($id));
+        return response()->json(VkClient::fetchAccountFollowers($id, $limit));
     }
 
-    public function getAccountFollowers($id, $limit = 6)
+    public function fetchAccountFriends($id, $limit = 6)
     {
-        return response()->json(VkClient::getAccountFollowers($id, $limit));
+        return response()->json(VkClient::fetchAccountFriends($id, $limit));
     }
 
-    public function getAccountFriends($id, $limit = 6)
-    {
-        return response()->json(VkClient::getAccountFriends($id, $limit));
-    }
-
-    public function getAccountCountFriends($accountId, $ownerId)
+    public function fetchAccountCountFriends($accountId, $ownerId)
     {
         $accessToken = $this->accountRepository->getAccessTokenByAccountID($accountId);
-        $response = VkClient::getAccountCountFriends($accountId, $ownerId, $accessToken);
+        $response = VkClient::fetchAccountCountFriends($accountId, $ownerId, $accessToken);
 
         return response()->json([
             'success' => true,
@@ -63,23 +58,23 @@ final class AccountController extends Controller
         ]);
     }
 
-    public function getAccountInfo($access_token)
+    public function fetchAccountInfo($access_token)
     {
-        return response()->json(VkClient::getAccountInfo($access_token));
+        return response()->json(VkClient::fetchAccountInfo($access_token));
+    }
+
+    public function fetchAccountNewsfeed(Request $request)
+    {
+        return response()->json(VkClient::fetchAccountNewsfeed(
+            $request->input('account_id'),
+            $request->input('start_from'),
+            $this->loggingService
+        ));
     }
 
     public function setAccountData(Request $request)
     {
         return response()->json(VkClient::setAccountData($request['access_token'], $this->accountRepository));
-    }
-
-    public function getAccountNewsfeed(Request $request)
-    {
-        return response()->json(VkClient::getAccountNewsfeed(
-            $request->input('account_id'),
-            $request->input('start_from'),
-            $this->loggingService
-        ));
     }
 
     public function addLike(Request $request)
@@ -97,5 +92,10 @@ final class AccountController extends Controller
                 $this->loggingService
             )
         );
+    }
+
+    public function deleteAccount($id)
+    {
+        return response()->json(VkClient::deleteAccount($id));
     }
 }

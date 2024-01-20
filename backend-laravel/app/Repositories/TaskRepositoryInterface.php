@@ -4,7 +4,7 @@ namespace App\Repositories;
 
 interface TaskRepositoryInterface
 {
-	public function taskStatus($status);
+	public function getTaskStatus($status);
 
 	public function findTask($taskId);
 

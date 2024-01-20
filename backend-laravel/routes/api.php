@@ -18,21 +18,21 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::prefix('tasks')->group(function () {
-    Route::get('/{status?}/{accountId?}', [TaskController::class, 'taskStatus']);
-    Route::post('/task-info/{taskId}', [TaskController::class, 'taskInfo']);
+    Route::get('/{status?}/{accountId?}', [TaskController::class, 'getTaskStatus']);
+    Route::post('/task-info/{taskId}', [TaskController::class, 'getTaskInfo']);
     Route::delete('/delete-like/{taskId}', [TaskController::class, 'deleteLike']);
     Route::delete('/delete-all-tasks/{status?}/{accountId?}', [TaskController::class, 'deleteAllTasks']);
     Route::delete('/delete-task-by-id/{id}', [TaskController::class, 'deleteTaskById']);
 });
 
 Route::prefix('account')->group(function (){
-    Route::post('/all-accounts', [AccountController::class, 'allAccounts']);
-    Route::post('/data/{id}', [AccountController::class, 'getAccountData']);
-    Route::post('/followers/{id}', [AccountController::class, 'getAccountFollowers']);
-    Route::post('/friends/{id}', [AccountController::class, 'getAccountFriends']);
-    Route::post('/friends/count/{accountId}/{ownerId?}', [AccountController::class, 'getAccountCountFriends']);
+    Route::post('/all-accounts', [AccountController::class, 'fetchAllAccounts']);
+    Route::post('/data/{id}', [AccountController::class, 'fetchAccountData']);
+    Route::post('/followers/{id}', [AccountController::class, 'fetchAccountFollowers']);
+    Route::post('/friends/{id}', [AccountController::class, 'fetchAccountFriends']);
+    Route::post('/friends/count/{accountId}/{ownerId?}', [AccountController::class, 'fetchAccountCountFriends']);
     Route::post('/add', [AccountController::class, 'setAccountData']);
-    Route::post('/newsfeed', [AccountController::class, 'getAccountNewsfeed']);
+    Route::post('/newsfeed', [AccountController::class, 'fetchAccountNewsfeed']);
     Route::post('/like', [AccountController::class, 'addLike']);
 
     // Перенести в tasks
@@ -42,11 +42,11 @@ Route::prefix('account')->group(function (){
 });
 
 
-Route::post('/group/data/{id}', [AccountController::class, 'getGroupData']);
+Route::post('/group/data/{id}', [AccountController::class, 'fetchGroupData']);
 
 
 Route::prefix('settings')->group(function () {
-    Route::post('/', [SettingsController::class, 'settings']);
+    Route::post('/', [SettingsController::class, 'getSettings']);
     Route::post('/save', [SettingsController::class, 'saveSettings']);
 });
 

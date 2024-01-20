@@ -24,7 +24,7 @@ final class TaskController extends Controller
         private readonly AccountController          $accountController
     ) {}
 
-    public function taskStatus($status = null, $accountId = null)
+    public function getTaskStatus($status = null, $accountId = null)
     {
         // Проверяем, является ли первый параметр числом (accountId)
         if (is_numeric($status)) {
@@ -32,7 +32,7 @@ final class TaskController extends Controller
             $status = null;
         }
 
-        $tasks = $this->taskRepository->taskStatus($status, $accountId);
+        $tasks = $this->taskRepository->getTaskStatus($status, $accountId);
 
         return response()->json([
             'success' => true,
@@ -41,7 +41,7 @@ final class TaskController extends Controller
         ]);
     }
 
-    public function taskInfo($taskId)
+    public function getTaskInfo($taskId)
     {
         $taskData = $this->taskRepository->findTask($taskId);
 
@@ -55,12 +55,12 @@ final class TaskController extends Controller
             'posts' => $ownerId . '_' . $postId,
         ], $access_token);
 
-        $likesResponse = VkClient::getLikes($access_token, 'post', $ownerId, $postId);
+        $likesResponse = VkClient::fetchLikes($access_token, 'post', $ownerId, $postId);
 
         // Получение ID пользователей, которые поставили лайки
         $userIds = implode(',', $likesResponse['response']['items']);
 
-        $usersResponse = VkClient::getUsers($userIds);
+        $usersResponse = VkClient::fetchUsers($userIds);
 
         // Деструктуризация 'response' для получения первого элемента
         list($response) = $postResponse['response'];
@@ -86,7 +86,7 @@ final class TaskController extends Controller
         $failedAttempts = 0; // Счетчик неудачных попыток
 
         do {
-            $result = $this->accountController->getAccountNewsfeed($request)->getData(true);
+            $result = $this->accountController->fetchAccountNewsfeed($request)->getData(true);
 
             $data = $result['data']['response']['items'];
             $next_from = $result['data']['response']['next_from'];
