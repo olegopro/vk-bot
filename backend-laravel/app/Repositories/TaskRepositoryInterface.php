@@ -10,8 +10,6 @@ interface TaskRepositoryInterface
 
 	public function getTaskStatusById($taskId);
 
-    // public function deleteAllTasks($status, $accountId = null);
-
 	public function deleteCompletedTask($taskId);
 
 	public function deleteQueuedTask($taskId);

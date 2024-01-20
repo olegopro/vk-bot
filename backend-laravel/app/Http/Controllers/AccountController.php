@@ -98,21 +98,4 @@ final class AccountController extends Controller
             )
         );
     }
-
-    // TODO: Нигде не используется
-    public function getScreenNameById(Request $request)
-    {
-        $user_id = $request->input('user_id');
-
-        $response = $this->vkClient->request('users.get', [
-            'fields'  => 'screen_name',
-            'user_id' => $user_id
-        ]);
-
-        return response()->json([
-            'success' => true,
-            'data'    => $response,
-            'message' => 'Отображаемое имя получено'
-        ]);
-    }
 }

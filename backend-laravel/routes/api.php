@@ -31,10 +31,6 @@ Route::prefix('account')->group(function (){
     Route::post('/followers/{id}', [AccountController::class, 'getAccountFollowers']);
     Route::post('/friends/{id}', [AccountController::class, 'getAccountFriends']);
     Route::post('/friends/count/{accountId}/{ownerId?}', [AccountController::class, 'getAccountCountFriends']);
-
-    // TODO: Нигде не используется
-    // Route::post('/info/{access_token}', [AccountController::class, 'getAccountInfo']);
-
     Route::post('/add', [AccountController::class, 'setAccountData']);
     Route::post('/newsfeed', [AccountController::class, 'getAccountNewsfeed']);
     Route::post('/like', [AccountController::class, 'addLike']);
@@ -42,10 +38,6 @@ Route::prefix('account')->group(function (){
     // Перенести в tasks
     Route::post('/get-posts-for-like', [TaskController::class, 'getNewsfeedPosts']);
     Route::post('/add-task-likes', [TaskController::class, 'addLikeTask']);
-
-	// TODO: Нигде не используется
-    // Route::post('/get-screen-name-by-id', [AccountController::class, 'getScreenNameById']);
-
 	Route::delete('/delete-account/{id}', [AccountController::class, 'deleteAccount']);
 });
 
