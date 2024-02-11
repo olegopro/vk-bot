@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Facades\VkClient;
-use App\Jobs\addLikesToPosts;
+use App\Jobs\addLikeToPost;
 use App\Models\Task;
 use App\Repositories\AccountRepositoryInterface;
 use App\Repositories\TaskRepositoryInterface;
@@ -177,7 +177,7 @@ final class TaskController extends Controller
               ]);
 
             // Затем отправляем задачу в очередь
-            addLikesToPosts::dispatch($task, $token, $this->loggingService)
+            addLikeToPost::dispatch($task, $token, $this->loggingService)
                                   ->delay(now()->addSeconds($pause));
 
             $pause += $increase;

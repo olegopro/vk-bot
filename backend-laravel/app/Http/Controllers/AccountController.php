@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Facades\VkClient;
-use App\Jobs\addLikesToPosts;
+use App\Jobs\addLikeToPost;
 use App\Models\Account;
 use App\Models\Task;
 use App\Repositories\AccountRepositoryInterface;
