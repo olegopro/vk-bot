@@ -23,9 +23,7 @@ COPY . .
 
 RUN composer update
 
-COPY laravel-cron /etc/cron.d/laravel-cron
-RUN chmod 0644 /etc/cron.d/laravel-cron
-RUN crontab /etc/cron.d/laravel-cron
-RUN touch /var/log/cron.log
-
-CMD cron -f & docker-php-entrypoint php-fpm
+# Замена CMD на новый entrypoint скрипт
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+ENTRYPOINT ["/entrypoint.sh"]
