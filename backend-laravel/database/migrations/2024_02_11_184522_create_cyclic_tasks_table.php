@@ -14,13 +14,12 @@ class CreateCyclicTasksTable extends Migration
     public function up()
     {
         Schema::create('cyclic_tasks', function (Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->unsignedBigInteger('job_id');
-            $table->integer('account_id')->unsigned()->unique();
-            $table->unsignedInteger('likes_per_hour');
-            $table->timestamp('started_at')->nullable();
-            $table->unsignedInteger('likes')->default(0);
+            $table->id();
+            $table->integer('account_id')->unsigned();
+            $table->unsignedInteger('tasks_per_hour');
+            $table->unsignedInteger('tasks_count')->default(0);
             $table->string('status');
+            $table->timestamp('started_at')->nullable();
             $table->timestamps();
 
             $table->foreign('account_id')->references('account_id')->on('accounts');

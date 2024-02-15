@@ -20,6 +20,7 @@ use Illuminate\Support\Facades\Route;
 Route::prefix('tasks')->group(function () {
     Route::get('/{status?}/{accountId?}', [TaskController::class, 'getTaskStatus']);
     Route::post('/task-info/{taskId}', [TaskController::class, 'getTaskInfo']);
+    Route::post('/create-cyclic-task', [TaskController::class, 'createCyclicTask']);
     Route::delete('/delete-like/{taskId}', [TaskController::class, 'deleteLike']);
     Route::delete('/delete-all-tasks/{status?}/{accountId?}', [TaskController::class, 'deleteAllTasks']);
     Route::delete('/delete-task-by-id/{id}', [TaskController::class, 'deleteTaskById']);
@@ -36,8 +37,8 @@ Route::prefix('account')->group(function (){
     Route::post('/like', [AccountController::class, 'addLike']);
 
     // Перенести в tasks
-    Route::post('/get-posts-for-like', [TaskController::class, 'getNewsfeedPosts']);
-    Route::post('/add-task-likes', [TaskController::class, 'addLikeTask']);
+    Route::post('/get-posts-for-like', [TaskController::class, 'collectNewsfeedPostsForLikeTask']);
+    Route::post('/add-task-likes', [TaskController::class, 'addLikeTaskToQueue']);
 	Route::delete('/delete-account/{id}', [AccountController::class, 'deleteAccount']);
 });
 
