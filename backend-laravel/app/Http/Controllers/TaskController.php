@@ -123,57 +123,77 @@ final class TaskController extends Controller
     }
 
     /**
-     * Извлекает и подготавливает посты для добавления задач на лайк.
+     * Извлекает посты из ленты новостей и подготавливает их для создания задач на лайк.
      *
-     * @param Request $request HTTP-запрос.
-     * @param int $account_id ID аккаунта пользователя.
-     * @param int $maxCreatedCount Максимальное количество создаваемых задач.
+     * Этот метод выполняет несколько ключевых функций:
+     * 1. Получает посты из ленты новостей пользователя.
+     * 2. Проверяет каждый пост на соответствие критериям для создания задачи.
+     * 3. Если пост подходит, проверяет, не была ли для этого поста уже создана задача.
+     * 4. Если задача не была создана, создает новую задачу на лайк.
+     * 5. Процесс продолжается до тех пор, пока не будет достигнуто максимальное количество созданных задач
+     *    или пока не закончатся посты в ленте.
+     *
+     * @param Request $request HTTP-запрос с параметрами для извлечения ленты новостей.
+     * @param int $account_id ID аккаунта пользователя, для которого получаем ленту новостей.
+     * @param int $maxCreatedCount Максимальное количество задач, которые необходимо создать.
      * @return int Количество созданных задач.
      */
     protected function fetchAndPreparePosts($request, $account_id, $maxCreatedCount)
     {
-        $createdCount = 0;
-        $failedAttempts = 0;
+        $createdCount = 0; // Счетчик созданных задач.
+        $failedAttempts = 0; // Счетчик неудачных попыток получения подходящих постов.
 
         do {
+            // Получаем посты из ленты новостей аккаунта.
             $result = $this->accountController->fetchAccountNewsfeed($request)->getData(true);
-            $data = $result['data']['response']['items'];
-            $next_from = $result['data']['response']['next_from'];
+            $data = $result['data']['response']['items']; // Посты из ленты новостей.
+            $next_from = $result['data']['response']['next_from']; // Курсор для следующего запроса.
 
-            $attemptFailed = true;
+            $attemptFailed = true; // Предполагаем, что попытка неудачна до обнаружения подходящего поста.
 
+            // Перебираем посты и проверяем их на соответствие критериям для задачи на лайк.
             foreach ($data as $post) {
                 if ($this->isValidPostForTask($post) && $createdCount < $maxCreatedCount) {
-                    $attemptFailed = false;
+                    $attemptFailed = false; // Попытка успешна, найден подходящий пост.
+
+                    // Проверяем, существует ли уже задача на лайк для этого поста.
                     $existingTask = $this->checkExistingTask($post['owner_id'], $post['post_id']);
 
                     if (!$existingTask) {
+                        // Если задачи нет, создаем новую задачу на лайк.
                         $this->createLikeTask($account_id, $post);
-                        $createdCount++;
+                        $createdCount++; // Увеличиваем счетчик созданных задач.
 
+                        // Если создано необходимое количество задач, прерываем цикл.
                         if ($createdCount >= $maxCreatedCount) {
+                            // Если достигнуто максимальное количество созданных задач,
+                            // 'break 2;' прерывает выполнение как текущего цикла foreach,
+                            // так и внешнего цикла do-while.
                             break 2;
                         }
-
                     }
                 }
             }
 
+            // Если после перебора всех постов не было успешных попыток, увеличиваем счетчик неудач.
             if ($attemptFailed) {
                 $failedAttempts++;
             } else {
-                $failedAttempts = 0;
+                $failedAttempts = 0; // Сбрасываем счетчик неудач, если была успешная попытка.
             }
 
+            // Обновляем запрос для следующего набора постов.
             $request->merge(['start_from' => $next_from]);
 
+            // Если количество неудачных попыток достигло 10, прерываем процесс.
             if ($failedAttempts >= 10) {
                 break;
             }
 
+            // Продолжаем пока не создадим необходимое количество задач или пока есть посты для обработки.
         } while ($createdCount < $maxCreatedCount && !empty($next_from));
 
-        return $createdCount;
+        return $createdCount; // Возвращаем количество созданных задач.
     }
 
     /**
