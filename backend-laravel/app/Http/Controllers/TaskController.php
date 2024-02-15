@@ -200,14 +200,24 @@ final class TaskController extends Controller
      * Проверяет, подходит ли пост для создания задачи на лайк.
      *
      * @param array $post Массив данных поста.
-     * @return bool Возвращает true, если пост подходит для задачи на лайк.
+     * @return bool Возвращает true, если пост удовлетворяет всем условиям.
      */
     protected function isValidPostForTask($post)
     {
-        return $post['owner_id'] > 0
+        return
+            // Пост должен принадлежать пользователю (не группе).
+            $post['owner_id'] > 0
+
+            // Пост не должен быть репостом.
             && !array_key_exists('copy_history', $post)
+
+            // Пользователь еще не ставил лайк этому посту.
             && $post['likes']['user_likes'] === 0
+
+            // У поста должны быть вложения.
             && isset($post['attachments'])
+
+            // Среди вложений должна быть фотография.
             && collect($post['attachments'])->contains('type', 'photo');
     }
 
@@ -385,7 +395,7 @@ final class TaskController extends Controller
         if (!$taskData) {
             return response()->json([
                 'success' => false,
-                'error' => 'Задача не найдена'
+                'error'   => 'Задача не найдена'
             ]);
         }
 
