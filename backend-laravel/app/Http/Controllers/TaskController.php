@@ -75,64 +75,46 @@ final class TaskController extends Controller
         ]);
     }
 
-    public function getNewsfeedPosts(Request $request)
+    public function collectNewsfeedPostsForLikeTask(Request $request)
     {
         $account_id = $request->input('account_id');
         $task_count = $request->input('task_count');
         $access_token = VkClient::getAccessTokenByAccountID($account_id);
 
-        $createdCount = 0; // Счетчик созданных записей
-        $maxCreatedCount = $task_count; // Нужное количество записей
-        $failedAttempts = 0; // Счетчик неудачных попыток
+        $maxCreatedCount = $task_count;
+
+        // Извлечение и подготовка постов
+        $createdCount = $this->fetchAndPreparePosts($request, $account_id, $maxCreatedCount);
+
+        // После обработки всех постов, добавляем задачу на лайк в очередь
+        return $this->addLikeTaskToQueue($access_token);
+    }
+
+    protected function fetchAndPreparePosts($request, $account_id, $maxCreatedCount)
+    {
+        $createdCount = 0;
+        $failedAttempts = 0;
 
         do {
             $result = $this->accountController->fetchAccountNewsfeed($request)->getData(true);
-
             $data = $result['data']['response']['items'];
             $next_from = $result['data']['response']['next_from'];
 
-            $attemptFailed = true; // Флаг, указывающий, что текущая попытка не удалась
+            $attemptFailed = true;
 
             foreach ($data as $post) {
-                if ($post['owner_id'] > 0
-                    && !array_key_exists('copy_history', $post)
-                    && $post['likes']['user_likes'] === 0
-                    && isset($post['attachments'])
-                    && collect($post['attachments'])->contains('type', 'photo')
-                    && $createdCount < $maxCreatedCount
-                ) {
+                if ($this->isValidPostForTask($post) && $createdCount < $maxCreatedCount) {
                     $attemptFailed = false;
+                    $existingTask = $this->checkExistingTask($post['owner_id'], $post['post_id']);
 
-                    // Проверяем, нет ли уже такой задачи в процессе
-                    $existingTask = Task::where('owner_id', $post['owner_id'])
-                                        ->where('item_id', $post['post_id'])
-                                        ->first();
+                    if (!$existingTask) {
+                        $this->createLikeTask($account_id, $post);
+                        $createdCount++;
 
-                    if ($existingTask) {
-                        continue; // Пропускаем, если такая задача уже существует
-                    }
+                        if ($createdCount >= $maxCreatedCount) {
+                            break 2;
+                        }
 
-                    $username = $this->vkClient->request('users.get', [
-                        'fields'  => 'screen_name',
-                        'user_id' => $post['owner_id']
-                    ]);
-
-                    usleep(300000);
-
-                    Task::create([
-                        'account_id'    => $account_id,
-                        'first_name'    => $username['response'][0]['first_name'],
-                        'last_name'     => $username['response'][0]['last_name'],
-                        'owner_id'      => $post['owner_id'],
-                        'item_id'       => $post['post_id'],
-                        'attempt_count' => 1,
-                        'status'        => 'pending'
-                    ]);
-
-                    $createdCount++;
-
-                    if ($createdCount >= $maxCreatedCount) {
-                        break 2;
                     }
                 }
             }
@@ -145,17 +127,56 @@ final class TaskController extends Controller
 
             $request->merge(['start_from' => $next_from]);
 
-            // Проверка на не выполнение условия 10 раза
             if ($failedAttempts >= 10) {
                 break;
             }
 
         } while ($createdCount < $maxCreatedCount && !empty($next_from));
 
-        return $this->addLikeTask($access_token);
+        return $createdCount;
     }
 
-    public function addLikeTask($token)
+    protected function isValidPostForTask($post)
+    {
+        return $post['owner_id'] > 0
+            && !array_key_exists('copy_history', $post)
+            && $post['likes']['user_likes'] === 0
+            && isset($post['attachments'])
+            && collect($post['attachments'])->contains('type', 'photo');
+    }
+
+    protected function checkExistingTask($ownerId, $postId)
+    {
+        return Task::where('owner_id', $ownerId)
+                   ->where('item_id', $postId)
+                   ->first() !== null;
+    }
+
+    protected function createLikeTask($accountId, $post)
+    {
+        $username = $this->vkClient->request('users.get', [
+            'fields'  => 'screen_name',
+            'user_id' => $post['owner_id']
+        ]);
+
+        // Предполагается, что запрос к API возвращает имя пользователя успешно
+        $firstName = $username['response'][0]['first_name'] ?? 'Unknown';
+        $lastName = $username['response'][0]['last_name'] ?? 'Unknown';
+
+        usleep(300000); // Задержка для имитации задержки между запросами к API
+
+        return Task::create([
+            'account_id'    => $accountId,
+            'first_name'    => $firstName,
+            'last_name'     => $lastName,
+            'owner_id'      => $post['owner_id'],
+            'item_id'       => $post['post_id'],
+            'attempt_count' => 1,
+            'status'        => 'pending'
+        ]);
+    }
+
+    public function addLikeTaskToQueue($token)
     {
         $increase = $pause = DB::table('settings')
                                ->where('id', '=', '1')
@@ -178,7 +199,7 @@ final class TaskController extends Controller
 
             // Затем отправляем задачу в очередь
             addLikeToPost::dispatch($task, $token, $this->loggingService)
-                                  ->delay(now()->addSeconds($pause));
+                         ->delay(now()->addSeconds($pause));
 
             $pause += $increase;
         }
