@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Facades\VkClient;
 use App\Jobs\addLikeToPost;
+use App\Models\CyclicTask;
 use App\Models\Task;
 use App\Repositories\AccountRepositoryInterface;
 use App\Repositories\TaskRepositoryInterface;
@@ -14,8 +15,20 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
+/**
+ * Контроллер для управления задачами связанными с лайками в социальной сети ВКонтакте.
+ */
 final class TaskController extends Controller
 {
+    /**
+     * Создает новый экземпляр TaskController.
+     *
+     * @param LoggingServiceInterface $loggingService Сервис логирования.
+     * @param VkClientService $vkClient Сервис клиента ВКонтакте.
+     * @param TaskRepositoryInterface $taskRepository Репозиторий задач.
+     * @param AccountRepositoryInterface $accountRepository Репозиторий аккаунтов.
+     * @param AccountController $accountController Контроллер аккаунтов.
+     */
     public function __construct(
         private readonly LoggingServiceInterface    $loggingService,
         private readonly VkClientService            $vkClient,
@@ -24,6 +37,13 @@ final class TaskController extends Controller
         private readonly AccountController          $accountController
     ) {}
 
+    /**
+     * Возвращает статус задачи или задач по указанному статусу и/или ID аккаунта.
+     *
+     * @param string|null $status Статус задачи для фильтрации.
+     * @param int|null $accountId ID аккаунта для фильтрации.
+     * @return \Illuminate\Http\JsonResponse Ответ с данными о задачах.
+     */
     public function getTaskStatus($status = null, $accountId = null)
     {
         // Проверяем, является ли первый параметр числом (accountId)
@@ -41,6 +61,12 @@ final class TaskController extends Controller
         ]);
     }
 
+    /**
+     * Получает информацию о задаче по её ID.
+     *
+     * @param int $taskId ID задачи.
+     * @return \Illuminate\Http\JsonResponse Ответ с данными о задаче.
+     */
     public function getTaskInfo($taskId)
     {
         $taskData = $this->taskRepository->findTask($taskId);
@@ -75,6 +101,12 @@ final class TaskController extends Controller
         ]);
     }
 
+    /**
+     * Собирает посты из ленты новостей для создания задачи на лайк.
+     *
+     * @param Request $request HTTP-запрос.
+     * @return \Illuminate\Http\JsonResponse Ответ с результатом добавления задач в очередь.
+     */
     public function collectNewsfeedPostsForLikeTask(Request $request)
     {
         $account_id = $request->input('account_id');
@@ -90,6 +122,14 @@ final class TaskController extends Controller
         return $this->addLikeTaskToQueue($access_token);
     }
 
+    /**
+     * Извлекает и подготавливает посты для добавления задач на лайк.
+     *
+     * @param Request $request HTTP-запрос.
+     * @param int $account_id ID аккаунта пользователя.
+     * @param int $maxCreatedCount Максимальное количество создаваемых задач.
+     * @return int Количество созданных задач.
+     */
     protected function fetchAndPreparePosts($request, $account_id, $maxCreatedCount)
     {
         $createdCount = 0;
@@ -136,6 +176,12 @@ final class TaskController extends Controller
         return $createdCount;
     }
 
+    /**
+     * Проверяет, подходит ли пост для создания задачи на лайк.
+     *
+     * @param array $post Массив данных поста.
+     * @return bool Возвращает true, если пост подходит для задачи на лайк.
+     */
     protected function isValidPostForTask($post)
     {
         return $post['owner_id'] > 0
@@ -145,6 +191,13 @@ final class TaskController extends Controller
             && collect($post['attachments'])->contains('type', 'photo');
     }
 
+    /**
+     * Проверяет, существует ли уже задача для данного поста.
+     *
+     * @param int $ownerId ID владельца поста.
+     * @param int $postId ID поста.
+     * @return bool Возвращает true, если задача уже существует.
+     */
     protected function checkExistingTask($ownerId, $postId)
     {
         return Task::where('owner_id', $ownerId)
@@ -152,6 +205,13 @@ final class TaskController extends Controller
                    ->first() !== null;
     }
 
+    /**
+     * Создает задачу на лайк для указанного поста.
+     *
+     * @param int $accountId ID аккаунта пользователя.
+     * @param array $post Массив данных поста.
+     * @return Task Созданная задача.
+     */
     protected function createLikeTask($accountId, $post)
     {
         $username = $this->vkClient->request('users.get', [
@@ -176,6 +236,12 @@ final class TaskController extends Controller
         ]);
     }
 
+    /**
+     * Добавляет задачу на лайк в очередь.
+     *
+     * @param string $token Токен доступа для API ВКонтакте.
+     * @return \Illuminate\Http\JsonResponse Ответ с информацией о задачах, добавленных в очередь.
+     */
     public function addLikeTaskToQueue($token)
     {
         $increase = $pause = DB::table('settings')
@@ -216,6 +282,36 @@ final class TaskController extends Controller
         ]);
     }
 
+    /**
+     * Создает циклическую задачу на лайки.
+     *
+     * @param Request $request HTTP-запрос, содержащий данные для создания циклической задачи.
+     * @return \Illuminate\Http\JsonResponse Ответ с информацией о созданной циклической задаче.
+     */
+    public function createCyclicTask(Request $request)
+    {
+        $cyclicTask = CyclicTask::create([
+            'account_id'     => $request->input('account_id'),
+            'tasks_per_hour' => $request->input('tasks_per_hour'),
+            'tasks_count'    => $request->input('tasks_count'),
+            'status'         => $request->input('status'),
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'data'    => $cyclicTask,
+            'message' => 'Задача на постановку лайков запланирована.'
+        ]);
+
+    }
+
+    /**
+     * Удаляет все задачи на основе указанного статуса и/или ID аккаунта.
+     *
+     * @param string|null $status Статус задач для удаления.
+     * @param int|null $accountId ID аккаунта для удаления задач.
+     * @return \Illuminate\Http\JsonResponse Ответ об успешном удалении задач.
+     */
     public function deleteAllTasks($status = null, $accountId = null)
     {
         $this->taskRepository->clearQueueBasedOnStatus($status, $accountId);
@@ -226,6 +322,12 @@ final class TaskController extends Controller
         ]);
     }
 
+    /**
+     * Удаляет задачу по её ID.
+     *
+     * @param int $id ID задачи для удаления.
+     * @return \Illuminate\Http\JsonResponse Ответ об успешном удалении задачи.
+     */
     public function deleteTaskById($id)
     {
         $taskStatus = $this->taskRepository->getTaskStatusById($id);
@@ -250,12 +352,21 @@ final class TaskController extends Controller
         ]);
     }
 
+    /**
+     * Удаляет лайк с поста, связанного с задачей по её ID.
+     *
+     * @param int $taskId ID задачи, для которой нужно удалить лайк.
+     * @return \Illuminate\Http\JsonResponse Ответ об успешном удалении лайка или ошибке.
+     */
     public function deleteLike($taskId)
     {
         $taskData = $this->taskRepository->findTask($taskId);
 
         if (!$taskData) {
-            return ['success' => false, 'error' => 'Задача не найдена'];
+            return response()->json([
+                'success' => false,
+                'error' => 'Задача не найдена'
+            ]);
         }
 
         $accessToken = $this->accountRepository->getAccessTokenByAccountID($taskData->account_id);
