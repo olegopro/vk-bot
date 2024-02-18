@@ -24,6 +24,7 @@ class CreateTasksTable extends Migration
             $table->integer('attempt_count')->unsigned()->default('0');
             $table->text('error_message')->nullable();
             $table->tinyText('status');
+            $table->boolean('is_cyclic')->nullable();
             $table->timestamp('run_at')->nullable();
             $table->timestamps();
 

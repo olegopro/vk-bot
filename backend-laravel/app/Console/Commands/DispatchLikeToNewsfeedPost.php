@@ -78,7 +78,7 @@ class DispatchLikeToNewsfeedPost extends Command
                 ]);
 
                 // Вызов метода контроллера с искусственным запросом
-                $response = app(TaskController::class)->collectNewsfeedPostsForLikeTask($request);
+                $response = app(TaskController::class)->collectNewsfeedPostsForLikeTask($request, true);
 
                 // Проверка успешности выполнения задачи
                 if ($response->isSuccessful()) {

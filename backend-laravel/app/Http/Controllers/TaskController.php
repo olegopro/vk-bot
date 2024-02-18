@@ -103,11 +103,13 @@ final class TaskController extends Controller
 
     /**
      * Собирает посты из ленты новостей для создания задачи на лайк.
+     * Дополнительно учитывает, является ли задача циклической, для корректной обработки внутри методов.
      *
      * @param Request $request HTTP-запрос.
+     * @param bool $isCyclic Флаг, указывающий, является ли задача циклической.
      * @return \Illuminate\Http\JsonResponse Ответ с результатом добавления задач в очередь.
      */
-    public function collectNewsfeedPostsForLikeTask(Request $request)
+    public function collectNewsfeedPostsForLikeTask(Request $request, $isCyclic = false)
     {
         $account_id = $request->input('account_id');
         $task_count = $request->input('task_count');
@@ -116,7 +118,7 @@ final class TaskController extends Controller
         $maxCreatedCount = $task_count;
 
         // Извлечение и подготовка постов
-        $createdCount = $this->fetchAndPreparePosts($request, $account_id, $maxCreatedCount);
+        $createdCount = $this->fetchAndPreparePosts($request, $account_id, $maxCreatedCount, $isCyclic);
 
         // После обработки всех постов, добавляем задачу на лайк в очередь
         return $this->addLikeTaskToQueue($access_token);
@@ -136,9 +138,10 @@ final class TaskController extends Controller
      * @param Request $request HTTP-запрос с параметрами для извлечения ленты новостей.
      * @param int $account_id ID аккаунта пользователя, для которого получаем ленту новостей.
      * @param int $maxCreatedCount Максимальное количество задач, которые необходимо создать.
+     * @param bool $isCyclic Флаг, указывающий, является ли задача циклической.
      * @return int Количество созданных задач.
      */
-    protected function fetchAndPreparePosts($request, $account_id, $maxCreatedCount)
+    protected function fetchAndPreparePosts($request, $account_id, $maxCreatedCount, $isCyclic)
     {
         $createdCount = 0; // Счетчик созданных задач.
         $failedAttempts = 0; // Счетчик неудачных попыток получения подходящих постов.
@@ -161,7 +164,7 @@ final class TaskController extends Controller
 
                     if (!$existingTask) {
                         // Если задачи нет, создаем новую задачу на лайк.
-                        $this->createLikeTask($account_id, $post);
+                        $this->createLikeTask($account_id, $post, $isCyclic);
                         $createdCount++; // Увеличиваем счетчик созданных задач.
 
                         // Если создано необходимое количество задач, прерываем цикл.
@@ -237,12 +240,14 @@ final class TaskController extends Controller
 
     /**
      * Создает задачу на лайк для указанного поста.
+     * Учитывает, является ли задача циклической, для установки соответствующего флага в базе данных.
      *
      * @param int $accountId ID аккаунта пользователя.
      * @param array $post Массив данных поста.
+     * @param bool $isCyclic Флаг, указывающий, является ли задача циклической.
      * @return Task Созданная задача.
      */
-    protected function createLikeTask($accountId, $post)
+    protected function createLikeTask($accountId, $post, $isCyclic)
     {
         $username = $this->vkClient->request('users.get', [
             'fields'  => 'screen_name',
@@ -262,7 +267,8 @@ final class TaskController extends Controller
             'owner_id'      => $post['owner_id'],
             'item_id'       => $post['post_id'],
             'attempt_count' => 1,
-            'status'        => 'pending'
+            'status'        => 'pending',
+            'is_cyclic'     => $isCyclic
         ]);
     }
 
@@ -274,33 +280,46 @@ final class TaskController extends Controller
      */
     public function addLikeTaskToQueue($token)
     {
-        $increase = $pause = DB::table('settings')
-                               ->where('id', '=', '1')
-                               ->value('task_timeout');
+        // Базовое значение задержки из настроек
+        $basePause = DB::table('settings')
+                       ->where('id', '=', '1')
+                       ->value('task_timeout');
 
+        // Получаем все задачи со статусом 'pending'
         $tasks = DB::table('tasks')
                    ->where('status', '=', 'pending')
                    ->get();
 
+        // Инициализируем переменную для хранения текущей задержки
+        $pause = 0;
+
         foreach ($tasks as $task) {
-            $run_at = now()->addSeconds($pause);
+
+            if ($task->is_cyclic) {
+                // Для циклических задач устанавливаем фиксированную задержку в 1 минуту
+                $specificPause = 60;
+            } else {
+                // Для нециклических задач используем задержку, увеличенную на значение из настроек
+                $pause += $basePause;
+                $specificPause = $pause;
+            }
+
+            $run_at = now()->addSeconds($specificPause);
 
             // Обновляем время запуска и статус задачи
             DB::table('tasks')
               ->where('id', $task->id)
               ->update([
                   'run_at' => $run_at,
-                  'status' => 'queued' // Обновляем статус на 'queued'
+                  'status' => 'queued'
               ]);
 
-            // Затем отправляем задачу в очередь
+            // Отправляем задачу в очередь с учетом задержки
             addLikeToPost::dispatch($task, $token, $this->loggingService)
-                         ->delay(now()->addSeconds($pause));
-
-            $pause += $increase;
+                         ->delay($specificPause);
         }
 
-        // Перезапрашиваем задачи из базы данных перед отправкой в ответе
+        // Возвращаем список оставшихся задач для информации
         $tasks = DB::table('tasks')
                    ->where('status', '=', 'pending')
                    ->get();
@@ -308,7 +327,7 @@ final class TaskController extends Controller
         return response()->json([
             'success' => true,
             'data'    => $tasks,
-            'message' => 'Задачи успешно созданы'
+            'message' => 'Задачи успешно созданы и запланированы'
         ]);
     }
 
