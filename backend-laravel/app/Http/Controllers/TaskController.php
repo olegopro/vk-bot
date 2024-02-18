@@ -313,18 +313,35 @@ final class TaskController extends Controller
     }
 
     /**
-     * Создает циклическую задачу на лайки.
+     * Создает циклическую задачу на лайки в социальной сети, используя предоставленные данные.
      *
-     * @param Request $request HTTP-запрос, содержащий данные для создания циклической задачи.
-     * @return \Illuminate\Http\JsonResponse Ответ с информацией о созданной циклической задаче.
+     * Этот метод обрабатывает HTTP-запрос, содержащий необходимые данные для создания циклической задачи,
+     * включая идентификатор аккаунта, количество задач в час, общее количество задач и статус задачи.
+     * Он также генерирует уникальное расписание (массив уникальных случайных минут в течение часа),
+     * в которое будут выполняться задачи, и сохраняет это расписание в базе данных.
+     *
+     * @param Request $request HTTP-запрос, содержащий следующие параметры:
+     * - account_id: Идентификатор аккаунта, для которого создается задача.
+     * - tasks_per_hour: Количество задач на лайки, которое должно быть выполнено в час.
+     * - tasks_count: Общее количество задач на лайки, которое нужно выполнить.
+     * - status: Статус задачи (например, 'active').
+     *
+     * @return \Illuminate\Http\JsonResponse Ответ, содержащий статус выполнения операции,
+     * данные созданной циклической задачи и сообщение об успешном создании задачи.
      */
     public function createCyclicTask(Request $request)
     {
+        // Генерация массива уникальных случайных минут
+        $tasksPerHour = $request->input('tasks_per_hour');
+        $uniqueMinutes = $this->generateUniqueRandomMinutes($tasksPerHour);
+
+        // Создание циклической задачи с заполнением поля likes_distribution
         $cyclicTask = CyclicTask::create([
-            'account_id'     => $request->input('account_id'),
-            'tasks_per_hour' => $request->input('tasks_per_hour'),
-            'tasks_count'    => $request->input('tasks_count'),
-            'status'         => $request->input('status'),
+            'account_id'         => $request->input('account_id'),
+            'tasks_per_hour'     => $tasksPerHour,
+            'tasks_count'        => $request->input('tasks_count'),
+            'status'             => $request->input('status'),
+            'likes_distribution' => json_encode($uniqueMinutes), // Сохраняем как строку
         ]);
 
         return response()->json([
@@ -332,7 +349,36 @@ final class TaskController extends Controller
             'data'    => $cyclicTask,
             'message' => 'Задача на постановку лайков запланирована.'
         ]);
+    }
 
+    /**
+     * Генерирует массив уникальных случайных минут для выполнения задач в течение одного часа.
+     *
+     * Этот метод используется для создания расписания выполнения задач на лайки в социальной сети,
+     * гарантируя, что каждая задача будет запланирована на уникальную минуту в пределах одного часа.
+     * Таким образом обеспечивается равномерное распределение задач во времени.
+     *
+     * @param int $count Количество уникальных минут (задач), которое необходимо сгенерировать.
+     *                  Это значение должно быть меньше или равно 60, так как в часе 60 минут.
+     *
+     * @return array Массив, содержащий уникальные случайные минуты в диапазоне от 1 до 60.
+     *               Каждое значение в массиве указывает минуту в часе, когда должна быть выполнена задача.
+     */
+    public function generateUniqueRandomMinutes(int $count): array
+    {
+        $minutes = [];
+
+        while (count($minutes) < $count) {
+            $randomMinute = rand(1, 60);
+            if (!in_array($randomMinute, $minutes)) {
+                $minutes[] = $randomMinute;
+            }
+        }
+
+        // Сортируем массив минут по возрастанию
+        sort($minutes);
+
+        return $minutes;
     }
 
     /**
