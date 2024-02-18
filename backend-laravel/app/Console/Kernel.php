@@ -17,7 +17,7 @@ class Kernel extends ConsoleKernel
     {
         // $schedule->command('inspire')->hourly();
 
-        $schedule->command('run:collectNewsfeedPostsForLikeTask')->everyMinute();
+        $schedule->command('run:DispatchLikeToNewsfeedPost')->everyMinute();
     }
 
     /**

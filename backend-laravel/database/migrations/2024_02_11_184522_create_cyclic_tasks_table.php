@@ -16,8 +16,10 @@ class CreateCyclicTasksTable extends Migration
         Schema::create('cyclic_tasks', function (Blueprint $table) {
             $table->id();
             $table->integer('account_id')->unsigned();
-            $table->unsignedInteger('tasks_per_hour');
             $table->unsignedInteger('tasks_count')->default(0);
+            $table->unsignedInteger('tasks_per_hour');
+            $table->integer('likes_count_hourly')->default(0);
+            $table->text('likes_distribution')->nullable();
             $table->string('status');
             $table->timestamp('started_at')->nullable();
             $table->timestamps();
