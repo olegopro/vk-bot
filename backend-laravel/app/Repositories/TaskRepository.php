@@ -7,8 +7,19 @@ use DB;
 use Exception;
 use Illuminate\Support\Str;
 
+/**
+ * Класс репозитория для работы с задачами.
+ * Предоставляет методы для поиска, получения статусов и управления задачами в базе данных.
+ */
 class TaskRepository implements TaskRepositoryInterface
 {
+    /**
+     * Находит задачу по идентификатору.
+     *
+     * @param int $taskId Идентификатор задачи.
+     * @return Task Возвращает экземпляр задачи, если она найдена.
+     * @throws Exception Если задача не найдена, выбрасывается исключение.
+     */
     public function findTask($taskId)
     {
         $task = Task::find($taskId);
@@ -20,6 +31,13 @@ class TaskRepository implements TaskRepositoryInterface
         return $task;
     }
 
+    /**
+     * Получает задачи по статусу и идентификатору аккаунта.
+     *
+     * @param string|null $status Статус задачи для фильтрации. Если null, фильтрация не применяется.
+     * @param int|null $accountId Идентификатор аккаунта для дополнительной фильтрации. Если null, фильтрация не применяется.
+     * @return \Illuminate\Database\Eloquent\Collection Возвращает коллекцию задач, соответствующих критериям фильтрации.
+     */
     public function getTaskStatus($status = null, $accountId = null)
     {
         $query = Task::query();
@@ -35,11 +53,23 @@ class TaskRepository implements TaskRepositoryInterface
         return $query->get();
     }
 
+    /**
+     * Получает статус задачи по её идентификатору.
+     *
+     * @param int $taskId Идентификатор задачи.
+     * @return string|null Статус задачи или null, если задача не найдена.
+     */
     public function getTaskStatusById($taskId)
     {
         return Task::where('id', $taskId)->value('status');
     }
 
+    /**
+     * Очищает очередь задач на основе статуса и идентификатора аккаунта.
+     *
+     * @param string|null $status Статус задач для очистки. Если null, очищаются задачи всех статусов.
+     * @param int|null $accountId Идентификатор аккаунта для дополнительной фильтрации. Если null, фильтрация не применяется.
+     */
     public function clearQueueBasedOnStatus($status = null, $accountId = null)
     {
         switch ($status) {
@@ -104,6 +134,12 @@ class TaskRepository implements TaskRepositoryInterface
         }
     }
 
+    /**
+     * Удаляет завершенную задачу по идентификатору.
+     *
+     * @param int $taskId Идентификатор задачи для удаления.
+     * @return bool|null Количество удаленных записей.
+     */
     public function deleteCompletedTask($taskId)
     {
         // Удаление завершенной задачи
@@ -112,6 +148,13 @@ class TaskRepository implements TaskRepositoryInterface
                    ->delete();
     }
 
+    /**
+     * Удаляет задачу из очереди по идентификатору.
+     *
+     * @param int $taskId Идентификатор задачи для удаления из очереди.
+     * @throws Exception Если задача не найдена, выбрасывается исключение.
+     * @return bool|null Возвращает true, если задача успешно удалена, иначе null.
+     */
     public function deleteQueuedTask($taskId)
     {
         // Находим задачу в таблице tasks
@@ -130,6 +173,13 @@ class TaskRepository implements TaskRepositoryInterface
         return $task->delete();
     }
 
+
+    /**
+     * Удаляет неуспешную задачу по идентификатору.
+     *
+     * @param int $taskId Идентификатор задачи для удаления.
+     * @return bool|null Количество удаленных записей.
+     */
     public function deleteFailedTask($taskId)
     {
         // Удаление неуспешной задачи
@@ -138,6 +188,12 @@ class TaskRepository implements TaskRepositoryInterface
                    ->delete();
     }
 
+    /**
+     * Удаляет задачи из таблицы jobs на основе статуса и идентификатора аккаунта.
+     *
+     * @param string|null $status Статус задач для удаления. Если null, удаляются задачи всех статусов.
+     * @param int|null $accountId Идентификатор аккаунта для дополнительной фильтрации. Если null, фильтрация не применяется.
+     */
     public function deleteJobsByStatus($status, $accountId = null)
     {
         // Получаем список job_id из таблицы tasks, соответствующих условиям
