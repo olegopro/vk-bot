@@ -16,6 +16,12 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Throwable;
 
+/**
+ * Задание для добавления лайка к посту в VK.
+ *
+ * Это задание добавляет лайк к определенному посту в VK, используя VK API.
+ * Оно помещается в очередь и выполняется асинхронно.
+ */
 class addLikeToPost implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
@@ -27,11 +33,11 @@ class addLikeToPost implements ShouldQueue
     private $vkClient;
 
     /**
-     * Create a new job instance.
+     * Создает новый экземпляр задания.
      *
-     * @param $task
-     * @param $token
-     * @param LoggingService $loggingService
+     * @param Task $task Экземпляр задачи, содержащий данные для выполнения.
+     * @param string $token Токен доступа для авторизации в VK API.
+     * @param LoggingService $loggingService Сервис для логирования операций.
      */
     public function __construct($task, $token, LoggingService $loggingService)
     {
@@ -39,16 +45,16 @@ class addLikeToPost implements ShouldQueue
         $this->token = $token;
         $this->loggingService = $loggingService;
 
+        // Получение screen name аккаунта по токену доступа
         $this->screenName = DB::table('accounts')
                               ->where('access_token', $token)
                               ->value('screen_name');
     }
 
     /**
-     * Execute the job.
+     * Выполняет задание.
      *
-     * @return void
-     * @throws Exception
+     * @throws Exception Если задача просрочена или возникают другие ошибки в процессе выполнения.
      */
     public function handle()
     {
@@ -104,6 +110,11 @@ class addLikeToPost implements ShouldQueue
         $task->update(['status' => 'done']);
     }
 
+    /**
+     * Обрабатывает неудачное выполнение задания.
+     *
+     * @param Throwable $exception Исключение, возникшее в процессе выполнения задания.
+     */
     public function failed(Throwable $exception)
     {
         $this->loggingService->log(
@@ -122,15 +133,30 @@ class addLikeToPost implements ShouldQueue
         ]);
     }
 
+    /**
+     * Получает статус задачи.
+     *
+     * @return string Статус задачи.
+     */
     public function getTaskStatus()
     {
         return $this->task->status;
     }
 
+    /**
+     * Получает идентификатор аккаунта, связанного с задачей.
+     *
+     * @return int Идентификатор аккаунта.
+     */
     public function getAccountId() {
         return $this->task->account_id;
     }
 
+    /**
+     * Получает идентификатор задачи.
+     *
+     * @return int Идентификатор задачи.
+     */
     public function getTaskId()
     {
         return $this->task->id;
