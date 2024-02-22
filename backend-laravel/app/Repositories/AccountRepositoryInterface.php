@@ -13,7 +13,7 @@ interface AccountRepositoryInterface
     /**
      * Получить все аккаунты.
      *
-     * @return \Illuminate\Database\Eloquent\Collection|static[]
+     * @return \Illuminate\Database\Eloquent\Collection
      * Возвращает коллекцию всех аккаунтов.
      */
 	public function getAllAccounts();

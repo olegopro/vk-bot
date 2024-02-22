@@ -10,6 +10,7 @@ use App\Repositories\AccountRepositoryInterface;
 use App\Repositories\TaskRepositoryInterface;
 use App\Services\LoggingServiceInterface;
 use App\Services\VkClientService;
+use ATehnix\VkClient\Exceptions\VkException;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -66,6 +67,7 @@ final class TaskController extends Controller
      *
      * @param int $taskId ID задачи.
      * @return \Illuminate\Http\JsonResponse Ответ с данными о задаче.
+     * @throws VkException
      */
     public function getTaskInfo($taskId)
     {
@@ -140,6 +142,7 @@ final class TaskController extends Controller
      * @param int $maxCreatedCount Максимальное количество задач, которые необходимо создать.
      * @param bool $isCyclic Флаг, указывающий, является ли задача циклической.
      * @return int Количество созданных задач.
+     * @throws VkException
      */
     protected function fetchAndPreparePosts($request, $account_id, $maxCreatedCount, $isCyclic)
     {
@@ -246,6 +249,7 @@ final class TaskController extends Controller
      * @param array $post Массив данных поста.
      * @param bool $isCyclic Флаг, указывающий, является ли задача циклической.
      * @return Task Созданная задача.
+     * @throws VkException
      */
     protected function createLikeTask($accountId, $post, $isCyclic)
     {
@@ -452,6 +456,7 @@ final class TaskController extends Controller
      *
      * @param int $taskId ID задачи, для которой нужно удалить лайк.
      * @return \Illuminate\Http\JsonResponse Ответ об успешном удалении лайка или ошибке.
+     * @throws VkException
      */
     public function deleteLike($taskId)
     {
