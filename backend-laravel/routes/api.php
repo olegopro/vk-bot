@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AccountController;
+use App\Http\Controllers\CyclicTaskController;
 use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\TaskController;
 use Illuminate\Http\Request;
@@ -20,10 +21,14 @@ use Illuminate\Support\Facades\Route;
 Route::prefix('tasks')->group(function () {
     Route::get('/{status?}/{accountId?}', [TaskController::class, 'getTaskStatus']);
     Route::post('/task-info/{taskId}', [TaskController::class, 'getTaskInfo']);
-    Route::post('/create-cyclic-task', [TaskController::class, 'createCyclicTask']);
     Route::delete('/delete-like/{taskId}', [TaskController::class, 'deleteLike']);
     Route::delete('/delete-all-tasks/{status?}/{accountId?}', [TaskController::class, 'deleteAllTasks']);
     Route::delete('/delete-task-by-id/{id}', [TaskController::class, 'deleteTaskById']);
+});
+
+Route::prefix('cyclic-tasks')->group(function () {
+    Route::get('/', [CyclicTaskController::class, 'getCyclicTasks']);
+    Route::post('/create-cyclic-task', [TaskController::class, 'createCyclicTask']);
 });
 
 Route::prefix('account')->group(function (){
@@ -50,5 +55,3 @@ Route::prefix('settings')->group(function () {
     Route::post('/', [SettingsController::class, 'getSettings']);
     Route::post('/save', [SettingsController::class, 'saveSettings']);
 });
-
-

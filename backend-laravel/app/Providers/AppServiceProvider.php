@@ -4,6 +4,8 @@ namespace App\Providers;
 
 use App\Repositories\AccountRepositoryInterface;
 use App\Repositories\AccountRepository;
+use App\Repositories\CyclicTaskRepository;
+use App\Repositories\CyclicTaskRepositoryInterface;
 use App\Repositories\TaskRepository;
 use App\Repositories\TaskRepositoryInterface;
 use App\Services\LoggingService;
@@ -52,6 +54,8 @@ class AppServiceProvider extends ServiceProvider
         абстрагироваться от конкретной реализации хранения данных, делая компоненты системы менее связанными
         и более гибкими в разработке и тестировании. */
         $this->app->bind(TaskRepositoryInterface::class, TaskRepository::class);
+
+        $this->app->bind(CyclicTaskRepositoryInterface::class, CyclicTaskRepository::class);
     }
 
     /**

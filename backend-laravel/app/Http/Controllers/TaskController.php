@@ -110,6 +110,7 @@ final class TaskController extends Controller
      * @param Request $request HTTP-запрос.
      * @param bool $isCyclic Флаг, указывающий, является ли задача циклической.
      * @return \Illuminate\Http\JsonResponse Ответ с результатом добавления задач в очередь.
+     * @throws VkException
      */
     public function collectNewsfeedPostsForLikeTask(Request $request, $isCyclic = false)
     {
