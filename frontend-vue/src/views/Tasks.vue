@@ -1,7 +1,13 @@
 <template>
     <div class="row mb-3 align-items-center">
-        <div class="col">
-            <h1 class="h2">Список задач</h1>
+        <div class="col d-flex align-items-center">
+            <h1 class="h2 mb-0">Список задач</h1>
+            <button class="btn btn-sm btn-secondary btn-action my-0 ms-3"
+                    :disabled="tasksStore.tasks.length === 0"
+                    @click="router.push({ name: 'CyclicTasks' })"
+            >
+                <b>Циклические задачи</b>
+            </button>
         </div>
         <div class="col d-flex justify-content-end">
 

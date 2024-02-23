@@ -4,6 +4,7 @@ import Tasks from '../views/Tasks.vue'
 import Account from '../views/Account.vue'
 import Statistics from '../views/Statistics.vue'
 import Settings from '../views/Settings.vue'
+import CyclicTasks from '../views/CyclicTasks.vue'
 
 const routes = [
     {
@@ -18,6 +19,14 @@ const routes = [
         path: '/tasks/:status?/:accountId?',
         name: 'Tasks',
         component: Tasks,
+        meta: {
+            layout: 'main'
+        }
+    },
+    {
+        path: '/cyclic-tasks/:status?/:accountId?',
+        name: 'CyclicTasks',
+        component: CyclicTasks,
         meta: {
             layout: 'main'
         }
