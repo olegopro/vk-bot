@@ -3,7 +3,6 @@
         <div class="col d-flex align-items-center">
             <h1 class="h2 mb-0">Список задач</h1>
             <button class="btn btn-sm btn-secondary btn-action my-0 ms-3"
-                    :disabled="cyclicTasksStore.cyclicTasks.length === 0"
                     @click="router.push({ name: 'Tasks' })"
             >
                 <b>Циклические задачи</b>
@@ -36,6 +35,7 @@
                         v-for="cyclicTask in cyclicTasksStore.cyclicTasks"
                         :cyclicTask="cyclicTask"
                         :key="cyclicTask.id"
+                        :showDeleteCyclicTaskModal="showDeleteCyclicTaskModal"
                     />
                 </tbody>
             </table>
@@ -45,20 +45,33 @@
         </div>
     </div>
 
-    <!--<div v-for="cyclicTask in cyclicTasksStore.cyclicTasks" :key="cyclicTask.id">
-        {{cyclicTask}}
-    </div>-->
+    <Teleport to="body">
+        <DeleteCyclicTask :modalInstance="deleteCyclicTaskModal" :taskId="taskId"/>
+    </Teleport>
+
 </template>
 
 <script setup>
     import { useCyclicTasksStore } from '../stores/CyclicTasksStore'
     import TableThread from '../components/CyclicTasks/TableThread.vue'
-    import { onMounted } from 'vue'
+    import { onMounted, ref } from 'vue'
     import router from '../router'
+    import { Modal } from 'bootstrap'
+    import DeleteCyclicTask from '../components/CyclicTasks/Modals/DeleteCyclicTask.vue'
+
+    const taskId = ref(null)
+    const deleteCyclicTaskModal = ref(null)
 
     const cyclicTasksStore = useCyclicTasksStore()
 
+    const showDeleteCyclicTaskModal = id => {
+        taskId.value = id
+        deleteCyclicTaskModal.value.show()
+    }
+
     onMounted(() => {
         cyclicTasksStore.fetchCyclicTasks()
+
+        deleteCyclicTaskModal.value = new Modal(document.getElementById('deleteCyclicTask'))
     })
 </script>

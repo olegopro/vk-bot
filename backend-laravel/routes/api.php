@@ -28,6 +28,7 @@ Route::prefix('tasks')->group(function () {
 
 Route::prefix('cyclic-tasks')->group(function () {
     Route::get('/', [CyclicTaskController::class, 'getCyclicTasks']);
+    Route::delete('/{taskId}', [CyclicTaskController::class, 'deleteCyclicTask']);
     Route::post('/create-cyclic-task', [TaskController::class, 'createCyclicTask']);
 });
 

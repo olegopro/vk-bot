@@ -19,4 +19,21 @@ final class CyclicTaskController extends Controller
             'message' => 'Список циклических задач получен'
         ]);
     }
+
+    public function deleteCyclicTask($taskId)
+    {
+        $cyclicTask = $this->cyclicTaskRepository->deleteCyclicTask($taskId);
+
+        if (!$cyclicTask) {
+            return response()->json([
+                'success' => false,
+                'error'   => 'Циклическая задача не найдена'
+            ]);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Циклическая задача удалена'
+        ]);
+    }
 }

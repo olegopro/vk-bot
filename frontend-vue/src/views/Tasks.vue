@@ -3,7 +3,6 @@
         <div class="col d-flex align-items-center">
             <h1 class="h2 mb-0">Список задач</h1>
             <button class="btn btn-sm btn-secondary btn-action my-0 ms-3"
-                    :disabled="tasksStore.tasks.length === 0"
                     @click="router.push({ name: 'CyclicTasks' })"
             >
                 <b>Циклические задачи</b>

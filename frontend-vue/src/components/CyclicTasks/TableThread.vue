@@ -34,7 +34,7 @@
                 </svg>
             </button>
 
-            <button class="btn btn-danger button-style" @click="props.showDeleteTaskModal(cyclicTask.id)">
+            <button class="btn btn-danger button-style" @click="props.showDeleteCyclicTaskModal(cyclicTask.id)">
                 <i class="bi bi-trash3" />
             </button>
         </td>
@@ -50,7 +50,8 @@
     import { format } from 'date-fns'
 
     const props = defineProps({
-        cyclicTask: Object
+        cyclicTask: Object,
+        showDeleteCyclicTaskModal: Function
     })
 
     const { cyclicTask } = toRefs(props)

@@ -10,4 +10,8 @@ class CyclicTaskRepository implements CyclicTaskRepositoryInterface
     {
         return CyclicTask::all();
     }
+
+    public function deleteCyclicTask($taskId) {
+        return CyclicTask::destroy($taskId);
+    }
 }
