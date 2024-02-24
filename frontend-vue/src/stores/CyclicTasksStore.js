@@ -16,6 +16,15 @@ export const useCyclicTasksStore = defineStore('cyclicTasks', {
 				})
 		},
 
+		async createCyclicTask(accountId, tasksPerHour, tasksCount, status) {
+			await axios.post('http://localhost:8080/api/cyclic-tasks/create-cyclic-task', {
+				account_id: accountId,
+				tasks_per_hour: tasksPerHour,
+				tasks_count: tasksCount,
+				status: status
+			})
+		},
+
 		async deleteCyclicTask(taskId) {
 			await axios.delete(`http://localhost:8080/api/cyclic-tasks/${taskId}`)
 				.then(({ data }) => {

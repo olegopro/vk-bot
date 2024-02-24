@@ -26,12 +26,17 @@
 
         <td>
             <button
+                class="btn btn-secondary button-style me-2"
+                type="button"
+            >
+                <i class="bi bi-pause-circle" />
+            </button>
+
+            <button
                 class="btn btn-primary button-style me-2"
                 type="button"
             >
-                <svg width="16" height="16">
-                    <use xlink:href="#info"></use>
-                </svg>
+                <i class="bi bi-pencil" />
             </button>
 
             <button class="btn btn-danger button-style" @click="props.showDeleteCyclicTaskModal(cyclicTask.id)">

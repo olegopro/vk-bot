@@ -8,9 +8,21 @@
                 <b>Циклические задачи</b>
             </button>
         </div>
-    </div>
 
-    <div class="col d-flex justify-content-end">
+        <div class="col d-flex justify-content-end">
+            <button class="btn btn-danger btn-action me-3"
+                    :disabled="cyclicTasksStore.cyclicTasks.length === 0"
+            >
+                Очистить список
+            </button>
+
+            <button class="btn btn-success btn-action"
+                    type="button"
+                    @click="showAddCyclicTaskModal"
+            >
+                Добавить задачу
+            </button>
+        </div>
     </div>
 
     <div class="row">
@@ -47,6 +59,7 @@
 
     <Teleport to="body">
         <DeleteCyclicTask :modalInstance="deleteCyclicTaskModal" :taskId="taskId"/>
+        <AddCyclicTask :modalInstance="addCyclicTaskModal" />
     </Teleport>
 
 </template>
@@ -58,20 +71,28 @@
     import router from '../router'
     import { Modal } from 'bootstrap'
     import DeleteCyclicTask from '../components/CyclicTasks/Modals/DeleteCyclicTask.vue'
+    import AddCyclicTask from '../components/CyclicTasks/Modals/AddCyclicTask.vue'
+    import { useAccountsStore } from '../stores/AccountsStore'
 
     const taskId = ref(null)
     const deleteCyclicTaskModal = ref(null)
+    const addCyclicTaskModal = ref(null)
 
     const cyclicTasksStore = useCyclicTasksStore()
+    const accountsStore = useAccountsStore()
 
     const showDeleteCyclicTaskModal = id => {
         taskId.value = id
         deleteCyclicTaskModal.value.show()
     }
 
+    const showAddCyclicTaskModal = () => addCyclicTaskModal.value.show()
+
     onMounted(() => {
         cyclicTasksStore.fetchCyclicTasks()
+        accountsStore.fetchAccounts()
 
         deleteCyclicTaskModal.value = new Modal(document.getElementById('deleteCyclicTask'))
+        addCyclicTaskModal.value = new Modal(document.getElementById('addCyclicTaskModal'))
     })
 </script>
