@@ -19,4 +19,21 @@ class CyclicTaskRepository implements CyclicTaskRepositoryInterface
     {
         return CyclicTask::truncate();
     }
+
+    public function pauseCyclicTask($taskId)
+    {
+        $task = CyclicTask::find($taskId);
+
+        if ($task) {
+            $task->status = $task->status === 'active' ? 'pause' : 'active';
+            $task->save();
+
+            return [
+                'task' => $task,
+                'statusChangedTo' => $task->status,
+            ];
+        }
+
+        return $task;
+    }
 }

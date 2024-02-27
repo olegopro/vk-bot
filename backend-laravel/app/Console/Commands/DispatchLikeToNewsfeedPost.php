@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Http\Controllers\TaskController;
 use App\Models\CyclicTask;
+use ATehnix\VkClient\Exceptions\VkException;
 use Illuminate\Console\Command;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -50,6 +51,7 @@ class DispatchLikeToNewsfeedPost extends Command
      * 4. Сохраняет изменения в базе данных.
      *
      * @return void
+     * @throws VkException
      */
     public function handle()
     {

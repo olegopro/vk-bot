@@ -26,10 +26,11 @@
 
         <td>
             <button
-                class="btn btn-secondary button-style me-2"
+                :class="['btn', 'button-style', 'me-2', buttonClass]"
                 type="button"
+                @click="cyclicTasksStore.pauseCyclicTask(cyclicTask.id)"
             >
-                <i class="bi bi-pause-circle" />
+                <i :class="['bi', buttonIcon]" />
             </button>
 
             <button
@@ -50,9 +51,12 @@
 </template>
 
 <script setup>
-    import { defineProps, toRefs } from 'vue'
+    import { defineProps, toRefs, computed } from 'vue'
     import TaskStatus from './TaskStatus.vue'
     import { format } from 'date-fns'
+    import { useCyclicTasksStore } from '../../stores/CyclicTasksStore'
+
+    const cyclicTasksStore = useCyclicTasksStore()
 
     const props = defineProps({
         cyclicTask: Object,
@@ -62,6 +66,8 @@
     const { cyclicTask } = toRefs(props)
 
     const dateFormat = (date) => format(new Date(date), 'yyyy-MM-dd HH:mm:ss')
+    const buttonClass = computed(() => cyclicTask.value.status === 'active' ? 'btn-secondary' : 'btn-success')
+    const buttonIcon = computed(() => cyclicTask.value.status === 'active' ? 'bi-pause-circle' : 'bi-play-circle')
 </script>
 
 <style scoped lang="scss">

@@ -39,6 +39,18 @@ export const useCyclicTasksStore = defineStore('cyclicTasks', {
 					this.cyclicTasks = []
 					showSuccessNotification(data.message)
 				})
+		},
+
+		async pauseCyclicTask(taskId) {
+			await axios.patch(`http://localhost:8080/api/cyclic-tasks/pause-cyclic-task/${taskId}`)
+				.then(({ data }) => {
+					const taskIndex = this.cyclicTasks.findIndex(task => task.id === taskId)
+					if (taskIndex !== -1) {
+						this.cyclicTasks[taskIndex].status = this.cyclicTasks[taskIndex].status === 'active' ? 'pause' : 'active'
+					}
+
+					showSuccessNotification(data.message)
+				})
 		}
 	}
 })

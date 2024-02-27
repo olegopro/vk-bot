@@ -9,4 +9,6 @@ interface CyclicTaskRepositoryInterface
     public function deleteCyclicTask($taskId);
 
     public function deleteAllCyclicTasks();
+
+    public function pauseCyclicTask($taskId);
 }

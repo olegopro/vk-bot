@@ -10,7 +10,8 @@ final class CyclicTaskController extends Controller
         private readonly CyclicTaskRepositoryInterface $cyclicTaskRepository
     ) {}
 
-    public function getCyclicTasks() {
+    public function getCyclicTasks()
+    {
         $cyclicTasks = $this->cyclicTaskRepository->getCyclicTasks();
 
         return response()->json([
@@ -44,6 +45,27 @@ final class CyclicTaskController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Все циклические задачи удалены'
+        ]);
+    }
+
+    public function pauseCyclicTask($taskId)
+    {
+        $result = $this->cyclicTaskRepository->pauseCyclicTask($taskId);
+
+        if (!$result) {
+            return response()->json([
+                'success' => false,
+                'error'   => 'Циклическая задача не найдена'
+            ]);
+        }
+
+        $message = $result['statusChangedTo'] === 'pause' ?
+            'Циклическая задача поставлена на паузу' :
+            'Циклическая задача возобновлена';
+
+        return response()->json([
+            'success' => true,
+            'message' => $message
         ]);
     }
 }
