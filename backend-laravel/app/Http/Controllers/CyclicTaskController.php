@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Repositories\CyclicTaskRepositoryInterface;
+use Illuminate\Http\Request;
 
 final class CyclicTaskController extends Controller
 {
@@ -19,6 +20,26 @@ final class CyclicTaskController extends Controller
             'data'    => $cyclicTasks,
             'message' => 'Список циклических задач получен'
         ]);
+    }
+
+    public function editCyclicTask(Request $request, $taskId)
+    {
+        $data = $request->only(['account_id', 'tasks_count', 'tasks_per_hour', 'status']);
+        $cyclicTasks = $this->cyclicTaskRepository->editCyclicTask($taskId, $data);
+
+        if (!$cyclicTasks) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Циклическая задача не найдена',
+            ]);
+        }
+
+        return response()->json([
+            'success' => true,
+            'data'    => $cyclicTasks,
+            'message' => 'Циклическая задача обновлена',
+        ]);
+
     }
 
     public function deleteCyclicTask($taskId)

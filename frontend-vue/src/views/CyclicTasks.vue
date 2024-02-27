@@ -49,6 +49,7 @@
                         :cyclicTask="cyclicTask"
                         :key="cyclicTask.id"
                         :showDeleteCyclicTaskModal="showDeleteCyclicTaskModal"
+                        :showEditCyclicTaskModal="showEditCyclicTaskModal"
                     />
                 </tbody>
             </table>
@@ -62,6 +63,7 @@
         <DeleteCyclicTask :modalInstance="deleteCyclicTaskModal" :taskId="taskId"/>
         <AddCyclicTask :modalInstance="addCyclicTaskModal" />
         <DeleteAllCyclicTasks :modalInstance="deleteAllCyclicTasksModal" />
+        <EditCyclicTask :modalInstance="editCyclicTaskModal" :taskId="taskId"/>
     </Teleport>
 
 </template>
@@ -76,10 +78,12 @@
     import AddCyclicTask from '../components/CyclicTasks/Modals/AddCyclicTask.vue'
     import { useAccountsStore } from '../stores/AccountsStore'
     import DeleteAllCyclicTasks from '../components/CyclicTasks/Modals/DeleteAllCyclicTasks.vue'
+    import EditCyclicTask from '../components/CyclicTasks/Modals/EditCyclicTask.vue'
 
     const taskId = ref(null)
     const deleteCyclicTaskModal = ref(null)
     const addCyclicTaskModal = ref(null)
+    const editCyclicTaskModal = ref(null)
     const deleteAllCyclicTasksModal = ref(null)
 
     const cyclicTasksStore = useCyclicTasksStore()
@@ -88,6 +92,11 @@
     const showDeleteCyclicTaskModal = id => {
         taskId.value = id
         deleteCyclicTaskModal.value.show()
+    }
+
+    const showEditCyclicTaskModal = id => {
+        taskId.value = id
+        editCyclicTaskModal.value.show()
     }
 
     const showAddCyclicTaskModal = () => addCyclicTaskModal.value.show()
@@ -99,6 +108,7 @@
 
         deleteCyclicTaskModal.value = new Modal(document.getElementById('deleteCyclicTask'))
         addCyclicTaskModal.value = new Modal(document.getElementById('addCyclicTaskModal'))
+        editCyclicTaskModal.value = new Modal(document.getElementById('editCyclicTaskModal'))
         deleteAllCyclicTasksModal.value = new Modal(document.getElementById('deleteAllCyclicTasks'))
     })
 </script>

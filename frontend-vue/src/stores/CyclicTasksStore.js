@@ -25,6 +25,22 @@ export const useCyclicTasksStore = defineStore('cyclicTasks', {
 			})
 		},
 
+		async editCyclicTask(taskId, taskData) {
+			await axios.patch(`http://localhost:8080/api/cyclic-tasks/${taskId}`, taskData)
+				.then(({ data }) => {
+					// Сервер возвращает обновлённую задачу в ответе
+					const updatedTask = data.data
+
+					// Находим индекс задачи в массиве
+					const index = this.cyclicTasks.findIndex(task => task.id === taskId)
+
+					// Если задача найдена, обновляем её данные
+					if (index !== -1) this.cyclicTasks[index] = updatedTask
+
+					showSuccessNotification(data.message)
+				})
+		},
+
 		async deleteCyclicTask(taskId) {
 			await axios.delete(`http://localhost:8080/api/cyclic-tasks/${taskId}`)
 				.then(({ data }) => {
@@ -52,5 +68,9 @@ export const useCyclicTasksStore = defineStore('cyclicTasks', {
 					showSuccessNotification(data.message)
 				})
 		}
+	},
+
+	getters: {
+		getTaskById: state => id => state.cyclicTasks.find(task => task.id === id)
 	}
 })

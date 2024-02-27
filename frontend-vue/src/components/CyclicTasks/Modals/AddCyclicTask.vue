@@ -26,7 +26,7 @@
 
                     <select class="form-select mb-3" aria-label="Default select example" v-model="status">
                         <option selected value="active">Запустить сейчас</option>
-                        <option  value="pending">Оставить на паузе</option>
+                        <option  value="pause">Оставить на паузе</option>
 
                     </select>
 

@@ -36,6 +36,7 @@
             <button
                 class="btn btn-primary button-style me-2"
                 type="button"
+                @click="props.showEditCyclicTaskModal(cyclicTask.id)"
             >
                 <i class="bi bi-pencil" />
             </button>
@@ -60,7 +61,8 @@
 
     const props = defineProps({
         cyclicTask: Object,
-        showDeleteCyclicTaskModal: Function
+        showDeleteCyclicTaskModal: Function,
+        showEditCyclicTaskModal: Function
     })
 
     const { cyclicTask } = toRefs(props)

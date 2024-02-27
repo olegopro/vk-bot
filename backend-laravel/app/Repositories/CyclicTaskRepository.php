@@ -36,4 +36,17 @@ class CyclicTaskRepository implements CyclicTaskRepositoryInterface
 
         return $task;
     }
+
+    public function editCyclicTask($taskId, $data)
+    {
+        $task = CyclicTask::find($taskId);
+
+        if ($task) {
+            $task->update($data);
+
+            return $task;
+        }
+
+        return $task;
+    }
 }
