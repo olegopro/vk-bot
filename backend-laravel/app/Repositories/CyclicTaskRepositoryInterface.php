@@ -7,4 +7,6 @@ interface CyclicTaskRepositoryInterface
     public function getCyclicTasks();
 
     public function deleteCyclicTask($taskId);
+
+    public function deleteAllCyclicTasks();
 }

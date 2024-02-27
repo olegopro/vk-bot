@@ -36,4 +36,14 @@ final class CyclicTaskController extends Controller
             'message' => 'Циклическая задача удалена'
         ]);
     }
+
+    public function deleteAllCyclicTasks()
+    {
+        $this->cyclicTaskRepository->deleteAllCyclicTasks();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Все циклические задачи удалены'
+        ]);
+    }
 }

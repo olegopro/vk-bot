@@ -28,11 +28,12 @@ Route::prefix('tasks')->group(function () {
 
 Route::prefix('cyclic-tasks')->group(function () {
     Route::get('/', [CyclicTaskController::class, 'getCyclicTasks']);
-    Route::delete('/{taskId}', [CyclicTaskController::class, 'deleteCyclicTask']);
     Route::post('/create-cyclic-task', [TaskController::class, 'createCyclicTask']);
+    Route::delete('/delete-all-cyclic-tasks', [CyclicTaskController::class, 'deleteAllCyclicTasks']);
+    Route::delete('/{taskId}', [CyclicTaskController::class, 'deleteCyclicTask']);
 });
 
-Route::prefix('account')->group(function (){
+Route::prefix('account')->group(function () {
     Route::post('/all-accounts', [AccountController::class, 'fetchAllAccounts']);
     Route::post('/data/{id}', [AccountController::class, 'fetchAccountData']);
     Route::post('/followers/{id}', [AccountController::class, 'fetchAccountFollowers']);
@@ -45,12 +46,10 @@ Route::prefix('account')->group(function (){
     // Перенести в tasks
     Route::post('/get-posts-for-like', [TaskController::class, 'collectNewsfeedPostsForLikeTask']);
     Route::post('/add-task-likes', [TaskController::class, 'addLikeTaskToQueue']);
-	Route::delete('/delete-account/{id}', [AccountController::class, 'deleteAccount']);
+    Route::delete('/delete-account/{id}', [AccountController::class, 'deleteAccount']);
 });
 
-
 Route::post('/group/data/{id}', [AccountController::class, 'fetchGroupData']);
-
 
 Route::prefix('settings')->group(function () {
     Route::post('/', [SettingsController::class, 'getSettings']);
