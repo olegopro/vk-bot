@@ -9,11 +9,11 @@
         </td>
 
         <td>
-            {{ cyclicTask.tasks_count }}
+            {{ cyclicTask.total_task_count }}
         </td>
 
         <td>
-            {{ cyclicTask.tasks_count }}
+            {{ cyclicTask.remaining_tasks_count }}
         </td>
 
         <td>

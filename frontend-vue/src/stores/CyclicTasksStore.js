@@ -20,7 +20,7 @@ export const useCyclicTasksStore = defineStore('cyclicTasks', {
 			await axios.post('http://localhost:8080/api/cyclic-tasks/create-cyclic-task', {
 				account_id: accountId,
 				tasks_per_hour: tasksPerHour,
-				tasks_count: tasksCount,
+				total_task_count: tasksCount,
 				status: status
 			})
 		},

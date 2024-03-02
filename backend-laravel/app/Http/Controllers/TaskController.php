@@ -361,11 +361,13 @@ final class TaskController extends Controller
 
         // Создание циклической задачи с заполнением поля likes_distribution
         $cyclicTask = CyclicTask::create([
-            'account_id'         => $request->input('account_id'),
-            'tasks_per_hour'     => $tasksPerHour,
-            'tasks_count'        => $request->input('tasks_count'),
-            'status'             => $request->input('status'),
-            'likes_distribution' => json_encode($uniqueMinutes), // Сохраняем как строку
+            'account_id'            => $request->input('account_id'),
+            'tasks_per_hour'        => $tasksPerHour,
+            'total_task_count'      => $request->input('total_task_count'),
+            'remaining_tasks_count' => $request->input('total_task_count'),
+            'status'                => $request->input('status'),
+            'likes_distribution'    => json_encode($uniqueMinutes), // Сохраняем как строку
+            'started_at'            => now()
         ]);
 
         return response()->json([

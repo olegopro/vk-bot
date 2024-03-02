@@ -15,10 +15,11 @@ class CyclicTask extends Model
 
     protected $fillable = [
         'account_id',
-        'tasks_count',
+        'total_task_count',
+        'remaining_tasks_count',
         'tasks_per_hour',
-        'likes_count_hourly',
         'likes_distribution',
-        'status'
+        'status',
+        'started_at'
     ];
 }

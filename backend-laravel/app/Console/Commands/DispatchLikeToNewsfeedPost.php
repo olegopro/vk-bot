@@ -72,7 +72,7 @@ class DispatchLikeToNewsfeedPost extends Command
             $likesDistribution = json_decode($task->likes_distribution, true);
 
             // Проверяем, входит ли текущая минута в расписание лайков
-            if (in_array($currentMinute, $likesDistribution) && $task->tasks_count > 0) {
+            if (in_array($currentMinute, $likesDistribution) && $task->remaining_tasks_count > 0) {
                 // Создание искусственного запроса
                 $request = Request::create('', 'POST', [
                     'account_id' => $task->account_id,
@@ -84,11 +84,10 @@ class DispatchLikeToNewsfeedPost extends Command
 
                 // Проверка успешности выполнения задачи
                 if ($response->isSuccessful()) {
-                    $task->increment('likes_count_hourly'); // Увеличиваем счетчик лайков в час
-                    $task->decrement('tasks_count'); // Уменьшаем общее количество задач
+                    $task->decrement('remaining_tasks_count'); // Уменьшаем оставшееся количество задач
 
                     // Проверяем, достигло ли количество лайков 0 после уменьшения
-                    if ($task->tasks_count == 0) {
+                    if ($task->remaining_tasks_count == 0) {
                         // Обновляем статус задачи на 'done'
                         $task->status = 'done';
                     }

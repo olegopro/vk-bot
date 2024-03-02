@@ -16,7 +16,7 @@
 
                     <div class="input-group mb-3">
                         <span class="input-group-text">Количество лайков (всего)</span>
-                        <input type="number" class="form-control" placeholder="По умолчанию 10 постов" v-model="taskCount">
+                        <input type="number" class="form-control" placeholder="По умолчанию 10 постов" v-model="totalTaskCount">
                     </div>
 
                     <div class="input-group mb-3">
@@ -57,7 +57,7 @@
     const cyclicTaskStore = useCyclicTasksStore()
 
     const accountId = ref('selectAccount')
-    const taskCount = ref(1000)
+    const totalTaskCount = ref(1000)
     const tasksPerHour = ref(60)
     const status = ref('active')
     const disablePost = ref(true)
@@ -69,7 +69,7 @@
         disablePost.value = true
         loading.value = true
 
-        cyclicTaskStore.createCyclicTask(accountId.value, tasksPerHour.value, taskCount.value, status.value)
+        cyclicTaskStore.createCyclicTask(accountId.value, tasksPerHour.value, totalTaskCount.value, status.value)
             .then(response => {
                 modalHide()
                 disablePost.value = false
