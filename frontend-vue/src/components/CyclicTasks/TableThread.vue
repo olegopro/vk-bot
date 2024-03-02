@@ -1,11 +1,11 @@
 <template>
     <tr>
         <th scope="row">{{ cyclicTask.id }}</th>
-        <td class="user-name inner-shadow">
-            <div class="flex-container">
-                {{ cyclicTask.account_id }}
-                <i class="bi bi-person-circle ms-2" style="font-size: 16px; opacity: 0.75" />
-            </div>
+
+        <td >
+            <span style="cursor: pointer;" @click="navigateToAccount(cyclicTask.account_id)">
+                {{ cyclicTask.first_name }} {{ cyclicTask.last_name }}
+            </span>
         </td>
 
         <td>
@@ -56,6 +56,7 @@
     import TaskStatus from './TaskStatus.vue'
     import { format } from 'date-fns'
     import { useCyclicTasksStore } from '../../stores/CyclicTasksStore'
+    import router from '../../router'
 
     const cyclicTasksStore = useCyclicTasksStore()
 
@@ -66,20 +67,8 @@
     })
 
     const { cyclicTask } = toRefs(props)
-
+    const navigateToAccount = (accountId) => router.push({ name: 'Account', params: { id: accountId } })
     const dateFormat = (date) => format(new Date(date), 'yyyy-MM-dd HH:mm:ss')
     const buttonClass = computed(() => cyclicTask.value.status === 'active' ? 'btn-secondary' : 'btn-success')
     const buttonIcon = computed(() => cyclicTask.value.status === 'active' ? 'bi-pause-circle' : 'bi-play-circle')
 </script>
-
-<style scoped lang="scss">
-    .flex-container {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        width: fit-content;
-        margin-left: auto;
-        margin-right: auto;
-    }
-</style>

@@ -22,4 +22,25 @@ class CyclicTask extends Model
         'status',
         'started_at'
     ];
+
+    protected $appends = ['first_name', 'last_name']; // Добавляем эти поля в сериализованный вывод
+    protected $hidden = ['account']; // Скрыть информацию об аккаунте из сериализованного вывода
+
+
+    public function account()
+    {
+        return $this->belongsTo(Account::class, 'account_id');
+    }
+
+    // Аксессор для first_name
+    public function getFirstNameAttribute()
+    {
+        return $this->account->first_name ?? null;
+    }
+
+    // Аксессор для last_name
+    public function getLastNameAttribute()
+    {
+        return $this->account->last_name ?? null;
+    }
 }
