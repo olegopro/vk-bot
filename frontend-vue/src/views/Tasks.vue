@@ -162,7 +162,6 @@
 
     const showDeleteAllTasksModal = () => deleteAllTasksModal.value.show()
     const showAddTaskModal = () => addTasksModal.value.show()
-
     onMounted(() => {
         tasksStore.fetchTasks(currentStatus.value)
         accountsStore.fetchAccounts()
