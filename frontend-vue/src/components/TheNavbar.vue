@@ -21,7 +21,7 @@
             },
 
             isTasksActive() {
-                return this.$route.name === 'Tasks'
+                return this.$route.name === 'Tasks' || this.$route.name === 'CyclicTasks'
             }
         }
     }

@@ -2,7 +2,7 @@
     <div class="row mb-3 align-items-center">
         <div class="col d-flex align-items-center">
             <h1 class="h2 mb-0">Список задач</h1>
-            <button class="btn btn-sm btn-secondary btn-action my-0 ms-3"
+            <button class="btn btn-sm btn-primary btn-action my-0 ms-3"
                     @click="router.push({ name: 'Tasks' })"
             >
                 <b>Циклические задачи</b>
