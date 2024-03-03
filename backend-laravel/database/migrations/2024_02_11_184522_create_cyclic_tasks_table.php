@@ -20,6 +20,7 @@ class CreateCyclicTasksTable extends Migration
             $table->unsignedInteger('remaining_tasks_count')->default(0);
             $table->unsignedInteger('tasks_per_hour')->default(0);
             $table->string('likes_distribution')->nullable();
+            $table->json('selected_times')->nullable();
             $table->string('status');
             $table->timestamp('started_at')->nullable();
             $table->timestamps();

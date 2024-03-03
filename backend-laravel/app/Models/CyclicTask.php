@@ -19,6 +19,7 @@ class CyclicTask extends Model
         'remaining_tasks_count',
         'tasks_per_hour',
         'likes_distribution',
+        'selected_times',
         'status',
         'started_at'
     ];

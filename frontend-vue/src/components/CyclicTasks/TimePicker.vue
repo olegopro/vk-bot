@@ -34,7 +34,7 @@
 <script setup>
     import { reactive, computed, onMounted, onUnmounted, defineEmits, watch } from 'vue'
 
-    const days = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс']
+    const days = ['пн', 'вт', 'ср', 'чт', 'пт', 'сб', 'вс']
     const hours = Array.from({ length: 24 }, (_, i) => i)
 
     const selectedTimes = reactive(

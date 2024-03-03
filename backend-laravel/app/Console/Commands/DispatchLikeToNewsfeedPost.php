@@ -56,10 +56,34 @@ class DispatchLikeToNewsfeedPost extends Command
     public function handle()
     {
         $activeTasks = CyclicTask::where('status', 'active')->get();
-        $currentMinute = now()->minute; // Получаем текущую минуту
+        $currentDay = now()->shortDayName; // Получаем текущий день Mon, Tue и т.д.
         $currentHour = now()->hour; // Получаем текущий час
+        $currentMinute = now()->minute; // Получаем текущую минуту
 
-        foreach ($activeTasks as $task) {
+        $dayMap = [
+            'Mon' => 'пн',
+            'Tue' => 'вт',
+            'Wed' => 'ср',
+            'Thu' => 'чт',
+            'Fri' => 'пт',
+            'Sat' => 'сб',
+            'Sun' => 'вс',
+        ];
+
+        // Преобразование в двухбуквенное сокращение на русском
+        $currentDayRu = $dayMap[$currentDay];
+
+        $filteredTasks = $activeTasks->filter(function($task) use ($currentDayRu, $currentHour) {
+            // Если нет расписания, задача пропускается
+            if (is_null($task->selected_times)) return false;
+
+            $selectedTimes = json_decode($task->selected_times, true);
+
+            return isset($selectedTimes[$currentDayRu]) && $selectedTimes[$currentDayRu][$currentHour];
+        });
+
+        // Теперь $task - это только те задачи, которые должны выполняться в текущий час согласно расписанию selectedTimes
+        foreach ($filteredTasks as $task) {
             // Проверяем, начался ли новый час
             if ($currentMinute === 0 && $task->updated_at->hour !== $currentHour) {
                 // Обновляем `likes_distribution` - генерируем новую последовательность минут для выполнения задач за час
