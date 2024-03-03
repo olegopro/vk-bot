@@ -39,7 +39,7 @@
                             </h2>
                             <div id="collapseTimePicker" class="accordion-collapse collapse" data-bs-parent="#accordionTimePicker">
                                 <div class="accordion-body">
-                                    <TimePicker />
+                                    <TimePicker @update:selectedTimes="handleSelectedTimes" />
                                 </div>
                             </div>
                         </div>
@@ -77,6 +77,7 @@
     const status = ref('active')
     const disablePost = ref(true)
     const loading = ref(false)
+    const selectedTimes = ref([])
 
     watch(accountId, newVal => disablePost.value = newVal === 'selectAccount')
 
@@ -84,7 +85,13 @@
         disablePost.value = true
         loading.value = true
 
-        cyclicTaskStore.createCyclicTask(accountId.value, tasksPerHour.value, totalTaskCount.value, status.value)
+        cyclicTaskStore.createCyclicTask(
+            accountId.value,
+            tasksPerHour.value,
+            totalTaskCount.value,
+            status.value,
+            selectedTimes.value
+        )
             .then(response => {
                 modalHide()
                 disablePost.value = false
@@ -96,6 +103,7 @@
             .catch(error => showErrorNotification(error))
     }
 
+    const handleSelectedTimes = times => selectedTimes.value = times
     const modalHide = () => props.modalInstance.hide()
 </script>
 

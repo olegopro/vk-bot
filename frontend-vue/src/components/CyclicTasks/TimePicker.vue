@@ -32,7 +32,7 @@
 </template>
 
 <script setup>
-    import { reactive, computed, onMounted, onUnmounted } from 'vue'
+    import { reactive, computed, onMounted, onUnmounted, defineEmits, watch } from 'vue'
 
     const days = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс']
     const hours = Array.from({ length: 24 }, (_, i) => i)
@@ -48,6 +48,13 @@
     let dragStartState = false
     let dragTimeout = null
 
+    const emits = defineEmits(['update:selectedTimes'])
+
+    const allSelectedComputed = computed(() => days.every(day => selectedTimes[day].every(hour => hour)))
+
+    watch(() => selectedTimes, () => submitSelectedTimes(), { deep: true })
+    const submitSelectedTimes = () => emits('update:selectedTimes', selectedTimes)
+
     const toggleAll = () => {
         const allSelected = allSelectedComputed.value
 
@@ -57,10 +64,6 @@
             }
         })
     }
-
-    const allSelectedComputed = computed(() => {
-        return days.every(day => selectedTimes[day].every(hour => hour))
-    })
 
     const toggleDay = selectedDay => {
         // Проверяем, все ли часы в выбранном дне уже true
@@ -110,13 +113,8 @@
         }
     }
 
-    onMounted(() => {
-        document.addEventListener('mouseup', handleMouseUp)
-    })
-
-    onUnmounted(() => {
-        document.removeEventListener('mouseup', handleMouseUp)
-    })
+    onMounted(() => document.addEventListener('mouseup', handleMouseUp))
+    onUnmounted(() => document.removeEventListener('mouseup', handleMouseUp))
 </script>
 
 <style scoped lang="scss">
