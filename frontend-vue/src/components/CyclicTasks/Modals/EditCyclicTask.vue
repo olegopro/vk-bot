@@ -30,6 +30,21 @@
 
                     </select>
 
+                    <div class="accordion mb-3" id="accordionTimePicker">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTimePicker" aria-expanded="false" aria-controls="collapseTimePicker">
+                                    Расписание
+                                </button>
+                            </h2>
+                            <div id="collapseTimePicker" class="accordion-collapse collapse" data-bs-parent="#accordionTimePicker">
+                                <div class="accordion-body">
+                                    <TimePicker :initialSelectedTimes="editedTaskData.selected_times" @update:selectedTimes="handleSelectedTimes" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" @click="modalHide">Отмена</button>
@@ -48,6 +63,7 @@
     import { useAccountsStore } from '../../../stores/AccountsStore'
     import { useCyclicTasksStore } from '../../../stores/CyclicTasksStore'
     import { showErrorNotification } from '../../../helpers/notyfHelper'
+    import TimePicker from '../TimePicker.vue'
 
     const props = defineProps({
         modalInstance: Object,
@@ -72,11 +88,14 @@
             account_id: editedTaskData.value.account_id,
             tasks_count: editedTaskData.value.tasks_count,
             tasks_per_hour: editedTaskData.value.tasks_per_hour,
-            status: editedTaskData.value.status
+            status: editedTaskData.value.status,
+            selected_times: editedTaskData.value.selected_times
         })
             .then(() => modalHide())
             .catch(error => showErrorNotification(error.message))
     }
+
+    const handleSelectedTimes = times => editedTaskData.value.selected_times = times
 
     const modalHide = () => {
         props.modalInstance.hide()

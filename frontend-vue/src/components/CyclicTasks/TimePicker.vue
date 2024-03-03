@@ -32,7 +32,7 @@
 </template>
 
 <script setup>
-    import { reactive, computed, onMounted, onUnmounted, defineEmits, watch } from 'vue'
+    import { reactive, computed, onMounted, onUnmounted, defineEmits, defineProps, watch } from 'vue'
 
     const days = ['пн', 'вт', 'ср', 'чт', 'пт', 'сб', 'вс']
     const hours = Array.from({ length: 24 }, (_, i) => i)
@@ -48,9 +48,16 @@
     let dragStartState = false
     let dragTimeout = null
 
+    const props = defineProps({ initialSelectedTimes: Object })
     const emits = defineEmits(['update:selectedTimes'])
 
     const allSelectedComputed = computed(() => days.every(day => selectedTimes[day].every(hour => hour)))
+
+    watch(() => props.initialSelectedTimes, (newValue) => {
+            if (newValue) Object.assign(selectedTimes, newValue)
+        },
+        { deep: true, immediate: true }
+    )
 
     watch(() => selectedTimes, () => submitSelectedTimes(), { deep: true })
     const submitSelectedTimes = () => emits('update:selectedTimes', selectedTimes)
@@ -93,7 +100,7 @@
         dragTimeout = setTimeout(() => {
             isDragging = true
             selectedTimes[day][hour] = dragStartState
-        }, 100) // Задержка в 100 мс должна быть достаточной для определения перетаскивания
+        }, 30) // Задержка в 30 мс должна быть достаточной для определения перетаскивания
     }
 
     const handleMouseMove = (event, day, hour) => {

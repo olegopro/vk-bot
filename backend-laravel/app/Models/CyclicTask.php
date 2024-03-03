@@ -24,6 +24,10 @@ class CyclicTask extends Model
         'started_at'
     ];
 
+    protected $casts = [
+        'selected_times' => 'array',
+    ];
+
     protected $appends = ['first_name', 'last_name']; // Добавляем эти поля в сериализованный вывод
     protected $hidden = ['account']; // Скрыть информацию об аккаунте из сериализованного вывода
 
