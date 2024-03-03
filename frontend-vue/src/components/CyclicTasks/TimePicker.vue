@@ -13,6 +13,8 @@
                     <td :class="{'active-cell': selectedTimes[day][hour], 'inactive-cell': !selectedTimes[day][hour]}"
                         v-for="day in days"
                         :key="day"
+                        @mousedown="handleMouseDown($event, day, hour)"
+                        @mousemove="handleMouseMove($event, day, hour)"
                     >
                         <label :for="`checkbox-${day}-${hour}`" class="custom-checkbox-label">
                             <input class="hidden-checkbox"
@@ -30,7 +32,7 @@
 </template>
 
 <script setup>
-    import { reactive, computed } from 'vue'
+    import { reactive, computed, onMounted, onUnmounted } from 'vue'
 
     const days = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс']
     const hours = Array.from({ length: 24 }, (_, i) => i)
@@ -42,7 +44,10 @@
         }, {})
     )
 
-    // Метод для переключения выбора для всей таблицы
+    let isDragging = false
+    let dragStartState = false
+    let dragTimeout = null
+
     const toggleAll = () => {
         const allSelected = allSelectedComputed.value
 
@@ -53,22 +58,59 @@
         })
     }
 
-    // Вычисляемое свойство для проверки, выбраны ли все чекбоксы
     const allSelectedComputed = computed(() => {
         return days.every(day => selectedTimes[day].every(hour => hour))
     })
 
     const toggleDay = selectedDay => {
         const isSelected = selectedTimes[selectedDay].includes(true)
-
         selectedTimes[selectedDay].forEach((_, index) => {
             selectedTimes[selectedDay][index] = !isSelected
         })
     }
 
     const toggleHour = selectedHour => {
-        days.forEach(day => selectedTimes[day][selectedHour] = !selectedTimes[day][selectedHour])
+        const isHourSelectedInAnyDay = days.some(day => selectedTimes[day][selectedHour])
+        days.forEach(day => {
+            selectedTimes[day][selectedHour] = !isHourSelectedInAnyDay
+        })
     }
+
+    const handleMouseDown = (event, day, hour) => {
+        event.preventDefault() // Предотвратить выделение текста при перетаскивании
+        dragStartState = !selectedTimes[day][hour]
+
+        // Установка задержки для определения перетаскивания
+        dragTimeout = setTimeout(() => {
+            isDragging = true
+            selectedTimes[day][hour] = dragStartState
+        }, 100) // Задержка в 100 мс должна быть достаточной для определения перетаскивания
+    }
+
+    const handleMouseMove = (event, day, hour) => {
+        if (!isDragging) return
+        selectedTimes[day][hour] = dragStartState
+    }
+
+    const handleMouseUp = () => {
+        if (!isDragging && dragTimeout) {
+            // Это был клик, меняем состояние ячейки
+            clearTimeout(dragTimeout)
+            dragTimeout = null
+        }
+        if (isDragging) {
+            // Завершение процесса перетаскивания
+            isDragging = false
+        }
+    }
+
+    onMounted(() => {
+        document.addEventListener('mouseup', handleMouseUp)
+    })
+
+    onUnmounted(() => {
+        document.removeEventListener('mouseup', handleMouseUp)
+    })
 </script>
 
 <style scoped lang="scss">
@@ -81,16 +123,23 @@
             tr {
                 th {
                     padding: 8px;
-                    border-top: none;
+                    border-top: 1px solid #ddd;
                     border-right: 1px solid #ddd;
                     border-bottom: 1px solid #ddd;
                     border-left: 1px solid #ddd;
                     text-transform: uppercase;
                     text-align: center;
                     cursor: pointer;
+                    user-select: none;
 
                     &:first-child {
                         border-left: none;
+
+                        i {
+                            display: block;
+                            width: 100%;
+                            height: 100%;
+                        }
                     }
 
                     &:last-child {
@@ -114,6 +163,7 @@
                     &:first-child {
                         border-left: none;
                         cursor: pointer;
+                        user-select: none;
                     }
 
                     &:last-child {

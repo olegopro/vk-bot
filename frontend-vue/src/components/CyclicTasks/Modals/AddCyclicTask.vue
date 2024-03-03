@@ -102,7 +102,7 @@
 <style scoped>
     #accordionTimePicker {
         .accordion-button {
-            //padding: 8px 8px 8px 12px;
+            background: white;
             box-shadow: none;
         }
 
