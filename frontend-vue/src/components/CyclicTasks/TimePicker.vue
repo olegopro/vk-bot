@@ -63,16 +63,22 @@
     })
 
     const toggleDay = selectedDay => {
-        const isSelected = selectedTimes[selectedDay].includes(true)
+        // Проверяем, все ли часы в выбранном дне уже true
+        const allHoursTrue = selectedTimes[selectedDay].every(hour => hour === true)
+
+        // Если все часы true, инвертируем. В противном случае, устанавливаем все в true.
         selectedTimes[selectedDay].forEach((_, index) => {
-            selectedTimes[selectedDay][index] = !isSelected
+            selectedTimes[selectedDay][index] = !allHoursTrue
         })
     }
 
     const toggleHour = selectedHour => {
-        const isHourSelectedInAnyDay = days.some(day => selectedTimes[day][selectedHour])
+        // Проверяем, выбран ли данный час во всех днях
+        const isHourSelectedInAllDays = days.every(day => selectedTimes[day][selectedHour])
+
+        // Если выбран во всех, инвертируем. В противном случае, устанавливаем в true.
         days.forEach(day => {
-            selectedTimes[day][selectedHour] = !isHourSelectedInAnyDay
+            selectedTimes[day][selectedHour] = !isHourSelectedInAllDays
         })
     }
 
