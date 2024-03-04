@@ -15,12 +15,14 @@
                         :key="day"
                         @mousedown="handleMouseDown($event, day, hour)"
                         @mousemove="handleMouseMove($event, day, hour)"
+                        @mouseup="handleMouseUp"
+                        @click="toggleCell(day, hour)"
                     >
                         <label :for="`checkbox-${day}-${hour}`" class="custom-checkbox-label">
                             <input class="hidden-checkbox"
                                    type="checkbox"
                                    :id="`checkbox-${day}-${hour}`"
-                                   v-model="selectedTimes[day][hour]"
+                                   :checked="selectedTimes[day][hour]"
                             />
                             <span class="checkmark" />
                         </label>
@@ -46,7 +48,6 @@
 
     let isDragging = false
     let dragStartState = false
-    let dragTimeout = null
 
     const props = defineProps({ initialSelectedTimes: Object })
     const emits = defineEmits(['update:selectedTimes'])
@@ -54,9 +55,11 @@
     const allSelectedComputed = computed(() => days.every(day => selectedTimes[day].every(hour => hour)))
 
     watch(() => props.initialSelectedTimes, (newValue) => {
-            if (newValue) Object.assign(selectedTimes, newValue)
+            if (newValue && Object.keys(newValue).length !== 0) {
+                Object.assign(selectedTimes, newValue)
+            }
         },
-        { deep: true, immediate: true }
+        { deep: false, immediate: true }
     )
 
     watch(() => selectedTimes, () => submitSelectedTimes(), { deep: true })
@@ -92,36 +95,38 @@
         })
     }
 
-    const handleMouseDown = (event, day, hour) => {
-        event.preventDefault() // Предотвратить выделение текста при перетаскивании
+    const handleMouseDown = async (event, day, hour) => {
+        event.preventDefault()
+        isDragging = true
         dragStartState = !selectedTimes[day][hour]
-
-        // Установка задержки для определения перетаскивания
-        dragTimeout = setTimeout(() => {
-            isDragging = true
-            selectedTimes[day][hour] = dragStartState
-        }, 30) // Задержка в 30 мс должна быть достаточной для определения перетаскивания
-    }
-
-    const handleMouseMove = (event, day, hour) => {
-        if (!isDragging) return
         selectedTimes[day][hour] = dragStartState
     }
 
-    const handleMouseUp = () => {
-        if (!isDragging && dragTimeout) {
-            // Это был клик, меняем состояние ячейки
-            clearTimeout(dragTimeout)
-            dragTimeout = null
-        }
-        if (isDragging) {
-            // Завершение процесса перетаскивания
-            isDragging = false
+    const handleMouseMove = (event, day, hour) => {
+        if (isDragging) { // Проверить, начато ли перетаскивание
+            selectedTimes[day][hour] = dragStartState // Обновить состояние при перемещении
         }
     }
 
-    onMounted(() => document.addEventListener('mouseup', handleMouseUp))
-    onUnmounted(() => document.removeEventListener('mouseup', handleMouseUp))
+    const handleMouseUp = () => {
+        if (isDragging) {
+            isDragging = false // Завершение перетаскивания
+        }
+    }
+
+    const toggleCell = (day, hour) => {
+        if (!isDragging) { // Действовать только если не происходит перетаскивание
+            selectedTimes[day][hour] = !selectedTimes[day][hour]
+        }
+    }
+
+    onMounted(() => {
+        console.log('TimePicker onMounted')
+    })
+
+    onUnmounted(() => {
+        console.log('TimePicker onUnmounted')
+    })
 </script>
 
 <style scoped lang="scss">

@@ -8,16 +8,10 @@
                 </div>
                 <div class="modal-body">
                     <select class="form-select mb-3" v-model="accountId">
-                        <option disabled selected value="selectAccount">Выберите аккаунт</option>
+                        <option value="selectAccount">Выберите аккаунт</option>
                         <option v-for="account in accountsStore.accounts" :key="account.id" :value="account.account_id">
                             {{ account.screen_name }} ({{ account.first_name }} {{ account.last_name }})
                         </option>
-                    </select>
-
-                    <select class="form-select mb-3 visually-hidden" v-model="status">
-                        <option selected value="active">Запустить сейчас</option>
-                        <option value="pause">Оставить на паузе</option>
-
                     </select>
 
                     <div class="input-group mb-3">
@@ -29,6 +23,11 @@
                         <span class="input-group-text">Количество лайков в час</span>
                         <input type="number" min="1" max="60" class="form-control" placeholder="По умолчанию 10 постов" v-model="tasksPerHour">
                     </div>
+
+                    <select class="form-select mb-3" v-model="status">
+                        <option selected value="active">Запустить сейчас</option>
+                        <option value="pause">Оставить на паузе</option>
+                    </select>
 
                     <div class="accordion mb-3" id="accordionTimePicker">
                         <div class="accordion-item">
@@ -43,29 +42,30 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
+                    </div><div class="modal-footer">
                     <button type="button" class="btn btn-secondary" @click="modalHide">Отмена</button>
                     <button type="submit" class="btn btn-success" :disabled="disablePost">
                         Создать
                         <span v-if="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
                     </button>
                 </div>
+                </div>
+
             </form>
         </div>
     </div>
 </template>
 
 <script setup>
-    import { ref, watch, defineProps } from 'vue'
+    import { ref, watch, defineProps, onMounted, onUnmounted, inject } from 'vue'
     import { useAccountsStore } from '../../../stores/AccountsStore'
     import { showErrorNotification, showSuccessNotification } from '../../../helpers/notyfHelper'
     import { useCyclicTasksStore } from '../../../stores/CyclicTasksStore'
     import TimePicker from '../TimePicker.vue'
 
     const props = defineProps({
-        modalInstance: Object
+        // TODO: Если убираю неиспользуемый пропс то при выборе в select модальное окно становиться display: none
+        taskId: Number
     })
 
     const accountsStore = useAccountsStore()
@@ -77,7 +77,9 @@
     const status = ref('active')
     const disablePost = ref(true)
     const loading = ref(false)
-    const selectedTimes = ref([])
+    const selectedTimes = ref({})
+
+    const modals = inject('modals')
 
     watch(accountId, newVal => disablePost.value = newVal === 'selectAccount')
 
@@ -104,18 +106,8 @@
     }
 
     const handleSelectedTimes = times => selectedTimes.value = times
-    const modalHide = () => props.modalInstance.hide()
+    const modalHide = () => modals.value.addCyclicTaskModal.hide()
+
+    onMounted(() => console.log('AddCyclicTask onMounted'))
+    onUnmounted(() => console.log('AddCyclicTask onUnmounted'))
 </script>
-
-<style scoped>
-    #accordionTimePicker {
-        .accordion-button {
-            background: white;
-            box-shadow: none;
-        }
-
-        .accordion-body {
-            padding: 0;
-        }
-    }
-</style>

@@ -60,55 +60,73 @@
     </div>
 
     <Teleport to="body">
-        <DeleteCyclicTask :modalInstance="deleteCyclicTaskModal" :taskId="taskId"/>
-        <AddCyclicTask :modalInstance="addCyclicTaskModal" />
-        <DeleteAllCyclicTasks :modalInstance="deleteAllCyclicTasksModal" />
-        <EditCyclicTask :modalInstance="editCyclicTaskModal" :taskId="taskId"/>
+        <component :is="modalComponent" :taskId="taskId" />
     </Teleport>
 
 </template>
 
 <script setup>
-    import { useCyclicTasksStore } from '../stores/CyclicTasksStore'
-    import TableThread from '../components/CyclicTasks/TableThread.vue'
-    import { onMounted, ref } from 'vue'
-    import router from '../router'
+    import { nextTick, onMounted, ref, provide, shallowRef } from 'vue'
     import { Modal } from 'bootstrap'
+    import { useCyclicTasksStore } from '../stores/CyclicTasksStore'
+    import { useAccountsStore } from '../stores/AccountsStore'
+    import TableThread from '../components/CyclicTasks/TableThread.vue'
     import DeleteCyclicTask from '../components/CyclicTasks/Modals/DeleteCyclicTask.vue'
     import AddCyclicTask from '../components/CyclicTasks/Modals/AddCyclicTask.vue'
-    import { useAccountsStore } from '../stores/AccountsStore'
-    import DeleteAllCyclicTasks from '../components/CyclicTasks/Modals/DeleteAllCyclicTasks.vue'
     import EditCyclicTask from '../components/CyclicTasks/Modals/EditCyclicTask.vue'
+    import DeleteAllCyclicTasks from '../components/CyclicTasks/Modals/DeleteAllCyclicTasks.vue'
+    import router from '../router'
 
     const taskId = ref(null)
-    const deleteCyclicTaskModal = ref(null)
-    const addCyclicTaskModal = ref(null)
-    const editCyclicTaskModal = ref(null)
-    const deleteAllCyclicTasksModal = ref(null)
+    const modalComponent = shallowRef(null)
+    const modals = ref({})
 
     const cyclicTasksStore = useCyclicTasksStore()
     const accountsStore = useAccountsStore()
 
-    const showDeleteCyclicTaskModal = id => {
-        taskId.value = id
-        deleteCyclicTaskModal.value.show()
+    provide('modals', modals)
+
+    const openModal = (modalId, component) => {
+        modalComponent.value = component
+
+        nextTick(() => {
+            if (!modals.value[modalId]) {
+                const modalElement = document.getElementById(modalId)
+                const modalInstance = new Modal(modalElement)
+
+                modalElement.addEventListener('hidden.bs.modal', () => {
+                    modalInstance.dispose()
+                    delete modals.value[modalId]
+                    modalComponent.value = null
+                }, { once: true })
+
+                modals.value[modalId] = modalInstance
+            }
+
+            modals.value[modalId].show()
+        })
     }
 
-    const showEditCyclicTaskModal = id => {
+    const showDeleteCyclicTaskModal = (id) => {
         taskId.value = id
-        editCyclicTaskModal.value.show()
+        openModal('deleteCyclicTaskModal', DeleteCyclicTask)
     }
 
-    const showAddCyclicTaskModal = () => addCyclicTaskModal.value.show()
-    const showDeleteAllCyclicTasksModal = () => deleteAllCyclicTasksModal.value.show()
+    const showEditCyclicTaskModal = (id) => {
+        taskId.value = id
+        openModal('editCyclicTaskModal', EditCyclicTask)
+    }
+
+    const showAddCyclicTaskModal = () => {
+        openModal('addCyclicTaskModal', AddCyclicTask)
+    }
+
+    const showDeleteAllCyclicTasksModal = () => {
+        openModal('deleteAllCyclicTasksModal', DeleteAllCyclicTasks)
+    }
 
     onMounted(() => {
         cyclicTasksStore.fetchCyclicTasks()
         accountsStore.fetchAccounts()
-
-        deleteCyclicTaskModal.value = new Modal(document.getElementById('deleteCyclicTask'))
-        addCyclicTaskModal.value = new Modal(document.getElementById('addCyclicTaskModal'))
-        editCyclicTaskModal.value = new Modal(document.getElementById('editCyclicTaskModal'))
-        deleteAllCyclicTasksModal.value = new Modal(document.getElementById('deleteAllCyclicTasks'))
     })
 </script>
