@@ -367,7 +367,7 @@ final class TaskController extends Controller
             'remaining_tasks_count' => $request->input('total_task_count'),
             'status'                => $request->input('status'),
             'likes_distribution'    => json_encode($uniqueMinutes), // Сохраняем как строку
-            'selected_times'        => json_encode($request->input('selected_times')),
+            'selected_times'        => $request->input('selected_times'),
             'started_at'            => now()
         ]);
 
