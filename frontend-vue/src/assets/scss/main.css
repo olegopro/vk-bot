@@ -11960,6 +11960,14 @@ table tbody:last-child {
   border-top: none;
 }
 
+#accordionTimePicker .accordion-button {
+  background: white;
+  box-shadow: none;
+}
+#accordionTimePicker .accordion-body {
+  padding: 0;
+}
+
 .notyf__toast {
   border-radius: var(--bs-border-radius) !important;
 }
