@@ -77,7 +77,7 @@ class DispatchLikeToNewsfeedPost extends Command
             // Если нет расписания, задача пропускается
             if (is_null($task->selected_times)) return false;
 
-            $selectedTimes = json_decode($task->selected_times, true);
+            $selectedTimes = $task->selected_times;
 
             return isset($selectedTimes[$currentDayRu]) && $selectedTimes[$currentDayRu][$currentHour];
         });
