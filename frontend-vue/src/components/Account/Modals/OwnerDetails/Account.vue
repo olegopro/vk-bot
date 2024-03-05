@@ -1,4 +1,3 @@
-
 <template>
     <div class="modal-header">
         <svg width="28" height="28" class="me-2" >

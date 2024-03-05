@@ -1,5 +1,5 @@
 <template>
-    <div class="modal fade" id="addCyclicTaskModal" tabindex="-1" aria-labelledby="Add task" style="display: none;" aria-hidden="true">
+    <div class="modal fade" id="addCyclicTaskModal" tabindex="-1" aria-labelledby="Add task" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
             <form @submit.prevent="addNewTask" class="modal-content">
                 <div class="modal-header">
@@ -8,7 +8,7 @@
                 </div>
                 <div class="modal-body">
                     <select class="form-select mb-3" v-model="accountId">
-                        <option value="selectAccount">Выберите аккаунт</option>
+                        <option disabled value="selectAccount">Выберите аккаунт</option>
                         <option v-for="account in accountsStore.accounts" :key="account.id" :value="account.account_id">
                             {{ account.screen_name }} ({{ account.first_name }} {{ account.last_name }})
                         </option>
@@ -42,13 +42,14 @@
                                 </div>
                             </div>
                         </div>
-                    </div><div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" @click="modalHide">Отмена</button>
-                    <button type="submit" class="btn btn-success" :disabled="disablePost">
-                        Создать
-                        <span v-if="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                    </button>
-                </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" @click="modalHide">Отмена</button>
+                        <button type="submit" class="btn btn-success" :disabled="disablePost">
+                            Создать
+                            <span v-if="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                        </button>
+                    </div>
                 </div>
 
             </form>
@@ -57,16 +58,11 @@
 </template>
 
 <script setup>
-    import { ref, watch, defineProps, onMounted, onUnmounted, inject } from 'vue'
+    import { ref, watch, onMounted, onUnmounted, inject } from 'vue'
     import { useAccountsStore } from '../../../stores/AccountsStore'
     import { showErrorNotification, showSuccessNotification } from '../../../helpers/notyfHelper'
     import { useCyclicTasksStore } from '../../../stores/CyclicTasksStore'
     import TimePicker from '../TimePicker.vue'
-
-    const props = defineProps({
-        // TODO: Если убираю неиспользуемый пропс то при выборе в select модальное окно становиться display: none
-        taskId: Number
-    })
 
     const accountsStore = useAccountsStore()
     const cyclicTaskStore = useCyclicTasksStore()

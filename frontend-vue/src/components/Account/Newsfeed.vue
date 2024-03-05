@@ -29,7 +29,7 @@
 
             <div class="placeholder-wrapper" v-if="loadingStatus[index]">
                 <transition name="fade">
-                    <span class="placeholder bg-danger" />
+                    <span class="placeholder bg-danger" v-show="loadingStatus[index]" />
                 </transition>
             </div>
 
