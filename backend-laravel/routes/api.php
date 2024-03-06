@@ -3,6 +3,7 @@
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\CyclicTaskController;
 use App\Http\Controllers\SettingsController;
+use App\Http\Controllers\StatisticController;
 use App\Http\Controllers\TaskController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -52,6 +53,8 @@ Route::prefix('account')->group(function () {
 });
 
 Route::post('/group/data/{id}', [AccountController::class, 'fetchGroupData']);
+
+Route::get('/statistics', [StatisticController::class, 'getWeeklyTaskStats']);
 
 Route::prefix('settings')->group(function () {
     Route::post('/', [SettingsController::class, 'getSettings']);

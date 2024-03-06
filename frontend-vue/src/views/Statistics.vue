@@ -1,49 +1,140 @@
 <template>
     <div class="row mb-3 align-items-center">
         <div class="col">
-            <h1 class="h2">Статистика</h1>
+            <h1 class="h2">Статистика успешных задач за 7 дней</h1>
         </div>
     </div>
     <div class="row">
         <div class="col-12">
-            <Bar
-                id="my-chart-id"
-                :options="chartOptions"
-                :data="chartData"
-            />
+            <Bar :options="chartOptions" :data="chartData" />
         </div>
     </div>
 </template>
 
-<script>
+<script setup>
+    import { ref, computed, onMounted } from 'vue'
     import { Bar } from 'vue-chartjs'
     import { Chart as ChartJS, Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale } from 'chart.js'
+    import ChartDataLabels from 'chartjs-plugin-datalabels'
+    import { useStatisticsStore } from '../stores/StatisticsStore'
 
-    ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale)
+    const statisticsStore = useStatisticsStore()
 
-    export default {
-        name: 'BarChart',
-        components: { Bar },
-        data() {
-            return {
-                chartData: {
-                    labels: ['Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота', 'Воскресенье'],
-                    datasets: [{ data: [40, 20, 12, 64, 42, 22, 74] }]
+    ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale, ChartDataLabels)
+
+    const chartData = computed(() => {
+        if (Object.keys(statisticsStore.weeklyTaskStats).length === 0) {
+            // Возвращаем пустую структуру данных, если ещё не загружены
+            return { labels: [], datasets: [] }
+        }
+
+        return {
+            labels: Object.keys(statisticsStore.weeklyTaskStats),
+
+            datasets: [
+                {
+                    data: Object.values(statisticsStore.weeklyTaskStats),
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.2)',
+                        'rgba(54, 162, 235, 0.2)',
+                        'rgba(255, 206, 86, 0.2)',
+                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(153, 102, 255, 0.2)',
+                        'rgba(255, 159, 64, 0.2)',
+                        'rgba(199, 199, 199, 0.2)'
+                    ],
+
+                    borderColor: [
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(153, 102, 255, 1)',
+                        'rgba(255, 159, 64, 1)',
+                        'rgba(199, 199, 199, 1)'
+                    ],
+
+                    borderWidth: 1,
+
+                    datalabels: {
+                        display: true
+                    }
+                }
+            ]
+        }
+    })
+
+    const chartOptions = ref({
+        responsive: true,
+        scales: {
+            y: {
+                ticks: {
+                    display: false,
+                    font: {
+                        size: 16
+                    }
                 },
-                chartOptions: {
-                    responsive: true,
-                    plugins: {
-                        legend: {
-                            display: false
-                            // position: 'bottom'
-                        }
+
+                grid: {
+                    display: true,
+                    drawBorder: false
+                }
+            },
+
+            x: {
+                grid: {
+                    display: false,
+                    drawBorder: true,
+                    drawOnChartArea: false
+                },
+
+                ticks: {
+                    font: {
+                        size: 16
                     }
                 }
             }
+        },
+
+        plugins: {
+            legend: {
+                display: false
+            },
+
+            tooltip: {
+                position: 'nearest', // Устанавливает tooltip появляющийся ближе к точке
+                yAlign: 'bottom', // Позиционирование tooltip сверху точки
+
+                titleFont: {
+                    size: 16 // Размер шрифта для заголовка всплывающей подсказки
+                },
+
+                bodyFont: {
+                    size: 16 // Размер шрифта для текста всплывающей подсказки
+                },
+
+                footerFont: {
+                    size: 16 // Размер шрифта для подвала всплывающей подсказки
+                }
+            },
+
+            datalabels: {
+                align: 'center',
+                anchor: 'center',
+
+                color: '#000', // Установите цвет текста, чтобы он хорошо смотрелся на фоне колонки
+
+                font: {
+                    size: 16 // Увеличенный размер шрифта для меток
+                },
+
+                formatter: (value, context) => {
+                    // Если значение равно 0, не отображать метку
+                    return value !== 0 ? value : ''
+                }
+            }
         }
-    }
+    })
+
+    onMounted(() => statisticsStore.fetchWeeklyTaskStats())
 </script>
-
-<style scoped lang="scss">
-
-</style>
