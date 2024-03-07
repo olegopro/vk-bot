@@ -46,32 +46,34 @@
 
     <div class="row">
         <div class="col-12">
-            <table v-if="tasksStore.tasks.length" class="table table-hover mb-4">
-                <thead>
-                    <tr>
-                        <th scope="col">#</th>
-                        <th scope="col">Имя и фамилия</th>
-                        <th scope="col">Статус</th>
-                        <th scope="col">Попытки</th>
-                        <th scope="col">Действия</th>
-                        <th scope="col">Старт задачи</th>
-                        <th scope="col">Задача создана</th>
-                    </tr>
-                </thead>
+            <PerfectScrollbar>
+                <table v-if="tasksStore.tasks.length" class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Имя и фамилия</th>
+                            <th scope="col">Статус</th>
+                            <th scope="col">Попытки</th>
+                            <th scope="col">Действия</th>
+                            <th scope="col">Старт задачи</th>
+                            <th scope="col">Задача создана</th>
+                        </tr>
+                    </thead>
 
-                <tbody>
-                    <TableThread
-                        v-for="task in tasksStore.tasks"
-                        :task="task"
-                        :key="task.id"
-                        :showTaskDetailsModal="showTaskDetailsModal"
-                        :showDeleteTaskModal="showDeleteTaskModal"
-                        :showAccountDetailsModal="showAccountDetailsModal"
-                    />
-                </tbody>
-            </table>
+                    <tbody>
+                        <TableThread
+                            v-for="task in tasksStore.tasks"
+                            :task="task"
+                            :key="task.id"
+                            :showTaskDetailsModal="showTaskDetailsModal"
+                            :showDeleteTaskModal="showDeleteTaskModal"
+                            :showAccountDetailsModal="showAccountDetailsModal"
+                        />
+                    </tbody>
+                </table>
+            </PerfectScrollbar>
 
-            <h3 v-else class="text-center">Список задач пустой</h3>
+            <!--<h3 v-else class="text-center">Список задач пустой</h3>-->
 
         </div>
     </div>
@@ -173,3 +175,12 @@
         addTasksModal.value = new Modal(document.getElementById('addTask'))
     })
 </script>
+
+<style lang="scss" scoped>
+    .ps {
+        height: auto;
+        max-height: var(--ps-height);
+        box-shadow: var(--ps-shadow-box);
+        border-radius: var(--ps-border-radius);
+    }
+</style>

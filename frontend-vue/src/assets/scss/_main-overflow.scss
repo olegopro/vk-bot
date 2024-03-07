@@ -1,7 +1,30 @@
 :root {
 	--ps-shadow-box: 0 1px 27px 0 rgba(34, 60, 80, 0.2);
-	--ps-border-radius: calc(var(--bs-border-radius) * 2)
+	--ps-border-radius: calc(var(--bs-border-radius) * 2);
+
+	--header-height: 100px;
+	--nav-bar-height: 54px;
+	--bottom-margin: 1.3rem;
+	--ps-height: calc(100 * var(--vh) - var(--header-height) - var(--nav-bar-height) - var(--bottom-margin));
 }
+
+// Стилизация Perfect Scrollbar
+.ps__rail-y {
+	margin-top: 60px !important;
+	margin-bottom: 8px !important;
+	margin-right: 3px !important;
+	background-color: transparent !important;
+
+	&.ps--clicking {
+		background-color: transparent !important;
+	}
+}
+
+.ps__thumb-y {
+	// Задаем желаемую минимальную ширину
+	min-height: 12px !important;
+}
+
 
 $table-border-radius: var(--ps-border-radius);
 

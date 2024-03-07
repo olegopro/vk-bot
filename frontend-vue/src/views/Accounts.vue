@@ -2,7 +2,7 @@
 
     <div class="row mb-3 align-items-center">
         <div class="col">
-            <h1 class="h2">Список аккаунтов</h1>
+            <h1 class="h2 mb-0">Список аккаунтов</h1>
         </div>
         <div class="col">
             <button class="btn btn-success btn-action float-end"
@@ -59,7 +59,6 @@
                         </tr>
                     </tbody>
                 </table>
-                <h3 v-else class="text-center">Список аккаунтов пустой</h3>
             </PerfectScrollbar>
         </div>
     </div>
@@ -89,7 +88,8 @@
 
 <style lang="scss" scoped>
     .ps {
-        height: 80vh;
+        height: auto;
+        max-height: var(--ps-height);
         box-shadow: var(--ps-shadow-box);
         border-radius: var(--ps-border-radius);
     }
