@@ -6,7 +6,9 @@
     </div>
     <div class="row">
         <div class="col-12">
-            <Bar :options="chartOptions" :data="chartData" />
+           <PerfectScrollbar>
+               <Bar :options="chartOptions" :data="chartData" />
+           </PerfectScrollbar>
         </div>
     </div>
 </template>
@@ -138,3 +140,16 @@
 
     onMounted(() => statisticsStore.fetchWeeklyTaskStats())
 </script>
+
+<style lang="scss" scoped>
+    .ps {
+        height: auto;
+        max-height: var(--ps-height);
+        box-shadow: var(--ps-shadow-box);
+        border-radius: var(--ps-border-radius);
+
+        canvas {
+            padding: 2rem 1.5rem 1rem;
+        }
+    }
+</style>
