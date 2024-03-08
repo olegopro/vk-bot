@@ -16,9 +16,9 @@ class AccountRepository implements AccountRepositoryInterface
      *
      * @return \Illuminate\Database\Eloquent\Collection Возвращает коллекцию всех учетных записей.
      */
-	public function getAllAccounts()
+	public function getAllAccounts($perPage = 30)
 	{
-		return $accounts = Account::all();
+        return Account::simplePaginate($perPage);
 	}
 
     /**

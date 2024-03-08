@@ -8,10 +8,10 @@ export const useAccountsStore = defineStore('accounts', {
 	}),
 
 	actions: {
-		async fetchAccounts() {
-			await axios.post('http://localhost:8080/api/account/all-accounts')
+		async fetchAccounts(page = 1) {
+			await axios.post(`http://localhost:8080/api/account/all-accounts?page=${page}`)
 				.then(({ data }) => {
-					this.accounts = data.data
+					this.accounts = [...this.accounts, ...data.data.data]
 					showSuccessNotification(data.message)
 				})
 				.catch(() => showErrorNotification('Ошибка получения аккаунтов'))

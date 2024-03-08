@@ -17,7 +17,7 @@
     <div class="row">
         <div class="col-12">
             <PerfectScrollbar>
-                <table class="table table-hover" v-if="accountsStore.accounts.length">
+                <table class="table table-hover">
                     <thead>
                         <tr>
                             <th scope="col">ID</th>
@@ -57,6 +57,10 @@
 
                             <td>{{ account.bdate }}</td>
                         </tr>
+
+                        <tr class="load-more-trigger visually-hidden">
+                            <td colspan="7">Загрузить ещё...</td>
+                        </tr>
                     </tbody>
                 </table>
             </PerfectScrollbar>
@@ -74,16 +78,33 @@
     import { useAccountsStore } from '@/stores/AccountsStore'
     import DeleteAccount from '../components/Accounts/Modals/DeleteAccount.vue'
     import AddAccount from '../components/Accounts/Modals/AddAccount.vue'
-    import { onMounted, ref } from 'vue'
+    import { onMounted, onUnmounted, ref } from 'vue'
 
     const accountsStore = useAccountsStore()
     const selectedAccount = ref({ login: '', id: '' })
+    const observer = ref(null)
+    const currentPage = ref(0)
 
     const getLogin = (login, id) => {
         selectedAccount.value = { login, id }
     }
 
-    onMounted(() => accountsStore.fetchAccounts())
+    onMounted(() => {
+        accountsStore.fetchAccounts()
+
+        observer.value = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    currentPage.value++
+                    accountsStore.fetchAccounts(currentPage.value++)
+                }
+            })
+        })
+
+        observer.value.observe(document.querySelector('.load-more-trigger'))
+    })
+
+    onUnmounted(() => observer.value.disconnect())
 </script>
 
 <style lang="scss" scoped>

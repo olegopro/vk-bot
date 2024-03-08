@@ -90,7 +90,7 @@
 </template>
 
 <script setup>
-    import { onMounted, ref, watch } from 'vue'
+    import { onMounted, onUnmounted, ref, watch } from 'vue'
     import { useTasksStore } from '@/stores/TasksStore'
     import { useAccountStore } from '../stores/AccountStore'
     import { useRoute, useRouter } from 'vue-router'
@@ -115,6 +115,7 @@
     const accountStore = useAccountStore()
     const route = useRoute()
     const router = useRouter()
+    const observer = ref(null)
 
     const taskId = ref(0)
     const currentPage = ref(0)
@@ -175,7 +176,7 @@
     const showAddTaskModal = () => addTasksModal.value.show()
 
     onMounted(() => {
-        const observer = new IntersectionObserver(entries => {
+        observer.value = new IntersectionObserver(entries => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     currentPage.value++
@@ -184,7 +185,7 @@
             })
         })
 
-        observer.observe(document.querySelector('.load-more-trigger'))
+        observer.value.observe(document.querySelector('.load-more-trigger'))
 
         accountsStore.fetchAccounts()
 
@@ -194,6 +195,8 @@
         accountDetailsModal.value = new Modal(document.getElementById('accountDetails'))
         addTasksModal.value = new Modal(document.getElementById('addTask'))
     })
+
+    onUnmounted(() => observer.value.disconnect())
 </script>
 
 <style lang="scss" scoped>
