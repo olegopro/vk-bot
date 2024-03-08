@@ -10,21 +10,19 @@
         </div>
         <div class="col d-flex justify-content-end">
 
-            <template v-if="tasksStore.tasks.length">
-                <select class="form-select me-3 w-auto" @change="filterTasks" v-model="currentStatus">
-                    <option value="">Все задачи ({{ tasksStore.totalTasksCount }})</option>
-                    <option value="failed">C ошибками</option>
-                    <option value="queued">В ожидании</option>
-                    <option value="done">Завершённые</option>
-                </select>
+            <select class="form-select me-3 w-auto" @change="filterTasks" v-model="currentStatus">
+                <option value="">{{ tasksStore.totalTasksCount > 0 ? `Все задачи (${tasksStore.totalTasksCount})`  : 'Загрузка...' }}</option>
+                <option value="failed">{{ tasksStore.totalTasksFailed > 0 ? `C ошибками (${tasksStore.totalTasksFailed})`  : 'Загрузка...' }}</option>
+                <option value="queued">{{ tasksStore.totalTasksQueued > 0 ? `В ожидании (${tasksStore.totalTasksQueued})`  : 'Загрузка...' }}</option>
+                <option value="done">{{ tasksStore.totalTasksDone > 0 ? `Завершённые (${tasksStore.totalTasksDone})`  : 'Загрузка...' }}</option>
+            </select>
 
-                <select class="form-select me-3 w-auto" @change="filterByAccount" v-model="selectedAccountId">
-                    <option selected value="">Все аккаунты</option>
-                    <option v-for="account in accountsStore.accounts" :key="account.id" :value="account.account_id">
-                        {{ account.screen_name }} ({{ account.first_name }} {{ account.last_name }})
-                    </option>
-                </select>
-            </template>
+            <select class="form-select me-3" style="width: 280px" @change="filterByAccount" v-model="selectedAccountId">
+                <option selected value="">Все аккаунты</option>
+                <option v-for="account in accountsStore.accounts" :key="account.id" :value="account.account_id">
+                    {{ account.screen_name }} ({{ account.first_name }} {{ account.last_name }})
+                </option>
+            </select>
 
             <button class="btn btn-danger btn-action me-3"
                     :disabled="tasksStore.tasks.length === 0"

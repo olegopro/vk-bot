@@ -21,12 +21,11 @@ class TaskFactory extends Factory
 
         return [
             'job_id'     => rand(1, 1000),
-            // 'account_id' => Account::inRandomOrder()->first()->account_id,
             'owner_id'   => rand(1, 1000),
             'first_name' => $faker->firstName,
             'last_name'  => $faker->lastName,
             'item_id'    => rand(1, 20),
-            'status'     => 'done',
+            'status'     => $faker->randomElement(['failed', 'queued', 'done']),
             'is_cyclic'  => rand(0, 1),
             'run_at'     => $timestamp,
             'created_at' => $timestamp,

@@ -31,15 +31,26 @@ class TaskRepository implements TaskRepositoryInterface
         return $task;
     }
 
-    /**
-     * Получает задачи по статусу и идентификатору аккаунта.
-     *
-     * @param string|null $status Статус задачи для фильтрации. Если null, фильтрация не применяется.
-     * @param int|null $accountId Идентификатор аккаунта для дополнительной фильтрации. Если null, фильтрация не применяется.
-     * @return \Illuminate\Database\Eloquent\Collection Возвращает коллекцию задач, соответствующих критериям фильтрации.
-     */
     public function getTaskStatus($status = null, $accountId = null, $perPage = 30)
     {
+        $result = [
+            'total' => Task::when($accountId, function ($query) use ($accountId) {
+                return $query->where('account_id', $accountId);
+            })->count(),
+
+            'statuses' => [
+                'failed' => Task::where('status', 'failed')->when($accountId, function ($query) use ($accountId) {
+                    return $query->where('account_id', $accountId);
+                })->count(),
+                'queued' => Task::where('status', 'queued')->when($accountId, function ($query) use ($accountId) {
+                    return $query->where('account_id', $accountId);
+                })->count(),
+                'done' => Task::where('status', 'done')->when($accountId, function ($query) use ($accountId) {
+                    return $query->where('account_id', $accountId);
+                })->count(),
+            ]
+        ];
+
         $query = Task::query();
 
         if (!is_null($status)) {
@@ -50,7 +61,10 @@ class TaskRepository implements TaskRepositoryInterface
             $query->where('account_id', $accountId);
         }
 
-        return $query->paginate($perPage);
+        // Вместо возвращения null для 'tasks', возвращаем пагинированный список задач
+        $result['tasks'] = $query->paginate($perPage);
+
+        return $result;
     }
 
     /**

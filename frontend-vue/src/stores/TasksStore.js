@@ -5,7 +5,10 @@ import { showSuccessNotification } from '../helpers/notyfHelper'
 export const useTasksStore = defineStore('tasks', {
     state: () => ({
         tasks: [],
-        totalTasksCount: Number
+        totalTasksCount: 0,
+        totalTasksQueued: 0,
+        totalTasksFailed: 0,
+        totalTasksDone: 0
     }),
 
     actions: {
@@ -22,10 +25,13 @@ export const useTasksStore = defineStore('tasks', {
 
             await axios.get(url).then(({ data }) => {
                 if (page === 1) {
-                    this.tasks = data.data.data
+                    this.tasks = data.data.tasks.data
                     this.totalTasksCount = data.data.total
+                    this.totalTasksFailed = data.data.statuses.failed
+                    this.totalTasksQueued = data.data.statuses.queued
+                    this.totalTasksDone = data.data.statuses.done
                 } else {
-                    this.tasks = [...this.tasks, ...data.data.data]
+                    this.tasks = [...this.tasks, ...data.data.tasks.data]
                 }
 
                 showSuccessNotification(data.message)
