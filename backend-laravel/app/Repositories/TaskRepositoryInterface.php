@@ -34,6 +34,8 @@ interface TaskRepositoryInterface
      */
 	public function getTaskStatusById($taskId);
 
+    public function countTasksByAccountAndStatus($status, $accountId);
+
     /**
      * Удаляет выполненную задачу по идентификатору.
      *

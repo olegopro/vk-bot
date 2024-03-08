@@ -7,7 +7,10 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <p class="mb-0">Удалить все задачи <strong>({{ tasksStore.tasks.length }})</strong></p>
+                    <p class="mb-0">
+                        Удалить <strong>{{ tasksStore.taskCountByStatus ? `${tasksStore.taskCountByStatus}` : '' }}</strong>
+                        задачи со статусом <strong>{{ props.selectedTasksStatus }}</strong>
+                    </p>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" @click="modalHide">Отмена</button>

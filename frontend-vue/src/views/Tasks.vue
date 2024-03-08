@@ -169,7 +169,10 @@
         deleteTaskModal.value.show()
     }
 
-    const showDeleteAllTasksModal = () => deleteAllTasksModal.value.show()
+    const showDeleteAllTasksModal = () => {
+        tasksStore.getTasksCountByStatus(currentStatus.value, selectedAccountId.value)
+        deleteAllTasksModal.value.show()
+    }
     const showAddTaskModal = () => addTasksModal.value.show()
 
     onMounted(() => {

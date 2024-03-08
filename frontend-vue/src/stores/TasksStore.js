@@ -8,7 +8,8 @@ export const useTasksStore = defineStore('tasks', {
         totalTasksCount: 0,
         totalTasksQueued: 0,
         totalTasksFailed: 0,
-        totalTasksDone: 0
+        totalTasksDone: 0,
+        taskCountByStatus: 0
     }),
 
     actions: {
@@ -20,7 +21,6 @@ export const useTasksStore = defineStore('tasks', {
                 Например, если status = 'failed' и accountId = '123', URL станет 'http://localhost:8080/api/tasks/failed/123'.
                 Если оба параметра не заданы, URL останется 'http://localhost:8080/api/tasks'.
             */
-            // const url = `http://localhost:8080/api/tasks${status ? `/${status}` : ''}${accountId ? `/${accountId}` : ''}`
             const url = `http://localhost:8080/api/tasks${status ? `/${status}` : ''}${accountId ? `/${accountId}` : ''}?page=${page}`
 
             await axios.get(url).then(({ data }) => {
@@ -41,6 +41,14 @@ export const useTasksStore = defineStore('tasks', {
         async taskDetails(taskId) {
             const { data } = await axios.post(`http://localhost:8080/api/tasks/task-info/${taskId}`)
             return data.data
+        },
+
+        async getTasksCountByStatus(status, accountId) {
+            await axios.get(`http://localhost:8080/api/tasks/count-by-status/${status}/${accountId}`)
+                .then(({ data }) => {
+                    this.taskCountByStatus = data.data
+                    showSuccessNotification(data.message)
+                })
         },
 
         async deleteLike(taskId) {

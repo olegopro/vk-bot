@@ -45,7 +45,7 @@ class TaskRepository implements TaskRepositoryInterface
                 'queued' => Task::where('status', 'queued')->when($accountId, function ($query) use ($accountId) {
                     return $query->where('account_id', $accountId);
                 })->count(),
-                'done' => Task::where('status', 'done')->when($accountId, function ($query) use ($accountId) {
+                'done'   => Task::where('status', 'done')->when($accountId, function ($query) use ($accountId) {
                     return $query->where('account_id', $accountId);
                 })->count(),
             ]
@@ -76,6 +76,13 @@ class TaskRepository implements TaskRepositoryInterface
     public function getTaskStatusById($taskId)
     {
         return Task::where('id', $taskId)->value('status');
+    }
+
+    public function countTasksByAccountAndStatus($status, $accountId)
+    {
+        return Task::where('account_id', $accountId)
+            ->where('status', $status)
+            ->count();
     }
 
     /**
@@ -158,16 +165,16 @@ class TaskRepository implements TaskRepositoryInterface
     {
         // Удаление завершенной задачи
         return Task::where('id', $taskId)
-                   ->where('status', 'done')
-                   ->delete();
+            ->where('status', 'done')
+            ->delete();
     }
 
     /**
      * Удаляет задачу из очереди по идентификатору.
      *
      * @param int $taskId Идентификатор задачи для удаления из очереди.
-     * @throws Exception Если задача не найдена, выбрасывается исключение.
      * @return bool|null Возвращает true, если задача успешно удалена, иначе null.
+     * @throws Exception Если задача не найдена, выбрасывается исключение.
      */
     public function deleteQueuedTask($taskId)
     {
@@ -187,7 +194,6 @@ class TaskRepository implements TaskRepositoryInterface
         return $task->delete();
     }
 
-
     /**
      * Удаляет неуспешную задачу по идентификатору.
      *
@@ -198,8 +204,8 @@ class TaskRepository implements TaskRepositoryInterface
     {
         // Удаление неуспешной задачи
         return Task::where('id', $taskId)
-                   ->where('status', 'failed')
-                   ->delete();
+            ->where('status', 'failed')
+            ->delete();
     }
 
     /**
@@ -212,19 +218,19 @@ class TaskRepository implements TaskRepositoryInterface
     {
         // Получаем список job_id из таблицы tasks, соответствующих условиям
         $tasks = Task::query()
-                     ->when($status, function ($query) use ($status) {
-                         // Здесь $query это объект построителя запросов, который Laravel передаёт в функцию.
-                         // Мы используем этот объект, чтобы добавить условие where к нашему запросу.
-                         // Это ограничение будет применено, если $status не null
-                         return $query->where('status', $status);
-                     })
-                     ->when($accountId, function ($query) use ($accountId) {
-                         // И снова Laravel передаёт объект построителя запросов ($query) в функцию.
-                         // Если $accountId не null, мы добавляем дополнительное условие where.
-                         // Это ограничение будет применено, если $accountId не null
-                         return $query->where('account_id', $accountId);
-                     })
-                     ->pluck('job_id'); // Извлекаем массив идентификаторов заданий (job_id) из записей таблицы tasks,
+            ->when($status, function ($query) use ($status) {
+                // Здесь $query это объект построителя запросов, который Laravel передаёт в функцию.
+                // Мы используем этот объект, чтобы добавить условие where к нашему запросу.
+                // Это ограничение будет применено, если $status не null
+                return $query->where('status', $status);
+            })
+            ->when($accountId, function ($query) use ($accountId) {
+                // И снова Laravel передаёт объект построителя запросов ($query) в функцию.
+                // Если $accountId не null, мы добавляем дополнительное условие where.
+                // Это ограничение будет применено, если $accountId не null
+                return $query->where('account_id', $accountId);
+            })
+            ->pluck('job_id'); // Извлекаем массив идентификаторов заданий (job_id) из записей таблицы tasks,
 
         // Удаляем задачи из таблицы jobs
         DB::table('jobs')->whereIn('id', $tasks)->delete();
