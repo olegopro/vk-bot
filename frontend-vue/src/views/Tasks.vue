@@ -11,14 +11,14 @@
         <div class="col d-flex justify-content-end">
 
             <select class="form-select me-3 w-auto" @change="filterTasks" v-model="currentStatus">
-                <option value="">{{ tasksStore.totalTasksCount > 0 ? `Все задачи (${tasksStore.totalTasksCount})`  : 'Загрузка...' }}</option>
-                <option value="failed">{{ tasksStore.totalTasksFailed > 0 ? `C ошибками (${tasksStore.totalTasksFailed})`  : 'Загрузка...' }}</option>
-                <option value="queued">{{ tasksStore.totalTasksQueued > 0 ? `В ожидании (${tasksStore.totalTasksQueued})`  : 'Загрузка...' }}</option>
-                <option value="done">{{ tasksStore.totalTasksDone > 0 ? `Завершённые (${tasksStore.totalTasksDone})`  : 'Загрузка...' }}</option>
+                <option value="">{{ tasksStore.totalTasksCount > 0 ? `Все задачи (${tasksStore.totalTasksCount})` : 'Загрузка...' }}</option>
+                <option value="failed">{{ tasksStore.totalTasksFailed > 0 ? `C ошибками (${tasksStore.totalTasksFailed})` : 'Загрузка...' }}</option>
+                <option value="queued">{{ tasksStore.totalTasksQueued > 0 ? `В ожидании (${tasksStore.totalTasksQueued})` : 'Загрузка...' }}</option>
+                <option value="done">{{ tasksStore.totalTasksDone > 0 ? `Завершённые (${tasksStore.totalTasksDone})` : 'Загрузка...' }}</option>
             </select>
 
             <select class="form-select me-3" style="width: 280px" @change="filterByAccount" v-model="selectedAccountId">
-                <option selected value="">Все аккаунты</option>
+                <option value="">Все аккаунты</option>
                 <option v-for="account in accountsStore.accounts" :key="account.id" :value="account.account_id">
                     {{ account.screen_name }} ({{ account.first_name }} {{ account.last_name }})
                 </option>
@@ -130,6 +130,38 @@
         tasksStore.fetchTasks(currentStatus.value, selectedAccountId.value, currentPage.value)
     })
 
+    watch(route, () => processRouteParams())
+
+    const processRouteParams = () => {
+        // Получаем текущие параметры маршрута из vue-router.
+        const params = route.params
+
+        // Проверяем наличие параметра status в URL.
+        if (params.status) {
+            // Если параметр status присутствует, проверяем, является ли он числом и больше ли он нуля.
+            // Эта проверка необходима, чтобы определить, относится ли параметр к идентификатору аккаунта.
+            if (!isNaN(params.status) && parseInt(params.status) > 0) {
+                // Если условие выполняется, значит, параметр status является идентификатором аккаунта.
+                // Устанавливаем его значение в selectedAccountId компонента.
+                selectedAccountId.value = params.status
+                // Так как status использовался для accountId, сбрасываем currentStatus.
+                currentStatus.value = '' // Сброс, указывая, что это ID аккаунта, а не статус.
+            } else {
+                // Если status не является числом или не больше нуля, то предполагаем, что это статус задачи.
+                // Устанавливаем его значение в currentStatus компонента.
+                currentStatus.value = params.status
+            }
+        }
+
+        // Проверяем, есть ли параметр accountId в URL.
+        // Это дополнительная проверка для случаев, когда параметр accountId явно передан в URL.
+        if (params.accountId) {
+            // Если параметр accountId присутствует, устанавливаем его значение в selectedAccountId компонента.
+            // Это позволяет явно выбрать аккаунт, не полагаясь на проверку status.
+            selectedAccountId.value = params.accountId
+        }
+    }
+
     const filterTasks = (event) => {
         const status = event.target.value || ''
         const accountId = selectedAccountId.value || ''
@@ -178,6 +210,8 @@
     onMounted(() => {
         console.log('Tasks onMounted')
 
+        processRouteParams()
+
         observer.value = new IntersectionObserver(entries => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
@@ -186,7 +220,6 @@
                 }
             })
         })
-
         observer.value.observe(document.querySelector('.load-more-trigger'))
 
         accountsStore.fetchAccounts()
