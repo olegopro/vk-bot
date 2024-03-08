@@ -271,7 +271,6 @@ final class TaskController extends Controller
             'last_name'     => $lastName,
             'owner_id'      => $post['owner_id'],
             'item_id'       => $post['post_id'],
-            'attempt_count' => 1,
             'status'        => 'pending',
             'is_cyclic'     => $isCyclic
         ]);

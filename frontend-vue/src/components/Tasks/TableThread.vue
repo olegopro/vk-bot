@@ -12,8 +12,6 @@
             <TaskStatus :type="task.status" :errorMessage="task.error_message" />
         </td>
 
-        <td>{{ task.attempt_count }}</td>
-
         <td>
             <button
                 class="btn btn-primary button-style me-2"
