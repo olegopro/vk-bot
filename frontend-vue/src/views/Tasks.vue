@@ -10,9 +10,9 @@
         </div>
         <div class="col d-flex justify-content-end">
 
-            <template v-if="accountsStore.accounts.length">
+            <template v-if="tasksStore.tasks.length">
                 <select class="form-select me-3 w-auto" @change="filterTasks" v-model="currentStatus">
-                    <option value="">Все задачи</option>
+                    <option value="">Все задачи ({{ tasksStore.totalTasksCount }})</option>
                     <option value="failed">C ошибками</option>
                     <option value="queued">В ожидании</option>
                     <option value="done">Завершённые</option>
@@ -175,6 +175,8 @@
     const showAddTaskModal = () => addTasksModal.value.show()
 
     onMounted(() => {
+        console.log('Tasks onMounted')
+
         observer.value = new IntersectionObserver(entries => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
@@ -195,7 +197,11 @@
         addTasksModal.value = new Modal(document.getElementById('addTask'))
     })
 
-    onUnmounted(() => observer.value.disconnect())
+    onUnmounted(() => {
+        console.log('Tasks onUnmounted')
+        observer.value.disconnect()
+        tasksStore.tasks = []
+    })
 </script>
 
 <style lang="scss" scoped>

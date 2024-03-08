@@ -50,7 +50,7 @@ class TaskRepository implements TaskRepositoryInterface
             $query->where('account_id', $accountId);
         }
 
-        return $query->simplePaginate($perPage);
+        return $query->paginate($perPage);
     }
 
     /**
