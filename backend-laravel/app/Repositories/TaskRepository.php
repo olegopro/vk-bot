@@ -38,7 +38,7 @@ class TaskRepository implements TaskRepositoryInterface
      * @param int|null $accountId Идентификатор аккаунта для дополнительной фильтрации. Если null, фильтрация не применяется.
      * @return \Illuminate\Database\Eloquent\Collection Возвращает коллекцию задач, соответствующих критериям фильтрации.
      */
-    public function getTaskStatus($status = null, $accountId = null)
+    public function getTaskStatus($status = null, $accountId = null, $perPage = 30)
     {
         $query = Task::query();
 
@@ -50,7 +50,7 @@ class TaskRepository implements TaskRepositoryInterface
             $query->where('account_id', $accountId);
         }
 
-        return $query->get();
+        return $query->simplePaginate($perPage);
     }
 
     /**

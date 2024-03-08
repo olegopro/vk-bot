@@ -47,7 +47,7 @@
     <div class="row">
         <div class="col-12">
             <PerfectScrollbar>
-                <table v-if="tasksStore.tasks.length" class="table table-hover">
+                <table class="table table-hover">
                     <thead>
                         <tr>
                             <th scope="col">#</th>
@@ -69,12 +69,13 @@
                             :showDeleteTaskModal="showDeleteTaskModal"
                             :showAccountDetailsModal="showAccountDetailsModal"
                         />
+
+                        <tr class="load-more-trigger visually-hidden">
+                            <td colspan="7">Загрузить ещё...</td>
+                        </tr>
                     </tbody>
                 </table>
             </PerfectScrollbar>
-
-            <!--<h3 v-else class="text-center">Список задач пустой</h3>-->
-
         </div>
     </div>
 
@@ -89,7 +90,7 @@
 </template>
 
 <script setup>
-    import { onMounted, ref } from 'vue'
+    import { onMounted, ref, watch } from 'vue'
     import { useTasksStore } from '@/stores/TasksStore'
     import { useAccountStore } from '../stores/AccountStore'
     import { useRoute, useRouter } from 'vue-router'
@@ -116,12 +117,20 @@
     const router = useRouter()
 
     const taskId = ref(0)
+    const currentPage = ref(0)
 
     const currentStatus = ref(route.params.status || '')
     const selectedAccountId = ref(route.params.accountId || '')
 
     const accountDetailsData = ref(null)
     const taskDetailsData = ref(null)
+
+    // Следим за изменениями статуса и ID аккаунта
+    watch([currentStatus, selectedAccountId], () => {
+        // Сброс currentPage на 1 перед загрузкой новых данных
+        currentPage.value = 1
+        tasksStore.fetchTasks(currentStatus.value, selectedAccountId.value, currentPage.value)
+    })
 
     const filterTasks = (event) => {
         const status = event.target.value || ''
@@ -164,8 +173,19 @@
 
     const showDeleteAllTasksModal = () => deleteAllTasksModal.value.show()
     const showAddTaskModal = () => addTasksModal.value.show()
+
     onMounted(() => {
-        tasksStore.fetchTasks(currentStatus.value)
+        const observer = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    currentPage.value++
+                    tasksStore.fetchTasks(currentStatus.value, selectedAccountId.value, currentPage.value)
+                }
+            })
+        })
+
+        observer.observe(document.querySelector('.load-more-trigger'))
+
         accountsStore.fetchAccounts()
 
         deleteTaskModal.value = new Modal(document.getElementById('deleteTask'))

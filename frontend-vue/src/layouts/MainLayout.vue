@@ -42,14 +42,14 @@
         </symbol>
     </svg>
 
-    <perfect-scrollbar>
+    <!--<perfect-scrollbar>-->
         <main>
             <div class="container">
                 <TheNavbar />
                 <router-view></router-view>
             </div>
         </main>
-    </perfect-scrollbar>
+    <!--</perfect-scrollbar>-->
 
 </template>
 
