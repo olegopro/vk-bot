@@ -28,7 +28,7 @@
                     :disabled="tasksStore.tasks.length === 0"
                     @click="showDeleteAllTasksModal"
             >
-                Очистить список
+                Удалить задачи
             </button>
 
             <button class="btn btn-success btn-action"

@@ -379,15 +379,14 @@ final class TaskController extends Controller
         ]);
     }
 
-    public function countTasksByAccountAndStatus($status, $accountId)
+    public function countTasksByAccountAndStatus($status = null, $accountId = null)
     {
-
         $count = $this->taskRepository->countTasksByAccountAndStatus($status, $accountId);
 
         return response()->json([
             'success' => true,
             'data'    => $count,
-            'message' => 'Задачи успешно удалены'
+            'message' => 'Количество задач получено'
         ]);
     }
 

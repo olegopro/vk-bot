@@ -20,8 +20,8 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::prefix('tasks')->group(function () {
+    Route::get('/count-by-status/{status?}/{accountId?}', [TaskController::class, 'countTasksByAccountAndStatus']);
     Route::get('/{status?}/{accountId?}', [TaskController::class, 'getTaskStatus']);
-    Route::get('/count-by-status/{status}/{accountId}', [TaskController::class, 'countTasksByAccountAndStatus']);
     Route::post('/task-info/{taskId}', [TaskController::class, 'getTaskInfo']);
     Route::delete('/delete-like/{taskId}', [TaskController::class, 'deleteLike']);
     Route::delete('/delete-all-tasks/{status?}/{accountId?}', [TaskController::class, 'deleteAllTasks']);

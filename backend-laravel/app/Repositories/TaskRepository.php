@@ -78,11 +78,24 @@ class TaskRepository implements TaskRepositoryInterface
         return Task::where('id', $taskId)->value('status');
     }
 
-    public function countTasksByAccountAndStatus($status, $accountId)
+    public function countTasksByAccountAndStatus($status = null, $accountId = null)
     {
-        return Task::where('account_id', $accountId)
-            ->where('status', $status)
-            ->count();
+        $query = Task::query();
+
+        if (is_numeric($status)) {
+            $accountId = $status;
+            $status = null;
+        }
+
+        if (!is_null($accountId)) {
+            $query->where('account_id', $accountId);
+        }
+
+        if (!is_null($status)) {
+            $query->where('status', $status);
+        }
+
+        return $query->count();
     }
 
     /**

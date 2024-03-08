@@ -43,8 +43,10 @@ export const useTasksStore = defineStore('tasks', {
             return data.data
         },
 
-        async getTasksCountByStatus(status, accountId) {
-            await axios.get(`http://localhost:8080/api/tasks/count-by-status/${status}/${accountId}`)
+        async getTasksCountByStatus(status = '', accountId = '') {
+            const url = `http://localhost:8080/api/tasks/count-by-status${status ? `/${status}` : ''}${accountId ? `/${accountId}` : ''}`
+
+            await axios.get(url)
                 .then(({ data }) => {
                     this.taskCountByStatus = data.data
                     showSuccessNotification(data.message)
