@@ -18,8 +18,10 @@
             </select>
 
             <select class="form-select me-3" style="width: 280px" @change="filterByAccount" v-model="selectedAccountId">
-                <option value="">Все аккаунты</option>
-                <option v-for="account in accountsStore.accounts" :key="account.id" :value="account.account_id">
+                <option value="" :disabled="accountsStore.accounts.length === 0">Все аккаунты</option>
+
+                <option :value="selectedAccountId" v-if="accountsStore.accounts.length === 0" disabled>Загрузка...</option>
+                <option v-else v-for="account in accountsStore.accounts" :key="account.id" :value="account.account_id">
                     {{ account.screen_name }} ({{ account.first_name }} {{ account.last_name }})
                 </option>
             </select>
