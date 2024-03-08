@@ -1,7 +1,9 @@
 :root {
+	// Глобальные стили для PerfectScrollbar контейнера
 	--ps-shadow-box: 0 1px 27px 0 rgba(34, 60, 80, 0.2);
 	--ps-border-radius: calc(var(--bs-border-radius) * 2);
 
+	// Глобальные переменны для расчета высоты контейнера PerfectScrollbar
 	--header-height: 100px;
 	--nav-bar-height: 54px;
 	--bottom-margin: 1.3rem;
@@ -22,7 +24,7 @@
 
 .ps__thumb-y {
 	// Задаем желаемую минимальную ширину
-	min-height: 12px !important;
+	min-height:0.5rem !important;
 }
 
 

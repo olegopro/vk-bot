@@ -11864,7 +11864,7 @@ textarea.form-control-lg {
 }
 
 .ps__thumb-y {
-  min-height: 12px !important;
+  min-height: 0.5rem !important;
 }
 
 table {
