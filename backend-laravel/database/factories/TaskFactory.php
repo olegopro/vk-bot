@@ -3,8 +3,9 @@
 namespace Database\Factories;
 
 use App\Models\Account;
-use App\Models\Task;
+use Faker\Factory as Faker;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Carbon;
 
 class TaskFactory extends Factory
 {
@@ -15,17 +16,21 @@ class TaskFactory extends Factory
      */
     public function definition()
     {
-        $taskStatus = [
-            'active',
-            'cancelled',
-            'done',
-            'pending'
-        ];
+        $faker = Faker::create();
+        $timestamp = Carbon::now()->subDays(rand(0, 6))->subMinutes(rand(0, 1440));
 
         return [
-            'account_id' => Account::get()->random()->id,
-            'status'     => $taskStatus[array_rand($taskStatus)],
-            'attempts'   => $this->faker->randomDigit()
+            'job_id'     => rand(1, 1000),
+            // 'account_id' => Account::inRandomOrder()->first()->account_id,
+            'owner_id'   => rand(1, 1000),
+            'first_name' => $faker->firstName,
+            'last_name'  => $faker->lastName,
+            'item_id'    => rand(1, 20),
+            'status'     => 'done',
+            'is_cyclic'  => rand(0, 1),
+            'run_at'     => $timestamp,
+            'created_at' => $timestamp,
+            'updated_at' => $timestamp,
         ];
     }
 }

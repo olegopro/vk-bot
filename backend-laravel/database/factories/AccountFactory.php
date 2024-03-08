@@ -2,7 +2,9 @@
 
 namespace Database\Factories;
 
+use Faker\Factory as Faker;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Str;
 
 class AccountFactory extends Factory
 {
@@ -13,11 +15,15 @@ class AccountFactory extends Factory
      */
     public function definition()
     {
+        $faker = Faker::create();
+
         return [
-            'username'    => $this->faker->name,
-            'login'       => $this->faker->word,
-            'password'    => $this->faker->word,
-            'likes_count' => $this->faker->numberBetween(5, 100)
+            'account_id'   => $faker->unique()->randomNumber(5),
+            'access_token' => $faker->sha256,
+            'screen_name'  => $faker->userName,
+            'first_name'   => $faker->firstName,
+            'last_name'    => $faker->lastName,
+            'bdate'        => $faker->date($format = 'Y-m-d', $max = 'now'),
         ];
     }
 }
