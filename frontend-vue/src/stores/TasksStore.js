@@ -5,11 +5,11 @@ import { showSuccessNotification } from '../helpers/notyfHelper'
 export const useTasksStore = defineStore('tasks', {
     state: () => ({
         tasks: [],
-        totalTasksCount: 0,
-        totalTasksQueued: 0,
-        totalTasksFailed: 0,
-        totalTasksDone: 0,
-        taskCountByStatus: 0
+        totalTasksCount: null,
+        totalTasksQueued: null,
+        totalTasksFailed: null,
+        totalTasksDone: null,
+        taskCountByStatus: null
     }),
 
     actions: {
@@ -75,6 +75,7 @@ export const useTasksStore = defineStore('tasks', {
         },
 
         async deleteAllTasks(status, accountId) {
+            console.log('deleteAllTasks status', status)
             // Проверяем, определены ли параметры status и accountId
             const statusPart = status ? `/${status}` : '/null' // Если status не определен, используем '/null'
             const accountIdPart = accountId ? `/${accountId}` : '' // Если accountId не определен, не добавляем его в URL
@@ -84,6 +85,8 @@ export const useTasksStore = defineStore('tasks', {
             await axios.delete(url)
                 .then(({ data }) => {
                     this.tasks = []
+
+                    this.fetchTasks(status, accountId)
                     showSuccessNotification(data.message)
                 })
         }

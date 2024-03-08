@@ -11,10 +11,10 @@
         <div class="col d-flex justify-content-end">
 
             <select class="form-select me-3 w-auto" @change="filterTasks" v-model="currentStatus">
-                <option value="">{{ tasksStore.totalTasksCount > 0 ? `Все задачи (${tasksStore.totalTasksCount})` : 'Загрузка...' }}</option>
-                <option value="failed">{{ tasksStore.totalTasksFailed > 0 ? `C ошибками (${tasksStore.totalTasksFailed})` : 'Загрузка...' }}</option>
-                <option value="queued">{{ tasksStore.totalTasksQueued > 0 ? `В ожидании (${tasksStore.totalTasksQueued})` : 'Загрузка...' }}</option>
-                <option value="done">{{ tasksStore.totalTasksDone > 0 ? `Завершённые (${tasksStore.totalTasksDone})` : 'Загрузка...' }}</option>
+                <option value="">{{ tasksStore.totalTasksCount !== null ? `Все задачи (${tasksStore.totalTasksCount})` : 'Загрузка...' }}</option>
+                <option value="failed">{{ tasksStore.totalTasksFailed !== null ? `C ошибками (${tasksStore.totalTasksFailed})` : 'Загрузка...' }}</option>
+                <option value="queued">{{ tasksStore.totalTasksQueued !== null ? `В ожидании (${tasksStore.totalTasksQueued})` : 'Загрузка...' }}</option>
+                <option value="done">{{ tasksStore.totalTasksDone !== null ? `Завершённые (${tasksStore.totalTasksDone})` : 'Загрузка...' }}</option>
             </select>
 
             <select class="form-select me-3" style="width: 280px" @change="filterByAccount" v-model="selectedAccountId">
