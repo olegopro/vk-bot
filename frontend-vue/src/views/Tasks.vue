@@ -10,7 +10,7 @@
         </div>
         <div class="col d-flex justify-content-end">
 
-            <select class="form-select me-3 w-auto" @change="filterTasks" v-model="currentStatus">
+            <select class="form-select me-3" style="width: 210px;" @change="filterTasks" v-model="currentStatus">
                 <option value="">{{ tasksStore.totalTasksCount !== null ? `Все задачи (${tasksStore.totalTasksCount})` : 'Загрузка...' }}</option>
                 <option value="failed">{{ tasksStore.totalTasksFailed !== null ? `C ошибками (${tasksStore.totalTasksFailed})` : 'Загрузка...' }}</option>
                 <option value="queued">{{ tasksStore.totalTasksQueued !== null ? `В ожидании (${tasksStore.totalTasksQueued})` : 'Загрузка...' }}</option>
@@ -50,11 +50,11 @@
                 <table class="table table-hover">
                     <thead>
                         <tr>
-                            <th scope="col">#</th>
-                            <th scope="col">Имя и фамилия</th>
-                            <th scope="col">Статус</th>
-                            <th scope="col">Действия</th>
-                            <th scope="col">Старт задачи</th>
+                            <th scope="col" style="width: 100px;">#</th>
+                            <th scope="col" style="width: 350px;">Имя и фамилия</th>
+                            <th scope="col" style="width: 100px;">Статус</th>
+                            <th scope="col" style="width: 250px;">Действия</th>
+                            <th scope="col" style="width: 250px">Старт задачи</th>
                             <th scope="col">Задача создана</th>
                         </tr>
                     </thead>

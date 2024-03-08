@@ -11867,6 +11867,12 @@ textarea.form-control-lg {
   min-height: 0.5rem !important;
 }
 
+select {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 table {
   margin-bottom: 0 !important;
 }

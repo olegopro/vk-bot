@@ -20,10 +20,10 @@
                 <table class="table table-hover">
                     <thead>
                         <tr>
-                            <th scope="col">ID</th>
-                            <th scope="col">Имя и фамилия</th>
-                            <th scope="col">Логин</th>
-                            <th scope="col">Действия</th>
+                            <th scope="col" style="width: 100px;">ID</th>
+                            <th scope="col" style="width: 400px;">Имя и фамилия</th>
+                            <th scope="col" style="width: 250px;">Логин</th>
+                            <th scope="col" style="width: 250px;">Действия</th>
                             <th scope="col">День рождения</th>
                         </tr>
                     </thead>
