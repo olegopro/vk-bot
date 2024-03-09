@@ -9,11 +9,13 @@ export const useTasksStore = defineStore('tasks', {
         totalTasksQueued: null,
         totalTasksFailed: null,
         totalTasksDone: null,
-        taskCountByStatus: null
+        taskCountByStatus: null,
+        isLoading: false
     }),
 
     actions: {
         async fetchTasks(status = '', accountId = '', page = 1) {
+            this.isLoading = true
             /*
                 Формирование базового URL для запроса.
                 Если параметр status задан (не пустая строка), то он добавляется к URL.
@@ -36,6 +38,7 @@ export const useTasksStore = defineStore('tasks', {
 
                 showSuccessNotification(data.message)
             })
+                .finally(() => this.isLoading = false)
         },
 
         async taskDetails(taskId) {

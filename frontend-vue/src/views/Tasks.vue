@@ -1,4 +1,7 @@
 <template>
+    <div style="position:absolute; top: 10px;">
+        {{ currentPage }}
+    </div>
     <div class="row mb-3 align-items-center">
         <div class="col d-flex align-items-center">
             <h1 class="h2 mb-0">Список задач</h1>
@@ -8,6 +11,7 @@
                 <b>Циклические задачи</b>
             </button>
         </div>
+
         <div class="col d-flex justify-content-end">
 
             <select class="form-select me-3" style="width: 210px;" @change="filterTasks" v-model="currentStatus">
@@ -46,7 +50,7 @@
 
     <div class="row">
         <div class="col-12">
-            <PerfectScrollbar>
+            <PerfectScrollbar ref="perfectScrollbarRef">
                 <table class="table table-hover">
                     <thead>
                         <tr>
@@ -69,8 +73,24 @@
                             :showAccountDetailsModal="showAccountDetailsModal"
                         />
 
+                        <tr v-if="tasksStore.isLoading" style="height: 55px;">
+                            <td colspan="7">
+                                <div class="spinner-border" role="status">
+                                    <span class="visually-hidden">Загрузка...</span>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <tr v-if="tasksStore.tasks.length === 0 && !tasksStore.isLoading">
+                            <td colspan="7" style="height: 55px;">
+                                Список задач пуст
+                            </td>
+                        </tr>
+
                         <tr class="load-more-trigger visually-hidden">
-                            <td colspan="7">Загрузить ещё...</td>
+                            <td colspan="7" style="height: 55px;">
+                                <span>Загрузка...</span>
+                            </td>
                         </tr>
                     </tbody>
                 </table>
@@ -91,9 +111,9 @@
 <script setup>
     import { onMounted, onUnmounted, ref, watch } from 'vue'
     import { useTasksStore } from '@/stores/TasksStore'
-    import { useAccountStore } from '../stores/AccountStore'
+    import { useAccountStore } from '@/stores/AccountStore'
     import { useRoute, useRouter } from 'vue-router'
-    import { showErrorNotification } from '../helpers/notyfHelper'
+    import { showErrorNotification } from '@/helpers/notyfHelper'
     import TableThread from '../components/Tasks/TableThread.vue'
     import AddTask from '../components/Tasks/Modals/AddTask.vue'
     import AccountDetails from '../components/Tasks/Modals/AccountDetails.vue'
@@ -101,7 +121,7 @@
     import DeleteTask from '../components/Tasks/Modals/DeleteTask.vue'
     import DeleteAllTasks from '../components/Tasks/Modals/DeleteAllTasks.vue'
     import { Modal } from 'bootstrap'
-    import { useAccountsStore } from '../stores/AccountsStore'
+    import { useAccountsStore } from '@/stores/AccountsStore'
 
     const taskDetailsModal = ref(null)
     const deleteTaskModal = ref(null)
@@ -115,9 +135,10 @@
     const route = useRoute()
     const router = useRouter()
     const observer = ref(null)
+    const perfectScrollbarRef = ref(null)
 
     const taskId = ref(0)
-    const currentPage = ref(0)
+    const currentPage = ref(1)
 
     const currentStatus = ref(route.params.status || '')
     const selectedAccountId = ref(route.params.accountId || '')
@@ -125,14 +146,32 @@
     const accountDetailsData = ref(null)
     const taskDetailsData = ref(null)
 
+    watch(() => tasksStore.tasks.length, newLength => {
+        if (newLength > 0 && !observer.value) {
+            observer.value = new IntersectionObserver(entries =>
+                entries.forEach(entry => {
+                    if (
+                        entry.isIntersecting &&
+                        tasksStore.totalTasksCount !== tasksStore.tasks.length
+                    ) {
+                        currentPage.value++
+                        tasksStore.fetchTasks(currentStatus.value, selectedAccountId.value, currentPage.value)
+                    }
+                }))
+            observer.value.observe(document.querySelector('.load-more-trigger'))
+        }
+    }, { immediate: false })
+
     // Следим за изменениями статуса и ID аккаунта
     watch([currentStatus, selectedAccountId], () => {
         // Сброс currentPage на 1 перед загрузкой новых данных
-        currentPage.value = 1
-        tasksStore.fetchTasks(currentStatus.value, selectedAccountId.value, currentPage.value)
+        tasksStore.fetchTasks(currentStatus.value, selectedAccountId.value, currentPage.value = 1)
     })
 
-    watch(route, () => processRouteParams())
+    watch(route, () => {
+        processRouteParams()
+        perfectScrollbarRef.value.$el.scrollTop = 0
+    })
 
     const processRouteParams = () => {
         // Получаем текущие параметры маршрута из vue-router.
@@ -212,18 +251,10 @@
     onMounted(() => {
         console.log('Tasks onMounted')
 
+        tasksStore.tasks = []
+        tasksStore.fetchTasks(currentStatus.value, selectedAccountId.value, currentPage.value)
+
         processRouteParams()
-
-        observer.value = new IntersectionObserver(entries => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    currentPage.value++
-                    tasksStore.fetchTasks(currentStatus.value, selectedAccountId.value, currentPage.value)
-                }
-            })
-        })
-        observer.value.observe(document.querySelector('.load-more-trigger'))
-
         accountsStore.fetchAccounts()
 
         deleteTaskModal.value = new Modal(document.getElementById('deleteTask'))
@@ -235,8 +266,7 @@
 
     onUnmounted(() => {
         console.log('Tasks onUnmounted')
-        observer.value.disconnect()
-        tasksStore.tasks = []
+        if (observer.value) observer.value.disconnect()
     })
 </script>
 
