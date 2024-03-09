@@ -1,7 +1,4 @@
 <template>
-    <div style="position:absolute; top: 10px;">
-        {{ currentPage }}
-    </div>
     <div class="row mb-3 align-items-center">
         <div class="col d-flex align-items-center">
             <h1 class="h2 mb-0">Список задач</h1>
@@ -109,19 +106,20 @@
 </template>
 
 <script setup>
+    import { useRoute, useRouter } from 'vue-router'
     import { onMounted, onUnmounted, ref, watch } from 'vue'
     import { useTasksStore } from '@/stores/TasksStore'
     import { useAccountStore } from '@/stores/AccountStore'
-    import { useRoute, useRouter } from 'vue-router'
+    import { useAccountsStore } from '@/stores/AccountsStore'
     import { showErrorNotification } from '@/helpers/notyfHelper'
-    import TableThread from '../components/Tasks/TableThread.vue'
+    import { Modal } from 'bootstrap'
+    import { debounce } from 'lodash'
     import AddTask from '../components/Tasks/Modals/AddTask.vue'
+    import TableThread from '../components/Tasks/TableThread.vue'
     import AccountDetails from '../components/Tasks/Modals/AccountDetails.vue'
     import TaskDetails from '../components/Tasks/Modals/TaskDetails.vue'
     import DeleteTask from '../components/Tasks/Modals/DeleteTask.vue'
     import DeleteAllTasks from '../components/Tasks/Modals/DeleteAllTasks.vue'
-    import { Modal } from 'bootstrap'
-    import { useAccountsStore } from '@/stores/AccountsStore'
 
     const taskDetailsModal = ref(null)
     const deleteTaskModal = ref(null)
@@ -155,7 +153,7 @@
                         tasksStore.totalTasksCount !== tasksStore.tasks.length
                     ) {
                         currentPage.value++
-                        tasksStore.fetchTasks(currentStatus.value, selectedAccountId.value, currentPage.value)
+                        debouncedFetchTasks(currentStatus.value, selectedAccountId.value, currentPage.value)
                     }
                 }))
             observer.value.observe(document.querySelector('.load-more-trigger'))
@@ -165,12 +163,19 @@
     // Следим за изменениями статуса и ID аккаунта
     watch([currentStatus, selectedAccountId], () => {
         // Сброс currentPage на 1 перед загрузкой новых данных
-        tasksStore.fetchTasks(currentStatus.value, selectedAccountId.value, currentPage.value = 1)
+        debouncedFetchTasks(currentStatus.value, selectedAccountId.value, currentPage.value = 1)
     })
 
     watch(route, () => {
         processRouteParams()
         perfectScrollbarRef.value.$el.scrollTop = 0
+    })
+
+    const debouncedFetchTasks = debounce((status, accountId, page) => {
+        tasksStore.fetchTasks(status, accountId, page)
+    }, 500, {
+        'leading': true, // Вызываться в начале периода ожидания
+        'trailing': false // Дополнительный вызов в конце периода не требуется
     })
 
     const processRouteParams = () => {
@@ -207,14 +212,14 @@
         const status = event.target.value || ''
         const accountId = selectedAccountId.value || ''
         router.push({ name: 'Tasks', params: { status, accountId } })
-        tasksStore.fetchTasks(status, accountId)
+        debouncedFetchTasks(status, accountId)
     }
 
     const filterByAccount = () => {
         const status = currentStatus.value || ''
         const accountId = selectedAccountId.value || ''
         router.push({ name: 'Tasks', params: { status, accountId } })
-        tasksStore.fetchTasks(status, accountId)
+        debouncedFetchTasks(status, accountId)
     }
 
     const showAccountDetailsModal = (accountId, ownerId) => {
@@ -252,7 +257,7 @@
         console.log('Tasks onMounted')
 
         tasksStore.tasks = []
-        tasksStore.fetchTasks(currentStatus.value, selectedAccountId.value, currentPage.value)
+        debouncedFetchTasks(currentStatus.value, selectedAccountId.value, currentPage.value)
 
         processRouteParams()
         accountsStore.fetchAccounts()
