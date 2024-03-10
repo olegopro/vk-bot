@@ -63,11 +63,15 @@ class VkClientService
     {
         $data = $this->accountRepository->getAllAccounts();
 
+        $pagination = collect($data->toArray())->except('data');
+
         return [
             'success' => true,
-            'data'    => $data,
+            'data'    => $data->items(), // Извлекаем только массив данных
+            'pagination' => $pagination, // Добавляем информацию о пагинации, если нужно
             'message' => 'Список аккаунтов получен'
         ];
+
     }
 
     /**

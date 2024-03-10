@@ -1,7 +1,9 @@
 <template>
     <div class="row mb-3 align-items-center">
         <div class="col d-flex align-items-center">
-            <h1 class="h2 mb-0">Список задач</h1>
+            <h1 class="h2 mb-0 position-relative">
+                Список задач
+            </h1>
             <button class="btn btn-sm btn-secondary btn-action my-0 ms-3"
                     @click="router.push({ name: 'CyclicTasks' })"
             >
@@ -51,7 +53,9 @@
                 <table class="table table-hover">
                     <thead>
                         <tr>
-                            <th scope="col" style="width: 135px;">#</th>
+                            <th scope="col" style="width: 110px;">
+                                {{ tasksStore.totalTasksCount ? tasksStore.totalTasksCount : 0 }} / {{tasksStore.tasks.length}}
+                            </th>
                             <th scope="col" style="width: 350px;">Имя и фамилия</th>
                             <th scope="col" style="width: 100px;">Статус</th>
                             <th scope="col" style="width: 250px;">Действия</th>
@@ -152,7 +156,6 @@
                         entry.isIntersecting &&
                         tasksStore.totalTasksCount !== tasksStore.tasks.length
                     ) {
-                        currentPage.value++
                         debouncedFetchTasks(currentStatus.value, selectedAccountId.value, currentPage.value)
                     }
                 }))
@@ -172,8 +175,8 @@
         perfectScrollbarRef.value.$el.scrollTop = 0
     })
 
-    const debouncedFetchTasks = debounce((status, accountId, page) => {
-        tasksStore.fetchTasks(status, accountId, page)
+    const debouncedFetchTasks = debounce((status, accountId, page = 1) => {
+        tasksStore.fetchTasks(status, accountId, page).then(() => currentPage.value++)
     }, 500, {
         'leading': true, // Вызываться в начале периода ожидания
         'trailing': false // Дополнительный вызов в конце периода не требуется

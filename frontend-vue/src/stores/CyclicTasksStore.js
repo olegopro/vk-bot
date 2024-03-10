@@ -5,7 +5,8 @@ import { showSuccessNotification } from '../helpers/notyfHelper'
 export const useCyclicTasksStore = defineStore('cyclicTasks', {
     state: () => ({
         cyclicTasks: [],
-        isLoading: false
+        isLoading: false,
+        pagination: {}
     }),
 
     actions: {
@@ -13,14 +14,22 @@ export const useCyclicTasksStore = defineStore('cyclicTasks', {
             this.isLoading = true
             await axios.get(`http://localhost:8080/api/cyclic-tasks?page=${page}`)
                 .then(({ data }) => {
+                    // Предположим, что `this.cyclicTasks` и `this.pagination` — это реактивные свойства вашего компонента/хранилища.
+                    console.log(data.pagination)
                     if (page === 1) {
-                        this.cyclicTasks = data.data.data
+                        // Если это первая страница, заменяем текущие данные новыми
+                        this.cyclicTasks = data.data
                     } else {
-                        console.log('data.data.cyclicTasks', data.data)
-                        this.cyclicTasks = [...this.cyclicTasks, ...data.data.data]
+                        // Если это не первая страница, добавляем новые данные к текущим
+                        this.cyclicTasks = [...this.cyclicTasks, ...data.data]
                     }
+
+                    // Обновляем данные о пагинации
+                    this.pagination = data.pagination
+
                     showSuccessNotification(data.message)
                 })
+                .catch(error => console.error('Ошибка при получении данных:', error))
                 .finally(() => this.isLoading = false)
         },
 

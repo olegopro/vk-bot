@@ -18,7 +18,7 @@ class AccountRepository implements AccountRepositoryInterface
      */
 	public function getAllAccounts($perPage = 30)
 	{
-        return Account::simplePaginate($perPage);
+        return Account::paginate($perPage);
 	}
 
     /**

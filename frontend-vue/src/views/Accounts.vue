@@ -1,9 +1,30 @@
 <template>
 
     <div class="row mb-3 align-items-center">
-        <div class="col">
-            <h1 class="h2 mb-0">Список аккаунтов</h1>
+        <div class="col d-flex align-items-center">
+            <h1 class="h2 mb-0 me-3">Список аккаунтов</h1>
+
+            <h6 class="mb-0" style="pointer-events: none">
+               <span class="badge btn d-flex items-center fw-bold"
+                     :class="{
+                        'btn-success ': isTotalMatched,
+                        'text-bg-secondary' : !isTotalMatched
+                     }"
+                     style="padding: 8px
+               ">
+                    <template v-if="accountsStore.isLoading && !accountsStore.accounts.length">
+                       <span class="spinner-border" role="status" style="width: 12px; height: 12px;">
+                          <span class="visually-hidden">Загрузка...</span>
+                        </span>
+                    </template>
+
+                     <template v-else>
+                        <span class="fw-bolder me-1">{{ accountsStore.pagination.total }}</span> / <span class="ms-1" :class="{'fw-bolder': isTotalMatched}">{{ accountsStore.accounts.length }}</span>
+                    </template>
+                </span>
+            </h6>
         </div>
+
         <div class="col">
             <button class="btn btn-success btn-action float-end"
                     data-bs-target="#addAccount"
@@ -12,6 +33,7 @@
                 Добавить аккаунт
             </button>
         </div>
+
     </div>
 
     <div class="row">
@@ -20,7 +42,7 @@
                 <table class="table table-hover">
                     <thead>
                         <tr>
-                            <th scope="col" style="width: 135px;">ID</th>
+                            <th scope="col" style="width: 110px;">ID</th>
                             <th scope="col" style="width: 400px;">Имя и фамилия</th>
                             <th scope="col" style="width: 250px;">Логин</th>
                             <th scope="col" style="width: 250px;">Действия</th>
@@ -93,7 +115,7 @@
     import { useAccountsStore } from '@/stores/AccountsStore'
     import DeleteAccount from '../components/Accounts/Modals/DeleteAccount.vue'
     import AddAccount from '../components/Accounts/Modals/AddAccount.vue'
-    import { onMounted, onUnmounted, ref } from 'vue'
+    import { computed, onMounted, onUnmounted, ref } from 'vue'
     import { debounce } from 'lodash'
 
     const accountsStore = useAccountsStore()
@@ -104,6 +126,10 @@
     const getLogin = (login, id) => {
         selectedAccount.value = { login, id }
     }
+
+    const isTotalMatched = computed(() => {
+        return accountsStore.pagination.total === accountsStore.accounts.length
+    })
 
     const debouncedFetchAccounts = debounce((page) => {
         accountsStore.isLoading = true
@@ -122,7 +148,7 @@
                 console.log(' observer.value = new IntersectionObserver(entries => {')
                 if (
                     entry.isIntersecting &&
-                    accountsStore.totalTasksCount !== accountsStore.accounts.length
+                    accountsStore.accounts.length !== accountsStore.pagination.total
                 ) {
                     currentPage.value++
                     debouncedFetchAccounts(currentPage.value)

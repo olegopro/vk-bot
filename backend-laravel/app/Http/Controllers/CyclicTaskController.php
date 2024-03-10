@@ -11,13 +11,18 @@ final class CyclicTaskController extends Controller
         private readonly CyclicTaskRepositoryInterface $cyclicTaskRepository
     ) {}
 
-    public function getCyclicTasks()
+    public function getCyclicTasks(Request $request)
     {
-        $cyclicTasks = $this->cyclicTaskRepository->getCyclicTasks();
+        // Получаем экземпляр пагинатора
+        $cyclicTasksPaginator = $this->cyclicTaskRepository->getCyclicTasks($request->query('perPage', 30));
+
+        // Извлекаем данные пагинации
+        $pagination = collect($cyclicTasksPaginator->toArray())->except('data');
 
         return response()->json([
             'success' => true,
-            'data'    => $cyclicTasks,
+            'data'    => $cyclicTasksPaginator->items(), // Извлекаем только массив данных
+            'pagination' => $pagination, // Добавляем информацию о пагинации, если нужно
             'message' => 'Список циклических задач получен'
         ]);
     }
