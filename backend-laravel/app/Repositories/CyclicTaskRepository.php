@@ -6,9 +6,9 @@ use App\Models\CyclicTask;
 
 class CyclicTaskRepository implements CyclicTaskRepositoryInterface
 {
-    public function getCyclicTasks()
+    public function getCyclicTasks($perPage = 30)
     {
-        return CyclicTask::all();
+        return CyclicTask::paginate($perPage);
     }
 
     public function deleteCyclicTask($taskId) {

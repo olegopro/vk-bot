@@ -30,18 +30,18 @@
         <div class="col-12">
 
             <PerfectScrollbar>
-                <table v-if="cyclicTasksStore.cyclicTasks.length" class="table table-hover">
+                <table v-if="cyclicTasksStore.cyclicTasks" class="table table-hover">
                     <thead>
                         <tr>
-                            <th scope="col">#</th>
-                            <th scope="col">Аккаунт</th>
-                            <th scope="col">Количество</th>
-                            <th scope="col">Осталось</th>
-                            <th scope="col">Задач в час</th>
-                            <th scope="col">Статус задачи</th>
-                            <th scope="col">Действия</th>
-                            <th scope="col">Старт задачи</th>
-                            <th scope="col">Задача создана</th>
+                            <th scope="col" style="width: 135px;">#</th>
+                            <th scope="col" style="width: 160px;">Аккаунт</th>
+                            <th scope="col" style="width: 112px;">Количество</th>
+                            <th scope="col" style="width: 112px;">Осталось</th>
+                            <th scope="col" style="width: 112px;">Задач в час</th>
+                            <th scope="col" style="width: 140px;">Статус задачи</th>
+                            <th scope="col" style="width: 160px;">Действия</th>
+                            <th scope="col" style="width: 180px">Старт задачи</th>
+                            <th scope="col" style="width: 180px">Задача создана</th>
                         </tr>
                     </thead>
 
@@ -53,6 +53,25 @@
                             :showDeleteCyclicTaskModal="showDeleteCyclicTaskModal"
                             :showEditCyclicTaskModal="showEditCyclicTaskModal"
                         />
+
+                        <tr v-if="cyclicTasksStore.isLoading" style="height: 55px;">
+                            <td colspan="9">
+                                <div class="spinner-border" role="status" style="position: relative; top: 3px;">
+                                    <span class="visually-hidden">Загрузка...</span>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <tr v-if="cyclicTasksStore.cyclicTasks.length === 0 && !cyclicTasksStore.isLoading && currentPage === 1">
+                            <td colspan="9" style="height: 55px;">
+                                Список циклических задач пуст
+                            </td>
+                        </tr>
+                        <tr class="load-more-trigger visually-hidden">
+                            <td colspan="9" style="height: 55px;">
+                                <span>Загрузка...</span>
+                            </td>
+                        </tr>
                     </tbody>
                 </table>
             </PerfectScrollbar>
@@ -77,10 +96,13 @@
     import EditCyclicTask from '../components/CyclicTasks/Modals/EditCyclicTask.vue'
     import DeleteAllCyclicTasks from '../components/CyclicTasks/Modals/DeleteAllCyclicTasks.vue'
     import router from '../router'
+    import { debounce } from 'lodash'
 
     const taskId = ref(null)
     const modalComponent = shallowRef(null)
     const modals = ref({})
+    const observer = ref(null)
+    const currentPage = ref(0)
 
     const cyclicTasksStore = useCyclicTasksStore()
     const accountsStore = useAccountsStore()
@@ -126,9 +148,38 @@
         openModal('deleteAllCyclicTasksModal', DeleteAllCyclicTasks)
     }
 
+    const debouncedFetchCyclicTasks = debounce((page) => {
+        cyclicTasksStore.isLoading = true
+        cyclicTasksStore.fetchCyclicTasks(page)
+    }, 500, {
+        'leading': true, // Вызываться в начале периода ожидания
+        'trailing': false // Дополнительный вызов в конце периода не требуется
+    })
+
     onMounted(() => {
-        cyclicTasksStore.fetchCyclicTasks()
+        cyclicTasksStore.cyclicTasks = []
+
+        debouncedFetchCyclicTasks()
         accountsStore.fetchAccounts()
+
+        accountsStore.accounts = []
+        // Устанавливаем observer
+        observer.value = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                console.log(' observer.value = new IntersectionObserver(entries => {')
+                if (
+                    entry.isIntersecting &&
+                    accountsStore.totalTasksCount !== accountsStore.accounts.length
+                ) {
+                    currentPage.value++
+                    debouncedFetchCyclicTasks(currentPage.value)
+                }
+            })
+        })
+
+        // Стартуем наблюдение за элементом с классом '.load-more-trigger'
+        const loadMoreTrigger = document.querySelector('.load-more-trigger')
+        if (loadMoreTrigger) observer.value.observe(loadMoreTrigger)
     })
 </script>
 
