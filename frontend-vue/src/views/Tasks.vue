@@ -21,7 +21,7 @@
             <select class="form-select me-3" style="width: 280px" @change="filterByAccount" v-model="selectedAccountId">
                 <option value="" :disabled="accountsStore.accounts.length === 0">Все аккаунты</option>
 
-                <option :value="selectedAccountId" v-if="accountsStore.accounts.length === 0" disabled>Загрузка...</option>
+                <option :value="selectedAccountId" v-if="accountsStore.accounts.length === 0 && accountsStore.isLoading" disabled>Загрузка...</option>
                 <option v-else v-for="account in accountsStore.accounts" :key="account.id" :value="account.account_id">
                     {{ account.screen_name }} ({{ account.first_name }} {{ account.last_name }})
                 </option>
@@ -72,7 +72,7 @@
 
                         <tr v-if="tasksStore.isLoading" style="height: 55px;">
                             <td colspan="7">
-                                <div class="spinner-border" role="status">
+                                <div class="spinner-border" role="status" style="position: relative; top: 3px;">
                                     <span class="visually-hidden">Загрузка...</span>
                                 </div>
                             </td>
@@ -167,6 +167,7 @@
     })
 
     watch(route, () => {
+        tasksStore.tasks = []
         processRouteParams()
         perfectScrollbarRef.value.$el.scrollTop = 0
     })

@@ -4,17 +4,20 @@ import { showErrorNotification, showSuccessNotification } from '../helpers/notyf
 
 export const useAccountsStore = defineStore('accounts', {
     state: () => ({
-        accounts: []
+        accounts: [],
+        isLoading: false
     }),
 
     actions: {
         async fetchAccounts(page = 1) {
+            this.isLoading = true
             await axios.post(`http://localhost:8080/api/account/all-accounts?page=${page}`)
                 .then(({ data }) => {
                     this.accounts = [...this.accounts, ...data.data.data]
                     showSuccessNotification(data.message)
                 })
                 .catch(() => showErrorNotification('Ошибка получения аккаунтов'))
+                .finally(() => this.isLoading = false)
         },
 
         async addAccount(accessToken) {

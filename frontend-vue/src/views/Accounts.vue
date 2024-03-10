@@ -58,8 +58,23 @@
                             <td>{{ account.bdate }}</td>
                         </tr>
 
+                        <tr v-if="accountsStore.isLoading" style="height: 55px;">
+                            <td colspan="7">
+                                <div class="spinner-border" role="status" style="position: relative; top: 3px;">
+                                    <span class="visually-hidden">Загрузка...</span>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <tr v-if="accountsStore.accounts.length === 0 && !accountsStore.isLoading && currentPage === 1">
+                            <td colspan="7" style="height: 55px;">
+                                Список аккаунтов пуст
+                            </td>
+                        </tr>
                         <tr class="load-more-trigger visually-hidden">
-                            <td colspan="7">Загрузить ещё...</td>
+                            <td colspan="7" style="height: 55px;">
+                                <span>Загрузка...</span>
+                            </td>
                         </tr>
                     </tbody>
                 </table>
@@ -79,6 +94,7 @@
     import DeleteAccount from '../components/Accounts/Modals/DeleteAccount.vue'
     import AddAccount from '../components/Accounts/Modals/AddAccount.vue'
     import { onMounted, onUnmounted, ref } from 'vue'
+    import { debounce } from 'lodash'
 
     const accountsStore = useAccountsStore()
     const selectedAccount = ref({ login: '', id: '' })
@@ -89,22 +105,40 @@
         selectedAccount.value = { login, id }
     }
 
-    onMounted(() => {
-        accountsStore.fetchAccounts()
+    const debouncedFetchAccounts = debounce((page) => {
+        accountsStore.isLoading = true
+        accountsStore.fetchAccounts(page)
+    }, 500, {
+        'leading': true, // Вызываться в начале периода ожидания
+        'trailing': false // Дополнительный вызов в конце периода не требуется
+    })
 
+    onMounted(() => {
+        console.log('Accounts onMounted')
+        accountsStore.accounts = []
+        // Устанавливаем observer
         observer.value = new IntersectionObserver(entries => {
             entries.forEach(entry => {
-                if (entry.isIntersecting) {
+                console.log(' observer.value = new IntersectionObserver(entries => {')
+                if (
+                    entry.isIntersecting &&
+                    accountsStore.totalTasksCount !== accountsStore.accounts.length
+                ) {
                     currentPage.value++
-                    accountsStore.fetchAccounts(currentPage.value++)
+                    debouncedFetchAccounts(currentPage.value)
                 }
             })
         })
 
-        observer.value.observe(document.querySelector('.load-more-trigger'))
+        // Стартуем наблюдение за элементом с классом '.load-more-trigger'
+        const loadMoreTrigger = document.querySelector('.load-more-trigger')
+        if (loadMoreTrigger) observer.value.observe(loadMoreTrigger)
     })
 
-    onUnmounted(() => observer.value.disconnect())
+    onUnmounted(() => {
+        console.log('Accounts onUnmounted')
+        if (observer.value) observer.value.disconnect() // Очищаем observer при размонтировании
+    })
 </script>
 
 <style lang="scss" scoped>
