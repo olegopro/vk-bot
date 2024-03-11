@@ -121,7 +121,7 @@
     import { useAccountStore } from '@/stores/AccountStore'
     import { useAccountsStore } from '@/stores/AccountsStore'
     import { showErrorNotification } from '@/helpers/notyfHelper'
-    import { useModal } from '@/composables/useModal'
+    import { useModal } from '@/composables/useModal.ts'
     import { debounce } from 'lodash'
     import AddTask from '../components/Tasks/Modals/AddTask.vue'
     import TableThread from '../components/Tasks/TableThread.vue'
