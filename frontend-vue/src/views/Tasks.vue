@@ -49,7 +49,7 @@
 
     <div class="row">
         <div class="col-12">
-            <PerfectScrollbar ref="perfectScrollbarRef">
+            <PerfectScrollbar ref="perfectScrollbarRef" class="ps-table">
                 <table class="table table-hover">
                     <thead>
                         <tr>
@@ -278,12 +278,3 @@
         if (observer.value) observer.value.disconnect()
     })
 </script>
-
-<style lang="scss" scoped>
-    .ps {
-        height: auto;
-        max-height: var(--ps-height);
-        box-shadow: var(--ps-shadow-box);
-        border-radius: var(--ps-border-radius);
-    }
-</style>

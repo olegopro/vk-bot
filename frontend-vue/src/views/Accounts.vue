@@ -19,7 +19,7 @@
                     </template>
 
                      <template v-else>
-                        <span class="fw-bolder me-1">{{ accountsStore.pagination.total }}</span> / <span class="ms-1" :class="{'fw-bolder': isTotalMatched}">{{ accountsStore.accounts.length }}</span>
+                        <span class="me-1">{{ accountsStore.pagination.total }}</span> / <span class="ms-1">{{ accountsStore.accounts.length }}</span>
                     </template>
                 </span>
             </h6>
@@ -38,7 +38,7 @@
 
     <div class="row">
         <div class="col-12">
-            <PerfectScrollbar>
+            <PerfectScrollbar class="ps-table">
                 <table class="table table-hover">
                     <thead>
                         <tr>
@@ -166,12 +166,3 @@
         if (observer.value) observer.value.disconnect() // Очищаем observer при размонтировании
     })
 </script>
-
-<style lang="scss" scoped>
-    .ps {
-        height: auto;
-        max-height: var(--ps-height);
-        box-shadow: var(--ps-shadow-box);
-        border-radius: var(--ps-border-radius);
-    }
-</style>

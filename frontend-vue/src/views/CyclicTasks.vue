@@ -26,7 +26,7 @@
                     </template>
 
                     <template v-else>
-                        <span class="fw-bolder me-1">{{ cyclicTasksStore.pagination.total }}</span> / <span class="ms-1" :class="{'fw-bolder': isTotalMatched}">{{ cyclicTasksStore.cyclicTasks.length }}</span>
+                        <span class="me-1">{{ cyclicTasksStore.pagination.total }}</span> / <span class="ms-1">{{ cyclicTasksStore.cyclicTasks.length }}</span>
                     </template>
                 </span>
             </h6>
@@ -52,19 +52,19 @@
     <div class="row">
         <div class="col-12">
 
-            <PerfectScrollbar>
+            <PerfectScrollbar class="ps-table">
                 <table v-if="cyclicTasksStore.cyclicTasks" class="table table-hover">
                     <thead>
                         <tr>
                             <th scope="col" style="width: 110px;">#</th>
                             <th scope="col" style="width: 140px;">Аккаунт</th>
-                            <th scope="col" style="width: 106px;">Количество</th>
-                            <th scope="col" style="width: 106px;">Осталось</th>
-                            <th scope="col" style="width: 108px;">Задач в час</th>
-                            <th scope="col" style="width: 130px;">Статус задачи</th>
+                            <th scope="col" style="width: 110px;">Количество</th>
+                            <th scope="col" style="width: 110px;">Осталось</th>
+                            <th scope="col" style="width: 110px;">Задач в час</th>
+                            <th scope="col" style="width: 150px;">Статус задачи</th>
                             <th scope="col" style="width: 150px;">Действия</th>
-                            <th scope="col" style="width: 170px">Старт задачи</th>
-                            <th scope="col" style="width: 170px">Задача создана</th>
+                            <th scope="col" style="width: 150px">Старт задачи</th>
+                            <th scope="col" style="width: 150px">Задача создана</th>
                         </tr>
                     </thead>
 
@@ -208,12 +208,3 @@
         if (loadMoreTrigger) observer.value.observe(loadMoreTrigger)
     })
 </script>
-
-<style lang="scss" scoped>
-    .ps {
-        height: auto;
-        max-height: var(--ps-height);
-        box-shadow: var(--ps-shadow-box);
-        border-radius: var(--ps-border-radius);
-    }
-</style>
