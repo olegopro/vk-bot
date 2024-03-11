@@ -1,10 +1,12 @@
 <template>
-    <main>
-        <div class="container">
-            <TheNavbar />
-            <router-view></router-view>
-        </div>
-    </main>
+    <PerfectScrollbar>
+        <main>
+            <div class="container">
+                <TheNavbar />
+                <RouterView />
+            </div>
+        </main>
+    </PerfectScrollbar>
 </template>
 
 <script>
@@ -15,3 +17,9 @@
         components: { TheNavbar }
     }
 </script>
+
+<style lang="scss" scoped>
+    .ps {
+        height: 100vh;
+    }
+</style>
