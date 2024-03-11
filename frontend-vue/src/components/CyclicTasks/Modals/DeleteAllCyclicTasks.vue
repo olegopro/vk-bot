@@ -1,5 +1,5 @@
 <template>
-    <div class="modal fade" id="deleteAllCyclicTasksModal" tabindex="-1" aria-labelledby="Delete all tasks" style="display: none;" aria-hidden="true">
+    <div class="modal fade" id="deleteAllCyclicTasksModal" tabindex="-1" aria-labelledby="Delete all tasks" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <form @submit.prevent="deleteCyclicTasks" class="modal-content">
                 <div class="modal-header">
@@ -11,7 +11,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" @click="modalHide">Отмена</button>
-                    <button type="submit" class="btn btn-danger" :disabled="disable">Очистить</button>
+                    <button type="submit" class="btn btn-danger" :disabled="disable">Удалить</button>
                 </div>
             </form>
         </div>
@@ -25,7 +25,7 @@
     const disable = ref(false)
     const cyclicTasksStore = useCyclicTasksStore()
 
-    const modals = inject('modals')
+    const closeModal = inject('closeModal')
 
     const deleteCyclicTasks = () => {
         disable.value = true
@@ -34,7 +34,7 @@
             .finally(() => disable.value = false)
     }
 
-    const modalHide = () => modals.value.deleteAllCyclicTasksModal.hide()
+    const modalHide = () => closeModal('deleteAllCyclicTasksModal')
 
     onMounted(() => console.log('DeleteAllCyclicTasks onMounted'))
     onUnmounted(() => console.log('DeleteAllCyclicTasks onUnmounted'))

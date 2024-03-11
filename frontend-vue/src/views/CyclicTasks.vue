@@ -103,14 +103,17 @@
     </div>
 
     <Teleport to="body">
-        <component :is="modalComponent" :taskId="taskId" />
+        <component v-if="isOpen"
+                   @mounted="showModal"
+                   :is="modalComponent"
+                   :taskId="taskId"
+        />
     </Teleport>
 
 </template>
 
 <script setup>
-    import { nextTick, onMounted, ref, provide, shallowRef, computed } from 'vue'
-    import { Modal } from 'bootstrap'
+    import { onMounted, ref, provide, shallowRef, computed } from 'vue'
     import { useCyclicTasksStore } from '../stores/CyclicTasksStore'
     import { useAccountsStore } from '../stores/AccountsStore'
     import TableThread from '../components/CyclicTasks/TableThread.vue'
@@ -120,55 +123,42 @@
     import DeleteAllCyclicTasks from '../components/CyclicTasks/Modals/DeleteAllCyclicTasks.vue'
     import router from '../router'
     import { debounce } from 'lodash'
+    import { useModal } from '@/composables/useModal'
+
+    const { isOpen, preparedModal, showModal, closeModal } = useModal()
 
     const taskId = ref(null)
     const modalComponent = shallowRef(null)
-    const modals = ref({})
     const observer = ref(null)
     const currentPage = ref(1)
 
     const cyclicTasksStore = useCyclicTasksStore()
     const accountsStore = useAccountsStore()
 
-    provide('modals', modals)
-
-    const openModal = (modalId, component) => {
-        modalComponent.value = component
-
-        nextTick(() => {
-            if (!modals.value[modalId]) {
-                const modalElement = document.getElementById(modalId)
-                const modalInstance = new Modal(modalElement)
-
-                modalElement.addEventListener('hidden.bs.modal', () => {
-                    modalInstance.dispose()
-                    delete modals.value[modalId]
-                    modalComponent.value = null
-                }, { once: true })
-
-                modals.value[modalId] = modalInstance
-            }
-
-            modals.value[modalId].show()
-        })
-    }
+    provide('closeModal', closeModal)
 
     const showDeleteCyclicTaskModal = (id) => {
         taskId.value = id
-        openModal('deleteCyclicTaskModal', DeleteCyclicTask)
+
+        modalComponent.value = preparedModal(DeleteCyclicTask)
+        showModal('deleteCyclicTaskModal')
     }
 
     const showEditCyclicTaskModal = (id) => {
         taskId.value = id
-        openModal('editCyclicTaskModal', EditCyclicTask)
+
+        modalComponent.value = preparedModal(EditCyclicTask)
+        showModal('editCyclicTaskModal')
     }
 
     const showAddCyclicTaskModal = () => {
-        openModal('addCyclicTaskModal', AddCyclicTask)
+        modalComponent.value = preparedModal(AddCyclicTask)
+        showModal('addCyclicTaskModal')
     }
 
     const showDeleteAllCyclicTasksModal = () => {
-        openModal('deleteAllCyclicTasksModal', DeleteAllCyclicTasks)
+        modalComponent.value = preparedModal(DeleteAllCyclicTasks)
+        showModal('deleteAllCyclicTasksModal')
     }
 
     const isTotalMatched = computed(() => {

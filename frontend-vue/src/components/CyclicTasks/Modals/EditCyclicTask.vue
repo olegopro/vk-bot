@@ -1,5 +1,5 @@
 <template>
-    <div class="modal fade" id="editCyclicTaskModal" tabindex="-1" aria-labelledby="Edit task" style="display: none;" aria-hidden="true">
+    <div class="modal fade" id="editCyclicTaskModal" tabindex="-1" aria-labelledby="Edit task" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <form @submit.prevent="editCyclicTask" class="modal-content" v-if="editedTaskData">
                 <div class="modal-header mb-1">
@@ -77,7 +77,7 @@
     const editedTaskData = ref(null)
     const selectedTimesForTimePicker = ref(null)
 
-    const modals = inject('modals')
+    const closeModal = inject('closeModal')
 
     const task = computed(() => cyclicTaskStore.getTaskById(props.taskId))
     watch(() => props.taskId, () => editedTaskData.value = { ...task.value }, { immediate: true })
@@ -106,7 +106,7 @@
     const handleSelectedTimes = times => editedTaskData.value.selected_times = times
 
     const modalHide = () => {
-        modals.value.editCyclicTaskModal.hide()
+        closeModal('editCyclicTaskModal')
 
         loading.value = false
         disablePost.value = false

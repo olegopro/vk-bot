@@ -80,7 +80,7 @@
     const loading = ref(false)
     const selectedTimes = ref({})
 
-    const modals = inject('modals')
+    const closeModal = inject('closeModal')
 
     watch(accountId, newVal => disablePost.value = newVal === 'selectAccount')
 
@@ -107,7 +107,7 @@
     }
 
     const handleSelectedTimes = times => selectedTimes.value = times
-    const modalHide = () => modals.value.addCyclicTaskModal.hide()
+    const modalHide = () => closeModal('addCyclicTaskModal')
 
     onMounted(() => console.log('AddCyclicTask onMounted'))
     onUnmounted(() => console.log('AddCyclicTask onUnmounted'))

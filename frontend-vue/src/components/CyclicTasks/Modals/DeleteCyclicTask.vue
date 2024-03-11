@@ -1,5 +1,5 @@
 <template>
-    <div class="modal fade" id="deleteCyclicTaskModal" tabindex="-1" aria-labelledby="Delete task" style="display: none;" aria-hidden="true">
+    <div class="modal fade" id="deleteCyclicTaskModal" tabindex="-1" aria-labelledby="Delete task" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <form @submit.prevent="deleteCyclicTaskById" class="modal-content">
                 <div class="modal-header">
@@ -20,17 +20,16 @@
 
 <script setup>
     import { ref, defineProps, onMounted, onUnmounted, inject } from 'vue'
-    import { useCyclicTasksStore } from '../../../stores/CyclicTasksStore'
+    import { useCyclicTasksStore } from '@/stores/CyclicTasksStore'
 
     const props = defineProps({
-        modalInstance: Object,
         taskId: Number
     })
 
     const disable = ref(false)
     const cyclicTasksStore = useCyclicTasksStore()
 
-    const modals = inject('modals')
+    const closeModal = inject('closeModal')
 
     const deleteCyclicTaskById = () => {
         disable.value = true
@@ -39,7 +38,7 @@
             .finally(() => disable.value = false)
     }
 
-    const modalHide = () => modals.value.deleteCyclicTaskModal.hide()
+    const modalHide = () => closeModal('deleteCyclicTaskModal')
 
     onMounted(() => console.log('DeleteCyclicTask onMounted'))
     onUnmounted(() => console.log('DeleteCyclicTask onUnmounted'))
