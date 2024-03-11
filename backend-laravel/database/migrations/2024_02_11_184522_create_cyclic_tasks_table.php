@@ -25,7 +25,10 @@ class CreateCyclicTasksTable extends Migration
             $table->timestamp('started_at')->nullable();
             $table->timestamps();
 
-            $table->foreign('account_id')->references('account_id')->on('accounts');
+            $table->foreign('account_id')
+                ->references('account_id')
+                ->on('accounts')
+                ->onDelete('cascade');
         });
     }
 
