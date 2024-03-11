@@ -1,5 +1,5 @@
 <template>
-    <div class="modal fade" id="taskDetails" tabindex="-1" aria-labelledby="Task details" style="display: none;" aria-hidden="true">
+    <div class="modal fade" id="taskDetailsModal" tabindex="-1" aria-labelledby="Task details" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
             <div class="modal-content">
                 <div class="modal-header" v-if="taskData">
@@ -66,18 +66,19 @@
 </template>
 
 <script setup>
-    import { ref, computed, watch, defineProps } from 'vue'
+    import { ref, computed, watch, defineProps, inject, onMounted, onUnmounted } from 'vue'
     import { format } from 'date-fns'
     import { useTasksStore } from '../../../stores/TasksStore'
     import { showErrorNotification } from '../../../helpers/notyfHelper'
 
     const props = defineProps({
-        modalInstance: Object,
         taskData: Object
     })
 
     const tasksStore = useTasksStore()
     const disableSubmit = ref(false)
+
+    const modals = inject('modals')
 
     const isUserLiked = computed(() => {
         if (props.taskData && props.taskData.liked_users && props.taskData.account_id) {
@@ -94,7 +95,7 @@
         }
     })
 
-    const modalHide = () => props.modalInstance.hide()
+    const modalHide = () => modals.value.taskDetailsModal.hide()
 
     const formatData = timestamp => format(new Date(timestamp * 1000), 'yyyy-MM-dd HH:mm:ss')
 
@@ -105,6 +106,9 @@
             .catch(data => showErrorNotification(data.response.data.message))
             .finally(() => disableSubmit.value = false)
     }
+
+    onMounted(() => console.log('TaskDetails onMounted'))
+    onUnmounted(() => console.log('TaskDetails onUnmounted'))
 </script>
 
 <style scoped lang="scss">

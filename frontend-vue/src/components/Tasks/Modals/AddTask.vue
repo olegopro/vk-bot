@@ -1,5 +1,5 @@
 <template>
-    <div class="modal fade" id="addTask" tabindex="-1" aria-labelledby="Add task" style="display: none;" aria-hidden="true">
+    <div class="modal fade" id="addTaskModal" tabindex="-1" aria-labelledby="Add task" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <form @submit.prevent="addNewTask" class="modal-content">
                 <div class="modal-header">
@@ -33,15 +33,11 @@
 </template>
 
 <script setup>
-    import { ref, watch, defineProps } from 'vue'
+    import { ref, watch, defineProps, inject, onMounted, onUnmounted } from 'vue'
     import { useAccountStore } from '@/stores/AccountStore'
     import { useAccountsStore } from '../../../stores/AccountsStore'
     import { showErrorNotification, showSuccessNotification } from '../../../helpers/notyfHelper'
     import { useTasksStore } from '../../../stores/TasksStore'
-
-    const props = defineProps({
-        modalInstance: Object
-    })
 
     const accountStore = useAccountStore()
     const accountsStore = useAccountsStore()
@@ -51,6 +47,8 @@
     const disablePost = ref(true)
     const loading = ref(false)
     const taskCount = ref(10)
+
+    const modals = inject('modals')
 
     watch(accountId, newVal => disablePost.value = newVal === 'selectAccount')
 
@@ -70,5 +68,8 @@
             .catch(error => showErrorNotification(error))
     }
 
-    const modalHide = () => props.modalInstance.hide()
+    const modalHide = () => modals.value.addTaskModal.hide()
+
+    onMounted(() => console.log('AddTaskModal onMounted'))
+    onUnmounted(() => console.log('AddTaskModal onUnmounted'))
 </script>

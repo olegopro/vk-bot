@@ -1,5 +1,5 @@
 <template>
-    <div class="modal fade" id="deleteAllTasks" tabindex="-1" aria-labelledby="Delete all tasks" style="display: none;" aria-hidden="true">
+    <div class="modal fade" id="deleteAllTasksModal" tabindex="-1" aria-labelledby="Delete all tasks" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <form @submit.prevent="deleteTasks" class="modal-content">
                 <div class="modal-header">
@@ -22,18 +22,18 @@
 </template>
 
 <script setup>
-    import { ref, defineProps } from 'vue'
+    import { ref, defineProps, inject, onMounted, onUnmounted } from 'vue'
     import { useTasksStore } from '@/stores/TasksStore'
 
     const props = defineProps({
-        modalInstance: Object,
         selectedTasksStatus: String,
         selectedAccountId: String
     })
 
     const disable = ref(false)
-
     const tasksStore = useTasksStore()
+
+    const modals = inject('modals')
 
     const deleteTasks = () => {
         disable.value = true
@@ -42,5 +42,8 @@
             .finally(() => disable.value = false)
     }
 
-    const modalHide = () => props.modalInstance.hide()
+    const modalHide = () => modals.value.deleteAllTasksModal.hide()
+
+    onMounted(() => console.log('DeleteAllTasks onMounted'))
+    onUnmounted(() => console.log('DeleteAllTasks onUnmounted'))
 </script>
