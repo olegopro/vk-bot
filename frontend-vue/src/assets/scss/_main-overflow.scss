@@ -1,138 +1,169 @@
 :root {
-	// Глобальные стили для PerfectScrollbar контейнера
-	--ps-shadow-box: 0 1px 27px 0 rgba(34, 60, 80, 0.2);
-	--ps-border-radius: calc(var(--bs-border-radius) * 2);
+    // Глобальные стили для PerfectScrollbar контейнера
+    --ps-shadow-box: 0 1px 27px 0 rgba(34, 60, 80, 0.2);
+    --ps-border-radius: calc(var(--bs-border-radius) * 2);
 
-	// Глобальные переменны для расчета высоты контейнера PerfectScrollbar
-	--header-height: 100px;
-	--nav-bar-height: 54px;
-	--bottom-margin: 1.3rem;
-	--ps-height: calc(100 * var(--vh) - var(--header-height) - var(--nav-bar-height) - var(--bottom-margin));
+    // Глобальные переменны для расчета высоты контейнера PerfectScrollbar
+    --header-height: 100px;
+    --nav-bar-height: 54px;
+    --bottom-margin: 1.3rem;
+    --ps-height: calc(100 * var(--vh) - var(--header-height) - var(--nav-bar-height) - var(--bottom-margin));
 }
 
 // Стилизация Perfect Scrollbar
-.ps__rail-y {
-	margin-top: 60px !important;
-	margin-bottom: 8px !important;
-	margin-right: 3px !important;
-	background-color: transparent !important;
+.ps {
+    &.ps-table {
+        height: auto;
+        max-height: var(--ps-height);
+        box-shadow: var(--ps-shadow-box);
+        border-radius: var(--ps-border-radius);
 
-	&.ps--clicking {
-		background-color: transparent !important;
-	}
+        .ps__rail-y {
+            margin-top: 60px !important;
+            margin-bottom: 8px !important;
+            margin-right: 3px !important;
+            background-color: transparent !important;
+
+            &.ps--clicking {
+                background-color: transparent !important;
+            }
+        }
+
+        .ps__thumb-y {
+            min-height: 0.5rem !important;
+        }
+    }
+
+    &.ps-modal {
+        height: auto;
+        //100vh - (margin top) - (modal header) - (modal footer) - (margin bottom)
+        max-height: calc(100vh - 28px - 72px - 28px - 72px);
+        box-shadow: none;
+        border-radius: 0;
+
+        .ps__rail-y {
+            margin-top: 0 !important;
+            margin-bottom: 0 !important;
+            margin-right: 3px !important;
+            background-color: transparent !important;
+
+            &.ps--clicking {
+                background-color: transparent !important;
+            }
+        }
+
+        .ps__thumb-y {
+            min-height: 0.5rem !important;
+            width: 6px !important;
+        }
+    }
 }
 
-.ps__thumb-y {
-	// Задаем желаемую минимальную ширину
-	min-height:0.5rem !important;
-}
 
 select {
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 $table-border-radius: var(--ps-border-radius);
 
 table {
-	//box-shadow: 0 1px 27px 0 rgba(34, 60, 80, 0.2);
-	//border-radius: $table-border-radius;
-	margin-bottom: 0 !important;
+    margin-bottom: 0 !important;
 
-	tr, td {
-		text-align: center;
-		vertical-align: middle;
-	}
+    tr, td {
+        text-align: center;
+        vertical-align: middle;
+    }
 
-	thead {
-		vertical-align: middle !important;
+    thead {
+        vertical-align: middle !important;
 
-		tr {
-			height: 55px;
-			position: sticky;
-			top: 0;
-			z-index: 1020;
+        tr {
+            height: 55px;
+            position: sticky;
+            top: 0;
+            z-index: 1020;
 
-			th:first-child {
-				border-top-left-radius: $table-border-radius;
-			}
+            th:first-child {
+                border-top-left-radius: $table-border-radius;
+            }
 
-			th:last-child {
-				border-top-right-radius: $table-border-radius;
-			}
+            th:last-child {
+                border-top-right-radius: $table-border-radius;
+            }
 
-			th::after {
-				content: "";
-				position: absolute;
-				bottom: -1px;
-				left: 0;
-				width: 100%;
-				border-bottom: 1px solid #dee2e6;
-				z-index: 100;
-			}
-		}
-	}
+            th::after {
+                content: "";
+                position: absolute;
+                bottom: -1px;
+                left: 0;
+                width: 100%;
+                border-bottom: 1px solid #dee2e6;
+                z-index: 100;
+            }
+        }
+    }
 
-	tbody {
-		tr {
-			&:last-child {
-				border-color: transparent;
+    tbody {
+        tr {
+            &:last-child {
+                border-color: transparent;
 
-				th:first-child {
-					border-bottom-left-radius: $table-border-radius;
-				}
+                th:first-child {
+                    border-bottom-left-radius: $table-border-radius;
+                }
 
-				td:last-child {
-					border-bottom-right-radius: $table-border-radius;
-				}
+                td:last-child {
+                    border-bottom-right-radius: $table-border-radius;
+                }
 
-				td, th {
-					border-bottom-width: 0;
-				}
-			}
+                td, th {
+                    border-bottom-width: 0;
+                }
+            }
 
-			td {
-				.button-style {
-					display: inline-flex;
-					width: 42px;
-					height: 38px;
-					justify-content: center;
-					align-items: center;
-					padding: 0;
-				}
-			}
-		}
+            td {
+                .button-style {
+                    display: inline-flex;
+                    width: 42px;
+                    height: 38px;
+                    justify-content: center;
+                    align-items: center;
+                    padding: 0;
+                }
+            }
+        }
 
-		&:last-child {
-			border-bottom-width: 0;
-		}
-	}
+        &:last-child {
+            border-bottom-width: 0;
+        }
+    }
 }
 
 .btn.btn-action {
-	width: 170px;
+    width: 170px;
 }
 
 .modal-dialog {
-	.modal-content {
-		.modal-header {
-			border-bottom: none;
-		}
+    .modal-content {
+        .modal-header {
+            border-bottom: none;
+        }
 
-		.modal-footer {
-			border-top: none;
-		}
-	}
+        .modal-footer {
+            border-top: none;
+        }
+    }
 }
 
 #accordionTimePicker {
-	.accordion-button {
-		background: white;
-		box-shadow: none;
-	}
+    .accordion-button {
+        background: white;
+        box-shadow: none;
+    }
 
-	.accordion-body {
-		padding: 0;
-	}
+    .accordion-body {
+        padding: 0;
+    }
 }

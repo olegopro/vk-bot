@@ -11853,18 +11853,42 @@ textarea.form-control-lg {
   --ps-height: calc(100 * var(--vh) - var(--header-height) - var(--nav-bar-height) - var(--bottom-margin));
 }
 
-.ps__rail-y {
+.ps.ps-table {
+  height: auto;
+  max-height: var(--ps-height);
+  box-shadow: var(--ps-shadow-box);
+  border-radius: var(--ps-border-radius);
+}
+.ps.ps-table .ps__rail-y {
   margin-top: 60px !important;
   margin-bottom: 8px !important;
   margin-right: 3px !important;
   background-color: transparent !important;
 }
-.ps__rail-y.ps--clicking {
+.ps.ps-table .ps__rail-y.ps--clicking {
   background-color: transparent !important;
 }
-
-.ps__thumb-y {
+.ps.ps-table .ps__thumb-y {
   min-height: 0.5rem !important;
+}
+.ps.ps-modal {
+  height: auto;
+  max-height: calc(100vh - 28px - 72px - 28px - 72px);
+  box-shadow: none;
+  border-radius: 0;
+}
+.ps.ps-modal .ps__rail-y {
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+  margin-right: 3px !important;
+  background-color: transparent !important;
+}
+.ps.ps-modal .ps__rail-y.ps--clicking {
+  background-color: transparent !important;
+}
+.ps.ps-modal .ps__thumb-y {
+  min-height: 0.5rem !important;
+  width: 6px !important;
 }
 
 select {
