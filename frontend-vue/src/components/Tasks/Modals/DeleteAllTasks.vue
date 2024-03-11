@@ -33,7 +33,7 @@
     const disable = ref(false)
     const tasksStore = useTasksStore()
 
-    const modals = inject('modals')
+    const closeModal = inject('closeModal')
 
     const deleteTasks = () => {
         disable.value = true
@@ -42,7 +42,7 @@
             .finally(() => disable.value = false)
     }
 
-    const modalHide = () => modals.value.deleteAllTasksModal.hide()
+    const modalHide = () => closeModal('deleteAllTasksModal')
 
     onMounted(() => console.log('DeleteAllTasks onMounted'))
     onUnmounted(() => console.log('DeleteAllTasks onUnmounted'))

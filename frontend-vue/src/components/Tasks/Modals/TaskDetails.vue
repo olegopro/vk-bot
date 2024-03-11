@@ -78,7 +78,7 @@
     const tasksStore = useTasksStore()
     const disableSubmit = ref(false)
 
-    const modals = inject('modals')
+    const closeModal = inject('closeModal')
 
     const isUserLiked = computed(() => {
         if (props.taskData && props.taskData.liked_users && props.taskData.account_id) {
@@ -95,7 +95,7 @@
         }
     })
 
-    const modalHide = () => modals.value.taskDetailsModal.hide()
+    const modalHide = () => closeModal('taskDetailsModal')
 
     const formatData = timestamp => format(new Date(timestamp * 1000), 'yyyy-MM-dd HH:mm:ss')
 

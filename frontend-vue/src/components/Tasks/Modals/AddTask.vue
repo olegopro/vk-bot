@@ -33,7 +33,7 @@
 </template>
 
 <script setup>
-    import { ref, watch, defineProps, inject, onMounted, onUnmounted } from 'vue'
+    import { ref, watch, inject, onMounted, onUnmounted } from 'vue'
     import { useAccountStore } from '@/stores/AccountStore'
     import { useAccountsStore } from '../../../stores/AccountsStore'
     import { showErrorNotification, showSuccessNotification } from '../../../helpers/notyfHelper'
@@ -48,7 +48,7 @@
     const loading = ref(false)
     const taskCount = ref(10)
 
-    const modals = inject('modals')
+    const closeModal = inject('closeModal')
 
     watch(accountId, newVal => disablePost.value = newVal === 'selectAccount')
 
@@ -68,7 +68,7 @@
             .catch(error => showErrorNotification(error))
     }
 
-    const modalHide = () => modals.value.addTaskModal.hide()
+    const modalHide = () => closeModal('addTaskModal')
 
     onMounted(() => console.log('AddTaskModal onMounted'))
     onUnmounted(() => console.log('AddTaskModal onUnmounted'))

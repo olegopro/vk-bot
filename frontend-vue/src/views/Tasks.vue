@@ -54,7 +54,7 @@
                     <thead>
                         <tr>
                             <th scope="col" style="width: 110px;">
-                                {{ tasksStore.totalTasksCount ? tasksStore.totalTasksCount : 0 }} / {{tasksStore.tasks.length}}
+                                {{ tasksStore.totalTasksCount ? tasksStore.totalTasksCount : 0 }} / {{ tasksStore.tasks.length }}
                             </th>
                             <th scope="col" style="width: 350px;">Имя и фамилия</th>
                             <th scope="col" style="width: 100px;">Статус</th>
@@ -100,12 +100,15 @@
     </div>
 
     <Teleport to="body">
-        <component :is="modalComponent"
+        <component v-if="isOpen"
+                   @mounted="showModal"
+                   :is="modalComponent"
                    :taskId="taskId"
                    :selectedTasksStatus="currentStatus"
                    :selectedAccountId="selectedAccountId"
                    :taskData="taskDetailsData"
                    :accountData="accountDetailsData"
+
         />
     </Teleport>
 
@@ -113,12 +116,12 @@
 
 <script setup>
     import { useRoute, useRouter } from 'vue-router'
-    import { nextTick, onMounted, onUnmounted, provide, ref, shallowRef, watch } from 'vue'
+    import { onMounted, onUnmounted, provide, ref, shallowRef, watch } from 'vue'
     import { useTasksStore } from '@/stores/TasksStore'
     import { useAccountStore } from '@/stores/AccountStore'
     import { useAccountsStore } from '@/stores/AccountsStore'
     import { showErrorNotification } from '@/helpers/notyfHelper'
-    import { Modal } from 'bootstrap'
+    import { useModal } from '@/composables/useModal'
     import { debounce } from 'lodash'
     import AddTask from '../components/Tasks/Modals/AddTask.vue'
     import TableThread from '../components/Tasks/TableThread.vue'
@@ -134,8 +137,8 @@
     const router = useRouter()
     const observer = ref(null)
     const perfectScrollbarRef = ref(null)
-    const modals = ref({})
     const modalComponent = shallowRef(null)
+    const { isOpen, preparedModal, showModal, closeModal } = useModal()
 
     const taskId = ref(0)
     const currentPage = ref(1)
@@ -146,7 +149,7 @@
     const accountDetailsData = ref(null)
     const taskDetailsData = ref(null)
 
-    provide('modals', modals)
+    provide('closeModal', closeModal)
 
     watch(() => tasksStore.tasks.length, newLength => {
         if (newLength > 0 && !observer.value) {
@@ -181,27 +184,6 @@
         'leading': true, // Вызываться в начале периода ожидания
         'trailing': false // Дополнительный вызов в конце периода не требуется
     })
-
-    const openModal = (modalId, component) => {
-        modalComponent.value = component
-
-        nextTick(() => {
-            if (!modals.value[modalId]) {
-                const modalElement = document.getElementById(modalId)
-                const modalInstance = new Modal(modalElement)
-
-                modalElement.addEventListener('hidden.bs.modal', () => {
-                    modalInstance.dispose()
-                    delete modals.value[modalId]
-                    modalComponent.value = null
-                }, { once: true })
-
-                modals.value[modalId] = modalInstance
-            }
-
-            modals.value[modalId].show()
-        })
-    }
 
     const processRouteParams = () => {
         // Получаем текущие параметры маршрута из vue-router.
@@ -249,7 +231,8 @@
 
     const showAccountDetailsModal = (accountId, ownerId) => {
         accountDetailsData.value = null
-        openModal('accountDetailsModal', AccountDetails)
+        modalComponent.value = preparedModal(AccountDetails)
+        showModal('accountDetailsModal')
 
         accountStore.fetchOwnerData(accountId, ownerId)
             .then(() => {
@@ -260,7 +243,9 @@
     }
 
     const showTaskDetailsModal = async (newTaskId) => {
-        openModal('taskDetailsModal', TaskDetails)
+        taskDetailsData.value = null
+        modalComponent.value = preparedModal(TaskDetails)
+        showModal('taskDetailsModal')
 
         const response = await tasksStore.taskDetails(newTaskId)
         taskDetailsData.value = { ...response, taskId: newTaskId }
@@ -268,16 +253,20 @@
 
     const showDeleteTaskModal = (id) => {
         taskId.value = id
-        openModal('deleteTaskModal', DeleteTask)
+        modalComponent.value = preparedModal(DeleteTask)
+        showModal('deleteTaskModal')
     }
 
     const showDeleteAllTasksModal = () => {
-        openModal('deleteAllTasksModal', DeleteAllTasks)
+        modalComponent.value = preparedModal(DeleteAllTasks)
+        showModal('deleteAllTasksModal')
+
         tasksStore.getTasksCountByStatus(currentStatus.value, selectedAccountId.value)
     }
 
     const showAddTaskModal = () => {
-        openModal('addTaskModal', AddTask)
+        modalComponent.value = preparedModal(AddTask)
+        showModal('addTaskModal')
     }
 
     onMounted(() => {
