@@ -18,21 +18,15 @@
                 </div>
                 <div class="col-4 p-3 d-flex flex-column">
                     <h4 class="mb-3">
-                        <svg width="28" height="28" class="me-3">
-                            <use xlink:href="#friends"></use>
-                        </svg>
+                        <i class="bi bi-person-fill-check me-3 fs-3 text-success" />
                         Друзья - {{ specificAccount?.friends_count }}
                     </h4>
                     <h4 class="mb-3">
-                        <svg width="28" height="28" class="me-3">
-                            <use xlink:href="#followers"></use>
-                        </svg>
+                        <i class="bi bi-person-heart me-3 fs-3 text-danger" />
                         Подписчики - {{ specificAccount?.followers_count }}
                     </h4>
                     <h4>
-                        <svg width="28" height="28" class="me-3">
-                            <use xlink:href="#address"></use>
-                        </svg>
+                        <i class="bi bi-buildings-fill me-3 fs-3 text-primary" />
                         Город - {{ specificAccount?.city?.title }}
                     </h4>
                 </div>

@@ -18,9 +18,7 @@
                 type="button"
                 @click="showTaskDetailsModal(task.id)"
             >
-                <svg width="16" height="16">
-                    <use xlink:href="#info"></use>
-                </svg>
+                <i class="bi bi-info-circle" />
             </button>
 
             <button class="btn btn-danger button-style" @click="props.showDeleteTaskModal(task.id)">

@@ -1,9 +1,6 @@
 <template>
     <div class="modal-header">
-        <svg width="28" height="28" class="me-2" >
-            <use xlink:href="#account"></use>
-        </svg>
-
+        <i class="bi bi-person-fill me-2 fs-3" />
         <h1 class="modal-title fs-5">{{ accountData?.first_name }} {{ accountData?.last_name }} {{ accountData?.name }}</h1>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
     </div>
@@ -38,21 +35,15 @@
                     </div>
                     <div class="col-12 d-flex flex-column">
                         <h4 class="mb-3">
-                            <svg width="28" height="28" class="me-3">
-                                <use xlink:href="#friends"></use>
-                            </svg>
+                            <i class="bi bi-person-fill-check me-3 fs-3 text-success" />
                             Друзья - {{ accountData?.friends_count }}
                         </h4>
                         <h4 class="mb-3">
-                            <svg width="28" height="28" class="me-3">
-                                <use xlink:href="#followers"></use>
-                            </svg>
+                            <i class="bi bi-person-heart me-3 fs-3 text-danger" />
                             Подписчики - {{ accountData?.followers_count }}
                         </h4>
                         <h4>
-                            <svg width="28" height="28" class="me-3">
-                                <use xlink:href="#address"></use>
-                            </svg>
+                            <i class="bi bi-buildings-fill me-3 fs-3 text-primary" />
                             Город - {{ accountData?.city?.title }}
                         </h4>
                     </div>

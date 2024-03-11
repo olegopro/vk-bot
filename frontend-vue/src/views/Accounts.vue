@@ -58,9 +58,7 @@
                             <td>
                                 <router-link custom :to="{name: 'Account', params: {id: account.account_id}}" v-slot="{navigate}">
                                     <a class="btn btn-primary me-2 button-style" @click="navigate">
-                                        <svg width="16" height="16">
-                                            <use xlink:href="#info"></use>
-                                        </svg>
+                                        <i class="bi bi-info-circle" />
                                     </a>
                                 </router-link>
 
@@ -71,9 +69,7 @@
                                     type="button"
                                     @click="getLogin(account.screen_name, account.account_id)"
                                 >
-                                    <svg width="16" height="16">
-                                        <use xlink:href="#delete"></use>
-                                    </svg>
+                                    <i class="bi bi-trash3" />
                                 </button>
                             </td>
 
