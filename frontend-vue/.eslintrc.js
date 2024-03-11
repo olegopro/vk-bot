@@ -1,15 +1,27 @@
 module.exports = {
     root: true,
+
     env: {
         node: true
     },
+
     extends: [
         'plugin:vue/vue3-essential',
-        '@vue/standard'
+        '@vue/standard',
+        // Это нужно поддержки TypeScript в ESLint
+        'plugin:@typescript-eslint/recommended',
+        // При использовании TypeScript с Vue
+        '@vue/typescript/recommended'
+
+        // '@vue/typescript'
     ],
+
     parserOptions: {
-        parser: '@babel/eslint-parser'
+        parser: '@typescript-eslint/parser',
+        ecmaVersion: 2020,
+        sourceType: 'module'
     },
+
     rules: {
         'no-console': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
         'no-debugger': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
@@ -22,6 +34,18 @@ module.exports = {
         'no-return-assign': 'off',
         'quote-props': 'off',
         'no-unused-vars': 'warn',
-        'no-mixed-spaces-and-tabs': 'off'
-    }
+        'no-mixed-spaces-and-tabs': 'off',
+        // Это правило помогает избежать ошибок, связанных с неиспользованными переменными в TypeScript
+        '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }]
+    },
+
+    // Добавляем overrides для того, чтобы сохранить совместимость с существующим JavaScript кодом
+    overrides: [
+        {
+            files: ['*.js'], // Определяем для каких файлов будут применяться эти настройки
+            parserOptions: {
+                parser: '@babel/eslint-parser'
+            }
+        }
+    ]
 }
