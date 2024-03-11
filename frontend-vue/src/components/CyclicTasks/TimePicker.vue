@@ -138,7 +138,9 @@
         thead {
             tr {
                 th {
+                    position: relative;
                     padding: 8px;
+                    background-color: white;
                     border-top: 1px solid #ddd;
                     border-right: 1px solid #ddd;
                     border-bottom: 1px solid #ddd;
@@ -148,7 +150,17 @@
                     cursor: pointer;
                     user-select: none;
 
+                    &::before {
+                        content: '';
+                        position: absolute;
+                        top: -1px;
+                        left: 0;
+                        right: 0;
+                        border-top: 1px solid #ddd;
+                    }
+
                     &:first-child {
+                        border-top-left-radius: 0;
                         border-left: none;
 
                         i {
@@ -159,6 +171,7 @@
                     }
 
                     &:last-child {
+                        border-top-right-radius: 0;
                         border-right: none;
                     }
                 }
