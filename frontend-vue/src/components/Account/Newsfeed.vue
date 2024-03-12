@@ -19,7 +19,7 @@
                     data-bs-toggle="modal"
                     type="button"
                     @click="ownerInfo(post.source_id, index)"
-                    @mouseover="ownerInfo(post.source_id, index); showDetailedInfoBtn(index)"
+                    @mouseover="ownerInfo(post.source_id, index); toggleDetailedInfoBtn(index, true)"
                     @mouseleave="hideDetailedInfo"
             >
                 <i class="bi bi-info-circle" v-if="!post.source_id"></i> <!-- стандартная иконка информации -->
@@ -40,8 +40,8 @@
             <div class="content-wrapper"
                  :style="post.likes.user_likes === 1 ? {'box-shadow': '0 0 0 2px var(--bs-danger)'} : {}"
                  :class="{'radial-red-background': post.likes.user_likes !== 1 }"
-                 @mouseover="showDetailedInfoBtn(index)"
-                 @mouseleave="hideDetailedInfoBtn"
+                 @mouseover="toggleDetailedInfoBtn(index, true)"
+                 @mouseleave="toggleDetailedInfoBtn(index, false)"
             >
                 <img class="card-img-top"
                      :style="post.likes.user_likes !== 1
@@ -151,9 +151,7 @@
 
     const hideDetailedInfo = () => (showDetailedInfo.value = false)
 
-    const showDetailedInfoBtn = index => (showDetailedInfoButton.value = index)
-
-    const hideDetailedInfoBtn = () => (showDetailedInfoButton.value = null)
+    const toggleDetailedInfoBtn = (index, show) => showDetailedInfoButton.value = show ? index : null
 
     const getAdjustedQualityImageUrl = (sizes) => {
         // Определения размеров изображений:
