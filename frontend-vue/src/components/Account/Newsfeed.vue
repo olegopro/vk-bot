@@ -177,23 +177,16 @@
         return foundSizeType ? sizes.find(size => size.type === foundSizeType).url : ''
     }
 
-    const ownerInfo = async (accountId, index) => {
+    const ownerInfo = (accountId, index) => {
         showDetailedInfo.value = index
         ownerDataById.value = null
 
-        if (accountId > 0) {
-            await accountStore.fetchOwnerData(accountId, accountId).then(() => {
-                ownerDataById.value = accountStore.getOwnerDataById(accountId)
-            })
-                .catch(({ response }) => showErrorNotification(response.data.message))
-        }
+        const fetchData = accountId > 0
+            ? accountStore.fetchOwnerData(accountId, accountId)
+            : accountStore.groupData(accountId)
 
-        if (accountId < 0) {
-            await accountStore.groupData(accountId).then(() => {
-                ownerDataById.value = accountStore.getOwnerDataById(accountId)
-            })
-                .catch(data => console.log('response', data))
-        }
+        fetchData.then(() => ownerDataById.value = accountStore.getOwnerDataById(accountId))
+            .catch(({ response }) => showErrorNotification(response.data.message))
     }
 
     const changeColumnClass = async (newClass) => {
