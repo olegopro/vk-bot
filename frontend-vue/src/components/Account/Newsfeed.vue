@@ -114,7 +114,7 @@
 <script setup>
     import { onMounted, ref } from 'vue'
     import { useAccountStore } from '@/stores/AccountStore'
-    import { showErrorNotification } from '../../helpers/notyfHelper'
+    import { showErrorNotification } from '@/helpers/notyfHelper'
     import OwnerDetails from './Modals/OwnerDetails.vue'
     import { useRoute } from 'vue-router'
 
@@ -156,40 +156,25 @@
     const hideDetailedInfoBtn = () => (showDetailedInfoButton.value = null)
 
     const getAdjustedQualityImageUrl = (sizes) => {
-        let requiredType
-
-        switch (currentColumnClass.value) {
-            case 'col-6':
-                requiredType = 'w' // оригинал
-                break
-            case 'col-4':
-                requiredType = 'z' // выше среднего
-                break
-            case 'col-3':
-                requiredType = 'x' // ниже среднего
-                break
-            default:
-                requiredType = 'm' // низкое качество (просто на случай, если не подойдет ни одно из условий)
+        // Определения размеров изображений:
+        // w - оригинал
+        // z - выше среднего
+        // x - ниже среднего
+        // m - низкое качество
+        const sizeMapping = {
+            'col-6': ['w', 'z', 'x', 'm'], // Приоритеты размера для колонок шириной 6
+            'col-4': ['z', 'x', 'm', 'w'], // Приоритеты размера для колонок шириной 4
+            'col-3': ['x', 'm', 'z', 'w'] // Приоритеты размера для колонок шириной 3
         }
 
-        let sizeObj = sizes.find(size => size.type === requiredType)
+        // Получение массива предпочтительных размеров на основе текущего класса колонок
+        const preferredSizes = sizeMapping[currentColumnClass.value] || ['m', 'x', 'z', 'w']
 
-        // Если sizeObj не найден, пытаемся найти размер 'z'
-        if (!sizeObj) {
-            sizeObj = sizes.find(size => size.type === 'z')
-        }
+        // Поиск первого доступного предпочтительного размера изображения
+        const foundSizeType = preferredSizes.find(sizeType => sizes.some(size => size.type === sizeType))
 
-        // Если sizeObj не найден, пытаемся найти размер 'x'
-        if (!sizeObj) {
-            sizeObj = sizes.find(size => size.type === 'x')
-        }
-
-        // Если sizeObj не найден, пытаемся найти размер 'm'
-        if (!sizeObj) {
-            sizeObj = sizes.find(size => size.type === 'm')
-        }
-
-        return sizeObj ? sizeObj.url : ''
+        // Возвращение URL изображения, если найден подходящий размер, иначе пустая строка
+        return foundSizeType ? sizes.find(size => size.type === foundSizeType).url : ''
     }
 
     const ownerInfo = async (accountId, index) => {
@@ -210,17 +195,6 @@
                 .catch(data => console.log('response', data))
         }
     }
-
-    // const changeColumnClass = async (newClass) => {
-    //     accountStore.accountNewsFeed = []
-    //     accountStore.nextFrom = null
-    //     accountStore.previousNextFrom = null
-    //
-    //     showNewsfeed.value = false
-    //     currentColumnClass.value = newClass
-    //     await accountStore.fetchAccountNewsFeed(userID.value)
-    //         .then(() => (showNewsfeed.value = true))
-    // }
 
     const changeColumnClass = async (newClass) => {
         // Очищаем текущую ленту новостей и сбрасываем состояния пагинации
@@ -251,7 +225,7 @@
 
         // Выполняем асинхронный запрос на получение данных для новостной ленты
         await accountStore.fetchAccountNewsFeed(userID.value)
-                .then(() => (showNewsfeed.value = true))
+            .then(() => (showNewsfeed.value = true))
     }
 
     const loadMore = async () => {
