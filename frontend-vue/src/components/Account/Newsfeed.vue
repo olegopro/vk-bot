@@ -1,9 +1,9 @@
 <template>
     <div class="row justify-content-end mt-5 mb-3">
         <div class="col-3 d-flex justify-content-end change-grid-columns">
-            <i @click="changeColumnClass('col-6')" :class="[currentColumnClass === 'col-6' ? 'bi-2-square-fill pe-none' : 'bi-2-square', 'bi', 'me-2']" style="font-size: 2rem;" />
-            <i @click="changeColumnClass('col-4')" :class="[currentColumnClass === 'col-4' ? 'bi-3-square-fill pe-none' : 'bi-3-square', 'bi', 'me-2']" style="font-size: 2rem;" />
-            <i @click="changeColumnClass('col-3')" :class="[currentColumnClass === 'col-3' ? 'bi-4-square-fill pe-none' : 'bi-4-square', 'bi']" style="font-size: 2rem;" />
+            <i @click="changeColumnClass('col-6')" :class="[columnSettings.columnClass === 'col-6' ? 'bi-2-square-fill pe-none' : 'bi-2-square', 'bi', 'me-2']" style="font-size: 2rem;" />
+            <i @click="changeColumnClass('col-4')" :class="[columnSettings.columnClass === 'col-4' ? 'bi-3-square-fill pe-none' : 'bi-3-square', 'bi', 'me-2']" style="font-size: 2rem;" />
+            <i @click="changeColumnClass('col-3')" :class="[columnSettings.columnClass === 'col-3' ? 'bi-4-square-fill pe-none' : 'bi-4-square', 'bi']" style="font-size: 2rem;" />
         </div>
     </div>
 
@@ -51,46 +51,48 @@
                      :src="getAdjustedQualityImageUrl(post.attachments[0].photo.sizes)"
                      @click="post.likes.user_likes !== 1 && addLikeToPost(post.owner_id, post.post_id, index)"
                 />
+
                 <div class="detailed-info" :class="{ 'opacity-100': showDetailedInfo === index }">
-                    <p class="mb-1 fs-4" v-if="ownerDataById?.first_name">
+                    <p class="mb-1" :class="columnSettings.fontClass" v-if="ownerDataById?.first_name">
                         <b>{{ ownerDataById?.first_name }} {{ ownerDataById?.last_name }}</b>
                     </p>
 
-                    <p class="mb-1 fs-4" v-if="ownerDataById?.name">
+                    <p class="mb-1" :class="columnSettings.fontClass" v-if="ownerDataById?.name">
                         <b>{{ ownerDataById?.name }}</b>
                     </p>
-                    <p class="mb-1 fs-4" v-if="ownerDataById?.description">
+                    <p class="mb-1" :class="columnSettings.fontClass" v-if="ownerDataById?.description">
                         <b>Описание:</b> {{ ownerDataById?.description }}
                     </p>
 
-                    <p class="mb-1" v-if="ownerDataById?.last_seen?.time">
+                    <p class="mb-1" :class="columnSettings.fontClass" v-if="ownerDataById?.last_seen?.time">
                         <b>Онлайн: </b> {{ date(ownerDataById?.last_seen?.time) }}
                     </p>
 
-                    <p class="mb-1" v-if="ownerDataById?.status">
+                    <p class="mb-1" :class="columnSettings.fontClass" v-if="ownerDataById?.status">
                         <b>Статус:</b> {{ ownerDataById?.status }}
                     </p>
 
-                    <p class="mb-1" v-if="ownerDataById?.country?.title">
+                    <p class="mb-1" :class="columnSettings.fontClass" v-if="ownerDataById?.country?.title">
                         <b>Страна:</b> {{ ownerDataById?.country?.title }}
                     </p>
 
-                    <p class="mb-1" v-if="ownerDataById?.city?.title">
+                    <p class="mb-1" :class="columnSettings.fontClass" v-if="ownerDataById?.city?.title">
                         <b>Город:</b> {{ ownerDataById?.city?.title }}
                     </p>
 
-                    <p class="mb-1" v-if="ownerDataById?.friends_count">
+                    <p class="mb-1" :class="columnSettings.fontClass" v-if="ownerDataById?.friends_count">
                         <b>Друзья:</b> {{ ownerDataById?.friends_count }}
                     </p>
 
-                    <p class="mb-1" v-if="ownerDataById?.followers_count">
+                    <p class="mb-1" :class="columnSettings.fontClass" v-if="ownerDataById?.followers_count">
                         <b>Подписчики:</b> {{ ownerDataById?.followers_count }}
                     </p>
 
-                    <p class="mb-1" v-if="ownerDataById?.members_count">
+                    <p class="mb-1" :class="columnSettings.fontClass" v-if="ownerDataById?.members_count">
                         <b>Подписчики:</b> {{ ownerDataById?.members_count }}
                     </p>
                 </div>
+
             </div>
         </div>
     </div>
@@ -128,6 +130,10 @@
     const showDetailedInfo = ref(null)
     const showDetailedInfoButton = ref(null)
     const likedPostIndex = ref(null)
+    const columnSettings = ref({
+        columnClass: 'col-4',
+        fontClass: 'fs-4'
+    })
 
     const addLikeToPost = async (ownerId, itemId, index) => {
         likedPostIndex.value = index
@@ -205,15 +211,47 @@
         }
     }
 
+    // const changeColumnClass = async (newClass) => {
+    //     accountStore.accountNewsFeed = []
+    //     accountStore.nextFrom = null
+    //     accountStore.previousNextFrom = null
+    //
+    //     showNewsfeed.value = false
+    //     currentColumnClass.value = newClass
+    //     await accountStore.fetchAccountNewsFeed(userID.value)
+    //         .then(() => (showNewsfeed.value = true))
+    // }
+
     const changeColumnClass = async (newClass) => {
+        // Очищаем текущую ленту новостей и сбрасываем состояния пагинации
         accountStore.accountNewsFeed = []
         accountStore.nextFrom = null
         accountStore.previousNextFrom = null
 
+        // Скрываем ленту новостей во время загрузки
         showNewsfeed.value = false
+
+        // Обновляем текущий класс колонки
         currentColumnClass.value = newClass
+
+        // Определяем класс шрифта на основе выбранного размера колонки
+        switch (newClass) {
+            case 'col-6':
+                columnSettings.value.fontClass = 'fs-1' // Большие колонки -> Меньший шрифт
+                break
+            case 'col-4':
+                columnSettings.value.fontClass = 'fs-4'
+                break
+            case 'col-3':
+                columnSettings.value.fontClass = 'fs-5' // Меньшие колонки -> Больший шрифт
+                break
+            default:
+                columnSettings.value.fontClass = 'fs-4' // Значение по умолчанию
+        }
+
+        // Выполняем асинхронный запрос на получение данных для новостной ленты
         await accountStore.fetchAccountNewsFeed(userID.value)
-            .then(() => (showNewsfeed.value = true))
+                .then(() => (showNewsfeed.value = true))
     }
 
     const loadMore = async () => {
