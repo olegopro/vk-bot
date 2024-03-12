@@ -123,7 +123,7 @@
     const selectedAccount = ref({ login: '', id: '' })
     const modalComponent = shallowRef(null)
     const observer = ref(null)
-    const currentPage = ref(0)
+    const currentPage = ref(1)
 
     provide('closeModal', closeModal)
 
@@ -133,7 +133,7 @@
 
     const debouncedFetchAccounts = debounce((page) => {
         accountsStore.isLoading = true
-        accountsStore.fetchAccounts(page)
+        accountsStore.fetchAccounts(page).then(() => currentPage.value++)
     }, 500, {
         'leading': true, // Вызываться в начале периода ожидания
         'trailing': false // Дополнительный вызов в конце периода не требуется
@@ -161,7 +161,6 @@
                     entry.isIntersecting &&
                     accountsStore.accounts.length !== accountsStore.pagination.total
                 ) {
-                    currentPage.value++
                     debouncedFetchAccounts(currentPage.value)
                 }
             })
