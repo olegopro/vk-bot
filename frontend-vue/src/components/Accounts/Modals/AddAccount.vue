@@ -1,5 +1,5 @@
 <template>
-    <div class="modal fade" id="addAccount" tabindex="-1" aria-labelledby="Add account" style="display: none;" aria-hidden="true">
+    <div class="modal fade" id="addAccountModal" tabindex="-1" aria-labelledby="Add account" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <form @submit.prevent="addAccount" class="modal-content">
                 <div class="modal-header">
@@ -30,29 +30,23 @@
 </template>
 
 <script setup>
-    import { computed, onMounted, ref } from 'vue'
-    import { useAccountsStore } from '../../../stores/AccountsStore'
-    import { Modal } from 'bootstrap'
+    import { computed, inject, ref } from 'vue'
+    import { useAccountsStore } from '@/stores/AccountsStore'
 
     const accountsStore = useAccountsStore()
     const accessToken = ref(null)
-    const modal = ref(null)
 
-    const addAccount = async () => {
-        await accountsStore.addAccount(accessToken.value)
-            .then(() => modal.value.hide())
-            .catch(error => {
-                console.log('error', error)
-                disableSubmit.value = true
-            })
+    const closeModal = inject('closeModal')
+
+    const addAccount = () => {
+        accountsStore.addAccount(accessToken.value)
+            .then(() => modalHide())
+            .catch(() => disableSubmit.value = true)
     }
 
-    const modalHide = () => modal.value.hide()
+    const modalHide = () => closeModal('addAccountModal')
 
     const disableSubmit = computed(() => {
         return !(accessToken.value && accessToken.value.length > 3)
     })
-
-    onMounted(() => (modal.value = new Modal(document.getElementById('addAccount'))))
-
 </script>

@@ -1,5 +1,5 @@
 <template>
-    <div class="modal fade" id="deleteAccount" tabindex="-1" aria-labelledby="Delete account" style="display: none;" aria-hidden="true">
+    <div class="modal fade" id="deleteAccountModal" tabindex="-1" aria-labelledby="Delete account" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <form @submit.prevent="deleteAccount" class="modal-content">
                 <div class="modal-header">
@@ -11,7 +11,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
-                    <button type="submit" data-bs-dismiss="modal" class="btn btn-danger">Удалить</button>
+                    <button type="submit" class="btn btn-danger">Удалить</button>
                 </div>
             </form>
         </div>
@@ -19,12 +19,14 @@
 </template>
 
 <script setup>
-    import { defineProps } from 'vue'
-    import { useAccountsStore } from '../../../stores/AccountsStore'
+    import { defineProps, inject } from 'vue'
+    import { useAccountsStore } from '@/stores/AccountsStore'
+
+    const closeModal = inject('closeModal')
 
     const accountsStore = useAccountsStore()
+    const props = defineProps(['login', 'accountId'])
 
-    const props = defineProps(['login', 'id'])
-
-    const deleteAccount = () => accountsStore.deleteAccount(props.id)
+    const modalHide = () => closeModal('deleteAccountModal')
+    const deleteAccount = () => accountsStore.deleteAccount(props.id).then(() => modalHide())
 </script>

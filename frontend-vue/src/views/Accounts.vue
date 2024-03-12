@@ -27,9 +27,9 @@
 
         <div class="col">
             <button class="btn btn-success btn-action float-end"
-                    data-bs-target="#addAccount"
-                    data-bs-toggle="modal"
-                    type="button">
+                    type="button"
+                    @click="showAddAccountModal"
+            >
                 Добавить аккаунт
             </button>
         </div>
@@ -64,10 +64,8 @@
 
                                 <button
                                     class="btn btn-danger button-style"
-                                    data-bs-target="#deleteAccount"
-                                    data-bs-toggle="modal"
                                     type="button"
-                                    @click="getLogin(account.screen_name, account.account_id)"
+                                    @click="showDeleteAccountModal(account.screen_name, account.account_id)"
                                 >
                                     <i class="bi bi-trash3" />
                                 </button>
@@ -101,27 +99,33 @@
     </div>
 
     <Teleport to="body">
-        <DeleteAccount :login="selectedAccount.login" :id="selectedAccount.id" />
-        <AddAccount />
+        <component v-if="isOpen"
+                   @mounted="showModal"
+                   :is="modalComponent"
+                   :login="selectedAccount.login"
+                   :accountId="selectedAccount.id"
+        />
     </Teleport>
 
 </template>
 
 <script setup>
     import { useAccountsStore } from '@/stores/AccountsStore'
-    import DeleteAccount from '../components/Accounts/Modals/DeleteAccount.vue'
     import AddAccount from '../components/Accounts/Modals/AddAccount.vue'
-    import { computed, onMounted, onUnmounted, ref } from 'vue'
+    import DeleteAccount from '../components/Accounts/Modals/DeleteAccount.vue'
+    import { computed, onMounted, onUnmounted, provide, ref, shallowRef } from 'vue'
     import { debounce } from 'lodash'
+    import { useModal } from '@/composables/useModal.ts'
+
+    const { isOpen, preparedModal, showModal, closeModal } = useModal()
 
     const accountsStore = useAccountsStore()
     const selectedAccount = ref({ login: '', id: '' })
+    const modalComponent = shallowRef(null)
     const observer = ref(null)
     const currentPage = ref(0)
 
-    const getLogin = (login, id) => {
-        selectedAccount.value = { login, id }
-    }
+    provide('closeModal', closeModal)
 
     const isTotalMatched = computed(() => {
         return accountsStore.pagination.total === accountsStore.accounts.length
@@ -135,13 +139,24 @@
         'trailing': false // Дополнительный вызов в конце периода не требуется
     })
 
+    const showAddAccountModal = () => {
+        modalComponent.value = preparedModal(AddAccount)
+        showModal('addAccountModal')
+    }
+
+    const showDeleteAccountModal = (login, id) => {
+        selectedAccount.value = { login, id }
+        modalComponent.value = preparedModal(DeleteAccount)
+        showModal('deleteAccountModal')
+    }
+
     onMounted(() => {
         console.log('Accounts onMounted')
         accountsStore.accounts = []
+
         // Устанавливаем observer
         observer.value = new IntersectionObserver(entries => {
             entries.forEach(entry => {
-                console.log(' observer.value = new IntersectionObserver(entries => {')
                 if (
                     entry.isIntersecting &&
                     accountsStore.accounts.length !== accountsStore.pagination.total

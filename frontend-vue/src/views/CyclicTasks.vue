@@ -123,7 +123,7 @@
     import DeleteAllCyclicTasks from '../components/CyclicTasks/Modals/DeleteAllCyclicTasks.vue'
     import router from '../router'
     import { debounce } from 'lodash'
-    import { useModal } from '@/composables/useModal'
+    import { useModal } from '@/composables/useModal.ts'
 
     const { isOpen, preparedModal, showModal, closeModal } = useModal()
 
