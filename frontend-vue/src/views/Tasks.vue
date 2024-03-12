@@ -54,7 +54,8 @@
                     <thead>
                         <tr>
                             <th scope="col" style="width: 110px;">
-                                {{ tasksStore.totalTasksCount ? tasksStore.totalTasksCount : 0 }} / {{ tasksStore.tasks.length }}
+                                <!--{{ tasksStore.totalTasksCount ? tasksStore.totalTasksCount : 0 }} / {{ tasksStore.tasks.length }}-->
+                                {{ totalTasksByStatus ? totalTasksByStatus: 0 }} / {{ tasksStore.tasks.length }}
                             </th>
                             <th scope="col" style="width: 350px;">Имя и фамилия</th>
                             <th scope="col" style="width: 100px;">Статус</th>
@@ -108,7 +109,6 @@
                    :selectedAccountId="selectedAccountId"
                    :taskData="taskDetailsData"
                    :accountData="accountDetailsData"
-
         />
     </Teleport>
 
@@ -116,7 +116,7 @@
 
 <script setup>
     import { useRoute, useRouter } from 'vue-router'
-    import { onMounted, onUnmounted, provide, ref, shallowRef, watch } from 'vue'
+    import { onMounted, onUnmounted, provide, ref, shallowRef, watch, computed } from 'vue'
     import { useTasksStore } from '@/stores/TasksStore'
     import { useAccountStore } from '@/stores/AccountStore'
     import { useAccountsStore } from '@/stores/AccountsStore'
@@ -157,11 +157,12 @@
                 entries.forEach(entry => {
                     if (
                         entry.isIntersecting &&
-                        tasksStore.totalTasksCount !== tasksStore.tasks.length
+                        totalTasksByStatus.value !== tasksStore.tasks.length
                     ) {
                         debouncedFetchTasks(currentStatus.value, selectedAccountId.value, currentPage.value)
                     }
                 }))
+
             observer.value.observe(document.querySelector('.load-more-trigger'))
         }
     }, { immediate: false })
@@ -228,6 +229,26 @@
         router.push({ name: 'Tasks', params: { status, accountId } })
         debouncedFetchTasks(status, accountId)
     }
+
+    const totalTasksByStatus = computed(() => {
+        // текущий статус задачи, полученный из параметров роута
+        const status = currentStatus.value
+
+        // Возвращаем значение в зависимости от статуса
+        switch (status) {
+            case 'queued':
+                return tasksStore.totalTasksQueued
+
+            case 'failed':
+                return tasksStore.totalTasksFailed
+
+            case 'done':
+                return tasksStore.totalTasksDone
+
+            default:
+                return tasksStore.totalTasksCount
+        }
+    })
 
     const showAccountDetailsModal = (accountId, ownerId) => {
         accountDetailsData.value = null
