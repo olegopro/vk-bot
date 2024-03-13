@@ -266,7 +266,8 @@
     const showTaskDetailsModal = async newTaskId => {
         taskDetailsData.value = null
 
-        await tasksStore.taskDetails(newTaskId).then(response => {
+        await tasksStore.fetchTaskDetails(newTaskId).then(response => {
+            console.log('response', response)
             taskDetailsData.value = { ...response, taskId: newTaskId }
             modalComponent.value = preparedModal(TaskDetails)
             showModal('taskDetailsModal')

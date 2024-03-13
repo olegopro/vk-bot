@@ -10,7 +10,8 @@ export const useTasksStore = defineStore('tasks', {
         totalTasksFailed: null,
         totalTasksDone: null,
         taskCountByStatus: null,
-        isLoading: false
+        isLoading: false,
+        taskDetails: null
     }),
 
     actions: {
@@ -46,9 +47,9 @@ export const useTasksStore = defineStore('tasks', {
         //     return data.data
         // },
 
-        async taskDetails(taskId) {
+        async fetchTaskDetails(taskId) {
             await axios.post(`http://localhost:8080/api/tasks/task-info/${taskId}`)
-                .then(({ data }) => data.data)
+                .then(({ data }) => this.taskDetails = data.data)
                 .catch(error => {
                     throw error
                 })
@@ -67,7 +68,7 @@ export const useTasksStore = defineStore('tasks', {
         async deleteLike(taskId) {
             await axios.delete(`http://localhost:8080/api/tasks/delete-like/${taskId}`)
                 .then(({ data }) => {
-                    this.taskDetails(taskId)
+                    this.fetchTaskDetails(taskId)
                     showSuccessNotification(data.message)
                 })
         },
