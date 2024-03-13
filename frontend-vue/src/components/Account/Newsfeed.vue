@@ -5,7 +5,6 @@
                v-for="option in columnOptions"
                :key="option.class"
                @click="changeColumnClass(option.class)"
-               style="font-size: 2rem;"
             />
         </div>
     </div>
@@ -50,46 +49,48 @@
                      alt=""
                 />
 
-                <div class="detailed-info" :class="{ 'opacity-100': showDetailedInfo === index }">
-                    <p class="mb-1" :class="columnSettings.fontClass" v-if="ownerDataById?.first_name">
-                        <b>{{ ownerDataById?.first_name }} {{ ownerDataById?.last_name }}</b>
-                    </p>
+                <PerfectScrollbar :class="{'pe-auto': showDetailedInfo === index }" class="ps-detailed-info">
+                    <div class="detailed-info" :class="{ 'opacity-100': showDetailedInfo === index }">
+                        <p class="mb-1" :class="columnSettings.fontClass" v-if="ownerDataById?.first_name">
+                            <b>{{ ownerDataById?.first_name }} {{ ownerDataById?.last_name }}</b>
+                        </p>
 
-                    <p class="mb-1" :class="columnSettings.fontClass" v-if="ownerDataById?.name">
-                        <b>{{ ownerDataById?.name }}</b>
-                    </p>
-                    <p class="mb-1" :class="columnSettings.fontClass" v-if="ownerDataById?.description">
-                        <b>Описание:</b> {{ ownerDataById?.description }}
-                    </p>
+                        <p class="mb-1" :class="columnSettings.fontClass" v-if="ownerDataById?.name">
+                            <b>{{ ownerDataById?.name }}</b>
+                        </p>
+                        <p class="mb-1" :class="columnSettings.fontClass" v-if="ownerDataById?.description">
+                            <b>Описание:</b> {{ ownerDataById?.description }}
+                        </p>
 
-                    <p class="mb-1" :class="columnSettings.fontClass" v-if="ownerDataById?.last_seen?.time">
-                        <b>Онлайн: </b> {{ date(ownerDataById?.last_seen?.time) }}
-                    </p>
+                        <p class="mb-1" :class="columnSettings.fontClass" v-if="ownerDataById?.last_seen?.time">
+                            <b>Онлайн: </b> {{ date(ownerDataById?.last_seen?.time) }}
+                        </p>
 
-                    <p class="mb-1" :class="columnSettings.fontClass" v-if="ownerDataById?.status">
-                        <b>Статус:</b> {{ ownerDataById?.status }}
-                    </p>
+                        <p class="mb-1" :class="columnSettings.fontClass" v-if="ownerDataById?.status">
+                            <b>Статус:</b> {{ ownerDataById?.status }}
+                        </p>
 
-                    <p class="mb-1" :class="columnSettings.fontClass" v-if="ownerDataById?.country?.title">
-                        <b>Страна:</b> {{ ownerDataById?.country?.title }}
-                    </p>
+                        <p class="mb-1" :class="columnSettings.fontClass" v-if="ownerDataById?.country?.title">
+                            <b>Страна:</b> {{ ownerDataById?.country?.title }}
+                        </p>
 
-                    <p class="mb-1" :class="columnSettings.fontClass" v-if="ownerDataById?.city?.title">
-                        <b>Город:</b> {{ ownerDataById?.city?.title }}
-                    </p>
+                        <p class="mb-1" :class="columnSettings.fontClass" v-if="ownerDataById?.city?.title">
+                            <b>Город:</b> {{ ownerDataById?.city?.title }}
+                        </p>
 
-                    <p class="mb-1" :class="columnSettings.fontClass" v-if="ownerDataById?.friends_count">
-                        <b>Друзья:</b> {{ ownerDataById?.friends_count }}
-                    </p>
+                        <p class="mb-1" :class="columnSettings.fontClass" v-if="ownerDataById?.friends_count">
+                            <b>Друзья:</b> {{ ownerDataById?.friends_count }}
+                        </p>
 
-                    <p class="mb-1" :class="columnSettings.fontClass" v-if="ownerDataById?.followers_count">
-                        <b>Подписчики:</b> {{ ownerDataById?.followers_count }}
-                    </p>
+                        <p class="mb-1" :class="columnSettings.fontClass" v-if="ownerDataById?.followers_count">
+                            <b>Подписчики:</b> {{ ownerDataById?.followers_count }}
+                        </p>
 
-                    <p class="mb-1" :class="columnSettings.fontClass" v-if="ownerDataById?.members_count">
-                        <b>Подписчики:</b> {{ ownerDataById?.members_count }}
-                    </p>
-                </div>
+                        <p class="mb-1" :class="columnSettings.fontClass" v-if="ownerDataById?.members_count">
+                            <b>Подписчики:</b> {{ ownerDataById?.members_count }}
+                        </p>
+                    </div>
+                </PerfectScrollbar>
 
             </div>
         </div>
@@ -197,7 +198,7 @@
         ownerDataById.value = null
 
         const fetchData = accountId > 0
-            ? accountStore.fetchOwnerData(accountId, accountId)
+            ? accountStore.fetchOwnerData(userId.value, accountId)
             : accountStore.fetchGroupData(accountId)
 
         fetchData.then(() => ownerDataById.value = accountStore.getOwnerDataById(accountId))
@@ -286,6 +287,7 @@
     .change-grid-columns {
         i {
             cursor: pointer;
+            font-size: 2rem;
         }
     }
 
@@ -373,7 +375,6 @@
                     right: 0;
                     bottom: 0;
                     box-shadow: 0 4px 18px 6px rgba(0, 4, 255, 0.24);
-                    //background: radial-gradient(circle at center, transparent, rgba(52, 0, 0, 0.16) 100%);
                     pointer-events: none;
                     opacity: 0;
                     transition: all 0.2s ease-out;
@@ -392,28 +393,35 @@
                 border-radius: 6px;
             }
 
-            .detailed-info {
+            .ps {
                 position: absolute;
                 top: 0;
                 left: 0;
                 right: 0;
                 bottom: 0;
-                padding: 2.4rem 2.6rem 2.6rem;
-                color: white;
-                background: rgba(0, 0, 0, 0.65);
+                pointer-events: none;
                 border-radius: 6px;
-                opacity: 0;
-                //pointer-events: none;
-                transition: opacity .2s ease;
-                font-size: 1.3rem;
-                overflow: auto;
+
+                .detailed-info {
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    right: 0;
+                    bottom: 0;
+                    height: fit-content;
+                    min-height: 100%;
+                    padding: 2.4rem 2.6rem 2.6rem;
+                    color: white;
+                    opacity: 0;
+                    background: rgba(0, 0, 0, 0.65);
+                    transition: opacity .2s ease;
+                    font-size: 1.3rem;
+                }
             }
         }
-
     }
 
     #loader {
-        //margin-top: -150vh;
         transition: 0.3s;
 
         &:before {

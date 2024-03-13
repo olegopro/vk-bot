@@ -57,6 +57,24 @@
             width: 6px !important;
         }
     }
+
+    &.ps-detailed-info {
+        .ps__rail-y {
+            margin-top: 6px !important;
+            margin-bottom: 6px !important;
+            margin-right: 2px !important;
+            background-color: transparent !important;
+
+            &.ps--clicking {
+                background-color: transparent !important;
+            }
+        }
+
+        .ps__thumb-y {
+            min-height: 0.5rem !important;
+            width: 2px !important;
+        }
+    }
 }
 
 
