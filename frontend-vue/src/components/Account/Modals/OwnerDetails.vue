@@ -3,58 +3,43 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
 
-                <Account
-                    v-if="ownerType === 'account'"
-                    :accountData="ownerData"
-                />
+                <Account v-if="ownerType === 'account'" :accountData="ownerData" />
+                <Group v-if="ownerType === 'group'" :groupData="ownerData" />
 
-                <Group
-                    v-if="ownerType === 'group'"
-                    :groupData="ownerData"
-                />
+                <!-- Добавленный modal-footer -->
+                <div class="modal-footer">
+                    <slot name="modal-footer">
+                        <!-- Содержимое по умолчанию для слота modal-footer, если вдруг потребители компонента не предоставят своего -->
+                        <button class="btn btn-secondary" @click="modalHide">Закрыть</button>
+                    </slot>
+                </div>
 
             </div>
         </div>
     </div>
 </template>
 
-<script>
-    import { Modal } from 'bootstrap'
+<script setup>
+    import { computed, inject, onMounted, onUnmounted } from 'vue'
     import Account from './OwnerDetails/Account.vue'
     import Group from './OwnerDetails/Group.vue'
 
-    export default {
-        components: { Group, Account },
-        props: ['ownerData'],
+    const props = defineProps(['ownerData'])
+    const closeModal = inject('closeModal')
 
-        mounted() {
-            this.modal = new Modal(document.getElementById('ownerDetailsModal'))
-        },
-
-        computed: {
-            ownerType() {
-                switch (true) {
-                    case Boolean(this.ownerData?.type):
-                        return 'group'
-                    case Boolean(this.ownerData?.first_name):
-                        return 'account'
-                    default:
-                        return null
-                }
-            }
-        },
-
-        methods: {
-            date(timestamp) {
-                return new Date(timestamp * 1000).toLocaleTimeString('ru-RU')
-            },
-
-            modalHide() {
-                console.log('modalHide')
-                this.modal.hide()
-            }
+    const ownerType = computed(() => {
+        if (props.ownerData?.type) {
+            return 'group'
+        } else if (props.ownerData?.first_name) {
+            return 'account'
         }
-    }
+        return null
+    })
+
+    const modalHide = () => closeModal('ownerDetailsModal')
+
+    onMounted(() => console.log('OwnerDetails onMounted'))
+    onUnmounted(() => console.log('OwnerDetails onUnmounted'))
 </script>
 
 <style lang="scss" scoped>

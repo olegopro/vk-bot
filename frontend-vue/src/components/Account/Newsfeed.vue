@@ -114,7 +114,7 @@
 </template>
 
 <script setup>
-    import { onMounted, onUnmounted, ref, shallowRef } from 'vue'
+    import { onMounted, onUnmounted, provide, ref, shallowRef } from 'vue'
     import { useAccountStore } from '@/stores/AccountStore'
     import { showErrorNotification } from '@/helpers/notyfHelper'
     import OwnerDetails from './Modals/OwnerDetails.vue'
@@ -153,6 +153,8 @@
         { class: 'col-4', icon: 'bi-3-square', iconFill: 'bi-3-square-fill pe-none' },
         { class: 'col-3', icon: 'bi-4-square', iconFill: 'bi-4-square-fill pe-none' }
     ])
+
+    provide('closeModal', closeModal)
 
     const addLikeToPost = async (ownerId, itemId, index) => {
         likedPostIndex.value = index

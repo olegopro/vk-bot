@@ -30,7 +30,7 @@
                         </div>
 
                         <div class="mb-3">
-                            <p>Последняя активность - {{ this.$parent.date(accountData?.last_seen?.time) }}</p>
+                            <p>Последняя активность - {{ date(accountData?.last_seen?.time) }}</p>
                         </div>
                     </div>
                     <div class="col-12 d-flex flex-column">
@@ -52,21 +52,15 @@
             </div>
         </div>
     </div>
-
-    <div class="modal-footer">
-        <button class="btn btn-secondary" @click="this.$parent.modalHide">Закрыть</button>
-    </div>
 </template>
 
-<script>
+<script setup>
+    import { defineProps } from 'vue'
     import OnlineStatus from '../../OnlineStatus.vue'
 
-    export default {
-        components: { OnlineStatus },
-        props: ['accountData']
-    }
+    // Определение props
+    const { accountData } = defineProps(['accountData'])
+
+    // Метод для форматирования даты
+    const date = timestamp => new Date(timestamp * 1000).toLocaleTimeString('ru-RU')
 </script>
-
-<style scoped lang="scss">
-
-</style>

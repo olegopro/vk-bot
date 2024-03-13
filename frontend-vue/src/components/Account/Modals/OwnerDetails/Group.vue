@@ -43,14 +43,11 @@
             </div>
         </div>
     </div>
-
-    <div class="modal-footer">
-        <button class="btn btn-secondary" @click="this.$parent.modalHide">Закрыть</button>
-    </div>
 </template>
 
-<script>
-    export default {
-        props: ['groupData']
-    }
+<script setup>
+    import { defineProps } from 'vue'
+
+    // Определение props
+    const { groupData } = defineProps(['groupData'])
 </script>
