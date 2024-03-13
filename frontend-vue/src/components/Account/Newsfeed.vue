@@ -15,12 +15,12 @@
              :class="[currentColumnClass, 'item', 'mb-4', 'placeholder-glow']"
              v-for="(post, index) in accountStore.accountNewsFeed"
              :key="index"
+             @mouseleave="hideDetailedInfo"
         >
             <button class="account-info-btn mr-1"
                     :class="{ 'opacity-100': showDetailedInfoButton === index || likedPostIndex === index }"
                     @click="showOwnerDetailsModal(post.source_id, index)"
                     @mouseover="ownerInfo(post.source_id, index); toggleDetailedInfoBtn(index, true)"
-                    @mouseleave="hideDetailedInfo"
             >
                 <i :class="iconClasses.info" v-if="!post.source_id" />
                 <i :class="iconClasses.person" v-if="post.source_id > 0" />
@@ -198,7 +198,7 @@
 
         const fetchData = accountId > 0
             ? accountStore.fetchOwnerData(accountId, accountId)
-            : accountStore.groupData(accountId)
+            : accountStore.fetchGroupData(accountId)
 
         fetchData.then(() => ownerDataById.value = accountStore.getOwnerDataById(accountId))
             .catch(({ response }) => showErrorNotification(response.data.message))
@@ -403,10 +403,10 @@
                 background: rgba(0, 0, 0, 0.65);
                 border-radius: 6px;
                 opacity: 0;
-                pointer-events: none; // Чтобы не мешал другим элементам
+                //pointer-events: none;
                 transition: opacity .2s ease;
                 font-size: 1.3rem;
-                //overflow: auto;
+                overflow: auto;
             }
         }
 
