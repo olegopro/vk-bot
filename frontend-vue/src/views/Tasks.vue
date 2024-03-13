@@ -55,7 +55,7 @@
                         <tr>
                             <th scope="col" style="width: 110px;">
                                 <!--{{ tasksStore.totalTasksCount ? tasksStore.totalTasksCount : 0 }} / {{ tasksStore.tasks.length }}-->
-                                {{ totalTasksByStatus ? totalTasksByStatus: 0 }} / {{ tasksStore.tasks.length }}
+                                {{ totalTasksByStatus ? totalTasksByStatus : 0 }} / {{ tasksStore.tasks.length }}
                             </th>
                             <th scope="col" style="width: 350px;">Имя и фамилия</th>
                             <th scope="col" style="width: 100px;">Статус</th>
@@ -252,24 +252,26 @@
 
     const showAccountDetailsModal = (accountId, ownerId) => {
         accountDetailsData.value = null
-        modalComponent.value = preparedModal(AccountDetails)
-        showModal('accountDetailsModal')
 
-        accountStore.fetchOwnerData(accountId, ownerId)
-            .then(() => {
-                const ownerData = accountStore.getOwnerDataById(ownerId)
-                accountDetailsData.value = { ...ownerData }
-            })
-            .catch(error => showErrorNotification(error))
+        accountStore.fetchOwnerData(accountId, ownerId).then(() => {
+            const ownerData = accountStore.getOwnerDataById(ownerId)
+            accountDetailsData.value = { ...ownerData }
+
+            modalComponent.value = preparedModal(AccountDetails)
+            showModal('accountDetailsModal')
+        })
+            .catch(error => showErrorNotification(error.response.data.message))
     }
 
-    const showTaskDetailsModal = async (newTaskId) => {
+    const showTaskDetailsModal = async newTaskId => {
         taskDetailsData.value = null
-        modalComponent.value = preparedModal(TaskDetails)
-        showModal('taskDetailsModal')
 
-        const response = await tasksStore.taskDetails(newTaskId)
-        taskDetailsData.value = { ...response, taskId: newTaskId }
+        await tasksStore.taskDetails(newTaskId).then(response => {
+            taskDetailsData.value = { ...response, taskId: newTaskId }
+            modalComponent.value = preparedModal(TaskDetails)
+            showModal('taskDetailsModal')
+        })
+            .catch(error => showErrorNotification(error.response.data.message))
     }
 
     const showDeleteTaskModal = (id) => {

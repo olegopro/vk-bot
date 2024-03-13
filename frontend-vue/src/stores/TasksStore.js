@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import axios from 'axios'
-import { showSuccessNotification } from '../helpers/notyfHelper'
+import { showErrorNotification, showSuccessNotification } from '../helpers/notyfHelper'
 
 export const useTasksStore = defineStore('tasks', {
     state: () => ({
@@ -41,9 +41,17 @@ export const useTasksStore = defineStore('tasks', {
                 .finally(() => this.isLoading = false)
         },
 
+        // async taskDetails(taskId) {
+        //     const { data } = await axios.post(`http://localhost:8080/api/tasks/task-info/${taskId}`)
+        //     return data.data
+        // },
+
         async taskDetails(taskId) {
-            const { data } = await axios.post(`http://localhost:8080/api/tasks/task-info/${taskId}`)
-            return data.data
+            await axios.post(`http://localhost:8080/api/tasks/task-info/${taskId}`)
+                .then(({ data }) => data.data)
+                .catch(error => {
+                    throw error
+                })
         },
 
         async getTasksCountByStatus(status = '', accountId = '') {

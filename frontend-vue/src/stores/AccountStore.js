@@ -62,7 +62,9 @@ export const useAccountStore = defineStore('account', {
 
                     return combinedData
                 })
-                .catch(error => showErrorNotification(error.message))
+                .catch(error => {
+                    throw error
+                })
         },
 
         async fetchAccountFollowers(accountId) {
