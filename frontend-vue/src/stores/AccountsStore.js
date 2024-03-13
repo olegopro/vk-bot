@@ -14,7 +14,10 @@ export const useAccountsStore = defineStore('accounts', {
             this.isLoading = true
             await axios.post(`http://localhost:8080/api/account/all-accounts?page=${page}`)
                 .then(({ data }) => {
-                    this.accounts = [...this.accounts, ...data.data]
+                    page === 1
+                        ? this.accounts = data.data
+                        : this.accounts = [...this.accounts, ...data.data]
+
                     this.pagination = data.pagination
                     showSuccessNotification(data.message)
                 })

@@ -76,7 +76,6 @@
                 showErrorNotification(error.response.data.message)
             })
 
-        // await accountStore.getOwnerDataById(userID)
         await settingsStore.fetchSettings()
         specificAccount.value = accountStore.getOwnerDataById(userID)
     })
