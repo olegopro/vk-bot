@@ -18,10 +18,7 @@
         >
             <button class="account-info-btn mr-1"
                     :class="{ 'opacity-100': showDetailedInfoButton === index || likedPostIndex === index }"
-                    data-bs-target="#accountDetails"
-                    data-bs-toggle="modal"
-                    type="button"
-                    @click="ownerInfo(post.source_id, index)"
+                    @click="showOwnerDetailsModal(post.source_id, index)"
                     @mouseover="ownerInfo(post.source_id, index); toggleDetailedInfoBtn(index, true)"
                     @mouseleave="hideDetailedInfo"
             >
@@ -107,18 +104,23 @@
     </div>
 
     <Teleport to="body">
-        <OwnerDetails :owner-data="ownerDataById" />
+        <component v-if="isOpen"
+                   @mounted="showModal"
+                   :is="modalComponent"
+                   :owner-data="ownerDataById"
+        />
     </Teleport>
 
 </template>
 
 <script setup>
-    import { onMounted, onUnmounted, ref } from 'vue'
+    import { onMounted, onUnmounted, ref, shallowRef } from 'vue'
     import { useAccountStore } from '@/stores/AccountStore'
     import { showErrorNotification } from '@/helpers/notyfHelper'
     import OwnerDetails from './Modals/OwnerDetails.vue'
     import { useRoute } from 'vue-router'
     import { debounce } from 'lodash'
+    import { useModal } from '@/composables/useModal'
 
     const accountStore = useAccountStore()
     const route = useRoute()
@@ -132,6 +134,8 @@
     const showDetailedInfoButton = ref(null)
     const likedPostIndex = ref(null)
     const observer = ref(null)
+    const modalComponent = shallowRef(null)
+    const { isOpen, preparedModal, showModal, closeModal } = useModal()
 
     const iconClasses = ref({
         info: 'bi bi-info-circle',
@@ -243,6 +247,12 @@
         'leading': true, // Вызываться в начале периода ожидания
         'trailing': false // Дополнительный вызов в конце периода не требуется
     })
+
+    const showOwnerDetailsModal = (accountId, index) => {
+        ownerInfo(accountId, index)
+        modalComponent.value = preparedModal(OwnerDetails)
+        showModal('ownerDetailsModal')
+    }
 
     onMounted(() => {
         console.log('Newsfeed onMounted')

@@ -1,7 +1,7 @@
 <template>
-    <div class="modal fade" id="accountDetails" tabindex="-1" aria-labelledby="Add account" style="display: none;" aria-hidden="true">
+    <div class="modal fade" id="ownerDetailsModal" tabindex="-1" aria-labelledby="Owner details" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content" v-if="ownerType">
+            <div class="modal-content">
 
                 <Account
                     v-if="ownerType === 'account'"
@@ -28,7 +28,7 @@
         props: ['ownerData'],
 
         mounted() {
-            this.modal = new Modal(document.getElementById('accountDetails'))
+            this.modal = new Modal(document.getElementById('ownerDetailsModal'))
         },
 
         computed: {

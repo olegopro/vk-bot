@@ -71,7 +71,7 @@
 </script>
 
 <style scoped lang="scss">
-    #accountDetails {
+    #ownerDetailsModal {
         .modal-body {
             img {
                 width: 100%;
