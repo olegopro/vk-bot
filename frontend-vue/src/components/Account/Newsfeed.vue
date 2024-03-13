@@ -22,9 +22,9 @@
                     @mouseover="ownerInfo(post.source_id, index); toggleDetailedInfoBtn(index, true)"
                     @mouseleave="hideDetailedInfo"
             >
-                <i class="bi bi-info-circle" v-if="!post.source_id"></i> <!-- стандартная иконка информации -->
-                <i class="bi bi-person-fill" v-if="post.source_id > 0"></i> <!-- иконка человека -->
-                <i class="bi bi-people-fill" v-if="post.source_id < 0"></i> <!-- иконка группы -->
+                <i :class="iconClasses.info" v-if="!post.source_id"></i>
+                <i :class="iconClasses.person" v-if="post.source_id > 0"></i>
+                <i :class="iconClasses.people" v-if="post.source_id < 0"></i>
             </button>
 
             <div class="placeholder-wrapper" v-if="loadingStatus[index]">
@@ -130,9 +130,16 @@
     const showDetailedInfo = ref(null)
     const showDetailedInfoButton = ref(null)
     const likedPostIndex = ref(null)
+
     const columnSettings = ref({
         columnClass: 'col-4',
         fontClass: 'fs-4'
+    })
+
+    const iconClasses = ref({
+        info: 'bi bi-info-circle',
+        person: 'bi bi-person-fill',
+        people: 'bi bi-people-fill'
     })
 
     const addLikeToPost = async (ownerId, itemId, index) => {
