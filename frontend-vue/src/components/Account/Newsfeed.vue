@@ -112,24 +112,25 @@
 </template>
 
 <script setup>
-    import { onMounted, ref } from 'vue'
+    import { onMounted, onUnmounted, ref } from 'vue'
     import { useAccountStore } from '@/stores/AccountStore'
     import { showErrorNotification } from '@/helpers/notyfHelper'
     import OwnerDetails from './Modals/OwnerDetails.vue'
     import { useRoute } from 'vue-router'
+    import { debounce } from 'lodash'
 
     const accountStore = useAccountStore()
     const route = useRoute()
 
-    const nextFrom = ref(accountStore.nextFrom)
     const ownerDataById = ref(null)
-    const userID = ref(null)
+    const userId = ref('')
     const loadingStatus = ref([])
     const currentColumnClass = ref('col-4')
     const showNewsfeed = ref(true)
     const showDetailedInfo = ref(null)
     const showDetailedInfoButton = ref(null)
     const likedPostIndex = ref(null)
+    const observer = ref(null)
 
     const columnSettings = ref({
         columnClass: 'col-4',
@@ -146,18 +147,14 @@
         likedPostIndex.value = index
         loadingStatus.value[index] = true
 
-        await accountStore.addLike(userID.value, ownerId, itemId)
+        await accountStore.addLike(userId.value, ownerId, itemId)
             .then(() => accountStore.accountNewsFeed[index].likes.user_likes = 1)
             .catch(({ response }) => showErrorNotification(response.data.message))
             .finally(() => (loadingStatus.value[index] = false))
     }
 
-    const date = (timestamp) => {
-        return new Date(timestamp * 1000).toLocaleTimeString('ru-RU')
-    }
-
+    const date = (timestamp) => new Date(timestamp * 1000).toLocaleTimeString('ru-RU')
     const hideDetailedInfo = () => (showDetailedInfo.value = false)
-
     const toggleDetailedInfoBtn = (index, show) => showDetailedInfoButton.value = show ? index : null
 
     const getAdjustedQualityImageUrl = (sizes) => {
@@ -222,54 +219,44 @@
         }
 
         // Выполняем асинхронный запрос на получение данных для новостной ленты
-        await accountStore.fetchAccountNewsFeed(userID.value)
+        await accountStore.fetchAccountNewsFeed(userId.value)
             .then(() => (showNewsfeed.value = true))
     }
 
     const loadMore = async () => {
         accountStore.isLoadingFeed = true
-        await accountStore.fetchAccountNewsFeed(userID.value, accountStore.nextFrom)
+        await accountStore.fetchAccountNewsFeed(userId.value, accountStore.nextFrom)
             .catch(() => showErrorNotification('Ошибка в loadMore()'))
     }
 
-    /*
-        Этот подход с throttle будет гарантировать, что функция loadMore не вызывается чаще,
-        чем каждые 300 миллисекунд, при этом не создавая "очередь" из вызовов и не внося
-        дополнительных задержек.
-    */
+    const debounceLoadMore = debounce(() => loadMore(), 500, {
+        'leading': true, // Вызываться в начале периода ожидания
+        'trailing': false // Дополнительный вызов в конце периода не требуется
+    })
+
     onMounted(() => {
-        userID.value = route.params.id
+        console.log('Newsfeed onMounted')
 
-        let lastCallTime = 0
-        const throttleTime = 750 // Задержка в миллисекундах
+        userId.value = route.params.id
+        accountStore.nextFrom = null
+        accountStore.accountNewsFeed = []
+        accountStore.isLoadingFeed = true
 
-        if (!accountStore.nextFrom) {
-            accountStore.isLoadingFeed = true
-
-            accountStore.fetchAccountNewsFeed({
-                accountID: userID.value,
-                startFrom: nextFrom
+        observer.value = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    debounceLoadMore()
+                }
             })
-                .then(() => {
-                    const loadingObserver = new IntersectionObserver(entries => {
-                        entries.forEach(entry => {
-                            if (entry.isIntersecting) {
-                                const currentTime = Date.now()
+        }, { threshold: 0 })
 
-                                if (currentTime - lastCallTime >= throttleTime) {
-                                    lastCallTime = currentTime
-                                    loadMore()
-                                }
-                            }
-                        })
-                    }, { threshold: 0 })
+        observer.value.observe(document.getElementById('loader'))
+        loadingStatus.value = new Array(accountStore.accountNewsFeed.length).fill(false)
+    })
 
-                    loadingObserver.observe(document.getElementById('loader'))
-                })
-                .catch(error => showErrorNotification(error.message))
-
-            loadingStatus.value = new Array(accountStore.accountNewsFeed.length).fill(false)
-        }
+    onUnmounted(() => {
+        console.log('Newsfeed onUnmounted')
+        if (observer.value) observer.value.disconnect()
     })
 </script>
 
