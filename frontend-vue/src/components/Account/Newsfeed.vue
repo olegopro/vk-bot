@@ -1,9 +1,12 @@
 <template>
     <div class="row justify-content-end mt-5 mb-3">
         <div class="col-3 d-flex justify-content-end change-grid-columns">
-            <i @click="changeColumnClass('col-6')" :class="[columnSettings.columnClass === 'col-6' ? 'bi-2-square-fill pe-none' : 'bi-2-square', 'bi', 'me-2']" style="font-size: 2rem;" />
-            <i @click="changeColumnClass('col-4')" :class="[columnSettings.columnClass === 'col-4' ? 'bi-3-square-fill pe-none' : 'bi-3-square', 'bi', 'me-2']" style="font-size: 2rem;" />
-            <i @click="changeColumnClass('col-3')" :class="[columnSettings.columnClass === 'col-3' ? 'bi-4-square-fill pe-none' : 'bi-4-square', 'bi']" style="font-size: 2rem;" />
+            <i :class="[columnSettings.columnClass === option.class ? option.iconFill : option.icon, 'bi', 'me-2']"
+               v-for="option in columnOptions"
+               :key="option.class"
+               @click="changeColumnClass(option.class)"
+               style="font-size: 2rem;"
+            />
         </div>
     </div>
 
@@ -22,9 +25,9 @@
                     @mouseover="ownerInfo(post.source_id, index); toggleDetailedInfoBtn(index, true)"
                     @mouseleave="hideDetailedInfo"
             >
-                <i :class="iconClasses.info" v-if="!post.source_id"></i>
-                <i :class="iconClasses.person" v-if="post.source_id > 0"></i>
-                <i :class="iconClasses.people" v-if="post.source_id < 0"></i>
+                <i :class="iconClasses.info" v-if="!post.source_id" />
+                <i :class="iconClasses.person" v-if="post.source_id > 0" />
+                <i :class="iconClasses.people" v-if="post.source_id < 0" />
             </button>
 
             <div class="placeholder-wrapper" v-if="loadingStatus[index]">
@@ -44,12 +47,10 @@
                  @mouseleave="toggleDetailedInfoBtn(index, false)"
             >
                 <img class="card-img-top"
-                     :style="post.likes.user_likes !== 1
-                          ? { cursor: 'pointer'}
-                          : {}"
-                     alt=""
+                     :style="post.likes.user_likes !== 1 ? { cursor: 'pointer'}: {}"
                      :src="getAdjustedQualityImageUrl(post.attachments[0].photo.sizes)"
                      @click="post.likes.user_likes !== 1 && addLikeToPost(post.owner_id, post.post_id, index)"
+                     alt=""
                 />
 
                 <div class="detailed-info" :class="{ 'opacity-100': showDetailedInfo === index }">
@@ -132,16 +133,22 @@
     const likedPostIndex = ref(null)
     const observer = ref(null)
 
-    const columnSettings = ref({
-        columnClass: 'col-4',
-        fontClass: 'fs-4'
-    })
-
     const iconClasses = ref({
         info: 'bi bi-info-circle',
         person: 'bi bi-person-fill',
         people: 'bi bi-people-fill'
     })
+
+    const columnSettings = ref({
+        columnClass: 'col-4',
+        fontClass: 'fs-4'
+    })
+
+    const columnOptions = ref([
+        { class: 'col-6', icon: 'bi-2-square', iconFill: 'bi-2-square-fill pe-none' },
+        { class: 'col-4', icon: 'bi-3-square', iconFill: 'bi-3-square-fill pe-none' },
+        { class: 'col-3', icon: 'bi-4-square', iconFill: 'bi-4-square-fill pe-none' }
+    ])
 
     const addLikeToPost = async (ownerId, itemId, index) => {
         likedPostIndex.value = index
@@ -207,25 +214,28 @@
         switch (newClass) {
             case 'col-6':
                 columnSettings.value.fontClass = 'fs-1' // Большие колонки -> Меньший шрифт
+                columnSettings.value.columnClass = newClass
                 break
+
             case 'col-4':
                 columnSettings.value.fontClass = 'fs-4'
+                columnSettings.value.columnClass = newClass
                 break
+
             case 'col-3':
                 columnSettings.value.fontClass = 'fs-5' // Меньшие колонки -> Больший шрифт
+                columnSettings.value.columnClass = newClass
                 break
+
             default:
                 columnSettings.value.fontClass = 'fs-4' // Значение по умолчанию
         }
-
-        // Выполняем асинхронный запрос на получение данных для новостной ленты
-        await accountStore.fetchAccountNewsFeed(userId.value)
-            .then(() => (showNewsfeed.value = true))
     }
 
     const loadMore = async () => {
         accountStore.isLoadingFeed = true
         await accountStore.fetchAccountNewsFeed(userId.value, accountStore.nextFrom)
+            .then(() => showNewsfeed.value = true)
             .catch(() => showErrorNotification('Ошибка в loadMore()'))
     }
 
