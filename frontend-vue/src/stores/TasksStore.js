@@ -111,41 +111,39 @@ export const useTasksStore = defineStore('tasks', {
         },
 
         async deleteTask(id) {
-            // Сначала находим задачу по id
-            const task = this.tasks.find(task => task.id === id)
-
-            // Если задача найдена, обновляем счетчики
-            if (this.tasks.find(task => task.id === id)) {
-                // Уменьшаем общий счетчик задач
-                this.totalTasksCount = this.totalTasksCount > 0 ? this.totalTasksCount - 1 : 0
-
-                // Обновляем счетчики по статусам задач
-                switch (task.status) {
-                    case 'failed':
-                        this.totalTasksFailed = this.totalTasksFailed > 0 ? this.totalTasksFailed - 1 : 0
-                        break
-
-                    case 'queued':
-                        this.totalTasksQueued = this.totalTasksQueued > 0 ? this.totalTasksQueued - 1 : 0
-                        break
-
-                    case 'done':
-                        this.totalTasksDone = this.totalTasksDone > 0 ? this.totalTasksDone - 1 : 0
-                        break
-
-                    default:
-                        // Здесь можно обработать другие статусы, если они есть
-                        break
-                }
-            }
-
-            // Затем выполняем запрос на удаление задачи
             await axios.delete(`http://localhost:8080/api/tasks/delete-task-by-id/${id}`)
                 .then(({ data }) => {
-                    // Удаляем задачу из списка задач
-                    this.tasks = this.tasks.filter(task => task.id !== id)
+                    const task = this.tasks.find(task => task.id === id)
 
+                    // Уменьшаем общий счетчик задач
+                    this.totalTasksCount = this.totalTasksCount > 0 ? this.totalTasksCount - 1 : 0
+
+                    // Обновляем счетчики по статусам задач
+                    switch (task.status) {
+                        case 'failed':
+                            this.totalTasksFailed = this.totalTasksFailed > 0 ? this.totalTasksFailed - 1 : 0
+                            break
+
+                        case 'queued':
+                            this.totalTasksQueued = this.totalTasksQueued > 0 ? this.totalTasksQueued - 1 : 0
+                            break
+
+                        case 'done':
+                            this.totalTasksDone = this.totalTasksDone > 0 ? this.totalTasksDone - 1 : 0
+                            break
+
+                        default:
+                            // Здесь можно обработать другие статусы, если они есть
+                            break
+                    }
+
+                    // Удаляем задачу из списка задач
+                    const index = this.tasks.findIndex(task => task.id === id)
+                    if (index !== -1) this.tasks.splice(index, 1)
+
+                    // Увеличиваем счетчик удаленных задач
                     this.deletedTasksCount++
+
                     // Показываем уведомление об успешном удалении
                     showSuccessNotification(data.message)
                 })
