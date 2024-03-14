@@ -47,15 +47,17 @@ final class TaskController extends Controller
      * @param int|null $accountId ID аккаунта для фильтрации.
      * @return \Illuminate\Http\JsonResponse Ответ с данными о задачах.
      */
-    public function getTaskStatus($status = null, $accountId = null)
+    public function getTaskStatus(Request $request, $status = null, $accountId = null)
     {
+        $perPage = (int) $request->query('perPage', 30);
+
         // Проверяем, является ли первый параметр числом (accountId)
         if (is_numeric($status)) {
             $accountId = $status;
             $status = null;
         }
 
-        $tasks = $this->taskRepository->getTaskStatus($status, $accountId);
+        $tasks = $this->taskRepository->getTaskStatus($status, $accountId, $perPage);
 
         return response()->json([
             'success' => true,

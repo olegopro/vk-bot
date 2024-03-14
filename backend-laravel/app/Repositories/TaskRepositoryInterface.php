@@ -18,7 +18,7 @@ interface TaskRepositoryInterface
      *
      * @param string|null $status Статус задач для фильтрации.
      */
-	public function getTaskStatus($status);
+	public function getTaskStatus($status, $accountId, $perPage);
 
     /**
      * Поиск задачи по идентификатору.

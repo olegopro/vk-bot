@@ -54,7 +54,6 @@
                     <thead>
                         <tr>
                             <th scope="col" style="width: 110px;">
-                                <!--{{ tasksStore.totalTasksCount ? tasksStore.totalTasksCount : 0 }} / {{ tasksStore.tasks.length }}-->
                                 {{ totalTasksByStatus ? totalTasksByStatus : 0 }} / {{ tasksStore.tasks.length }}
                             </th>
                             <th scope="col" style="width: 350px;">Имя и фамилия</th>

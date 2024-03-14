@@ -11,9 +11,9 @@ class AccountsTasksSeeder extends Seeder
 {
     public function run()
     {
-        Account::factory(50)->create()->each(function ($account) {
+        Account::factory(30)->create()->each(function ($account) {
             // Создаем обычные задачи
-            Task::factory(random_int(5, 35))->create(['account_id' => $account->account_id]);
+            Task::factory(random_int(20, 50))->create(['account_id' => $account->account_id]);
 
             // Создаем циклические задачи
             CyclicTask::factory(random_int(3, 10))->create(['account_id' => $account->account_id]);

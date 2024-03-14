@@ -12,12 +12,49 @@ export const useTasksStore = defineStore('tasks', {
         taskCountByStatus: null,
         isLoading: false,
         isTaskDetailsLoading: null,
-        taskDetails: null
+        taskDetails: null,
+        tasksPerPage: 30,
+        deletedTasksCount: 0
     }),
 
     actions: {
         async fetchTasks(status = '', accountId = '', page = 1) {
             this.isLoading = true
+
+            // Инициализируем переменную effectivePerPage значением tasksPerPage.
+            // Это количество задач, запрашиваемых с сервера за один раз.
+            let effectivePerPage = this.tasksPerPage
+
+            // Используем Nullish coalescing operator для проверки totalTasksCount на null/undefined.
+            // Если totalTasksCount не определено, используем значение 0.
+            const totalTasksCount = this.totalTasksCount ?? 0
+
+            // Вычисляем adjustedTotal, добавляя к totalTasksCount количество удаленных задач.
+            // Это необходимо для корректировки пагинации с учетом недавно удаленных задач.
+            const adjustedTotal = totalTasksCount + this.deletedTasksCount
+
+            // Рассчитываем общее количество страниц, разделив adjustedTotal на количество задач на странице.
+            const totalPages = Math.ceil(adjustedTotal / this.tasksPerPage)
+
+            // Если текущая страница не первая, проверяем, нужно ли корректировать effectivePerPage.
+            if (page > 1) {
+                // Если текущая страница меньше общего количества страниц, значит это не последняя страница.
+                if (page < totalPages) {
+                    // Для не последних страниц увеличиваем effectivePerPage на количество удаленных задач,
+                    // чтобы компенсировать удаление и заполнить страницу полностью.
+                    effectivePerPage += this.deletedTasksCount
+                } else {
+                    // Если это последняя страница, вычисляем количество задач, которые должны быть на этой странице.
+                    // Это делается путем вычитания из adjustedTotal количества задач на предыдущих страницах.
+                    const tasksLeftForLastPage = adjustedTotal - (this.tasksPerPage * (page - 1))
+
+                    // Корректируем effectivePerPage, чтобы на последней странице было не больше задач, чем осталось.
+                    // Используем Math.min для выбора меньшего из двух значений: расчетного количества задач
+                    // на последней странице и effectivePerPage с учетом удаленных задач.
+                    effectivePerPage = Math.min(tasksLeftForLastPage, effectivePerPage + this.deletedTasksCount)
+                }
+            }
+
             /*
                 Формирование базового URL для запроса.
                 Если параметр status задан (не пустая строка), то он добавляется к URL.
@@ -25,7 +62,7 @@ export const useTasksStore = defineStore('tasks', {
                 Например, если status = 'failed' и accountId = '123', URL станет 'http://localhost:8080/api/tasks/failed/123'.
                 Если оба параметра не заданы, URL останется 'http://localhost:8080/api/tasks'.
             */
-            const url = `http://localhost:8080/api/tasks${status ? `/${status}` : ''}${accountId ? `/${accountId}` : ''}?page=${page}`
+            const url = `http://localhost:8080/api/tasks${status ? `/${status}` : ''}${accountId ? `/${accountId}` : ''}?page=${page}&perPage=${effectivePerPage}`
 
             await axios.get(url).then(({ data }) => {
                 if (page === 1) {
@@ -38,15 +75,12 @@ export const useTasksStore = defineStore('tasks', {
                     this.tasks = [...this.tasks, ...data.data.tasks.data]
                 }
 
+                this.deletedTasksCount = 0
+
                 showSuccessNotification(data.message)
             })
                 .finally(() => this.isLoading = false)
         },
-
-        // async taskDetails(taskId) {
-        //     const { data } = await axios.post(`http://localhost:8080/api/tasks/task-info/${taskId}`)
-        //     return data.data
-        // },
 
         async fetchTaskDetails(taskId) {
             console.log('taskId', taskId)
@@ -78,10 +112,47 @@ export const useTasksStore = defineStore('tasks', {
         },
 
         async deleteTask(id) {
+            // Сначала находим задачу по id
+            const task = this.tasks.find(task => task.id === id)
+
+            // Если задача найдена, обновляем счетчики
+            if (this.tasks.find(task => task.id === id)) {
+                // Уменьшаем общий счетчик задач
+                this.totalTasksCount = this.totalTasksCount > 0 ? this.totalTasksCount - 1 : 0
+
+                // Обновляем счетчики по статусам задач
+                switch (task.status) {
+                    case 'failed':
+                        this.totalTasksFailed = this.totalTasksFailed > 0 ? this.totalTasksFailed - 1 : 0
+                        break
+
+                    case 'queued':
+                        this.totalTasksQueued = this.totalTasksQueued > 0 ? this.totalTasksQueued - 1 : 0
+                        break
+
+                    case 'done':
+                        this.totalTasksDone = this.totalTasksDone > 0 ? this.totalTasksDone - 1 : 0
+                        break
+
+                    default:
+                        // Здесь можно обработать другие статусы, если они есть
+                        break
+                }
+            }
+
+            // Затем выполняем запрос на удаление задачи
             await axios.delete(`http://localhost:8080/api/tasks/delete-task-by-id/${id}`)
                 .then(({ data }) => {
+                    // Удаляем задачу из списка задач
                     this.tasks = this.tasks.filter(task => task.id !== id)
+
+                    this.deletedTasksCount++
+                    // Показываем уведомление об успешном удалении
                     showSuccessNotification(data.message)
+                })
+                .catch(error => {
+                    // Показываем уведомление об ошибке, если что-то пошло не так
+                    showErrorNotification(error || 'Произошла ошибка при удалении задачи')
                 })
         },
 
