@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import axios from 'axios'
-import { showErrorNotification, showSuccessNotification } from '../helpers/notyfHelper'
+import { showErrorNotification, showSuccessNotification } from '@/helpers/notyfHelper'
 
 export const useStatisticsStore = defineStore('statistics', {
 	state: () => ({

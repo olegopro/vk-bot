@@ -55,7 +55,7 @@
     import { defineProps, toRefs, computed } from 'vue'
     import TaskStatus from './TaskStatus.vue'
     import { format } from 'date-fns'
-    import { useCyclicTasksStore } from '../../stores/CyclicTasksStore'
+    import { useCyclicTasksStore } from '@/stores/CyclicTasksStore'
     import router from '../../router'
 
     const cyclicTasksStore = useCyclicTasksStore()

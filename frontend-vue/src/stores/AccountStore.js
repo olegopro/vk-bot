@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import axios from 'axios'
 import axiosThrottle from 'axios-request-throttle'
-import { showErrorNotification, showSuccessNotification } from '../helpers/notyfHelper'
+import { showErrorNotification, showSuccessNotification } from '@/helpers/notyfHelper'
 
 export const useAccountStore = defineStore('account', {
     state: () => ({
@@ -89,9 +89,7 @@ export const useAccountStore = defineStore('account', {
         },
 
         async fetchAccountNewsFeed(accountID, startFrom = null) {
-            if (startFrom !== null && startFrom === this.previousNextFrom) {
-                return
-            }
+            if (startFrom !== null && startFrom === this.previousNextFrom) return
 
             this.previousNextFrom = startFrom
 
@@ -112,9 +110,7 @@ export const useAccountStore = defineStore('account', {
                     this.nextFrom = response.next_from
 
                     // если начальный маркер равен null, очистить ленту новостей
-                    if (startFrom === null) {
-                        this.accountNewsFeed = []
-                    }
+                    if (startFrom === null) this.accountNewsFeed = []
 
                     // добавление отфильтрованных новостей к текущему списку новостей в аккаунте
                     this.accountNewsFeed = [...this.accountNewsFeed, ...result]
@@ -157,7 +153,6 @@ export const useAccountStore = defineStore('account', {
                 task_count: taskCount
             })
                 .then(({ data }) => {
-                    console.log('addPostsToLike data', data.data)
                     this.accountNewsFeed = [...this.accountNewsFeed, ...data.data]
                     showSuccessNotification(data.message)
                 })
@@ -190,9 +185,7 @@ export const useAccountStore = defineStore('account', {
 
         async getAccountDetails(ownerId) {
             await axios.get(`http://localhost:8080/api/account/${ownerId}`)
-                .then(response => {
-                    return response.data
-                })
+                .then(response => response.data)
                 .catch(error => showErrorNotification(error.response.data.message))
         }
     },

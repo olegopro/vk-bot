@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import axios from 'axios'
-import { showSuccessNotification } from '../helpers/notyfHelper'
+import { showErrorNotification, showSuccessNotification } from '@/helpers/notyfHelper'
 
 export const useCyclicTasksStore = defineStore('cyclicTasks', {
     state: () => ({
@@ -14,8 +14,6 @@ export const useCyclicTasksStore = defineStore('cyclicTasks', {
             this.isLoading = true
             await axios.get(`http://localhost:8080/api/cyclic-tasks?page=${page}`)
                 .then(({ data }) => {
-                    // Предположим, что `this.cyclicTasks` и `this.pagination` — это реактивные свойства вашего компонента/хранилища.
-                    console.log(data.pagination)
                     if (page === 1) {
                         // Если это первая страница, заменяем текущие данные новыми
                         this.cyclicTasks = data.data
@@ -29,7 +27,7 @@ export const useCyclicTasksStore = defineStore('cyclicTasks', {
 
                     showSuccessNotification(data.message)
                 })
-                .catch(error => console.error('Ошибка при получении данных:', error))
+                .catch(error => showErrorNotification(error))
                 .finally(() => this.isLoading = false)
         },
 

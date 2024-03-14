@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import axios from 'axios'
-import { showErrorNotification, showSuccessNotification } from '../helpers/notyfHelper'
+import { showErrorNotification, showSuccessNotification } from '@/helpers/notyfHelper'
 
 export const useTasksStore = defineStore('tasks', {
     state: () => ({
@@ -83,7 +83,6 @@ export const useTasksStore = defineStore('tasks', {
         },
 
         async fetchTaskDetails(taskId) {
-            console.log('taskId', taskId)
             this.isTaskDetailsLoading = taskId
             await axios.post(`http://localhost:8080/api/tasks/task-info/${taskId}`)
                 .then(({ data }) => this.taskDetails = data.data)
@@ -162,7 +161,6 @@ export const useTasksStore = defineStore('tasks', {
         },
 
         async deleteAllTasks(status, accountId) {
-            console.log('deleteAllTasks status', status)
             // Проверяем, определены ли параметры status и accountId
             const statusPart = status ? `/${status}` : '/null' // Если status не определен, используем '/null'
             const accountIdPart = accountId ? `/${accountId}` : '' // Если accountId не определен, не добавляем его в URL
