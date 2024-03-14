@@ -13,6 +13,7 @@ export const useAccountStore = defineStore('account', {
         accountNewsFeed: [],
         nextFrom: null,
         previousNextFrom: null,
+        isOwnerDataLoading: null,
         isLoadingFeed: false
     }),
 
@@ -30,13 +31,17 @@ export const useAccountStore = defineStore('account', {
             }
         },
 
-        async fetchOwnerData(accountId, ownerId) {
+        async fetchOwnerData(accountId, ownerId, taskId = null) {
+            this.isOwnerDataLoading = taskId
+
             // Поиск владельца по ID в массиве ownerData
             const existingOwnerData = this.ownerData.find(owner => owner.id === ownerId)
-            console.log('existingOwnerData', existingOwnerData)
 
             // Если данные о владельце уже есть, немедленно возвращаем эти данные
-            if (existingOwnerData) return Promise.resolve(existingOwnerData)
+            if (existingOwnerData) {
+                return Promise.resolve(existingOwnerData)
+                    .finally(() => this.isOwnerDataLoading = null)
+            }
 
             // Если данных о владельце нет, выполняем запросы
             await Promise.all([
@@ -65,6 +70,7 @@ export const useAccountStore = defineStore('account', {
                 .catch(error => {
                     throw error
                 })
+                .finally(() => this.isOwnerDataLoading = null)
         },
 
         async fetchAccountFollowers(accountId) {

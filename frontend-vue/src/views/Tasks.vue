@@ -250,10 +250,11 @@
         }
     })
 
-    const showAccountDetailsModal = (accountId, ownerId) => {
+    const showAccountDetailsModal = (accountId, ownerId, taskId) => {
+        console.log(accountId)
         accountDetailsData.value = null
 
-        accountStore.fetchOwnerData(accountId, ownerId).then(() => {
+        accountStore.fetchOwnerData(accountId, ownerId, taskId).then(() => {
             const ownerData = accountStore.getOwnerDataById(ownerId)
             accountDetailsData.value = { ...ownerData }
 
@@ -267,7 +268,6 @@
         taskDetailsData.value = null
 
         await tasksStore.fetchTaskDetails(newTaskId).then(response => {
-            console.log('response', response)
             taskDetailsData.value = { ...response, taskId: newTaskId }
             modalComponent.value = preparedModal(TaskDetails)
             showModal('taskDetailsModal')

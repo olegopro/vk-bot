@@ -11,6 +11,7 @@ export const useTasksStore = defineStore('tasks', {
         totalTasksDone: null,
         taskCountByStatus: null,
         isLoading: false,
+        isTaskDetailsLoading: null,
         taskDetails: null
     }),
 
@@ -48,11 +49,14 @@ export const useTasksStore = defineStore('tasks', {
         // },
 
         async fetchTaskDetails(taskId) {
+            console.log('taskId', taskId)
+            this.isTaskDetailsLoading = taskId
             await axios.post(`http://localhost:8080/api/tasks/task-info/${taskId}`)
                 .then(({ data }) => this.taskDetails = data.data)
                 .catch(error => {
                     throw error
                 })
+                .finally(() => this.isTaskDetailsLoading = null)
         },
 
         async getTasksCountByStatus(status = '', accountId = '') {

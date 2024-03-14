@@ -88,12 +88,6 @@
         return false
     })
 
-    watch(() => props.taskData, newTaskData => {
-        if (newTaskData && newTaskData.taskId) {
-            tasksStore.fetchTaskDetails(newTaskData.taskId)
-        }
-    }, { immediate: true })
-
     const modalHide = () => closeModal('taskDetailsModal')
 
     const formatData = timestamp => format(new Date(timestamp * 1000), 'yyyy-MM-dd HH:mm:ss')

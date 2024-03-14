@@ -2,9 +2,13 @@
     <tr>
         <th scope="row">{{ task.id }}</th>
         <td class="user-name inner-shadow">
-            <div class="flex-container" @click="showAccountDetailsModal(task.account_id, task.owner_id)" >
+            <div class="flex-container" @click="showAccountDetailsModal(task.account_id, task.owner_id, task.id)" >
                 {{ task.first_name }} {{ task.last_name }}
-                <i class="bi bi-person-circle ms-2" style="font-size: 16px; opacity: 0.75" />
+
+                <span v-if="accountStore.isOwnerDataLoading === task.id" class="spinner-border ms-2" role="status" style="width: 1rem; height: 1rem;">
+                    <span class="visually-hidden">Loading...</span>
+                </span>
+                <i  v-else class="bi bi-person-circle ms-2" style="font-size: 1rem; opacity: 0.75" />
             </div>
         </td>
 
@@ -17,8 +21,13 @@
                 class="btn btn-primary button-style me-2"
                 type="button"
                 @click="showTaskDetailsModal(task.id)"
+                :disabled="tasksStore.isTaskDetailsLoading === task.id"
             >
-                <i class="bi bi-info-circle" />
+                <span v-if="tasksStore.isTaskDetailsLoading === task.id" class="spinner-border" role="status" style="width: 1rem; height: 1rem;">
+                    <span class="visually-hidden">Loading...</span>
+                </span>
+                <i v-else class="bi bi-info-circle" />
+
             </button>
 
             <button class="btn btn-danger button-style" @click="props.showDeleteTaskModal(task.id)">
@@ -35,6 +44,8 @@
     import { defineProps, toRefs } from 'vue'
     import TaskStatus from './TaskStatus.vue'
     import { format } from 'date-fns'
+    import { useTasksStore } from '@/stores/TasksStore'
+    import { useAccountStore } from '@/stores/AccountStore'
 
     const props = defineProps({
         task: Object,
@@ -44,6 +55,9 @@
     })
 
     const { task } = toRefs(props)
+
+    const tasksStore = useTasksStore()
+    const accountStore = useAccountStore()
 
     const dateFormat = (date) => format(new Date(date), 'yyyy-MM-dd HH:mm:ss')
 </script>
