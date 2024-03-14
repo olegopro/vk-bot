@@ -26,7 +26,7 @@
                     </template>
 
                     <template v-else>
-                        <span class="me-1">{{ cyclicTasksStore.pagination.total }}</span> / <span class="ms-1">{{ cyclicTasksStore.cyclicTasks.length }}</span>
+                        <span class="me-1">{{ cyclicTasksStore.totalCyclicTasksCount }}</span> / <span class="ms-1">{{ cyclicTasksStore.cyclicTasks.length }}</span>
                     </template>
                 </span>
             </h6>
@@ -162,7 +162,7 @@
     }
 
     const isTotalMatched = computed(() => {
-        return cyclicTasksStore.pagination.total === cyclicTasksStore.cyclicTasks.length
+        return cyclicTasksStore.totalCyclicTasksCount === cyclicTasksStore.cyclicTasks.length
     })
 
     const debouncedFetchCyclicTasks = debounce((page) => {
@@ -176,17 +176,16 @@
     onMounted(() => {
         cyclicTasksStore.cyclicTasks = []
 
-        debouncedFetchCyclicTasks()
+        // debouncedFetchCyclicTasks()
         accountsStore.fetchAccounts()
 
         accountsStore.accounts = []
         // Устанавливаем observer
         observer.value = new IntersectionObserver(entries => {
             entries.forEach(entry => {
-                console.log(' observer.value = new IntersectionObserver(entries => {')
                 if (
                     entry.isIntersecting &&
-                    cyclicTasksStore.cyclicTasks.length !== cyclicTasksStore.pagination.total
+                    cyclicTasksStore.cyclicTasks.length !== cyclicTasksStore.totalCyclicTasksCount
                 ) {
                     debouncedFetchCyclicTasks(currentPage.value)
                 }
