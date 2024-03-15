@@ -22,19 +22,34 @@ export const useTasksStore = defineStore('tasks', {
             this.isLoading = true
 
             // Инициализируем переменную effectivePerPage значением tasksPerPage.
-            // Это количество задач, запрашиваемых с сервера за один раз.
             let effectivePerPage = this.tasksPerPage
 
-            // Используем Nullish coalescing operator для проверки totalTasksCount на null/undefined.
-            // Если totalTasksCount не определено, используем значение 0.
-            const totalTasksCount = this.totalTasksCount ?? 0
+            let totalTasksCountByStatus = 0
+            switch (status) {
+                case 'done':
+                    totalTasksCountByStatus = this.totalTasksDone ?? 0
+                    break
 
-            // Вычисляем adjustedTotal, добавляя к totalTasksCount количество удаленных задач.
+                case 'failed':
+                    totalTasksCountByStatus = this.totalTasksFailed ?? 0
+                    break
+
+                case 'queued':
+                    totalTasksCountByStatus = this.totalTasksQueued ?? 0
+                    break
+
+                default:
+                    totalTasksCountByStatus = this.totalTasksCount ?? 0
+            }
+
+            // Вычисляем adjustedTotal, добавляя к totalTasksCountByStatus количество удаленных задач.
             // Это необходимо для корректировки пагинации с учетом недавно удаленных задач.
-            const adjustedTotal = totalTasksCount + this.deletedTasksCount
+            const adjustedTotal = totalTasksCountByStatus + this.deletedTasksCount
+            console.log('adjustedTotal', adjustedTotal)
 
             // Рассчитываем общее количество страниц, разделив adjustedTotal на количество задач на странице.
             const totalPages = Math.ceil(adjustedTotal / this.tasksPerPage)
+            console.log('totalPages', totalPages)
 
             // Если текущая страница не первая, проверяем, нужно ли корректировать effectivePerPage.
             if (page > 1) {
@@ -43,10 +58,12 @@ export const useTasksStore = defineStore('tasks', {
                     // Для не последних страниц увеличиваем effectivePerPage на количество удаленных задач,
                     // чтобы компенсировать удаление и заполнить страницу полностью.
                     effectivePerPage += this.deletedTasksCount
+                    console.log('effectivePerPage', effectivePerPage)
                 } else {
                     // Если это последняя страница, вычисляем количество задач, которые должны быть на этой странице.
                     // Это делается путем вычитания из adjustedTotal количества задач на предыдущих страницах.
                     const tasksLeftForLastPage = adjustedTotal - (this.tasksPerPage * (page - 1))
+                    console.log('tasksLeftForLastPage', tasksLeftForLastPage)
 
                     // Корректируем effectivePerPage, чтобы на последней странице было не больше задач, чем осталось.
                     // Используем Math.min для выбора меньшего из двух значений: расчетного количества задач
@@ -55,6 +72,7 @@ export const useTasksStore = defineStore('tasks', {
                 }
             }
 
+            console.log('effectivePerPage', effectivePerPage)
             /*
                 Формирование базового URL для запроса.
                 Если параметр status задан (не пустая строка), то он добавляется к URL.
@@ -76,7 +94,6 @@ export const useTasksStore = defineStore('tasks', {
                 }
 
                 this.deletedTasksCount = 0
-
                 showSuccessNotification(data.message)
             })
                 .finally(() => this.isLoading = false)
@@ -115,6 +132,10 @@ export const useTasksStore = defineStore('tasks', {
                 .then(({ data }) => {
                     const task = this.tasks.find(task => task.id === id)
 
+                    // Удаляем задачу из списка задач
+                    const index = this.tasks.findIndex(task => task.id === id)
+                    if (index !== -1) this.tasks.splice(index, 1)
+
                     // Уменьшаем общий счетчик задач
                     this.totalTasksCount = this.totalTasksCount > 0 ? this.totalTasksCount - 1 : 0
 
@@ -136,10 +157,6 @@ export const useTasksStore = defineStore('tasks', {
                             // Здесь можно обработать другие статусы, если они есть
                             break
                     }
-
-                    // Удаляем задачу из списка задач
-                    const index = this.tasks.findIndex(task => task.id === id)
-                    if (index !== -1) this.tasks.splice(index, 1)
 
                     // Увеличиваем счетчик удаленных задач
                     this.deletedTasksCount++
