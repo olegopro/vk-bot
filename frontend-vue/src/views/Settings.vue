@@ -58,9 +58,9 @@
 
     const settingsStore = useSettingsStore()
 
-    const showFriends = ref(null)
-    const showFollowers = ref(null)
-    const taskTimeout = ref(null)
+    const showFriends = ref(false)
+    const showFollowers = ref(false)
+    const taskTimeout = ref(0)
     const loadingStatus = ref(false)
     const saveSettingStatus = ref(false)
 

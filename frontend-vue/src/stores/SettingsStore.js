@@ -17,6 +17,7 @@ export const useSettingsStore = defineStore('settings', {
                 show_friends: showFriends,
                 task_timeout: taskTimeout
             })
+
             this.settings = { showFollowers, showFriends, taskTimeout }
         }
     }

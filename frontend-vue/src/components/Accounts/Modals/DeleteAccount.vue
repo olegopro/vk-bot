@@ -28,5 +28,5 @@
     const props = defineProps(['login', 'accountId'])
 
     const modalHide = () => closeModal('deleteAccountModal')
-    const deleteAccount = () => accountsStore.deleteAccount(props.id).then(() => modalHide())
+    const deleteAccount = () => accountsStore.deleteAccount(props.accountId).then(() => modalHide())
 </script>

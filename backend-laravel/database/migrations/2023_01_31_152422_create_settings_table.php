@@ -15,10 +15,17 @@ class CreateSettingsTable extends Migration
     {
         Schema::create('settings', function (Blueprint $table) {
             $table->id();
-            $table->boolean('show_followers')->default('1');
-            $table->boolean('show_friends')->default('1');
-            $table->integer('task_timeout')->unsigned()->default('30');
+            $table->boolean('show_followers')->default(true);
+            $table->boolean('show_friends')->default(true);
+            $table->integer('task_timeout')->unsigned()->default(30);
         });
+
+        // Добавление начальной записи непосредственно после создания таблицы
+        DB::table('settings')->insert([
+            'show_followers' => false,
+            'show_friends'   => true,
+            'task_timeout'   => 30,
+        ]);
     }
 
     /**
