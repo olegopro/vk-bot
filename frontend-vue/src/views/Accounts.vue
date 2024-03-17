@@ -82,13 +82,14 @@
                             </td>
                         </tr>
 
-                        <tr v-if="accountsStore.accounts.length === 0 && !accountsStore.isLoading && currentPage === 1">
+                        <tr v-if="accountsStore.accounts.length === 0 && !accountsStore.isLoading" class="pe-none">
                             <td colspan="7" style="height: 55px;">
                                 Список аккаунтов пуст
                             </td>
                         </tr>
-                        <tr class="load-more-trigger visually-hidden">
-                            <td colspan="7" style="height: 55px;">
+
+                        <tr class="load-more-trigger">
+                            <td colspan="5" class="visually-hidden">
                                 <span>Загрузка...</span>
                             </td>
                         </tr>
@@ -153,6 +154,7 @@
     onMounted(() => {
         console.log('Accounts onMounted')
         accountsStore.accounts = []
+        debouncedFetchAccounts(currentPage.value)
 
         // Устанавливаем observer
         observer.value = new IntersectionObserver(entries => {

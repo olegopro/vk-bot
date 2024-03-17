@@ -85,13 +85,14 @@
                             </td>
                         </tr>
 
-                        <tr v-if="cyclicTasksStore.cyclicTasks.length === 0 && !cyclicTasksStore.isLoading && currentPage === 1">
+                        <tr v-if="cyclicTasksStore.cyclicTasks.length === 0 && !cyclicTasksStore.isLoading" class="pe-none">
                             <td colspan="9" style="height: 55px;">
                                 Список циклических задач пуст
                             </td>
                         </tr>
-                        <tr class="load-more-trigger visually-hidden">
-                            <td colspan="9" style="height: 55px;">
+
+                        <tr class="load-more-trigger">
+                            <td colspan="9" class="visually-hidden">
                                 <span>Загрузка...</span>
                             </td>
                         </tr>
@@ -175,13 +176,16 @@
 
     onMounted(() => {
         cyclicTasksStore.cyclicTasks = []
+        accountsStore.accounts = []
 
         // debouncedFetchCyclicTasks()
+        debouncedFetchCyclicTasks(currentPage.value)
         accountsStore.fetchAccounts()
 
-        accountsStore.accounts = []
         // Устанавливаем observer
         observer.value = new IntersectionObserver(entries => {
+            console.log('cyclicTasksStore.cyclicTasks.length', cyclicTasksStore.cyclicTasks.length)
+            console.log('cyclicTasksStore.totalCyclicTasksCount', cyclicTasksStore.totalCyclicTasksCount)
             entries.forEach(entry => {
                 if (
                     entry.isIntersecting &&

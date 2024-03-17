@@ -101,14 +101,14 @@
                             </td>
                         </tr>
 
-                        <tr v-if="tasksStore.tasks.length === 0 && !tasksStore.isLoading">
+                        <tr v-if="tasksStore.tasks.length === 0 && !tasksStore.isLoading" class="pe-none">
                             <td colspan="7" style="height: 55px;">
                                 Список задач пуст
                             </td>
                         </tr>
 
-                        <tr class="load-more-trigger visually-hidden">
-                            <td colspan="7" style="height: 55px;">
+                        <tr class="load-more-trigger">
+                            <td colspan="7" class="visually-hidden">
                                 <span>Загрузка...</span>
                             </td>
                         </tr>
