@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Repositories\AccountRepositoryInterface;
 use ATehnix\VkClient\Client;
 use ATehnix\VkClient\Exceptions\VkException;
+use GuzzleHttp\Client as HttpClient;
 
 /**
  * Класс VkClientService предоставляет сервисы для взаимодействия с VK API.
@@ -24,6 +25,10 @@ class VkClientService
      */
     private $accountRepository;
 
+    const API_URI = 'https://api.vk.com/method/';
+    const API_VERSION = '5.62';
+    const API_TIMEOUT = 30.0;
+
     /**
      * Конструктор класса VkClientService.
      *
@@ -31,7 +36,19 @@ class VkClientService
      */
     public function __construct(AccountRepositoryInterface $accountRepository)
     {
-        $this->api = new Client(config('services.vk.version'));
+        // $this->api = new Client(config('services.vk.version'));
+
+        $this->api = new Client(config('services.vk.version'), new HttpClient([
+            'base_uri'    => static::API_URI,
+            'timeout'     => static::API_TIMEOUT,
+            'http_errors' => false,
+            'headers'     => [
+                'User-Agent'      => 'github.com/atehnix/vk-client',
+                'Accept'          => 'application/json',
+                'Accept-Language' => 'ru-RU', // Добавлен заголовок для русского языка
+            ],
+        ]));
+
         $this->api->setDefaultToken(config('services.vk.token'));
         $this->accountRepository = $accountRepository;
     }
@@ -66,10 +83,10 @@ class VkClientService
         $pagination = collect($data->toArray())->except('data');
 
         return [
-            'success' => true,
-            'data'    => $data->items(), // Извлекаем только массив данных
+            'success'    => true,
+            'data'       => $data->items(), // Извлекаем только массив данных
             'pagination' => $pagination, // Добавляем информацию о пагинации, если нужно
-            'message' => 'Список аккаунтов получен'
+            'message'    => 'Список аккаунтов получен'
         ];
 
     }
