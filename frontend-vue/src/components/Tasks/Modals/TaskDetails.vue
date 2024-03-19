@@ -10,7 +10,7 @@
                 <PerfectScrollbar class="ps-modal">
                     <div class="modal-body py-0">
                         <div class="d-flex mb-3" v-if="tasksStore.taskDetails">
-                            <img :src="tasksStore.taskDetails.attachments[0].photo.sizes[2].url" class="rounded-1 w-100" alt="">
+                            <img :src="tasksStore.taskDetails.attachments[0].photo.sizes[4].url" class="rounded-1 w-100" alt="">
                         </div>
 
                         <div class="ps-3 d-flex flex-column">

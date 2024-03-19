@@ -12,13 +12,9 @@
             >
 
             <h6 class="mb-0" style="pointer-events: none">
-                <span class="badge btn d-flex items-center fw-bold"
-                      :class="{
-                        'btn-success ': isTotalMatched,
-                        'text-bg-secondary' : !isTotalMatched
-                     }"
-                      style="padding: 8px
-               ">
+                <span class="badge btn btn-secondary d-flex items-center fw-bold"
+                      style="padding: 8px"
+                >
                     <template v-if="cyclicTasksStore.isLoading && !cyclicTasksStore.cyclicTasks.length">
                        <span class="spinner-border" role="status" style="width: 12px; height: 12px;">
                           <span class="visually-hidden">Загрузка...</span>
@@ -161,10 +157,6 @@
         modalComponent.value = preparedModal(DeleteAllCyclicTasks)
         showModal('deleteAllCyclicTasksModal')
     }
-
-    const isTotalMatched = computed(() => {
-        return cyclicTasksStore.totalCyclicTasksCount === cyclicTasksStore.cyclicTasks.length
-    })
 
     const debouncedFetchCyclicTasks = debounce((page) => {
         cyclicTasksStore.isLoading = true

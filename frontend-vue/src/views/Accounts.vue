@@ -5,11 +5,7 @@
             <h1 class="h2 mb-0 me-3">Список аккаунтов</h1>
 
             <h6 class="mb-0" style="pointer-events: none">
-               <span class="badge btn d-flex items-center fw-bold"
-                     :class="{
-                        'btn-success ': isTotalMatched,
-                        'text-bg-secondary' : !isTotalMatched
-                     }"
+               <span class="badge btn btn-secondary d-flex items-center fw-bold"
                      style="padding: 8px
                ">
                     <template v-if="accountsStore.isLoading && !accountsStore.accounts.length">
@@ -127,10 +123,6 @@
     const currentPage = ref(1)
 
     provide('closeModal', closeModal)
-
-    const isTotalMatched = computed(() => {
-        return accountsStore.pagination.total === accountsStore.accounts.length
-    })
 
     const debouncedFetchAccounts = debounce((page) => {
         accountsStore.isLoading = true

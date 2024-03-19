@@ -55,11 +55,7 @@
                         <tr>
                             <th scope="col" style="width: 110px;">
                                 <h6 class="d-flex mb-0 pe-none justify-content-center">
-                                    <span class="badge btn d-flex items-center justify-content-center fw-bold"
-                                          :class="{
-                                            'btn-success ': isTotalMatched,
-                                            'text-bg-secondary' : !isTotalMatched
-                                         }"
+                                    <span class="badge btn btn-secondary d-flex items-center justify-content-center fw-bold"
                                           style="padding: 8px; min-width: 80px;">
                                         <template v-if="tasksStore.isLoading && !tasksStore.tasks.length">
                                            <span class="spinner-border" role="status" style="width: 12px; height: 12px;">
@@ -73,7 +69,6 @@
                                     </span>
                                 </h6>
 
-                                <!--{{ totalTasksByStatus ? totalTasksByStatus : 0 }} / {{ tasksStore.tasks.length }}-->
                             </th>
                             <th scope="col" style="width: 350px;">Имя и фамилия</th>
                             <th scope="col" style="width: 100px;">Статус</th>
@@ -266,10 +261,6 @@
             default:
                 return tasksStore.totalTasksCount
         }
-    })
-
-    const isTotalMatched = computed(() => {
-        return totalTasksByStatus.value === tasksStore.tasks.length
     })
 
     const showAccountDetailsModal = (accountId, ownerId, taskId) => {
