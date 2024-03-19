@@ -49,7 +49,9 @@ export const useCyclicTasksStore = defineStore('cyclicTasks', {
                     // Корректируем effectivePerPage, чтобы на последней странице было не больше задач, чем осталось.
                     // Используем Math.min для выбора меньшего из двух значений: расчетного количества задач
                     // на последней странице и effectivePerPage с учетом удаленных задач.
-                    effectivePerPage = Math.min(tasksLeftForLastPage, effectivePerPage + this.deletedCyclicTasksCount)
+                    if (this.deletedTasksCount > 0) {
+                        effectivePerPage = Math.min(tasksLeftForLastPage, effectivePerPage + this.deletedTasksCount)
+                    }
                 }
             }
 

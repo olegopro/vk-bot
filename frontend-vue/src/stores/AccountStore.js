@@ -135,7 +135,7 @@ export const useAccountStore = defineStore('account', {
                 item_id: itemId
             })
                 .then(({ data }) => showSuccessNotification(data.message))
-                .catch(({ data }) => showErrorNotification(data.error))
+                .catch(error => showErrorNotification(error.response.data.message))
         },
 
         // TODO: Нигде не используется

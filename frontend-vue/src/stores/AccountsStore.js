@@ -31,7 +31,7 @@ export const useAccountsStore = defineStore('accounts', {
                     this.accounts.push(data.data)
                     showSuccessNotification(data.message)
                 })
-                .catch(({ data }) => showErrorNotification(data.error))
+                .catch(error => showErrorNotification(error.response.data.message))
         },
 
         async deleteAccount(accountId) {
