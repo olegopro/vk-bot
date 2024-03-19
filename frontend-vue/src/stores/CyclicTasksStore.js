@@ -87,6 +87,7 @@ export const useCyclicTasksStore = defineStore('cyclicTasks', {
         async editCyclicTask(taskId, taskData) {
             await axios.patch(`http://localhost:8080/api/cyclic-tasks/${taskId}`, taskData)
                 .then(({ data }) => {
+                    console.log('data', data)
                     // Сервер возвращает обновлённую задачу в ответе
                     const updatedTask = data.data
 

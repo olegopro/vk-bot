@@ -94,7 +94,7 @@
 
         cyclicTaskStore.editCyclicTask(props.taskId, {
             account_id: editedTaskData.value.account_id,
-            tasks_count: editedTaskData.value.tasks_count,
+            total_task_count: editedTaskData.value.total_task_count,
             tasks_per_hour: editedTaskData.value.tasks_per_hour,
             status: editedTaskData.value.status,
             selected_times: editedTaskData.value.selected_times

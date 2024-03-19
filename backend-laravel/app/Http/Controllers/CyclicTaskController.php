@@ -29,7 +29,7 @@ final class CyclicTaskController extends Controller
 
     public function editCyclicTask(Request $request, $taskId)
     {
-        $data = $request->only(['account_id', 'tasks_count', 'tasks_per_hour', 'status', 'selected_times']);
+        $data = $request->only(['account_id','total_task_count', 'tasks_per_hour', 'status', 'selected_times']);
         $cyclicTasks = $this->cyclicTaskRepository->editCyclicTask($taskId, $data);
 
         if (!$cyclicTasks) {
