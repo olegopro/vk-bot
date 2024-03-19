@@ -121,6 +121,7 @@ export const useCyclicTasksStore = defineStore('cyclicTasks', {
             await axios.delete('http://localhost:8080/api/cyclic-tasks/delete-all-cyclic-tasks')
                 .then(({ data }) => {
                     this.cyclicTasks = []
+                    this.totalCyclicTasksCount = null
                     showSuccessNotification(data.message)
                 })
         },

@@ -1,5 +1,4 @@
 <template>
-
     <div class="row mb-3 align-items-center">
         <div class="col d-flex align-items-center">
             <h1 class="h2 mb-0 me-3">Список аккаунтов</h1>

@@ -38,6 +38,7 @@ export const useAccountsStore = defineStore('accounts', {
             await axios.delete(`http://localhost:8080/api/account/delete-account/${accountId}`)
                 .then(({ data }) => {
                     this.accounts = this.accounts.filter(account => account.account_id !== accountId)
+                    this.pagination.total--
                     showSuccessNotification(data.message)
                 })
                 .catch(({ data }) => showErrorNotification(data.error))
