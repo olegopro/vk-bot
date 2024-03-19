@@ -13,7 +13,12 @@
                     </div>
                     <div class="mb-3">
                         <p>Статус - {{ specificAccount?.status }}</p>
-                        <p>Последняя активность - {{ date(specificAccount?.last_seen?.time) }}</p>
+                        <p>
+                            Последняя активность -
+                            <span v-if="specificAccount">
+                                {{ date(specificAccount?.last_seen?.time) }}
+                            </span>
+                        </p>
                     </div>
                 </div>
                 <div class="col-4 p-3 d-flex flex-column">
@@ -30,7 +35,7 @@
                         Город - {{ specificAccount?.city?.title }}
                     </h4>
                 </div>
-                <div class="col p-3">
+                <div class="col p-3" v-if="specificAccount">
                     <OnlineStatus :type="specificAccount?.online === 0 ? 'offline' : 'online'" />
                 </div>
             </div>
