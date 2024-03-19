@@ -37,7 +37,7 @@
                 <table class="table table-hover">
                     <thead>
                         <tr>
-                            <th scope="col" style="width: 110px;">#</th>
+                            <th scope="col" style="width: 180px;">#</th>
                             <th scope="col" style="width: 400px;">Имя и фамилия</th>
                             <th scope="col" style="width: 250px;">Логин</th>
                             <th scope="col" style="width: 250px;">Действия</th>

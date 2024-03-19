@@ -3,7 +3,7 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header" v-if="props.accountData">
-                    <h1 class="modal-title fs-4">
+                    <h1 class="modal-title fs-4 me-3">
                         <span>{{ props.accountData.first_name }} {{ props.accountData.last_name }}</span>
 
                     </h1>
@@ -13,8 +13,8 @@
 
                 <div class="modal-body py-2" v-if="props.accountData">
                     <div class="row">
-                        <div class="mb-3 col-6">
-                            <img :src="props.accountData.photo_200" class="rounded-1 " alt="">
+                        <div class=" col-6">
+                            <img :src="props.accountData.photo_200" class="rounded-1 w-100" alt="">
                         </div>
 
                         <div class="col-6">
@@ -30,7 +30,9 @@
                         </div>
                     </div>
 
-                    <p class="mb-0"><b>Статус:</b> {{ props.accountData.status }}</p>
+                    <p class="mt-3 mb-0" v-if="props.accountData.status">
+                        <b>Статус:</b> {{ props.accountData.status }}
+                    </p>
                 </div>
 
                 <div class="modal-footer">
