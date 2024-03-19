@@ -124,6 +124,12 @@ table {
     }
 
     tbody {
+
+        &:last-child {
+            //border-bottom-width: 1px !important;
+            //border-color: transparent !important;
+        }
+
         tr {
             &:last-child {
                 border-color: transparent;

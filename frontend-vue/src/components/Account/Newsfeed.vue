@@ -163,7 +163,7 @@
 
         await accountStore.addLike(userId.value, ownerId, itemId)
             .then(() => accountStore.accountNewsFeed[index].likes.user_likes = 1)
-            .catch(({ response }) => showErrorNotification(response.data.message))
+            .catch(error => showErrorNotification(error.message))
             .finally(() => (loadingStatus.value[index] = false))
     }
 
