@@ -38,7 +38,7 @@
                 <table class="table table-hover">
                     <thead>
                         <tr>
-                            <th scope="col" style="width: 110px;">ID</th>
+                            <th scope="col" style="width: 110px;">#</th>
                             <th scope="col" style="width: 400px;">Имя и фамилия</th>
                             <th scope="col" style="width: 250px;">Логин</th>
                             <th scope="col" style="width: 250px;">Действия</th>
@@ -47,7 +47,7 @@
                     </thead>
                     <tbody>
                         <tr v-for="account in accountsStore.accounts" :key="account.account_id">
-                            <th scope="row">{{ account.account_id }}</th>
+                            <th scope="row">ID {{ account.account_id }}</th>
                             <td>{{ account.first_name }} {{ account.last_name }}</td>
                             <td>{{ account.screen_name }}</td>
 

@@ -7,7 +7,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <p class="mb-0">Удалить все циклические задачи <strong>({{ cyclicTasksStore.cyclicTasks.length }})</strong></p>
+                    <p class="mb-0">Удалить все циклические задачи <strong>({{ cyclicTasksStore.totalCyclicTasksCount }})</strong></p>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" @click="modalHide">Отмена</button>
@@ -20,7 +20,7 @@
 
 <script setup>
     import { ref, onMounted, onUnmounted, inject } from 'vue'
-    import { useCyclicTasksStore } from '../../../stores/CyclicTasksStore'
+    import { useCyclicTasksStore } from '@/stores/CyclicTasksStore'
 
     const disable = ref(false)
     const cyclicTasksStore = useCyclicTasksStore()
