@@ -11996,6 +11996,13 @@ table tbody:last-child {
 }
 
 .notyf__toast {
+  max-width: fit-content !important;
+}
+.notyf__toast .notyf__ripple {
+  width: 140% !important;
+}
+
+.notyf__toast {
   border-radius: var(--bs-border-radius) !important;
 }
 

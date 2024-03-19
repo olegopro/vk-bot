@@ -202,3 +202,11 @@ table {
     white-space: nowrap !important;
     border: 0 !important;
 }
+
+.notyf__toast {
+    max-width: fit-content !important;
+
+    .notyf__ripple {
+        width: 140% !important;
+    }
+}
