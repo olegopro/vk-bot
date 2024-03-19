@@ -41,13 +41,13 @@ final class TaskController extends Controller
     }
 
     /**
-     * Возвращает статус задачи или задач по указанному статусу и/или ID аккаунта.
+     * Возвращает задачи или задачу по указанному статусу и/или ID аккаунта.
      *
      * @param string|null $status Статус задачи для фильтрации.
      * @param int|null $accountId ID аккаунта для фильтрации.
      * @return \Illuminate\Http\JsonResponse Ответ с данными о задачах.
      */
-    public function getTaskStatus(Request $request, $status = null, $accountId = null)
+    public function getTasksByStatus(Request $request, $status = null, $accountId = null)
     {
         $perPage = (int) $request->query('perPage', 30);
 
@@ -57,7 +57,7 @@ final class TaskController extends Controller
             $status = null;
         }
 
-        $tasks = $this->taskRepository->getTaskStatus($status, $accountId, $perPage);
+        $tasks = $this->taskRepository->getTasksByStatus($status, $accountId, $perPage);
 
         return response()->json([
             'success' => true,

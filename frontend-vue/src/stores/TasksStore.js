@@ -103,7 +103,7 @@ export const useTasksStore = defineStore('tasks', {
 
         async fetchTaskDetails(taskId) {
             this.isTaskDetailsLoading = taskId
-            await axios.post(`http://localhost:8080/api/tasks/task-info/${taskId}`)
+            await axios.get(`http://localhost:8080/api/tasks/task-info/${taskId}`)
                 .then(({ data }) => this.taskDetails = data.data)
                 .catch(error => {
                     throw error

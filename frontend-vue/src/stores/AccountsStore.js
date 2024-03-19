@@ -12,7 +12,7 @@ export const useAccountsStore = defineStore('accounts', {
     actions: {
         async fetchAccounts(page = 1) {
             this.isLoading = true
-            await axios.post(`http://localhost:8080/api/account/all-accounts?page=${page}`)
+            await axios.get(`http://localhost:8080/api/account/all-accounts?page=${page}`)
                 .then(({ data }) => {
                     page === 1
                         ? this.accounts = data.data

@@ -45,8 +45,8 @@ export const useAccountStore = defineStore('account', {
 
             // Если данных о владельце нет, выполняем запросы
             await Promise.all([
-                axios.post(`http://localhost:8080/api/account/data/${ownerId}`),
-                axios.post(`http://localhost:8080/api/account/friends/count/${accountId}/${ownerId}`)
+                axios.get(`http://localhost:8080/api/account/data/${ownerId}`),
+                axios.get(`http://localhost:8080/api/account/friends/count/${accountId}/${ownerId}`)
             ])
                 .then(responses => {
                     const ownerDataResponse = responses[0]
@@ -74,12 +74,12 @@ export const useAccountStore = defineStore('account', {
         },
 
         async fetchAccountFollowers(accountId) {
-            axios.post(`http://localhost:8080/api/account/followers/${accountId}`)
+            axios.get(`http://localhost:8080/api/account/followers/${accountId}`)
                 .then(response => this.accountFollowers[accountId] = response.data.response.items)
         },
 
         async fetchAccountFriends(accountId) {
-            axios.post(`http://localhost:8080/api/account/friends/${accountId}`)
+            axios.get(`http://localhost:8080/api/account/friends/${accountId}`)
                 .then(response => this.accountFriends[accountId] = response.data.response.items)
         },
 
@@ -167,7 +167,7 @@ export const useAccountStore = defineStore('account', {
             // Если данные о владельце уже есть, немедленно возвращаем эти данные
             if (existingGroupData) return Promise.resolve(existingGroupData)
 
-            const { data } = await axios.post(`http://localhost:8080/api/group/data/${Math.abs(groupId)}`)
+            const { data } = await axios.get(`http://localhost:8080/api/group/data/${Math.abs(groupId)}`)
             this.addOwnerData(data.response[0])
         },
 

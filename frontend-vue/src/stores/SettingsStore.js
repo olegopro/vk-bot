@@ -8,7 +8,7 @@ export const useSettingsStore = defineStore('settings', {
 
     actions: {
         async fetchSettings() {
-            const { data } = await axios.post('/api/settings')
+            const { data } = await axios.get('/api/settings')
             this.settings = data[0]
         },
         async saveSettings({ showFollowers, showFriends, taskTimeout }) {

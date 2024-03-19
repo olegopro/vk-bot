@@ -31,7 +31,7 @@ class TaskRepository implements TaskRepositoryInterface
         return $task;
     }
 
-    public function getTaskStatus($status = null, $accountId = null, $perPage)
+    public function getTasksByStatus($status = null, $accountId = null, $perPage)
     {
         $result = [
             'total' => Task::when($accountId, function ($query) use ($accountId) {
