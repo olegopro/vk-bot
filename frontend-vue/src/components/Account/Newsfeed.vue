@@ -1,7 +1,10 @@
 <template>
     <div class="row justify-content-end mt-5 mb-3">
         <div class="col-3 d-flex justify-content-end change-grid-columns">
-            <i :class="[columnSettings.columnClass === option.class ? option.iconFill : option.icon, 'bi', 'me-2']"
+            <i :class="[
+                    columnSettings.columnClass === option.class ? option.iconFill : option.icon,'bi','me-2',
+                    accountStore.isLoadingFeed ? 'pe-none' : ''
+               ]"
                v-for="option in columnOptions"
                :key="option.class"
                @click="changeColumnClass(option.class)"
