@@ -23,6 +23,8 @@ Route::prefix('tasks')->group(function () {
     Route::get('/count-by-status/{status?}/{accountId?}', [TaskController::class, 'countTasksByAccountAndStatus']);
     Route::get('/task-info/{taskId}', [TaskController::class, 'getTaskInfo']);
     Route::get('/{status?}/{accountId?}/{perPage?}', [TaskController::class, 'getTasksByStatus']);
+    Route::post('/get-posts-for-like', [TaskController::class, 'collectNewsfeedPostsForLikeTask']);
+    Route::post('/add-task-likes', [TaskController::class, 'addLikeTaskToQueue']);
     Route::delete('/delete-like/{taskId}', [TaskController::class, 'deleteLike']);
     Route::delete('/delete-all-tasks/{status?}/{accountId?}', [TaskController::class, 'deleteAllTasks']);
     Route::delete('/delete-task-by-id/{id}', [TaskController::class, 'deleteTaskById']);
@@ -46,10 +48,6 @@ Route::prefix('account')->group(function () {
     Route::post('/add', [AccountController::class, 'setAccountData']);
     Route::post('/newsfeed', [AccountController::class, 'fetchAccountNewsfeed']);
     Route::post('/like', [AccountController::class, 'addLike']);
-
-    // Перенести в tasks
-    Route::post('/get-posts-for-like', [TaskController::class, 'collectNewsfeedPostsForLikeTask']);
-    Route::post('/add-task-likes', [TaskController::class, 'addLikeTaskToQueue']);
     Route::delete('/delete-account/{id}', [AccountController::class, 'deleteAccount']);
 });
 

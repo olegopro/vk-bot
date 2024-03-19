@@ -148,7 +148,7 @@ export const useAccountStore = defineStore('account', {
         },
 
         async addPostsToLike(accountId, taskCount) {
-            await axios.post('http://localhost:8080/api/account/get-posts-for-like', {
+            await axios.post('http://localhost:8080/api/tasks/get-posts-for-like', {
                 account_id: accountId,
                 task_count: taskCount
             })
