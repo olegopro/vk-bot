@@ -95,12 +95,11 @@
             status.value,
             selectedTimes.value
         )
-            .then(response => {
+            .then(() => {
                 modalHide()
                 disablePost.value = false
                 loading.value = false
                 accountId.value = 'selectAccount'
-                showSuccessNotification(response)
                 cyclicTaskStore.fetchCyclicTasks()
             })
             .catch(error => showErrorNotification(error))

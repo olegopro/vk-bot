@@ -82,6 +82,8 @@ export const useCyclicTasksStore = defineStore('cyclicTasks', {
                 status: status,
                 selected_times: selectedTimes
             })
+                .then(({ data }) => showSuccessNotification(data.message))
+                .catch(error => showErrorNotification(error))
         },
 
         async editCyclicTask(taskId, taskData) {
