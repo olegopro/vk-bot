@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import axios from 'axios'
+import axios from '@/helpers/axiosConfig'
 import { showErrorNotification, showSuccessNotification } from '@/helpers/notyfHelper'
 
 export const useCyclicTasksStore = defineStore('cyclicTasks', {
@@ -56,7 +56,7 @@ export const useCyclicTasksStore = defineStore('cyclicTasks', {
             }
 
             console.log('effectivePerPage', effectivePerPage)
-            await axios.get(`http://localhost:8080/api/cyclic-tasks?page=${page}&perPage=${effectivePerPage}`)
+            await axios.get(`cyclic-tasks?page=${page}&perPage=${effectivePerPage}`)
                 .then(({ data }) => {
                     if (page === 1) {
                         this.cyclicTasks = data.data
@@ -75,7 +75,7 @@ export const useCyclicTasksStore = defineStore('cyclicTasks', {
         },
 
         async createCyclicTask(accountId, tasksPerHour, tasksCount, status, selectedTimes) {
-            await axios.post('http://localhost:8080/api/cyclic-tasks/create-cyclic-task', {
+            await axios.post('cyclic-tasks/create-cyclic-task', {
                 account_id: accountId,
                 tasks_per_hour: tasksPerHour,
                 total_task_count: tasksCount,
@@ -87,7 +87,7 @@ export const useCyclicTasksStore = defineStore('cyclicTasks', {
         },
 
         async editCyclicTask(taskId, taskData) {
-            await axios.patch(`http://localhost:8080/api/cyclic-tasks/${taskId}`, taskData)
+            await axios.patch(`cyclic-tasks/${taskId}`, taskData)
                 .then(({ data }) => {
                     console.log('data', data)
                     // Сервер возвращает обновлённую задачу в ответе
@@ -104,7 +104,7 @@ export const useCyclicTasksStore = defineStore('cyclicTasks', {
         },
 
         async deleteCyclicTask(taskId) {
-            await axios.delete(`http://localhost:8080/api/cyclic-tasks/${taskId}`)
+            await axios.delete(`cyclic-tasks/${taskId}`)
                 .then(({ data }) => {
                     // Удаляем задачу из списка
                     const index = this.cyclicTasks.findIndex(cyclicTask => cyclicTask.id === taskId)
@@ -120,7 +120,7 @@ export const useCyclicTasksStore = defineStore('cyclicTasks', {
         },
 
         async deleteAllCyclicTasks() {
-            await axios.delete('http://localhost:8080/api/cyclic-tasks/delete-all-cyclic-tasks')
+            await axios.delete('cyclic-tasks/delete-all-cyclic-tasks')
                 .then(({ data }) => {
                     this.cyclicTasks = []
                     this.totalCyclicTasksCount = null
@@ -129,7 +129,7 @@ export const useCyclicTasksStore = defineStore('cyclicTasks', {
         },
 
         async pauseCyclicTask(taskId) {
-            await axios.patch(`http://localhost:8080/api/cyclic-tasks/pause-cyclic-task/${taskId}`)
+            await axios.patch(`cyclic-tasks/pause-cyclic-task/${taskId}`)
                 .then(({ data }) => {
                     const taskIndex = this.cyclicTasks.findIndex(task => task.id === taskId)
                     if (taskIndex !== -1) {

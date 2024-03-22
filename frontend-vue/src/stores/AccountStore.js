@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import axios from 'axios'
+import axios from '@/helpers/axiosConfig'
 import axiosThrottle from 'axios-request-throttle'
 import { showErrorNotification, showSuccessNotification } from '@/helpers/notyfHelper'
 
@@ -19,7 +19,7 @@ export const useAccountStore = defineStore('account', {
 
     actions: {
         async fetchAccount(id) {
-            const { data } = await axios.get(`http://localhost:8080/api/accounts/${id}`)
+            const { data } = await axios.get(`accounts/${id}`)
             const index = this.account.findIndex((item) => item.id === data.id)
 
             if (index !== -1) {
@@ -45,8 +45,8 @@ export const useAccountStore = defineStore('account', {
 
             // Если данных о владельце нет, выполняем запросы
             await Promise.all([
-                axios.get(`http://localhost:8080/api/account/data/${ownerId}`),
-                axios.get(`http://localhost:8080/api/account/friends/count/${accountId}/${ownerId}`)
+                axios.get(`account/data/${ownerId}`),
+                axios.get(`account/friends/count/${accountId}/${ownerId}`)
             ])
                 .then(responses => {
                     const ownerDataResponse = responses[0]
@@ -74,17 +74,17 @@ export const useAccountStore = defineStore('account', {
         },
 
         async fetchAccountFollowers(accountId) {
-            axios.get(`http://localhost:8080/api/account/followers/${accountId}`)
+            axios.get(`account/followers/${accountId}`)
                 .then(response => this.accountFollowers[accountId] = response.data.response.items)
         },
 
         async fetchAccountFriends(accountId) {
-            axios.get(`http://localhost:8080/api/account/friends/${accountId}`)
+            axios.get(`account/friends/${accountId}`)
                 .then(response => this.accountFriends[accountId] = response.data.response.items)
         },
 
         async fetchAccountFriendsCount(id) {
-            const { data } = await axios.get(`http://localhost:8080/api/account/friends/count/${id}`)
+            const { data } = await axios.get(`account/friends/count/${id}`)
             this.accountFriendsCount = data
         },
 
@@ -96,7 +96,7 @@ export const useAccountStore = defineStore('account', {
             const localAxios = axios
             axiosThrottle.use(localAxios, { requestsPerSecond: 5 })
 
-            localAxios.post('http://localhost:8080/api/account/newsfeed', {
+            localAxios.post('account/newsfeed', {
                 account_id: accountID,
                 start_from: startFrom
             })
@@ -129,7 +129,7 @@ export const useAccountStore = defineStore('account', {
         },
 
         async addLike(accountId, ownerId, itemId) {
-            await axios.post('http://localhost:8080/api/account/like', {
+            await axios.post('account/like', {
                 account_id: accountId,
                 owner_id: ownerId,
                 item_id: itemId
@@ -140,7 +140,7 @@ export const useAccountStore = defineStore('account', {
 
         // TODO: Нигде не используется
         async getScreenNameById(accountId) {
-            const { data } = await axios.post('http://localhost:8080/api/account/get-screen-name-by-id', {
+            const { data } = await axios.post('account/get-screen-name-by-id', {
                 user_id: accountId
             })
 
@@ -148,7 +148,7 @@ export const useAccountStore = defineStore('account', {
         },
 
         async addPostsToLike(accountId, taskCount) {
-            await axios.post('http://localhost:8080/api/tasks/get-posts-for-like', {
+            await axios.post('tasks/get-posts-for-like', {
                 account_id: accountId,
                 task_count: taskCount
             })
@@ -167,7 +167,7 @@ export const useAccountStore = defineStore('account', {
             // Если данные о владельце уже есть, немедленно возвращаем эти данные
             if (existingGroupData) return Promise.resolve(existingGroupData)
 
-            const { data } = await axios.get(`http://localhost:8080/api/group/data/${Math.abs(groupId)}`)
+            const { data } = await axios.get(`group/data/${Math.abs(groupId)}`)
             this.addOwnerData(data.response[0])
         },
 
@@ -184,7 +184,7 @@ export const useAccountStore = defineStore('account', {
         },
 
         async getAccountDetails(ownerId) {
-            await axios.get(`http://localhost:8080/api/account/${ownerId}`)
+            await axios.get(`account/${ownerId}`)
                 .then(response => response.data)
                 .catch(error => showErrorNotification(error.response.data.message))
         }

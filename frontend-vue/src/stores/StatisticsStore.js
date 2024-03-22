@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import axios from 'axios'
+import axios from '@/helpers/axiosConfig'
 import { showErrorNotification, showSuccessNotification } from '@/helpers/notyfHelper'
 
 export const useStatisticsStore = defineStore('statistics', {
@@ -9,7 +9,7 @@ export const useStatisticsStore = defineStore('statistics', {
 
 	actions: {
 		fetchWeeklyTaskStats() {
-			axios.get('http://localhost:8080/api/statistics')
+			axios.get('statistics')
 				.then(({ data }) => {
 					this.weeklyTaskStats = data.data
 					showSuccessNotification(data.message)

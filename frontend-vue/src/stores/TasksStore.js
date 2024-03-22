@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import axios from 'axios'
+import axios from '@/helpers/axiosConfig'
 import { showErrorNotification, showSuccessNotification } from '@/helpers/notyfHelper'
 
 export const useTasksStore = defineStore('tasks', {
@@ -79,10 +79,10 @@ export const useTasksStore = defineStore('tasks', {
                 Формирование базового URL для запроса.
                 Если параметр status задан (не пустая строка), то он добавляется к URL.
                 Если параметр accountId задан, то он также добавляется к URL.
-                Например, если status = 'failed' и accountId = '123', URL станет 'http://localhost:8080/api/tasks/failed/123'.
-                Если оба параметра не заданы, URL останется 'http://localhost:8080/api/tasks'.
+                Например, если status = 'failed' и accountId = '123', URL станет 'tasks/failed/123'.
+                Если оба параметра не заданы, URL останется 'tasks'.
             */
-            const url = `http://localhost:8080/api/tasks${status ? `/${status}` : ''}${accountId ? `/${accountId}` : ''}?page=${page}&perPage=${effectivePerPage}`
+            const url = `tasks${status ? `/${status}` : ''}${accountId ? `/${accountId}` : ''}?page=${page}&perPage=${effectivePerPage}`
 
             await axios.get(url).then(({ data }) => {
                 if (page === 1) {
@@ -103,7 +103,7 @@ export const useTasksStore = defineStore('tasks', {
 
         async fetchTaskDetails(taskId) {
             this.isTaskDetailsLoading = taskId
-            await axios.get(`http://localhost:8080/api/tasks/task-info/${taskId}`)
+            await axios.get(`tasks/task-info/${taskId}`)
                 .then(({ data }) => this.taskDetails = data.data)
                 .catch(error => {
                     throw error
@@ -112,7 +112,7 @@ export const useTasksStore = defineStore('tasks', {
         },
 
         async getTasksCountByStatus(status = '', accountId = '') {
-            const url = `http://localhost:8080/api/tasks/count-by-status${status ? `/${status}` : ''}${accountId ? `/${accountId}` : ''}`
+            const url = `tasks/count-by-status${status ? `/${status}` : ''}${accountId ? `/${accountId}` : ''}`
 
             await axios.get(url)
                 .then(({ data }) => {
@@ -122,7 +122,7 @@ export const useTasksStore = defineStore('tasks', {
         },
 
         async deleteLike(taskId) {
-            await axios.delete(`http://localhost:8080/api/tasks/delete-like/${taskId}`)
+            await axios.delete(`tasks/delete-like/${taskId}`)
                 .then(({ data }) => {
                     this.fetchTaskDetails(taskId)
                     showSuccessNotification(data.message)
@@ -130,7 +130,7 @@ export const useTasksStore = defineStore('tasks', {
         },
 
         async deleteTask(id) {
-            await axios.delete(`http://localhost:8080/api/tasks/delete-task-by-id/${id}`)
+            await axios.delete(`tasks/delete-task-by-id/${id}`)
                 .then(({ data }) => {
                     const task = this.tasks.find(task => task.id === id)
 
@@ -173,7 +173,7 @@ export const useTasksStore = defineStore('tasks', {
         },
 
         async deleteSingleTaskById(id) {
-            await axios.delete(`http://localhost:8080/api/tasks/deleteTask/${id}`)
+            await axios.delete(`tasks/deleteTask/${id}`)
                 .then(() => this.tasks = this.tasks.filter(task => task.id !== id))
         },
 
@@ -182,7 +182,7 @@ export const useTasksStore = defineStore('tasks', {
             const statusPart = status ? `/${status}` : '/null' // Если status не определен, используем '/null'
             const accountIdPart = accountId ? `/${accountId}` : '' // Если accountId не определен, не добавляем его в URL
 
-            const url = `http://localhost:8080/api/tasks/delete-all-tasks${statusPart}${accountIdPart}`
+            const url = `tasks/delete-all-tasks${statusPart}${accountIdPart}`
 
             await axios.delete(url)
                 .then(({ data }) => {

@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import axios from 'axios'
+import axios from '@/helpers/axiosConfig'
 import { showErrorNotification, showSuccessNotification } from '@/helpers/notyfHelper'
 
 export const useAccountsStore = defineStore('accounts', {
@@ -12,7 +12,7 @@ export const useAccountsStore = defineStore('accounts', {
     actions: {
         async fetchAccounts(page = 1) {
             this.isLoading = true
-            await axios.get(`http://localhost:8080/api/account/all-accounts?page=${page}`)
+            await axios.get(`account/all-accounts?page=${page}`)
                 .then(({ data }) => {
                     page === 1
                         ? this.accounts = data.data
@@ -26,7 +26,7 @@ export const useAccountsStore = defineStore('accounts', {
         },
 
         async addAccount(accessToken) {
-            await axios.post('http://localhost:8080/api/account/add', { access_token: accessToken })
+            await axios.post('account/add', { access_token: accessToken })
                 .then(({ data }) => {
                     this.accounts.push(data.data)
                     showSuccessNotification(data.message)
@@ -35,7 +35,7 @@ export const useAccountsStore = defineStore('accounts', {
         },
 
         async deleteAccount(accountId) {
-            await axios.delete(`http://localhost:8080/api/account/delete-account/${accountId}`)
+            await axios.delete(`account/delete-account/${accountId}`)
                 .then(({ data }) => {
                     this.accounts = this.accounts.filter(account => account.account_id !== accountId)
                     this.pagination.total--
