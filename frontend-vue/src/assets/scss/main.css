@@ -11921,37 +11921,32 @@ table thead {
   vertical-align: middle !important;
 }
 table thead tr {
-  height: 55px;
+  height: 56px;
   position: sticky;
   top: 0;
   z-index: 1020;
 }
-table thead tr th:first-child {
-  border-top-left-radius: var(--ps-border-radius);
-}
-table thead tr th:last-child {
-  border-top-right-radius: var(--ps-border-radius);
-}
-table thead tr th::after {
+table thead tr::after {
   content: "";
   position: absolute;
-  bottom: -1px;
+  top: 57px;
   left: 0;
   width: 100%;
-  border-bottom: 1px solid #dee2e6;
-  z-index: 100;
+  box-shadow: 0px -1px 0px 0.5px #dee2e6;
+  z-index: 1020;
 }
-table tbody tr:last-child {
+table tbody tr:nth-last-child(2) {
   border-color: transparent;
 }
-table tbody tr:last-child th:first-child {
+table tbody tr:nth-last-child(2) th:first-child {
   border-bottom-left-radius: var(--ps-border-radius);
 }
-table tbody tr:last-child td:last-child {
+table tbody tr:nth-last-child(2) td:last-child {
   border-bottom-right-radius: var(--ps-border-radius);
 }
-table tbody tr:last-child td, table tbody tr:last-child th {
+table tbody tr:nth-last-child(2) td, table tbody tr:nth-last-child(2) th {
   border-bottom-width: 0;
+  border-bottom: none !important;
 }
 table tbody tr td .button-style {
   display: inline-flex;
@@ -11960,6 +11955,10 @@ table tbody tr td .button-style {
   justify-content: center;
   align-items: center;
   padding: 0;
+}
+table tbody tr:first-child td, table tbody tr:first-child th {
+  border-top-width: 0;
+  border-top: none !important;
 }
 table tbody:last-child {
   border-bottom-width: 0;

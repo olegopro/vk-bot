@@ -53,12 +53,12 @@
                     <thead>
                         <tr>
                             <th scope="col" style="width: 110px;">#</th>
-                            <th scope="col" style="width: 140px;">Аккаунт</th>
+                            <th scope="col" style="width: auto;">Аккаунт</th>
                             <th scope="col" style="width: 110px;">Количество</th>
                             <th scope="col" style="width: 110px;">Осталось</th>
-                            <th scope="col" style="width: 110px;">Задач в час</th>
+                            <th scope="col" style="width: 120px;">Задач в час</th>
                             <th scope="col" style="width: 150px;">Статус задачи</th>
-                            <th scope="col" style="width: 150px;">Действия</th>
+                            <th scope="col" style="width: 160px;">Действия</th>
                             <th scope="col" style="width: 150px">Старт задачи</th>
                             <th scope="col" style="width: 150px">Задача создана</th>
                         </tr>
