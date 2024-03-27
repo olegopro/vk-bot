@@ -8,8 +8,8 @@ interface Modals {
 
 export function useModal() {
     // Создаем реактивные ссылки для хранения состояния модальных окон и их видимости
-    const modal: Ref<Modals> = ref({})
-    const isOpen: Ref<boolean> = ref(false)
+    const modal: Ref<Modals> = ref<Modals>({})
+    const isOpen: Ref<boolean> = ref<boolean>(false)
 
     // Функция для подготовки модального окна к показу, устанавливает isOpen в true
     const preparedModal = <T>(component: T): T => {
