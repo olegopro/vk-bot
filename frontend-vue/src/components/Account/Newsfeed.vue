@@ -47,7 +47,7 @@
             >
                 <img class="card-img-top"
                      :style="post.likes.user_likes !== 1 ? { cursor: 'pointer'}: {}"
-                     :src="getAdjustedQualityImageUrl(post.attachments[0].photo.sizes)"
+                     :src="getAdjustedQualityImageUrl(post.attachments[0].photo.sizes, currentColumnClass)"
                      @click="post.likes.user_likes !== 1 && addLikeToPost(post.owner_id, post.post_id, index)"
                      alt=""
                 />
@@ -66,6 +66,7 @@
                         </p>
 
                         <p class="mb-1" :class="columnSettings.fontClass" v-if="ownerDataById?.last_seen?.time">
+                            <!-- TODO: Переделать на lodash -->
                             <b>Онлайн: </b> {{ date(ownerDataById?.last_seen?.time) }}
                         </p>
 
@@ -125,6 +126,7 @@
     import { useRoute } from 'vue-router'
     import { debounce } from 'lodash'
     import { useModal } from '@/composables/useModal'
+    import { useImageUrl } from '@/composables/useImageUrl'
 
     const accountStore = useAccountStore()
     const route = useRoute()
@@ -139,6 +141,7 @@
     const likedPostIndex = ref(null)
     const observer = ref(null)
     const modalComponent = shallowRef(null)
+    const { getAdjustedQualityImageUrl } = useImageUrl()
     const { isOpen, preparedModal, showModal, closeModal } = useModal()
 
     const iconClasses = ref({
@@ -173,28 +176,6 @@
     const date = (timestamp) => new Date(timestamp * 1000).toLocaleTimeString('ru-RU')
     const hideDetailedInfo = () => (showDetailedInfo.value = false)
     const toggleDetailedInfoBtn = (index, show) => showDetailedInfoButton.value = show ? index : null
-
-    const getAdjustedQualityImageUrl = (sizes) => {
-        // Определения размеров изображений:
-        // w - оригинал
-        // z - выше среднего
-        // x - ниже среднего
-        // m - низкое качество
-        const sizeMapping = {
-            'col-6': ['w', 'z', 'x', 'm'], // Приоритеты размера для колонок шириной 6
-            'col-4': ['z', 'x', 'm', 'w'], // Приоритеты размера для колонок шириной 4
-            'col-3': ['x', 'm', 'z', 'w'] // Приоритеты размера для колонок шириной 3
-        }
-
-        // Получение массива предпочтительных размеров на основе текущего класса колонок
-        const preferredSizes = sizeMapping[currentColumnClass.value] || ['m', 'x', 'z', 'w']
-
-        // Поиск первого доступного предпочтительного размера изображения
-        const foundSizeType = preferredSizes.find(sizeType => sizes.some(size => size.type === sizeType))
-
-        // Возвращение URL изображения, если найден подходящий размер, иначе пустая строка
-        return foundSizeType ? sizes.find(size => size.type === foundSizeType).url : ''
-    }
 
     const ownerInfo = (accountId, index) => {
         showDetailedInfo.value = index
@@ -320,8 +301,8 @@
                 i {
                     color: white;
                     font-size: 18px;
-                    background: rgba(0, 0, 0, 0.29); /* полупрозрачный черный фон */
-                    backdrop-filter: blur(5px); /* размытие заднего фона */
+                    background: rgba(0, 0, 0, 0.29);
+                    backdrop-filter: blur(5px);
                     border-radius: 6px;
                     padding: 4px 10px;
                 }
