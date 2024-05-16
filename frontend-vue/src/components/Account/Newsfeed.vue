@@ -52,7 +52,7 @@
     import { useRoute } from 'vue-router'
     import { debounce } from 'lodash'
     import { useModal } from '@/composables/useModal'
-    import NewsfeedItem from './ Newsfeed/NewsfeedItem.vue'
+    import NewsfeedItem from './Newsfeed/NewsfeedItem.vue'
     import OwnerDetails from './Modals/OwnerDetails.vue'
 
     const accountStore = useAccountStore()

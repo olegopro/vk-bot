@@ -84,9 +84,9 @@
 
 <script setup>
     import { ref, toRefs } from 'vue'
-    import { useAccountStore } from '@/stores/AccountStore'
-    import { showErrorNotification } from '@/helpers/notyfHelper'
-    import { useImageUrl } from '@/composables/useImageUrl'
+    import { useAccountStore } from '../../../stores/AccountStore'
+    import { showErrorNotification } from '../../../helpers/notyfHelper'
+    import { useImageUrl } from '../../../composables/useImageUrl'
 
     const props = defineProps({
         index: Number,
