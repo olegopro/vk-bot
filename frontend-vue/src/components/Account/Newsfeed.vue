@@ -58,11 +58,11 @@
     const accountStore = useAccountStore()
     const route = useRoute()
 
+    let observer = null
     const userId = ref('')
     const loadingStatus = ref([])
     const currentColumnClass = ref('col-4')
     const showNewsfeed = ref(true)
-    const observer = ref(null)
     const modalComponent = shallowRef(null)
     const ownerDataById = ref(null)
     const showDetailedInfo = ref(null)
@@ -157,7 +157,7 @@
         accountStore.accountNewsFeed = []
         accountStore.isLoadingFeed = true
 
-        observer.value = new IntersectionObserver(entries => {
+        observer = new IntersectionObserver(entries => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     debounceLoadMore()
@@ -165,12 +165,12 @@
             })
         }, { threshold: 0 })
 
-        observer.value.observe(document.getElementById('loader'))
+        observer.observe(document.getElementById('loader'))
         loadingStatus.value = new Array(accountStore.accountNewsFeed.length).fill(false)
     })
 
     onUnmounted(() => {
-        if (observer.value) observer.value.disconnect()
+        if (observer) observer.disconnect()
     })
 </script>
 
