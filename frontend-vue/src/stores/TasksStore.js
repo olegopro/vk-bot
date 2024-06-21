@@ -1,4 +1,4 @@
-import { defineStore } from 'pinia'
+    import { defineStore } from 'pinia'
 import axios from '@/helpers/axiosConfig'
 import { showErrorNotification, showSuccessNotification } from '@/helpers/notyfHelper'
 
@@ -18,7 +18,7 @@ export const useTasksStore = defineStore('tasks', {
     }),
 
     actions: {
-        async fetchTasks(status = '', accountId = '', page = 1) {
+        async fetchTasks(status = '', accountId = '', page = 1, sortBy = 'created_at', sortOrder = 'asc') {
             this.isLoading = true
 
             // Инициализируем переменную effectivePerPage значением tasksPerPage.
@@ -82,7 +82,7 @@ export const useTasksStore = defineStore('tasks', {
                 Например, если status = 'failed' и accountId = '123', URL станет 'tasks/failed/123'.
                 Если оба параметра не заданы, URL останется 'tasks'.
             */
-            const url = `tasks${status ? `/${status}` : ''}${accountId ? `/${accountId}` : ''}?page=${page}&perPage=${effectivePerPage}`
+            const url = `tasks${status ? `/${status}` : ''}${accountId ? `/${accountId}` : ''}?page=${page}&perPage=${effectivePerPage}&sortBy=${sortBy}&sortOrder=${sortOrder}`
 
             await axios.get(url).then(({ data }) => {
                 if (page === 1) {

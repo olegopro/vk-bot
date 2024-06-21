@@ -36,9 +36,7 @@ final class TaskController extends Controller
         private readonly TaskRepositoryInterface    $taskRepository,
         private readonly AccountRepositoryInterface $accountRepository,
         private readonly AccountController          $accountController
-    )
-    {
-    }
+    ) {}
 
     /**
      * Возвращает задачи или задачу по указанному статусу и/или ID аккаунта.
@@ -50,14 +48,15 @@ final class TaskController extends Controller
     public function getTasksByStatus(Request $request, $status = null, $accountId = null)
     {
         $perPage = (int) $request->query('perPage', 30);
+        $sortBy = $request->query('sortBy', 'created_at');
+        $sortOrder = $request->query('sortOrder', 'asc');
 
-        // Проверяем, является ли первый параметр числом (accountId)
         if (is_numeric($status)) {
             $accountId = $status;
             $status = null;
         }
 
-        $tasks = $this->taskRepository->getTasksByStatus($status, $accountId, $perPage);
+        $tasks = $this->taskRepository->getTasksByStatus($status, $accountId, $perPage, $sortBy, $sortOrder);
 
         return response()->json([
             'success' => true,
@@ -242,8 +241,8 @@ final class TaskController extends Controller
     protected function checkExistingTask($ownerId, $postId)
     {
         return Task::where('owner_id', $ownerId)
-                ->where('item_id', $postId)
-                ->first() !== null;
+                   ->where('item_id', $postId)
+                   ->first() !== null;
     }
 
     /**
@@ -290,13 +289,13 @@ final class TaskController extends Controller
     {
         // Базовое значение задержки из настроек
         $basePause = DB::table('settings')
-            ->where('id', '=', '1')
-            ->value('task_timeout');
+                       ->where('id', '=', '1')
+                       ->value('task_timeout');
 
         // Получаем все задачи со статусом 'pending'
         $tasks = DB::table('tasks')
-            ->where('status', '=', 'pending')
-            ->get();
+                   ->where('status', '=', 'pending')
+                   ->get();
 
         // Инициализируем переменную для хранения текущей задержки
         $pause = 0;
@@ -316,21 +315,21 @@ final class TaskController extends Controller
 
             // Обновляем время запуска и статус задачи
             DB::table('tasks')
-                ->where('id', $task->id)
-                ->update([
-                    'run_at' => $run_at,
-                    'status' => 'queued'
-                ]);
+              ->where('id', $task->id)
+              ->update([
+                  'run_at' => $run_at,
+                  'status' => 'queued'
+              ]);
 
             // Отправляем задачу в очередь с учетом задержки
             addLikeToPost::dispatch($task, $token, $this->loggingService)
-                ->delay($specificPause);
+                         ->delay($specificPause);
         }
 
         // Возвращаем список оставшихся задач для информации
         $tasks = DB::table('tasks')
-            ->where('status', '=', 'pending')
-            ->get();
+                   ->where('status', '=', 'pending')
+                   ->get();
 
         return response()->json([
             'success' => true,

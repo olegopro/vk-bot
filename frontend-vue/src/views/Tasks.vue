@@ -74,7 +74,10 @@
                             <th scope="col" style="width: 100px;">Статус</th>
                             <th scope="col" style="width: 250px;">Действия</th>
                             <th scope="col" style="width: 250px">Старт задачи</th>
-                            <th scope="col">Задача создана</th>
+                            <th scope="col" class="cursor-pointer" style="width: 250px" @click="toggleSortOrder('created_at')">
+                                Задача создана
+                                <i class="ms-1" :class="sortBy === 'created_at' && sortOrder === 'asc' ? 'bi bi-sort-down' : 'bi bi-sort-up'"></i>
+                            </th>
                         </tr>
                     </thead>
 
@@ -151,6 +154,8 @@
     const observer = ref(null)
     const perfectScrollbarRef = ref(null)
     const modalComponent = shallowRef(null)
+    const sortBy = ref('created_at')
+    const sortOrder = ref('asc')
     const { isOpen, preparedModal, showModal, closeModal } = useModal()
 
     const taskId = ref(0)
@@ -193,11 +198,22 @@
     })
 
     const debouncedFetchTasks = debounce((status, accountId, page = 1) => {
-        tasksStore.fetchTasks(status, accountId, page).then(() => currentPage.value++)
+        tasksStore.fetchTasks(status, accountId, page, 'created_at', sortOrder.value).then(() => currentPage.value++)
     }, 500, {
         'leading': true, // Вызываться в начале периода ожидания
         'trailing': false // Дополнительный вызов в конце периода не требуется
     })
+
+    const toggleSortOrder = column => {
+        if (sortBy.value === column) {
+            sortOrder.value = sortOrder.value === 'asc' ? 'desc' : 'asc'
+        } else {
+            sortBy.value = column
+            sortOrder.value = 'asc'
+        }
+
+        debouncedFetchTasks(currentStatus.value, selectedAccountId.value, 1)
+    }
 
     const processRouteParams = () => {
         // Получаем текущие параметры маршрута из vue-router.

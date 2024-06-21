@@ -31,7 +31,7 @@ class TaskRepository implements TaskRepositoryInterface
         return $task;
     }
 
-    public function getTasksByStatus($status = null, $accountId = null, $perPage)
+    public function getTasksByStatus($status = null, $accountId = null, $perPage, $sortBy = 'created_at', $sortOrder = 'asc')
     {
         $result = [
             'total' => Task::when($accountId, function ($query) use ($accountId) {
@@ -61,7 +61,9 @@ class TaskRepository implements TaskRepositoryInterface
             $query->where('account_id', $accountId);
         }
 
-        // Вместо возвращения null для 'tasks', возвращаем пагинированный список задач
+        // Добавляем сортировку
+        $query->orderBy($sortBy, $sortOrder);
+
         $result['tasks'] = $query->paginate($perPage);
 
         return $result;
