@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\CyclicTaskController;
+use App\Http\Controllers\FilterController;
 use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\StatisticController;
 use App\Http\Controllers\TaskController;
@@ -49,6 +50,13 @@ Route::prefix('account')->group(function () {
     Route::post('/newsfeed', [AccountController::class, 'fetchAccountNewsfeed']);
     Route::post('/like', [AccountController::class, 'addLike']);
     Route::delete('/delete-account/{id}', [AccountController::class, 'deleteAccount']);
+});
+
+Route::prefix('filters')->group(function () {
+    // Поиск пользователей с применением фильтров
+    Route::post('/search', [FilterController::class, 'searchUsers']);
+    // Поиск и создание задач на основе найденных пользователей
+    Route::post('/search-and-create', [FilterController::class, 'searchAndCreateTasks']);
 });
 
 Route::get('/group/data/{id}', [AccountController::class, 'fetchGroupData']);

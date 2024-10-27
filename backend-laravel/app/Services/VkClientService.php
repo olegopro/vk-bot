@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Filters\VkSearchFilter;
 use App\Repositories\AccountRepositoryInterface;
 use ATehnix\VkClient\Client;
 use ATehnix\VkClient\Exceptions\VkException;
@@ -316,6 +317,26 @@ class VkClientService
             'data'    => $response,
             'message' => 'Пользователи получены'
         ];
+    }
+
+    /**
+     * Выполняет поиск пользователей ВКонтакте с применением фильтров.
+     *
+     * Метод использует API ВКонтакте users.search для поиска пользователей
+     * с учетом заданных параметров фильтрации.
+     *
+     * @param VkSearchFilter $filter Фильтр с параметрами поиска
+     * @param int $accountId ID аккаунта, от имени которого выполняется поиск
+     * @return array Результаты поиска пользователей
+     * @throws VkException Если произошла ошибка при выполнении API запроса
+     */
+    public function searchUsers(VkSearchFilter $filter, int $accountId): array
+    {
+        $accessToken = $this->getAccessTokenByAccountID($accountId);
+
+        return $this->request('users.search', array_merge(
+            $filter->toArray(),
+        ), $accessToken);
     }
 
     /**
