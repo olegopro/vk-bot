@@ -1,5 +1,7 @@
 # vk-bot
 
+#### Документация API https://olegopro.github.io/vk-bot/
+
 ![ID приложения](./frontend-vue/src/assets/github-images/app-preview.gif)
 
 ## Использованные технологии
