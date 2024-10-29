@@ -20,13 +20,27 @@ class VkSearchFilter
     /**
      * Устанавливает строку поискового запроса.
      *
-     * @param string $query Строка для поиска пользователей (например, "Иван Петров")
+     * @param string|null $query Строка для поиска пользователей (например, "Иван Петров")
      * @return self Возвращает текущий экземпляр для цепочки вызовов
      */
-    public function setQuery(string $query): self
+    public function setQuery(?string $query): self
     {
-        $this->filters['q'] = trim($query);
+        if ($query !== null) {
+            $this->filters['q'] = trim($query);
+        }
 
+        return $this;
+    }
+
+    /**
+     * Устанавливает ID города для фильтрации результатов поиска.
+     *
+     * @param int $cityId ID города для поиска
+     * @return self Возвращает текущий экземпляр для цепочки вызовов
+     */
+    public function setCity(int $cityId): self
+    {
+        $this->filters['city'] = $cityId;
         return $this;
     }
 
@@ -45,7 +59,7 @@ class VkSearchFilter
             $this->filters,
             [
                 'fields' => 'photo_200,city,country,online',
-                'count'  => 100
+                'count'  => 10
             ]
         );
     }

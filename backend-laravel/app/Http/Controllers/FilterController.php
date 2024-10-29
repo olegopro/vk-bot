@@ -49,8 +49,9 @@ class FilterController extends Controller
     {
         // Валидация входящих данных
         $validator = Validator::make($request->all(), [
-            'q'          => 'required|string|max:255',
-            'account_id' => 'required|integer'
+            'q'          => 'string|max:255|nullable',
+            'account_id' => 'required|integer',
+            'city_id'    => 'integer|nullable'
         ]);
 
         if ($validator->fails()) {
@@ -64,6 +65,10 @@ class FilterController extends Controller
             // Создаем и настраиваем фильтр для поиска
             $filter = new VkSearchFilter();
             $filter->setQuery($request->q);
+
+            if ($request->city_id) {
+                $filter->setCity($request->city_id);
+            }
 
             // Выполняем поиск через VK API
             $response = $this->vkClient->searchUsers($filter, $request->account_id);
@@ -109,6 +114,55 @@ class FilterController extends Controller
                 $request->account_id,
                 $users
             );
+
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'error'   => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Получает список городов по поисковому запросу.
+     *
+     * Метод делает запрос к API VK для получения списка городов,
+     * соответствующих поисковому запросу. Поддерживает фильтрацию
+     * по стране и ограничение количества результатов.
+     *
+     * @param Request $request HTTP запрос, содержащий параметры:
+     *  - q: string - поисковый запрос (обязательный, минимум 2 символа)
+     *  - country_id: int - ID страны (по умолчанию 1 - Россия)
+     *  - count: int - количество результатов (максимум 1000)
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getCities(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'q'          => 'required|string|min:2',
+            'country_id' => 'integer',
+            'count'      => 'integer|max:1000'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'errors'  => $validator->errors()
+            ], 422);
+        }
+
+        try {
+            $response = $this->vkClient->getCities(
+                $request->q,
+                $request->get('country_id', 1),
+                $request->get('count', 100)
+            );
+
+            return response()->json([
+                'success' => true,
+                'data'    => $response['response'] ?? [],
+                'message' => 'Список городов получен'
+            ]);
 
         } catch (Exception $e) {
             return response()->json([

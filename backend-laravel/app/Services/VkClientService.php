@@ -340,6 +340,28 @@ class VkClientService
     }
 
     /**
+     * Получает список городов через VK API.
+     *
+     * Метод выполняет запрос к методу database.getCities API ВКонтакте
+     * для получения списка городов по поисковому запросу.
+     *
+     * @param string $query Строка для поиска городов
+     * @param int $countryId ID страны (по умолчанию 1 - Россия)
+     * @param int $count Максимальное количество возвращаемых городов
+     * @return array Результат запроса к API
+     * @throws VkException Если произошла ошибка при выполнении запроса
+     */
+    public function getCities(string $query, int $countryId = 1, int $count = 100): array
+    {
+        return $this->request('database.getCities', [
+            'country_id' => $countryId,  // 1 = Россия по умолчанию
+            'q'          => $query,      // Строка поиска
+            'count'      => $count,      // Количество результатов
+            'need_all'   => 0            // 1 - возвращать все города, 0 - только основные
+        ]);
+    }
+
+    /**
      * Получает токен доступа по ID аккаунта.
      *
      * @param int $account_id ID аккаунта.

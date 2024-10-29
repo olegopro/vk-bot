@@ -20,7 +20,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::prefix('tasks')->group(function () {
+Route::prefix('tasks')->group(function() {
     Route::get('/count-by-status/{status?}/{accountId?}', [TaskController::class, 'countTasksByAccountAndStatus']);
     Route::get('/task-info/{taskId}', [TaskController::class, 'getTaskInfo']);
     Route::get('/{status?}/{accountId?}/{perPage?}', [TaskController::class, 'getTasksByStatus']);
@@ -31,7 +31,7 @@ Route::prefix('tasks')->group(function () {
     Route::delete('/delete-task-by-id/{id}', [TaskController::class, 'deleteTaskById']);
 });
 
-Route::prefix('cyclic-tasks')->group(function () {
+Route::prefix('cyclic-tasks')->group(function() {
     Route::get('/', [CyclicTaskController::class, 'getCyclicTasks']);
     Route::post('/create-cyclic-task', [TaskController::class, 'createCyclicTask']);
     Route::patch('/{taskId}', [CyclicTaskController::class, 'editCyclicTask']);
@@ -40,7 +40,7 @@ Route::prefix('cyclic-tasks')->group(function () {
     Route::delete('/{taskId}', [CyclicTaskController::class, 'deleteCyclicTask']);
 });
 
-Route::prefix('account')->group(function () {
+Route::prefix('account')->group(function() {
     Route::get('/all-accounts', [AccountController::class, 'fetchAllAccounts']);
     Route::get('/data/{id}', [AccountController::class, 'fetchAccountData']);
     Route::get('/followers/{id}', [AccountController::class, 'fetchAccountFollowers']);
@@ -52,18 +52,19 @@ Route::prefix('account')->group(function () {
     Route::delete('/delete-account/{id}', [AccountController::class, 'deleteAccount']);
 });
 
-Route::prefix('filters')->group(function () {
+Route::prefix('filters')->group(function() {
     // Поиск пользователей с применением фильтров
     Route::post('/search', [FilterController::class, 'searchUsers']);
     // Поиск и создание задач на основе найденных пользователей
     Route::post('/search-and-create', [FilterController::class, 'searchAndCreateTasks']);
+    // Получение списка городов для фильтрации
+    Route::post('/cities', [FilterController::class, 'getCities']);
 });
-
 Route::get('/group/data/{id}', [AccountController::class, 'fetchGroupData']);
 
 Route::get('/statistics', [StatisticController::class, 'getWeeklyTaskStats']);
 
-Route::prefix('settings')->group(function () {
+Route::prefix('settings')->group(function() {
     Route::get('/', [SettingsController::class, 'getSettings']);
     Route::post('/save', [SettingsController::class, 'saveSettings']);
 });
