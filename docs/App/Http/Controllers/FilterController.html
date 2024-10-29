@@ -75,24 +75,24 @@
                         <div class="namespace-breadcrumbs">
             <ol class="breadcrumb">
                 <li><span class="label label-default">class</span></li>
-                        <li><a href="../../../App.html">App</a></li><li class="backslash">\</li><li><a href="../../Http.html">Http</a></li><li class="backslash">\</li><li><a href="../Controllers.html">Controllers</a></li><li class="backslash">\</li><li>FilterController</li>
+                        <li><a href="../../../App.html">App</a></li><li class="backslash">\</li><li><a href="../../../App/Http.html">Http</a></li><li class="backslash">\</li><li><a href="../../../App/Http/Controllers.html">Controllers</a></li><li class="backslash">\</li><li>FilterController</li>
             </ol>
         </div>
                 <div id="page-content">
     <div class="page-header">
-        <h1>FilterController
+        <h1>FilterController    
             </h1>
     </div>
 
-
+    
     <p>        class
-    <strong>FilterController</strong>        extends <a href="Controller.html"><abbr title="App\Http\Controllers\Controller">Controller</abbr></a>
+    <strong>FilterController</strong>        extends <a href="../../../App/Http/Controllers/Controller.html"><abbr title="App\Http\Controllers\Controller">Controller</abbr></a>
 </p>
 
-
-
-
-
+        
+        
+    
+        
 
             <div class="description">
             <p><p>Контроллер для поиска пользователей VK с применением различных фильтров.</p></p>            <p><p>Этот контроллер предоставляет методы для поиска пользователей ВКонтакте
@@ -105,10 +105,10 @@
 и другие параметры, поддерживаемые API ВКонтакте.</li>
 </ul>
 <p>Также поддерживает создание задач на основе найденных пользователей.</p></p>        </div>
-
+            
                 <h2>Traits</h2>
 
-
+        
     <div class="container-fluid underlined">
                     <div class="row">
                 <div class="col-md-6">
@@ -126,19 +126,19 @@
                 <div class="col-md-6"></div>
             </div>
             </div>
-
-
-
+    
+    
+    
             <h2>Methods</h2>
 
             <div class="container-fluid underlined">
                     <div class="row">
                 <div class="col-md-2 type">
-
+                    
                 </div>
                 <div class="col-md-8">
-                    <a href="#method___construct">__construct</a>(<a href="../../Services/VkClientService.html"><abbr title="App\Services\VkClientService">VkClientService</abbr></a> $vkClient, <a href="TaskController.html"><abbr title="App\Http\Controllers\TaskController">TaskController</abbr></a> $taskController)
-
+                    <a href="#method___construct">__construct</a>(<a href="../../../App/Services/VkClientService.html"><abbr title="App\Services\VkClientService">VkClientService</abbr></a> $vkClient, <a href="../../../App/Http/Controllers/TaskController.html"><abbr title="App\Http\Controllers\TaskController">TaskController</abbr></a> $taskController)
+        
                                             <p><p>Создает новый экземпляр контроллера.</p></p>                </div>
                 <div class="col-md-2"></div>
             </div>
@@ -148,7 +148,7 @@
                 </div>
                 <div class="col-md-8">
                     <a href="#method_searchUsers">searchUsers</a>(<abbr title="Illuminate\Http\Request">Request</abbr> $request)
-
+        
                                             <p><p>Выполняет поиск пользователей ВКонтакте с применением фильтров.</p></p>                </div>
                 <div class="col-md-2"></div>
             </div>
@@ -158,8 +158,18 @@
                 </div>
                 <div class="col-md-8">
                     <a href="#method_searchAndCreateTasks">searchAndCreateTasks</a>(<abbr title="Illuminate\Http\Request">Request</abbr> $request)
-
+        
                                             <p><p>Выполняет поиск пользователей и создает задачи для найденных профилей.</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    <abbr title="Illuminate\Http\JsonResponse">JsonResponse</abbr>
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_getCities">getCities</a>(<abbr title="Illuminate\Http\Request">Request</abbr> $request)
+        
+                                            <p><p>Получает список городов по поисковому запросу.</p></p>                </div>
                 <div class="col-md-2"></div>
             </div>
             </div>
@@ -171,38 +181,38 @@
                     <div class="method-item">
                     <h3 id="method___construct">
         <div class="location">at line 31</div>
-        <code>
-    <strong>__construct</strong>(<a href="../../Services/VkClientService.html"><abbr title="App\Services\VkClientService">VkClientService</abbr></a> $vkClient, <a href="TaskController.html"><abbr title="App\Http\Controllers\TaskController">TaskController</abbr></a> $taskController)
+        <code>                    
+    <strong>__construct</strong>(<a href="../../../App/Services/VkClientService.html"><abbr title="App\Services\VkClientService">VkClientService</abbr></a> $vkClient, <a href="../../../App/Http/Controllers/TaskController.html"><abbr title="App\Http\Controllers\TaskController">TaskController</abbr></a> $taskController)
         </code>
     </h3>
-    <div class="details">
-
-
-
+    <div class="details">    
+            
+    
+            
 
         <div class="method-description">
-                            <p><p>Создает новый экземпляр контроллера.</p></p>
+                            <p><p>Создает новый экземпляр контроллера.</p></p>                        
         </div>
         <div class="tags">
                             <h4>Parameters</h4>
 
                     <table class="table table-condensed">
                     <tr>
-                <td><a href="../../Services/VkClientService.html"><abbr title="App\Services\VkClientService">VkClientService</abbr></a></td>
+                <td><a href="../../../App/Services/VkClientService.html"><abbr title="App\Services\VkClientService">VkClientService</abbr></a></td>
                 <td>$vkClient</td>
                 <td><p>Сервис для работы с API ВКонтакте</p></td>
             </tr>
                     <tr>
-                <td><a href="TaskController.html"><abbr title="App\Http\Controllers\TaskController">TaskController</abbr></a></td>
+                <td><a href="../../../App/Http/Controllers/TaskController.html"><abbr title="App\Http\Controllers\TaskController">TaskController</abbr></a></td>
                 <td>$taskController</td>
                 <td></td>
             </tr>
             </table>
 
-
-
-
-
+            
+            
+            
+            
                     </div>
     </div>
 
@@ -214,15 +224,15 @@
     <strong>searchUsers</strong>(<abbr title="Illuminate\Http\Request">Request</abbr> $request)
         </code>
     </h3>
-    <div class="details">
-
-
-
+    <div class="details">    
+            
+    
+            
 
         <div class="method-description">
                             <p><p>Выполняет поиск пользователей ВКонтакте с применением фильтров.</p></p>                <p><p>Метод принимает параметры поиска, валидирует их и выполняет
 поиск пользователей через API ВКонтакте. Текущая реализация
-поддерживает базовую фильтрацию по поисковому запросу.</p></p>
+поддерживает базовую фильтрацию по поисковому запросу.</p></p>        
         </div>
         <div class="tags">
                             <h4>Parameters</h4>
@@ -239,7 +249,7 @@
             </tr>
             </table>
 
-
+            
                             <h4>Return Value</h4>
 
                     <table class="table table-condensed">
@@ -249,28 +259,28 @@
         </tr>
     </table>
 
-
-
-
+            
+            
+            
                     </div>
     </div>
 
             </div>
                     <div class="method-item">
                     <h3 id="method_searchAndCreateTasks">
-        <div class="location">at line 94</div>
+        <div class="location">at line 99</div>
         <code>                    <abbr title="Illuminate\Http\JsonResponse">JsonResponse</abbr>
     <strong>searchAndCreateTasks</strong>(<abbr title="Illuminate\Http\Request">Request</abbr> $request)
         </code>
     </h3>
-    <div class="details">
-
-
-
+    <div class="details">    
+            
+    
+            
 
         <div class="method-description">
                             <p><p>Выполняет поиск пользователей и создает задачи для найденных профилей.</p></p>                <p><p>Метод сначала выполняет поиск пользователей с заданными параметрами,
-а затем создает задачи для взаимодействия с найденными профилями.</p></p>
+а затем создает задачи для взаимодействия с найденными профилями.</p></p>        
         </div>
         <div class="tags">
                             <h4>Parameters</h4>
@@ -283,7 +293,7 @@
             </tr>
             </table>
 
-
+            
                             <h4>Return Value</h4>
 
                     <table class="table table-condensed">
@@ -293,16 +303,66 @@
         </tr>
     </table>
 
+            
+            
+            
+                    </div>
+    </div>
 
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_getCities">
+        <div class="location">at line 139</div>
+        <code>                    <abbr title="Illuminate\Http\JsonResponse">JsonResponse</abbr>
+    <strong>getCities</strong>(<abbr title="Illuminate\Http\Request">Request</abbr> $request)
+        </code>
+    </h3>
+    <div class="details">    
+            
+    
+            
 
+        <div class="method-description">
+                            <p><p>Получает список городов по поисковому запросу.</p></p>                <p><p>Метод делает запрос к API VK для получения списка городов,
+соответствующих поисковому запросу. Поддерживает фильтрацию
+по стране и ограничение количества результатов.</p></p>        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
 
+                    <table class="table table-condensed">
+                    <tr>
+                <td><abbr title="Illuminate\Http\Request">Request</abbr></td>
+                <td>$request</td>
+                <td><p>HTTP запрос, содержащий параметры:</p>
+<ul>
+<li>q: string - поисковый запрос (обязательный, минимум 2 символа)</li>
+<li>country_id: int - ID страны (по умолчанию 1 - Россия)</li>
+<li>count: int - количество результатов (максимум 1000)</li>
+</ul></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td><abbr title="Illuminate\Http\JsonResponse">JsonResponse</abbr></td>
+            <td></td>
+        </tr>
+    </table>
+
+            
+            
+            
                     </div>
     </div>
 
             </div>
             </div>
 
-
+    
 </div><div id="footer">
         Generated by <a href="https://github.com/code-lts/doctum">Doctum, a API Documentation generator and fork of Sami</a>.</div></div>
     </div>

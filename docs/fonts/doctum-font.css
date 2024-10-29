@@ -1,9 +1,9 @@
 @font-face {
   font-family: "doctum";
-  src: url("doctum.eot?39101248");
-  src: url("doctum.eot?39101248#iefix") format("embedded-opentype"),
-    url("doctum.woff2?39101248") format("woff2"), url("doctum.woff?39101248") format("woff"),
-    url("doctum.ttf?39101248") format("truetype"), url("doctum.svg?39101248#doctum") format("svg");
+  src: url("./doctum.eot?39101248");
+  src: url("./doctum.eot?39101248#iefix") format("embedded-opentype"),
+    url("./doctum.woff2?39101248") format("woff2"), url("./doctum.woff?39101248") format("woff"),
+    url("./doctum.ttf?39101248") format("truetype"), url("./doctum.svg?39101248#doctum") format("svg");
   font-weight: normal;
   font-style: normal;
 }

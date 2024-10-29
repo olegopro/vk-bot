@@ -75,32 +75,32 @@
                         <div class="namespace-breadcrumbs">
             <ol class="breadcrumb">
                 <li><span class="label label-default">class</span></li>
-                        <li><a href="../../../App.html">App</a></li><li class="backslash">\</li><li><a href="../../Http.html">Http</a></li><li class="backslash">\</li><li><a href="../Controllers.html">Controllers</a></li><li class="backslash">\</li><li>AccountController</li>
+                        <li><a href="../../../App.html">App</a></li><li class="backslash">\</li><li><a href="../../../App/Http.html">Http</a></li><li class="backslash">\</li><li><a href="../../../App/Http/Controllers.html">Controllers</a></li><li class="backslash">\</li><li>AccountController</li>
             </ol>
         </div>
                 <div id="page-content">
     <div class="page-header">
-        <h1>AccountController
+        <h1>AccountController    
             </h1>
     </div>
 
-
+    
     <p>final         class
-    <strong>AccountController</strong>        extends <a href="Controller.html"><abbr title="App\Http\Controllers\Controller">Controller</abbr></a>
+    <strong>AccountController</strong>        extends <a href="../../../App/Http/Controllers/Controller.html"><abbr title="App\Http\Controllers\Controller">Controller</abbr></a>
 </p>
 
-
-
-
-
+        
+        
+    
+        
 
             <div class="description">
             <p><p>Контроллер для управления аккаунтами.</p></p>            <p><p>Этот класс предоставляет методы для взаимодействия с данными аккаунтов,
 включая получение информации об аккаунтах, друзьях, подписчиках и группах.</p></p>        </div>
-
+            
                 <h2>Traits</h2>
 
-
+        
     <div class="container-fluid underlined">
                     <div class="row">
                 <div class="col-md-6">
@@ -118,19 +118,19 @@
                 <div class="col-md-6"></div>
             </div>
             </div>
-
-
-
+    
+    
+    
             <h2>Methods</h2>
 
             <div class="container-fluid underlined">
                     <div class="row">
                 <div class="col-md-2 type">
-
+                    
                 </div>
                 <div class="col-md-8">
-                    <a href="#method___construct">__construct</a>(<a href="../../Services/LoggingServiceInterface.html"><abbr title="App\Services\LoggingServiceInterface">LoggingServiceInterface</abbr></a> $loggingService, <a href="../../Services/VkClientService.html"><abbr title="App\Services\VkClientService">VkClientService</abbr></a> $vkClient, <a href="../../Repositories/AccountRepositoryInterface.html"><abbr title="App\Repositories\AccountRepositoryInterface">AccountRepositoryInterface</abbr></a> $accountRepository)
-
+                    <a href="#method___construct">__construct</a>(<a href="../../../App/Services/LoggingServiceInterface.html"><abbr title="App\Services\LoggingServiceInterface">LoggingServiceInterface</abbr></a> $loggingService, <a href="../../../App/Services/VkClientService.html"><abbr title="App\Services\VkClientService">VkClientService</abbr></a> $vkClient, <a href="../../../App/Repositories/AccountRepositoryInterface.html"><abbr title="App\Repositories\AccountRepositoryInterface">AccountRepositoryInterface</abbr></a> $accountRepository)
+        
                                             <p class="no-description">No description</p>
                                     </div>
                 <div class="col-md-2"></div>
@@ -141,7 +141,7 @@
                 </div>
                 <div class="col-md-8">
                     <a href="#method_fetchAllAccounts">fetchAllAccounts</a>()
-
+        
                                             <p><p>Получить список всех аккаунтов.</p></p>                </div>
                 <div class="col-md-2"></div>
             </div>
@@ -151,7 +151,7 @@
                 </div>
                 <div class="col-md-8">
                     <a href="#method_fetchAccountData">fetchAccountData</a>(string|array $ids)
-
+        
                                             <p><p>Получить данные аккаунта по ID.</p></p>                </div>
                 <div class="col-md-2"></div>
             </div>
@@ -161,7 +161,7 @@
                 </div>
                 <div class="col-md-8">
                     <a href="#method_fetchGroupData">fetchGroupData</a>(string $id)
-
+        
                                             <p><p>Получить данные группы по ID.</p></p>                </div>
                 <div class="col-md-2"></div>
             </div>
@@ -171,7 +171,7 @@
                 </div>
                 <div class="col-md-8">
                     <a href="#method_fetchAccountFollowers">fetchAccountFollowers</a>(string $id, int $limit = 6)
-
+        
                                             <p><p>Получить подписчиков аккаунта.</p></p>                </div>
                 <div class="col-md-2"></div>
             </div>
@@ -181,7 +181,7 @@
                 </div>
                 <div class="col-md-8">
                     <a href="#method_fetchAccountFriends">fetchAccountFriends</a>(string $id, int $limit = 6)
-
+        
                                             <p><p>Получить друзей аккаунта.</p></p>                </div>
                 <div class="col-md-2"></div>
             </div>
@@ -191,7 +191,7 @@
                 </div>
                 <div class="col-md-8">
                     <a href="#method_fetchAccountCountFriends">fetchAccountCountFriends</a>(string $accountId, string $ownerId)
-
+        
                                             <p><p>Получить количество друзей аккаунта.</p></p>                </div>
                 <div class="col-md-2"></div>
             </div>
@@ -201,7 +201,7 @@
                 </div>
                 <div class="col-md-8">
                     <a href="#method_fetchAccountInfo">fetchAccountInfo</a>(string $access_token)
-
+        
                                             <p><p>Получить информацию об аккаунте.</p></p>                </div>
                 <div class="col-md-2"></div>
             </div>
@@ -211,7 +211,7 @@
                 </div>
                 <div class="col-md-8">
                     <a href="#method_fetchAccountNewsfeed">fetchAccountNewsfeed</a>(<abbr title="Illuminate\Http\Request">Request</abbr> $request)
-
+        
                                             <p><p>Получить новостную ленту аккаунта.</p></p>                </div>
                 <div class="col-md-2"></div>
             </div>
@@ -221,7 +221,7 @@
                 </div>
                 <div class="col-md-8">
                     <a href="#method_setAccountData">setAccountData</a>(<abbr title="Illuminate\Http\Request">Request</abbr> $request)
-
+        
                                             <p><p>Установить данные аккаунта.</p></p>                </div>
                 <div class="col-md-2"></div>
             </div>
@@ -231,7 +231,7 @@
                 </div>
                 <div class="col-md-8">
                     <a href="#method_addLike">addLike</a>(<abbr title="Illuminate\Http\Request">Request</abbr> $request)
-
+        
                                             <p><p>Добавить лайк к посту.</p></p>                </div>
                 <div class="col-md-2"></div>
             </div>
@@ -241,7 +241,7 @@
                 </div>
                 <div class="col-md-8">
                     <a href="#method_deleteAccount">deleteAccount</a>(string $id)
-
+        
                                             <p><p>Удалить аккаунт.</p></p>                </div>
                 <div class="col-md-2"></div>
             </div>
@@ -254,44 +254,44 @@
                     <div class="method-item">
                     <h3 id="method___construct">
         <div class="location">at line 25</div>
-        <code>
-    <strong>__construct</strong>(<a href="../../Services/LoggingServiceInterface.html"><abbr title="App\Services\LoggingServiceInterface">LoggingServiceInterface</abbr></a> $loggingService, <a href="../../Services/VkClientService.html"><abbr title="App\Services\VkClientService">VkClientService</abbr></a> $vkClient, <a href="../../Repositories/AccountRepositoryInterface.html"><abbr title="App\Repositories\AccountRepositoryInterface">AccountRepositoryInterface</abbr></a> $accountRepository)
+        <code>                    
+    <strong>__construct</strong>(<a href="../../../App/Services/LoggingServiceInterface.html"><abbr title="App\Services\LoggingServiceInterface">LoggingServiceInterface</abbr></a> $loggingService, <a href="../../../App/Services/VkClientService.html"><abbr title="App\Services\VkClientService">VkClientService</abbr></a> $vkClient, <a href="../../../App/Repositories/AccountRepositoryInterface.html"><abbr title="App\Repositories\AccountRepositoryInterface">AccountRepositoryInterface</abbr></a> $accountRepository)
         </code>
     </h3>
-    <div class="details">
-
-
-
+    <div class="details">    
+            
+    
+            
 
         <div class="method-description">
                             <p class="no-description">No description</p>
-
+                    
         </div>
         <div class="tags">
                             <h4>Parameters</h4>
 
                     <table class="table table-condensed">
                     <tr>
-                <td><a href="../../Services/LoggingServiceInterface.html"><abbr title="App\Services\LoggingServiceInterface">LoggingServiceInterface</abbr></a></td>
+                <td><a href="../../../App/Services/LoggingServiceInterface.html"><abbr title="App\Services\LoggingServiceInterface">LoggingServiceInterface</abbr></a></td>
                 <td>$loggingService</td>
                 <td></td>
             </tr>
                     <tr>
-                <td><a href="../../Services/VkClientService.html"><abbr title="App\Services\VkClientService">VkClientService</abbr></a></td>
+                <td><a href="../../../App/Services/VkClientService.html"><abbr title="App\Services\VkClientService">VkClientService</abbr></a></td>
                 <td>$vkClient</td>
                 <td></td>
             </tr>
                     <tr>
-                <td><a href="../../Repositories/AccountRepositoryInterface.html"><abbr title="App\Repositories\AccountRepositoryInterface">AccountRepositoryInterface</abbr></a></td>
+                <td><a href="../../../App/Repositories/AccountRepositoryInterface.html"><abbr title="App\Repositories\AccountRepositoryInterface">AccountRepositoryInterface</abbr></a></td>
                 <td>$accountRepository</td>
                 <td></td>
             </tr>
             </table>
 
-
-
-
-
+            
+            
+            
+            
                     </div>
     </div>
 
@@ -303,16 +303,16 @@
     <strong>fetchAllAccounts</strong>()
         </code>
     </h3>
-    <div class="details">
-
-
-
+    <div class="details">    
+            
+    
+            
 
         <div class="method-description">
-                            <p><p>Получить список всех аккаунтов.</p></p>
+                            <p><p>Получить список всех аккаунтов.</p></p>                        
         </div>
         <div class="tags">
-
+            
                             <h4>Return Value</h4>
 
                     <table class="table table-condensed">
@@ -322,9 +322,9 @@
         </tr>
     </table>
 
-
-
-
+            
+            
+            
                     </div>
     </div>
 
@@ -336,13 +336,13 @@
     <strong>fetchAccountData</strong>(string|array $ids)
         </code>
     </h3>
-    <div class="details">
-
-
-
+    <div class="details">    
+            
+    
+            
 
         <div class="method-description">
-                            <p><p>Получить данные аккаунта по ID.</p></p>
+                            <p><p>Получить данные аккаунта по ID.</p></p>                        
         </div>
         <div class="tags">
                             <h4>Parameters</h4>
@@ -355,7 +355,7 @@
             </tr>
             </table>
 
-
+            
                             <h4>Return Value</h4>
 
                     <table class="table table-condensed">
@@ -365,7 +365,7 @@
         </tr>
     </table>
 
-
+            
                             <h4>Exceptions</h4>
 
                     <table class="table table-condensed">
@@ -375,8 +375,8 @@
             </tr>
             </table>
 
-
-
+            
+            
                     </div>
     </div>
 
@@ -388,13 +388,13 @@
     <strong>fetchGroupData</strong>(string $id)
         </code>
     </h3>
-    <div class="details">
-
-
-
+    <div class="details">    
+            
+    
+            
 
         <div class="method-description">
-                            <p><p>Получить данные группы по ID.</p></p>
+                            <p><p>Получить данные группы по ID.</p></p>                        
         </div>
         <div class="tags">
                             <h4>Parameters</h4>
@@ -407,7 +407,7 @@
             </tr>
             </table>
 
-
+            
                             <h4>Return Value</h4>
 
                     <table class="table table-condensed">
@@ -417,7 +417,7 @@
         </tr>
     </table>
 
-
+            
                             <h4>Exceptions</h4>
 
                     <table class="table table-condensed">
@@ -427,8 +427,8 @@
             </tr>
             </table>
 
-
-
+            
+            
                     </div>
     </div>
 
@@ -440,13 +440,13 @@
     <strong>fetchAccountFollowers</strong>(string $id, int $limit = 6)
         </code>
     </h3>
-    <div class="details">
-
-
-
+    <div class="details">    
+            
+    
+            
 
         <div class="method-description">
-                            <p><p>Получить подписчиков аккаунта.</p></p>
+                            <p><p>Получить подписчиков аккаунта.</p></p>                        
         </div>
         <div class="tags">
                             <h4>Parameters</h4>
@@ -464,7 +464,7 @@
             </tr>
             </table>
 
-
+            
                             <h4>Return Value</h4>
 
                     <table class="table table-condensed">
@@ -474,7 +474,7 @@
         </tr>
     </table>
 
-
+            
                             <h4>Exceptions</h4>
 
                     <table class="table table-condensed">
@@ -484,8 +484,8 @@
             </tr>
             </table>
 
-
-
+            
+            
                     </div>
     </div>
 
@@ -497,13 +497,13 @@
     <strong>fetchAccountFriends</strong>(string $id, int $limit = 6)
         </code>
     </h3>
-    <div class="details">
-
-
-
+    <div class="details">    
+            
+    
+            
 
         <div class="method-description">
-                            <p><p>Получить друзей аккаунта.</p></p>
+                            <p><p>Получить друзей аккаунта.</p></p>                        
         </div>
         <div class="tags">
                             <h4>Parameters</h4>
@@ -521,7 +521,7 @@
             </tr>
             </table>
 
-
+            
                             <h4>Return Value</h4>
 
                     <table class="table table-condensed">
@@ -531,7 +531,7 @@
         </tr>
     </table>
 
-
+            
                             <h4>Exceptions</h4>
 
                     <table class="table table-condensed">
@@ -541,8 +541,8 @@
             </tr>
             </table>
 
-
-
+            
+            
                     </div>
     </div>
 
@@ -554,13 +554,13 @@
     <strong>fetchAccountCountFriends</strong>(string $accountId, string $ownerId)
         </code>
     </h3>
-    <div class="details">
-
-
-
+    <div class="details">    
+            
+    
+            
 
         <div class="method-description">
-                            <p><p>Получить количество друзей аккаунта.</p></p>
+                            <p><p>Получить количество друзей аккаунта.</p></p>                        
         </div>
         <div class="tags">
                             <h4>Parameters</h4>
@@ -578,7 +578,7 @@
             </tr>
             </table>
 
-
+            
                             <h4>Return Value</h4>
 
                     <table class="table table-condensed">
@@ -588,7 +588,7 @@
         </tr>
     </table>
 
-
+            
                             <h4>Exceptions</h4>
 
                     <table class="table table-condensed">
@@ -598,8 +598,8 @@
             </tr>
             </table>
 
-
-
+            
+            
                     </div>
     </div>
 
@@ -611,13 +611,13 @@
     <strong>fetchAccountInfo</strong>(string $access_token)
         </code>
     </h3>
-    <div class="details">
-
-
-
+    <div class="details">    
+            
+    
+            
 
         <div class="method-description">
-                            <p><p>Получить информацию об аккаунте.</p></p>
+                            <p><p>Получить информацию об аккаунте.</p></p>                        
         </div>
         <div class="tags">
                             <h4>Parameters</h4>
@@ -630,7 +630,7 @@
             </tr>
             </table>
 
-
+            
                             <h4>Return Value</h4>
 
                     <table class="table table-condensed">
@@ -640,7 +640,7 @@
         </tr>
     </table>
 
-
+            
                             <h4>Exceptions</h4>
 
                     <table class="table table-condensed">
@@ -650,8 +650,8 @@
             </tr>
             </table>
 
-
-
+            
+            
                     </div>
     </div>
 
@@ -663,13 +663,13 @@
     <strong>fetchAccountNewsfeed</strong>(<abbr title="Illuminate\Http\Request">Request</abbr> $request)
         </code>
     </h3>
-    <div class="details">
-
-
-
+    <div class="details">    
+            
+    
+            
 
         <div class="method-description">
-                            <p><p>Получить новостную ленту аккаунта.</p></p>
+                            <p><p>Получить новостную ленту аккаунта.</p></p>                        
         </div>
         <div class="tags">
                             <h4>Parameters</h4>
@@ -682,7 +682,7 @@
             </tr>
             </table>
 
-
+            
                             <h4>Return Value</h4>
 
                     <table class="table table-condensed">
@@ -692,7 +692,7 @@
         </tr>
     </table>
 
-
+            
                             <h4>Exceptions</h4>
 
                     <table class="table table-condensed">
@@ -702,8 +702,8 @@
             </tr>
             </table>
 
-
-
+            
+            
                     </div>
     </div>
 
@@ -715,13 +715,13 @@
     <strong>setAccountData</strong>(<abbr title="Illuminate\Http\Request">Request</abbr> $request)
         </code>
     </h3>
-    <div class="details">
-
-
-
+    <div class="details">    
+            
+    
+            
 
         <div class="method-description">
-                            <p><p>Установить данные аккаунта.</p></p>
+                            <p><p>Установить данные аккаунта.</p></p>                        
         </div>
         <div class="tags">
                             <h4>Parameters</h4>
@@ -734,7 +734,7 @@
             </tr>
             </table>
 
-
+            
                             <h4>Return Value</h4>
 
                     <table class="table table-condensed">
@@ -744,7 +744,7 @@
         </tr>
     </table>
 
-
+            
                             <h4>Exceptions</h4>
 
                     <table class="table table-condensed">
@@ -754,8 +754,8 @@
             </tr>
             </table>
 
-
-
+            
+            
                     </div>
     </div>
 
@@ -767,13 +767,13 @@
     <strong>addLike</strong>(<abbr title="Illuminate\Http\Request">Request</abbr> $request)
         </code>
     </h3>
-    <div class="details">
-
-
-
+    <div class="details">    
+            
+    
+            
 
         <div class="method-description">
-                            <p><p>Добавить лайк к посту.</p></p>
+                            <p><p>Добавить лайк к посту.</p></p>                        
         </div>
         <div class="tags">
                             <h4>Parameters</h4>
@@ -786,7 +786,7 @@
             </tr>
             </table>
 
-
+            
                             <h4>Return Value</h4>
 
                     <table class="table table-condensed">
@@ -796,7 +796,7 @@
         </tr>
     </table>
 
-
+            
                             <h4>Exceptions</h4>
 
                     <table class="table table-condensed">
@@ -806,8 +806,8 @@
             </tr>
             </table>
 
-
-
+            
+            
                     </div>
     </div>
 
@@ -819,13 +819,13 @@
     <strong>deleteAccount</strong>(string $id)
         </code>
     </h3>
-    <div class="details">
-
-
-
+    <div class="details">    
+            
+    
+            
 
         <div class="method-description">
-                            <p><p>Удалить аккаунт.</p></p>
+                            <p><p>Удалить аккаунт.</p></p>                        
         </div>
         <div class="tags">
                             <h4>Parameters</h4>
@@ -838,7 +838,7 @@
             </tr>
             </table>
 
-
+            
                             <h4>Return Value</h4>
 
                     <table class="table table-condensed">
@@ -848,16 +848,16 @@
         </tr>
     </table>
 
-
-
-
+            
+            
+            
                     </div>
     </div>
 
             </div>
             </div>
 
-
+    
 </div><div id="footer">
         Generated by <a href="https://github.com/code-lts/doctum">Doctum, a API Documentation generator and fork of Sami</a>.</div></div>
     </div>
