@@ -16,7 +16,7 @@
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3",
-        "barryvdh/laravel-ide-helper": "^3",
+        "barryvdh/laravel-ide-helper": "^3.1",
         "fakerphp/faker": "^1",
         "laravel/sail": "^1",
         "mockery/mockery": "^1",
