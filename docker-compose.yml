@@ -47,7 +47,7 @@ services:
             - /app/node_modules
 
     mysql:
-        image: mysql
+        image: mysql:8.3.0
         restart: unless-stopped
         ports:
             - "3306:3306"
