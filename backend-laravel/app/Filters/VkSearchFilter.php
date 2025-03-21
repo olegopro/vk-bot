@@ -58,7 +58,7 @@ class VkSearchFilter
         return array_merge(
             $this->filters,
             [
-                'fields' => 'photo_200,city,country,online',
+                'fields' => 'photo_200,city,country,online, screen_name',
                 'count'  => 10
             ]
         );

@@ -280,6 +280,40 @@ class VkClientService
         ];
     }
 
+    public function fetchWallPostsByDomain($accountId, $domain, $startFrom, $loggingService)
+    {
+        $access_token = $this->getAccessTokenByAccountID($accountId);
+        $screen_name = $this->getScreenNameByToken($access_token);
+
+        // Логирование запроса
+        $loggingService->log(
+            'wall_posts',
+            $screen_name,
+            'VK API Request',
+            ['request' => ['domain' => $domain, 'start_from' => $startFrom]]
+        );
+
+        $response = $this->request('wall.get', [
+            'domain' => $domain,
+            'count'  => 40,
+            'offset' => $startFrom
+        ], $access_token);
+
+        // Логирование ответа
+        $loggingService->log(
+            'wall_posts',
+            $screen_name,
+            'VK API Response',
+            ['response' => $response]
+        );
+
+        return [
+            'success' => true,
+            'data'    => $response,
+            'message' => 'Получены новые данные со стены'
+        ];
+    }
+
     /**
      * Получает информацию о лайках к объекту.
      *
@@ -335,7 +369,7 @@ class VkClientService
         $accessToken = $this->getAccessTokenByAccountID($accountId);
 
         return $this->request('users.search', array_merge(
-            $filter->toArray(),
+            $filter->toArray()
         ), $accessToken);
     }
 

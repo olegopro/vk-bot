@@ -29,6 +29,7 @@ Route::prefix('tasks')->group(function() {
     Route::delete('/delete-like/{taskId}', [TaskController::class, 'deleteLike']);
     Route::delete('/delete-all-tasks/{status?}/{accountId?}', [TaskController::class, 'deleteAllTasks']);
     Route::delete('/delete-task-by-id/{id}', [TaskController::class, 'deleteTaskById']);
+    Route::post('/create-for-users', [TaskController::class, 'createTasksForUsers']);
 });
 
 Route::prefix('cyclic-tasks')->group(function() {

@@ -15,6 +15,7 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Log;
 
 /**
  * Контроллер для управления задачами связанными с лайками в социальной сети ВКонтакте.
@@ -36,9 +37,7 @@ final class TaskController extends Controller
         private readonly TaskRepositoryInterface    $taskRepository,
         private readonly AccountRepositoryInterface $accountRepository,
         private readonly AccountController          $accountController
-    )
-    {
-    }
+    ) {}
 
     /**
      * Возвращает задачи или задачу по указанному статусу и/или ID аккаунта.
@@ -242,8 +241,8 @@ final class TaskController extends Controller
     protected function checkExistingTask($ownerId, $postId)
     {
         return Task::where('owner_id', $ownerId)
-                ->where('item_id', $postId)
-                ->first() !== null;
+                   ->where('item_id', $postId)
+                   ->first() !== null;
     }
 
     /**
@@ -274,9 +273,49 @@ final class TaskController extends Controller
             'first_name' => $firstName,
             'last_name'  => $lastName,
             'owner_id'   => $post['owner_id'],
-            'item_id'    => $post['post_id'],
+            'item_id'    => $post['post_id'] ?? $post['id'],
             'status'     => 'pending',
             'is_cyclic'  => $isCyclic
+        ]);
+    }
+
+    public function createTasksForUsers(Request $request)
+    {
+        $accountId = $request->input('account_id');
+        $domains = $request->input('domains');
+
+        if (!$accountId || !$domains || !is_array($domains)) {
+            return response()->json([
+                'success' => false,
+                'error'   => 'Неправильные параметры запроса'
+            ], 400);
+        }
+
+        $tasks = [];
+
+        Log::info('Domains data:', ['domains' => $domains]);
+
+        foreach ($domains as $domain) {
+
+            Log::info('Domain', ['domain' => $domain]);
+
+            // Получаем записи со стены пользователя по его логину
+            $wallPosts = $this->vkClient->fetchWallPostsByDomain($accountId, $domain, null, $this->loggingService);
+
+            // Извлекаем первую запись из стены
+            if (!empty($wallPosts['data']['response']['items'])) {
+                $post = $wallPosts['data']['response']['items'][0];
+
+                // Создаем задачу на лайк для извлеченной записи
+                $task = $this->createLikeTask($accountId, $post, false);
+                $tasks[] = $task;
+            }
+        }
+
+        return response()->json([
+            'success' => true,
+            'data'    => $tasks,
+            'message' => 'Задачи на лайки созданы для пользователей'
         ]);
     }
 
@@ -290,13 +329,13 @@ final class TaskController extends Controller
     {
         // Базовое значение задержки из настроек
         $basePause = DB::table('settings')
-            ->where('id', '=', '1')
-            ->value('task_timeout');
+                       ->where('id', '=', '1')
+                       ->value('task_timeout');
 
         // Получаем все задачи со статусом 'pending'
         $tasks = DB::table('tasks')
-            ->where('status', '=', 'pending')
-            ->get();
+                   ->where('status', '=', 'pending')
+                   ->get();
 
         // Инициализируем переменную для хранения текущей задержки
         $pause = 0;
@@ -316,21 +355,21 @@ final class TaskController extends Controller
 
             // Обновляем время запуска и статус задачи
             DB::table('tasks')
-                ->where('id', $task->id)
-                ->update([
-                    'run_at' => $run_at,
-                    'status' => 'queued'
-                ]);
+              ->where('id', $task->id)
+              ->update([
+                  'run_at' => $run_at,
+                  'status' => 'queued'
+              ]);
 
             // Отправляем задачу в очередь с учетом задержки
             addLikeToPost::dispatch($task, $token, $this->loggingService)
-                ->delay($specificPause);
+                         ->delay($specificPause);
         }
 
         // Возвращаем список оставшихся задач для информации
         $tasks = DB::table('tasks')
-            ->where('status', '=', 'pending')
-            ->get();
+                   ->where('status', '=', 'pending')
+                   ->get();
 
         return response()->json([
             'success' => true,
