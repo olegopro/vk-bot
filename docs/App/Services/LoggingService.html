@@ -94,6 +94,10 @@
     
         
 
+            <div class="description">
+            <p><p>Сервис для организованного логирования в системе.</p></p>            <p><p>Класс предоставляет метод для записи логов в файлы, организованные по каналам и аккаунтам.
+Каждый аккаунт получает собственную директорию для логов, а внутри неё логи разделяются по каналам.
+Поддерживает разные уровни логирования на основе предоставленного контекста.</p></p>        </div>
             
         
     
@@ -108,8 +112,7 @@
                 <div class="col-md-8">
                     <a href="#method_log">log</a>(string $channel, string $account_name, string $message, array $context = [])
         
-                                            <p class="no-description">No description</p>
-                                    </div>
+                                            <p><p>Записывает сообщение лога в указанный канал для определенного аккаунта.</p></p>                </div>
                 <div class="col-md-2"></div>
             </div>
             </div>
@@ -120,7 +123,7 @@
             <div id="method-details">
                     <div class="method-item">
                     <h3 id="method_log">
-        <div class="location">at line 10</div>
+        <div class="location">at line 44</div>
         <code>                    void
     <strong>log</strong>(string $channel, string $account_name, string $message, array $context = [])
         </code>
@@ -131,8 +134,12 @@
             
 
         <div class="method-description">
-                            <p class="no-description">No description</p>
-                    
+                            <p><p>Записывает сообщение лога в указанный канал для определенного аккаунта.</p></p>                <p><p>Метод создает индивидуальные файлы логов для каждого канала внутри директории аккаунта.
+Уровень логирования автоматически определяется на основе содержимого контекста:</p>
+<ul>
+<li>Если контекст содержит ключ 'exception', используется уровень 'error'</li>
+<li>В остальных случаях используется уровень 'info'</li>
+</ul></p>        
         </div>
         <div class="tags">
                             <h4>Parameters</h4>
@@ -173,6 +180,20 @@
             
             
             
+                            <h4>Examples</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td><pre class="examples">// Запись обычного информационного сообщения
+$loggingService-&gt;log(&#039;account_newsfeed&#039;, &#039;user123&#039;, &#039;Получены данные ленты&#039;, [&#039;count&#039; =&gt; 15]);</pre></td>
+            </tr>
+                    <tr>
+                <td><pre class="examples">// Запись сообщения об ошибке
+$loggingService-&gt;log(&#039;account_task_likes&#039;, &#039;user123&#039;, &#039;Ошибка при выполнении задачи&#039;,
+                     [&#039;exception&#039; =&gt; $e-&gt;getMessage(), &#039;task_id&#039; =&gt; 42]);</pre></td>
+            </tr>
+            </table>
+
                     </div>
     </div>
 

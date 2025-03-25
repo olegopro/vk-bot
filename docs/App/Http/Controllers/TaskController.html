@@ -208,6 +208,16 @@
                     <abbr title="Illuminate\Http\JsonResponse">JsonResponse</abbr>
                 </div>
                 <div class="col-md-8">
+                    <a href="#method_createTasksForUsers">createTasksForUsers</a>(<abbr title="Illuminate\Http\Request">Request</abbr> $request)
+        
+                                            <p><p>Создает задачи на лайки для списка пользователей.</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    <abbr title="Illuminate\Http\JsonResponse">JsonResponse</abbr>
+                </div>
+                <div class="col-md-8">
                     <a href="#method_addLikeTaskToQueue">addLikeTaskToQueue</a>(string $token)
         
                                             <p><p>Добавляет задачу на лайк в очередь.</p></p>                </div>
@@ -225,13 +235,12 @@
             </div>
                     <div class="row">
                 <div class="col-md-2 type">
-                    
+                    <abbr title="Illuminate\Http\JsonResponse">JsonResponse</abbr>
                 </div>
                 <div class="col-md-8">
-                    <a href="#method_countTasksByAccountAndStatus">countTasksByAccountAndStatus</a>($status = null, $accountId = null)
+                    <a href="#method_countTasksByAccountAndStatus">countTasksByAccountAndStatus</a>(string|null $status = null, int|null $accountId = null)
         
-                                            <p class="no-description">No description</p>
-                                    </div>
+                                            <p><p>Подсчитывает количество задач по указанному статусу и/или ID аккаунта.</p></p>                </div>
                 <div class="col-md-2"></div>
             </div>
                     <div class="row">
@@ -282,7 +291,7 @@
             <div id="method-details">
                     <div class="method-item">
                     <h3 id="method___construct">
-        <div class="location">at line 33</div>
+        <div class="location">at line 34</div>
         <code>                    
     <strong>__construct</strong>(<a href="../../../App/Services/LoggingServiceInterface.html"><abbr title="App\Services\LoggingServiceInterface">LoggingServiceInterface</abbr></a> $loggingService, <a href="../../../App/Services/VkClientService.html"><abbr title="App\Services\VkClientService">VkClientService</abbr></a> $vkClient, <a href="../../../App/Repositories/TaskRepositoryInterface.html"><abbr title="App\Repositories\TaskRepositoryInterface">TaskRepositoryInterface</abbr></a> $taskRepository, <a href="../../../App/Repositories/AccountRepositoryInterface.html"><abbr title="App\Repositories\AccountRepositoryInterface">AccountRepositoryInterface</abbr></a> $accountRepository, <a href="../../../App/Http/Controllers/AccountController.html"><abbr title="App\Http\Controllers\AccountController">AccountController</abbr></a> $accountController)
         </code>
@@ -336,7 +345,7 @@
             </div>
                     <div class="method-item">
                     <h3 id="method_getTasksByStatus">
-        <div class="location">at line 50</div>
+        <div class="location">at line 49</div>
         <code>                    <abbr title="Illuminate\Http\JsonResponse">JsonResponse</abbr>
     <strong>getTasksByStatus</strong>(<abbr title="Illuminate\Http\Request">Request</abbr> $request, string|null $status = null, int|null $accountId = null)
         </code>
@@ -389,7 +398,7 @@
             </div>
                     <div class="method-item">
                     <h3 id="method_getTaskInfo">
-        <div class="location">at line 76</div>
+        <div class="location">at line 75</div>
         <code>                    <abbr title="Illuminate\Http\JsonResponse">JsonResponse</abbr>
     <strong>getTaskInfo</strong>(int $taskId)
         </code>
@@ -441,7 +450,7 @@
             </div>
                     <div class="method-item">
                     <h3 id="method_collectNewsfeedPostsForLikeTask">
-        <div class="location">at line 119</div>
+        <div class="location">at line 118</div>
         <code>                    <abbr title="Illuminate\Http\JsonResponse">JsonResponse</abbr>
     <strong>collectNewsfeedPostsForLikeTask</strong>(<abbr title="Illuminate\Http\Request">Request</abbr> $request, bool $isCyclic = false)
         </code>
@@ -498,7 +507,7 @@
             </div>
                     <div class="method-item">
                     <h3 id="method_fetchAndPreparePosts">
-        <div class="location">at line 152</div>
+        <div class="location">at line 151</div>
         <code>            protected        int
     <strong>fetchAndPreparePosts</strong>(<abbr title="Illuminate\Http\Request">Request</abbr> $request, int $account_id, int $maxCreatedCount, bool $isCyclic)
         </code>
@@ -573,7 +582,7 @@
             </div>
                     <div class="method-item">
                     <h3 id="method_isValidPostForTask">
-        <div class="location">at line 216</div>
+        <div class="location">at line 215</div>
         <code>            protected        bool
     <strong>isValidPostForTask</strong>(array $post)
         </code>
@@ -616,7 +625,7 @@
             </div>
                     <div class="method-item">
                     <h3 id="method_checkExistingTask">
-        <div class="location">at line 242</div>
+        <div class="location">at line 241</div>
         <code>            protected        bool
     <strong>checkExistingTask</strong>(int $ownerId, int $postId)
         </code>
@@ -664,7 +673,7 @@
             </div>
                     <div class="method-item">
                     <h3 id="method_createLikeTask">
-        <div class="location">at line 259</div>
+        <div class="location">at line 258</div>
         <code>            protected        <a href="../../../App/Models/Task.html"><abbr title="App\Models\Task">Task</abbr></a>
     <strong>createLikeTask</strong>(int $accountId, array $post, bool $isCyclic)
         </code>
@@ -725,8 +734,60 @@
 
             </div>
                     <div class="method-item">
-                    <h3 id="method_addLikeTaskToQueue">
+                    <h3 id="method_createTasksForUsers">
         <div class="location">at line 289</div>
+        <code>                    <abbr title="Illuminate\Http\JsonResponse">JsonResponse</abbr>
+    <strong>createTasksForUsers</strong>(<abbr title="Illuminate\Http\Request">Request</abbr> $request)
+        </code>
+    </h3>
+    <div class="details">    
+            
+    
+            
+
+        <div class="method-description">
+                            <p><p>Создает задачи на лайки для списка пользователей.</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td><abbr title="Illuminate\Http\Request">Request</abbr></td>
+                <td>$request</td>
+                <td><p>HTTP-запрос, содержащий account_id и domains (список доменов пользователей).</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td><abbr title="Illuminate\Http\JsonResponse">JsonResponse</abbr></td>
+            <td><p>Ответ с созданными задачами.</p></td>
+        </tr>
+    </table>
+
+            
+                            <h4>Exceptions</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td><abbr title="ATehnix\VkClient\Exceptions\VkException">VkException</abbr></td>
+                <td></td>
+            </tr>
+            </table>
+
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_addLikeTaskToQueue">
+        <div class="location">at line 335</div>
         <code>                    <abbr title="Illuminate\Http\JsonResponse">JsonResponse</abbr>
     <strong>addLikeTaskToQueue</strong>(string $token)
         </code>
@@ -769,7 +830,7 @@
             </div>
                     <div class="method-item">
                     <h3 id="method_createCyclicTask">
-        <div class="location">at line 359</div>
+        <div class="location">at line 405</div>
         <code>                    <abbr title="Illuminate\Http\JsonResponse">JsonResponse</abbr>
     <strong>createCyclicTask</strong>(<abbr title="Illuminate\Http\Request">Request</abbr> $request)
         </code>
@@ -822,9 +883,9 @@
             </div>
                     <div class="method-item">
                     <h3 id="method_countTasksByAccountAndStatus">
-        <div class="location">at line 384</div>
-        <code>                    
-    <strong>countTasksByAccountAndStatus</strong>($status = null, $accountId = null)
+        <div class="location">at line 437</div>
+        <code>                    <abbr title="Illuminate\Http\JsonResponse">JsonResponse</abbr>
+    <strong>countTasksByAccountAndStatus</strong>(string|null $status = null, int|null $accountId = null)
         </code>
     </h3>
     <div class="details">    
@@ -833,26 +894,34 @@
             
 
         <div class="method-description">
-                            <p class="no-description">No description</p>
-                    
+                            <p><p>Подсчитывает количество задач по указанному статусу и/или ID аккаунта.</p></p>                        
         </div>
         <div class="tags">
                             <h4>Parameters</h4>
 
                     <table class="table table-condensed">
                     <tr>
-                <td></td>
+                <td>string|null</td>
                 <td>$status</td>
-                <td></td>
+                <td><p>Статус задачи для фильтрации.</p></td>
             </tr>
                     <tr>
-                <td></td>
+                <td>int|null</td>
                 <td>$accountId</td>
-                <td></td>
+                <td><p>ID аккаунта для фильтрации.</p></td>
             </tr>
             </table>
 
             
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td><abbr title="Illuminate\Http\JsonResponse">JsonResponse</abbr></td>
+            <td><p>Ответ с количеством задач.</p></td>
+        </tr>
+    </table>
+
             
             
             
@@ -862,7 +931,7 @@
             </div>
                     <div class="method-item">
                     <h3 id="method_generateUniqueRandomMinutes">
-        <div class="location">at line 408</div>
+        <div class="location">at line 461</div>
         <code>                    array
     <strong>generateUniqueRandomMinutes</strong>(int $count)
         </code>
@@ -909,7 +978,7 @@
             </div>
                     <div class="method-item">
                     <h3 id="method_deleteAllTasks">
-        <div class="location">at line 432</div>
+        <div class="location">at line 485</div>
         <code>                    <abbr title="Illuminate\Http\JsonResponse">JsonResponse</abbr>
     <strong>deleteAllTasks</strong>(string|null $status = null, int|null $accountId = null)
         </code>
@@ -957,7 +1026,7 @@
             </div>
                     <div class="method-item">
                     <h3 id="method_deleteTaskById">
-        <div class="location">at line 448</div>
+        <div class="location">at line 501</div>
         <code>                    <abbr title="Illuminate\Http\JsonResponse">JsonResponse</abbr>
     <strong>deleteTaskById</strong>(int $id)
         </code>
@@ -1000,7 +1069,7 @@
             </div>
                     <div class="method-item">
                     <h3 id="method_deleteLike">
-        <div class="location">at line 479</div>
+        <div class="location">at line 532</div>
         <code>                    <abbr title="Illuminate\Http\JsonResponse">JsonResponse</abbr>
     <strong>deleteLike</strong>(int $taskId)
         </code>

@@ -94,6 +94,10 @@
     
         
 
+            <div class="description">
+            <p><p>Класс DispatchLikeToNewsfeedPost - консольная команда для автоматического выполнения
+циклических задач по постановке лайков на посты в ленте новостей ВКонтакте.</p></p>            <p><p>Эта команда запускается планировщиком Laravel каждую минуту и является ключевым компонентом
+для реализации циклических задач по автоматической постановке лайков на посты в VK.</p></p>        </div>
             
         
     
@@ -106,7 +110,7 @@
                                                                                 
                                     </td>
                 <td>$signature</td>
-                <td class="last"><p>The name and signature of the console command.</p></td>
+                <td class="last"><p>Сигнатура консольной команды.</p></td>
                 <td></td>
             </tr>
                     <tr>
@@ -115,7 +119,7 @@
                                                                                 
                                     </td>
                 <td>$description</td>
-                <td class="last"><p>The console command description.</p></td>
+                <td class="last"><p>Описание команды, объясняющее её назначение.</p></td>
                 <td></td>
             </tr>
             </table>
@@ -131,7 +135,7 @@
                 <div class="col-md-8">
                     <a href="#method___construct">__construct</a>()
         
-                                            <p><p>Create a new command instance.</p></p>                </div>
+                                            <p><p>Конструктор класса.</p></p>                </div>
                 <div class="col-md-2"></div>
             </div>
                     <div class="row">
@@ -153,7 +157,7 @@
             <div id="method-details">
                     <div class="method-item">
                     <h3 id="method___construct">
-        <div class="location">at line 33</div>
+        <div class="location">at line 42</div>
         <code>                    void
     <strong>__construct</strong>()
         </code>
@@ -164,7 +168,7 @@
             
 
         <div class="method-description">
-                            <p><p>Create a new command instance.</p></p>                        
+                            <p><p>Конструктор класса.</p></p>                <p><p>Вызывает конструктор родительского класса Command.</p></p>        
         </div>
         <div class="tags">
             
@@ -186,7 +190,7 @@
             </div>
                     <div class="method-item">
                     <h3 id="method_handle">
-        <div class="location">at line 56</div>
+        <div class="location">at line 65</div>
         <code>                    void
     <strong>handle</strong>()
         </code>
