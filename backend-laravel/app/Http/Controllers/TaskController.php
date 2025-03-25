@@ -279,6 +279,13 @@ final class TaskController extends Controller
         ]);
     }
 
+    /**
+     * Создает задачи на лайки для списка пользователей.
+     *
+     * @param Request $request HTTP-запрос, содержащий account_id и domains (список доменов пользователей).
+     * @return \Illuminate\Http\JsonResponse Ответ с созданными задачами.
+     * @throws VkException
+     */
     public function createTasksForUsers(Request $request)
     {
         $accountId = $request->input('account_id');
@@ -420,6 +427,13 @@ final class TaskController extends Controller
         ]);
     }
 
+    /**
+     * Подсчитывает количество задач по указанному статусу и/или ID аккаунта.
+     *
+     * @param string|null $status Статус задачи для фильтрации.
+     * @param int|null $accountId ID аккаунта для фильтрации.
+     * @return \Illuminate\Http\JsonResponse Ответ с количеством задач.
+     */
     public function countTasksByAccountAndStatus($status = null, $accountId = null)
     {
         $count = $this->taskRepository->countTasksByAccountAndStatus($status, $accountId);
