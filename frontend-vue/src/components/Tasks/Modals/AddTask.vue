@@ -38,7 +38,7 @@
                             class="city-item p-2 border-bottom"
                             @click="selectCity(city)"
                         >
-                            {{ city.title }}, {{ city.region }}
+                            ID - <b>{{ city.id }}</b>  {{ city.title }} <span v-if="city.region">, {{ city.region }}</span>
                         </div>
                     </div>
 

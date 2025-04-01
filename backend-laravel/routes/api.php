@@ -56,8 +56,6 @@ Route::prefix('account')->group(function() {
 Route::prefix('filters')->group(function() {
     // Поиск пользователей с применением фильтров
     Route::post('/search', [FilterController::class, 'searchUsers']);
-    // Поиск и создание задач на основе найденных пользователей
-    Route::post('/search-and-create', [FilterController::class, 'searchAndCreateTasks']);
     // Получение списка городов для фильтрации
     Route::post('/cities', [FilterController::class, 'getCities']);
 });

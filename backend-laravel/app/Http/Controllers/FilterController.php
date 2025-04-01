@@ -30,7 +30,6 @@ class FilterController extends Controller
      */
     public function __construct(
         private readonly VkClientService $vkClient,
-        private readonly TaskController  $taskController
     ) {}
 
     /**
@@ -78,43 +77,6 @@ class FilterController extends Controller
                 'data'    => $response['response'] ?? [],
                 'message' => 'Поиск пользователей выполнен успешно'
             ]);
-
-        } catch (Exception $e) {
-            return response()->json([
-                'success' => false,
-                'error'   => $e->getMessage()
-            ], 500);
-        }
-    }
-
-    // TODO: ЭТОТ МЕТОД ЕЩЕ НЕ РАБОТАТЕ!
-    /**
-     * Выполняет поиск пользователей и создает задачи для найденных профилей.
-     *
-     * Метод сначала выполняет поиск пользователей с заданными параметрами,
-     * а затем создает задачи для взаимодействия с найденными профилями.
-     *
-     * @param Request $request HTTP запрос с параметрами поиска и создания задач
-     * @return \Illuminate\Http\JsonResponse Результат создания задач или сообщение об ошибке
-     */
-    public function searchAndCreateTasks(Request $request)
-    {
-        // Сначала выполняем поиск пользователей
-        $searchResponse = $this->searchUsers($request);
-        $responseData = json_decode($searchResponse->getContent(), true);
-
-        if (!$responseData['success']) {
-            return $searchResponse;
-        }
-
-        try {
-            // Создаем задачи для найденных пользователей
-            $users = $responseData['data']['items'] ?? [];
-
-            return $this->taskController->createTasksForFilteredUsers(
-                $request->account_id,
-                $users
-            );
 
         } catch (Exception $e) {
             return response()->json([
