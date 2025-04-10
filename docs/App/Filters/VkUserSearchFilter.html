@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="robots" content="index, follow, all" />
+    <title>App\Filters\VkUserSearchFilter | VK Bot API</title>
+
+            <link rel="stylesheet" type="text/css" href="../../css/bootstrap.min.css">
+        <link rel="stylesheet" type="text/css" href="../../css/bootstrap-theme.min.css">
+        <link rel="stylesheet" type="text/css" href="../../css/doctum.css">
+        <link rel="stylesheet" type="text/css" href="../../fonts/doctum-font.css">
+        <script src="../../js/jquery-3.5.1.slim.min.js"></script>
+        <script async defer src="../../doctum.js"></script>
+        <script async defer src="../../js/bootstrap.min.js"></script>
+        <script async defer src="../../js/autocomplete.min.js"></script>
+        <meta name="MobileOptimized" content="width">
+        <meta name="HandheldFriendly" content="true">
+        <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+
+    </head>
+
+    <body id="class" data-name="class:App_Filters_VkUserSearchFilter" data-root-path="../../" data-search-index-url="../../doctum-search.json">
+            <div id="content">
+        <div id="left-column">
+                <div id="control-panel">
+                <div class="search-bar hidden" id="search-progress-bar-container">
+            <div class="progress">
+                <div class="progress-bar" role="progressbar" id="search-progress-bar"
+                    aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%"></div>
+            </div>
+        </div>
+        <form id="search-form" action="../../search.html">
+            <span class="icon icon-search"></span>
+            <input name="search"
+                   id="doctum-search-auto-complete"
+                   class="typeahead form-control"
+                   type="search"
+                   placeholder="Search"
+                   spellcheck="false"
+                   autocorrect="off"
+                   autocomplete="off"
+                   autocapitalize="off">
+            <div class="auto-complete-results" id="auto-complete-results"></div>
+        </form>
+    </div>
+
+                <div id="api-tree"></div>
+
+        </div>
+        <div id="right-column">
+                <nav id="site-nav" class="navbar navbar-default" role="navigation">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-elements">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="../../index.html">VK Bot API</a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar-elements">
+                <ul class="nav navbar-nav">
+                    <li><a href="../../classes.html">Classes</a></li>
+                    <li><a href="../../namespaces.html">Namespaces</a></li>
+                    <li><a href="../../interfaces.html">Interfaces</a></li>
+                    <li><a href="../../traits.html">Traits</a></li>
+                    <li><a href="../../doc-index.html">Index</a></li>
+                    <li><a href="../../search.html">Search</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+                        <div class="namespace-breadcrumbs">
+            <ol class="breadcrumb">
+                <li><span class="label label-default">class</span></li>
+                        <li><a href="../../App.html">App</a></li><li class="backslash">\</li><li><a href="../../App/Filters.html">Filters</a></li><li class="backslash">\</li><li>VkUserSearchFilter</li>
+            </ol>
+        </div>
+                <div id="page-content">
+    <div class="page-header">
+        <h1>VkUserSearchFilter    
+            </h1>
+    </div>
+
+    
+    <p>        class
+    <strong>VkUserSearchFilter</strong>
+</p>
+
+        
+        
+    
+        
+
+            <div class="description">
+            <p><p>Класс фильтра для поиска пользователей VK.</p></p>            <p><p>Этот класс предоставляет fluent interface для построения параметров поиска,
+которые будут использоваться при вызове метода users.search API ВКонтакте.</p></p>        </div>
+            
+        
+    
+            <h2>Properties</h2>
+
+            <table class="table table-condensed">
+                    <tr>
+                <td class="type" id="property_filters">
+                                        protected                                        array
+                                                                                
+                                    </td>
+                <td>$filters</td>
+                <td class="last"><p>Массив параметров фильтрации.</p></td>
+                <td></td>
+            </tr>
+            </table>
+
+    
+            <h2>Methods</h2>
+
+            <div class="container-fluid underlined">
+                    <div class="row">
+                <div class="col-md-2 type">
+                    
+                </div>
+                <div class="col-md-8">
+                    <a href="#method___construct">__construct</a>()
+        
+                                            <p><p>Конструктор класса.</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    <a href="../../App/Filters/VkUserSearchFilter.html"><abbr title="App\Filters\VkUserSearchFilter">VkUserSearchFilter</abbr></a>
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_setDefaults">setDefaults</a>()
+        
+                                            <p><p>Устанавливает значения по умолчанию для фильтров.</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    <a href="../../App/Filters/VkUserSearchFilter.html"><abbr title="App\Filters\VkUserSearchFilter">VkUserSearchFilter</abbr></a>
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_setQuery">setQuery</a>(string|null $query)
+        
+                                            <p><p>Устанавливает строку поискового запроса.</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    <a href="../../App/Filters/VkUserSearchFilter.html"><abbr title="App\Filters\VkUserSearchFilter">VkUserSearchFilter</abbr></a>
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_setCity">setCity</a>(int $cityId)
+        
+                                            <p><p>Устанавливает ID города для фильтрации результатов поиска.</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    <a href="../../App/Filters/VkUserSearchFilter.html"><abbr title="App\Filters\VkUserSearchFilter">VkUserSearchFilter</abbr></a>
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_setCount">setCount</a>(int $count)
+        
+                                            <p><p>Устанавливает количество возвращаемых пользователей.</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    <a href="../../App/Filters/VkUserSearchFilter.html"><abbr title="App\Filters\VkUserSearchFilter">VkUserSearchFilter</abbr></a>
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_addFilter">addFilter</a>(string $key, mixed $value)
+        
+                                            <p><p>Добавляет произвольный фильтр к параметрам поиска.</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    array
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_getFilters">getFilters</a>()
+        
+                                            <p><p>Возвращает массив параметров для API запроса.</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+            </div>
+
+
+        <h2>Details</h2>
+
+            <div id="method-details">
+                    <div class="method-item">
+                    <h3 id="method___construct">
+        <div class="location">at line 24</div>
+        <code>                    
+    <strong>__construct</strong>()
+        </code>
+    </h3>
+    <div class="details">    
+            
+    
+            
+
+        <div class="method-description">
+                            <p><p>Конструктор класса.</p></p>                <p><p>Устанавливает значения по умолчанию для фильтров.</p></p>        
+        </div>
+        <div class="tags">
+            
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_setDefaults">
+        <div class="location">at line 34</div>
+        <code>                    <a href="../../App/Filters/VkUserSearchFilter.html"><abbr title="App\Filters\VkUserSearchFilter">VkUserSearchFilter</abbr></a>
+    <strong>setDefaults</strong>()
+        </code>
+    </h3>
+    <div class="details">    
+            
+    
+            
+
+        <div class="method-description">
+                            <p><p>Устанавливает значения по умолчанию для фильтров.</p></p>                        
+        </div>
+        <div class="tags">
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td><a href="../../App/Filters/VkUserSearchFilter.html"><abbr title="App\Filters\VkUserSearchFilter">VkUserSearchFilter</abbr></a></td>
+            <td><p>Возвращает текущий экземпляр для цепочки вызовов</p></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_setQuery">
+        <div class="location">at line 50</div>
+        <code>                    <a href="../../App/Filters/VkUserSearchFilter.html"><abbr title="App\Filters\VkUserSearchFilter">VkUserSearchFilter</abbr></a>
+    <strong>setQuery</strong>(string|null $query)
+        </code>
+    </h3>
+    <div class="details">    
+            
+    
+            
+
+        <div class="method-description">
+                            <p><p>Устанавливает строку поискового запроса.</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td>string|null</td>
+                <td>$query</td>
+                <td><p>Строка для поиска пользователей (например, &quot;Иван Петров&quot;)</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td><a href="../../App/Filters/VkUserSearchFilter.html"><abbr title="App\Filters\VkUserSearchFilter">VkUserSearchFilter</abbr></a></td>
+            <td><p>Возвращает текущий экземпляр для цепочки вызовов</p></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_setCity">
+        <div class="location">at line 62</div>
+        <code>                    <a href="../../App/Filters/VkUserSearchFilter.html"><abbr title="App\Filters\VkUserSearchFilter">VkUserSearchFilter</abbr></a>
+    <strong>setCity</strong>(int $cityId)
+        </code>
+    </h3>
+    <div class="details">    
+            
+    
+            
+
+        <div class="method-description">
+                            <p><p>Устанавливает ID города для фильтрации результатов поиска.</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td>int</td>
+                <td>$cityId</td>
+                <td><p>ID города для поиска</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td><a href="../../App/Filters/VkUserSearchFilter.html"><abbr title="App\Filters\VkUserSearchFilter">VkUserSearchFilter</abbr></a></td>
+            <td><p>Возвращает текущий экземпляр для цепочки вызовов</p></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_setCount">
+        <div class="location">at line 74</div>
+        <code>                    <a href="../../App/Filters/VkUserSearchFilter.html"><abbr title="App\Filters\VkUserSearchFilter">VkUserSearchFilter</abbr></a>
+    <strong>setCount</strong>(int $count)
+        </code>
+    </h3>
+    <div class="details">    
+            
+    
+            
+
+        <div class="method-description">
+                            <p><p>Устанавливает количество возвращаемых пользователей.</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td>int</td>
+                <td>$count</td>
+                <td><p>Количество пользователей для возврата</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td><a href="../../App/Filters/VkUserSearchFilter.html"><abbr title="App\Filters\VkUserSearchFilter">VkUserSearchFilter</abbr></a></td>
+            <td><p>Возвращает текущий экземпляр для цепочки вызовов</p></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_addFilter">
+        <div class="location">at line 87</div>
+        <code>                    <a href="../../App/Filters/VkUserSearchFilter.html"><abbr title="App\Filters\VkUserSearchFilter">VkUserSearchFilter</abbr></a>
+    <strong>addFilter</strong>(string $key, mixed $value)
+        </code>
+    </h3>
+    <div class="details">    
+            
+    
+            
+
+        <div class="method-description">
+                            <p><p>Добавляет произвольный фильтр к параметрам поиска.</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td>string</td>
+                <td>$key</td>
+                <td><p>Ключ фильтра</p></td>
+            </tr>
+                    <tr>
+                <td>mixed</td>
+                <td>$value</td>
+                <td><p>Значение фильтра</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td><a href="../../App/Filters/VkUserSearchFilter.html"><abbr title="App\Filters\VkUserSearchFilter">VkUserSearchFilter</abbr></a></td>
+            <td><p>Возвращает текущий экземпляр для цепочки вызовов</p></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_getFilters">
+        <div class="location">at line 98</div>
+        <code>                    array
+    <strong>getFilters</strong>()
+        </code>
+    </h3>
+    <div class="details">    
+            
+    
+            
+
+        <div class="method-description">
+                            <p><p>Возвращает массив параметров для API запроса.</p></p>                        
+        </div>
+        <div class="tags">
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td>array</td>
+            <td><p>Массив параметров для API запроса</p></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+            </div>
+
+    
+</div><div id="footer">
+        Generated by <a href="https://github.com/code-lts/doctum">Doctum, a API Documentation generator and fork of Sami</a>.</div></div>
+    </div>
+    </body>
+
+</html>

@@ -137,7 +137,7 @@
                     
                 </div>
                 <div class="col-md-8">
-                    <a href="#method___construct">__construct</a>(<a href="../../../App/Services/VkClientService.html"><abbr title="App\Services\VkClientService">VkClientService</abbr></a> $vkClient, <a href="../../../App/Http/Controllers/TaskController.html"><abbr title="App\Http\Controllers\TaskController">TaskController</abbr></a> $taskController)
+                    <a href="#method___construct">__construct</a>(<a href="../../../App/Services/VkClientService.html"><abbr title="App\Services\VkClientService">VkClientService</abbr></a> $vkClient)
         
                                             <p><p>Создает новый экземпляр контроллера.</p></p>                </div>
                 <div class="col-md-2"></div>
@@ -157,9 +157,9 @@
                     <abbr title="Illuminate\Http\JsonResponse">JsonResponse</abbr>
                 </div>
                 <div class="col-md-8">
-                    <a href="#method_searchAndCreateTasks">searchAndCreateTasks</a>(<abbr title="Illuminate\Http\Request">Request</abbr> $request)
+                    <a href="#method_getUsersByCity">getUsersByCity</a>(<abbr title="Illuminate\Http\Request">Request</abbr> $request)
         
-                                            <p><p>Выполняет поиск пользователей и создает задачи для найденных профилей.</p></p>                </div>
+                                            <p><p>Получает пользователей по ID города.</p></p>                </div>
                 <div class="col-md-2"></div>
             </div>
                     <div class="row">
@@ -182,7 +182,7 @@
                     <h3 id="method___construct">
         <div class="location">at line 31</div>
         <code>                    
-    <strong>__construct</strong>(<a href="../../../App/Services/VkClientService.html"><abbr title="App\Services\VkClientService">VkClientService</abbr></a> $vkClient, <a href="../../../App/Http/Controllers/TaskController.html"><abbr title="App\Http\Controllers\TaskController">TaskController</abbr></a> $taskController)
+    <strong>__construct</strong>(<a href="../../../App/Services/VkClientService.html"><abbr title="App\Services\VkClientService">VkClientService</abbr></a> $vkClient)
         </code>
     </h3>
     <div class="details">    
@@ -202,11 +202,6 @@
                 <td>$vkClient</td>
                 <td><p>Сервис для работы с API ВКонтакте</p></td>
             </tr>
-                    <tr>
-                <td><a href="../../../App/Http/Controllers/TaskController.html"><abbr title="App\Http\Controllers\TaskController">TaskController</abbr></a></td>
-                <td>$taskController</td>
-                <td></td>
-            </tr>
             </table>
 
             
@@ -219,7 +214,7 @@
             </div>
                     <div class="method-item">
                     <h3 id="method_searchUsers">
-        <div class="location">at line 48</div>
+        <div class="location">at line 45</div>
         <code>                    <abbr title="Illuminate\Http\JsonResponse">JsonResponse</abbr>
     <strong>searchUsers</strong>(<abbr title="Illuminate\Http\Request">Request</abbr> $request)
         </code>
@@ -241,10 +236,54 @@
                     <tr>
                 <td><abbr title="Illuminate\Http\Request">Request</abbr></td>
                 <td>$request</td>
-                <td><p>HTTP запрос, содержащий параметры:</p>
+                <td><p>HTTP запрос с параметрами поиска</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td><abbr title="Illuminate\Http\JsonResponse">JsonResponse</abbr></td>
+            <td></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_getUsersByCity">
+        <div class="location">at line 105</div>
+        <code>                    <abbr title="Illuminate\Http\JsonResponse">JsonResponse</abbr>
+    <strong>getUsersByCity</strong>(<abbr title="Illuminate\Http\Request">Request</abbr> $request)
+        </code>
+    </h3>
+    <div class="details">    
+            
+    
+            
+
+        <div class="method-description">
+                            <p><p>Получает пользователей по ID города.</p></p>                        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td><abbr title="Illuminate\Http\Request">Request</abbr></td>
+                <td>$request</td>
+                <td><p>HTTP запрос с параметрами:</p>
 <ul>
-<li>q: string - поисковый запрос (обязательный)</li>
-<li>account_id: int - ID аккаунта для выполнения поиска (обязательный)</li>
+<li>account_id: ID аккаунта</li>
+<li>city_id: ID города</li>
+<li>count: количество пользователей (опционально)</li>
 </ul></td>
             </tr>
             </table>
@@ -267,52 +306,8 @@
 
             </div>
                     <div class="method-item">
-                    <h3 id="method_searchAndCreateTasks">
-        <div class="location">at line 99</div>
-        <code>                    <abbr title="Illuminate\Http\JsonResponse">JsonResponse</abbr>
-    <strong>searchAndCreateTasks</strong>(<abbr title="Illuminate\Http\Request">Request</abbr> $request)
-        </code>
-    </h3>
-    <div class="details">    
-            
-    
-            
-
-        <div class="method-description">
-                            <p><p>Выполняет поиск пользователей и создает задачи для найденных профилей.</p></p>                <p><p>Метод сначала выполняет поиск пользователей с заданными параметрами,
-а затем создает задачи для взаимодействия с найденными профилями.</p></p>        
-        </div>
-        <div class="tags">
-                            <h4>Parameters</h4>
-
-                    <table class="table table-condensed">
-                    <tr>
-                <td><abbr title="Illuminate\Http\Request">Request</abbr></td>
-                <td>$request</td>
-                <td><p>HTTP запрос с параметрами поиска и создания задач</p></td>
-            </tr>
-            </table>
-
-            
-                            <h4>Return Value</h4>
-
-                    <table class="table table-condensed">
-        <tr>
-            <td><abbr title="Illuminate\Http\JsonResponse">JsonResponse</abbr></td>
-            <td><p>Результат создания задач или сообщение об ошибке</p></td>
-        </tr>
-    </table>
-
-            
-            
-            
-                    </div>
-    </div>
-
-            </div>
-                    <div class="method-item">
                     <h3 id="method_getCities">
-        <div class="location">at line 139</div>
+        <div class="location">at line 171</div>
         <code>                    <abbr title="Illuminate\Http\JsonResponse">JsonResponse</abbr>
     <strong>getCities</strong>(<abbr title="Illuminate\Http\Request">Request</abbr> $request)
         </code>

@@ -158,9 +158,9 @@
                     <abbr title="Illuminate\Http\JsonResponse">JsonResponse</abbr>
                 </div>
                 <div class="col-md-8">
-                    <a href="#method_collectNewsfeedPostsForLikeTask">collectNewsfeedPostsForLikeTask</a>(<abbr title="Illuminate\Http\Request">Request</abbr> $request, bool $isCyclic = false)
+                    <a href="#method_createAndQueueLikeTasksFromNewsfeed">createAndQueueLikeTasksFromNewsfeed</a>(<abbr title="Illuminate\Http\Request">Request</abbr> $request, bool $isCyclic = false)
         
-                                            <p><p>Собирает посты из ленты новостей для создания задачи на лайк.</p></p>                </div>
+                                            <p><p>Создает задачи на лайки из ленты новостей и добавляет их в очередь.</p></p>                </div>
                 <div class="col-md-2"></div>
             </div>
                     <div class="row">
@@ -168,9 +168,9 @@
                     int
                 </div>
                 <div class="col-md-8">
-                    <a href="#method_fetchAndPreparePosts">fetchAndPreparePosts</a>(<abbr title="Illuminate\Http\Request">Request</abbr> $request, int $account_id, int $maxCreatedCount, bool $isCyclic)
+                    <a href="#method_fetchPostsAndCreateLikeTasks">fetchPostsAndCreateLikeTasks</a>(<abbr title="Illuminate\Http\Request">Request</abbr> $request, int $account_id, int $maxCreatedCount, bool $isCyclic)
         
-                                            <p><p>Извлекает посты из ленты новостей и подготавливает их для создания задач на лайк.</p></p>                </div>
+                                            <p><p>Извлекает посты из ленты новостей и создает для них задачи на лайк.</p></p>                </div>
                 <div class="col-md-2"></div>
             </div>
                     <div class="row">
@@ -198,9 +198,9 @@
                     <a href="../../../App/Models/Task.html"><abbr title="App\Models\Task">Task</abbr></a>
                 </div>
                 <div class="col-md-8">
-                    <a href="#method_createLikeTask">createLikeTask</a>(int $accountId, array $post, bool $isCyclic)
+                    <a href="#method_createPendingLikeTask">createPendingLikeTask</a>(int $accountId, array $post, bool $isCyclic)
         
-                                            <p><p>Создает задачу на лайк для указанного поста.</p></p>                </div>
+                                            <p><p>Создает новую задачу на лайк в статусе &quot;pending&quot;.</p></p>                </div>
                 <div class="col-md-2"></div>
             </div>
                     <div class="row">
@@ -208,9 +208,9 @@
                     <abbr title="Illuminate\Http\JsonResponse">JsonResponse</abbr>
                 </div>
                 <div class="col-md-8">
-                    <a href="#method_createTasksForUsers">createTasksForUsers</a>(<abbr title="Illuminate\Http\Request">Request</abbr> $request)
+                    <a href="#method_createLikeTasksForUserWallPosts">createLikeTasksForUserWallPosts</a>(<abbr title="Illuminate\Http\Request">Request</abbr> $request)
         
-                                            <p><p>Создает задачи на лайки для списка пользователей.</p></p>                </div>
+                                            <p><p>Создает задачи на лайки для постов со стен пользователей и добавляет их в очередь.</p></p>                </div>
                 <div class="col-md-2"></div>
             </div>
                     <div class="row">
@@ -218,9 +218,9 @@
                     <abbr title="Illuminate\Http\JsonResponse">JsonResponse</abbr>
                 </div>
                 <div class="col-md-8">
-                    <a href="#method_addLikeTaskToQueue">addLikeTaskToQueue</a>(string $token)
+                    <a href="#method_processAndQueuePendingLikeTasks">processAndQueuePendingLikeTasks</a>(string $token)
         
-                                            <p><p>Добавляет задачу на лайк в очередь.</p></p>                </div>
+                                            <p><p>Обрабатывает задачи на лайки в статусе &quot;pending&quot; и добавляет их в очередь на выполнение.</p></p>                </div>
                 <div class="col-md-2"></div>
             </div>
                     <div class="row">
@@ -449,10 +449,10 @@
 
             </div>
                     <div class="method-item">
-                    <h3 id="method_collectNewsfeedPostsForLikeTask">
+                    <h3 id="method_createAndQueueLikeTasksFromNewsfeed">
         <div class="location">at line 118</div>
         <code>                    <abbr title="Illuminate\Http\JsonResponse">JsonResponse</abbr>
-    <strong>collectNewsfeedPostsForLikeTask</strong>(<abbr title="Illuminate\Http\Request">Request</abbr> $request, bool $isCyclic = false)
+    <strong>createAndQueueLikeTasksFromNewsfeed</strong>(<abbr title="Illuminate\Http\Request">Request</abbr> $request, bool $isCyclic = false)
         </code>
     </h3>
     <div class="details">    
@@ -461,7 +461,7 @@
             
 
         <div class="method-description">
-                            <p><p>Собирает посты из ленты новостей для создания задачи на лайк.</p></p>                <p><p>Дополнительно учитывает, является ли задача циклической, для корректной обработки внутри методов.</p></p>        
+                            <p><p>Создает задачи на лайки из ленты новостей и добавляет их в очередь.</p></p>                <p><p>Дополнительно учитывает, является ли задача циклической, для корректной обработки внутри методов.</p></p>        
         </div>
         <div class="tags">
                             <h4>Parameters</h4>
@@ -506,10 +506,10 @@
 
             </div>
                     <div class="method-item">
-                    <h3 id="method_fetchAndPreparePosts">
+                    <h3 id="method_fetchPostsAndCreateLikeTasks">
         <div class="location">at line 151</div>
         <code>            protected        int
-    <strong>fetchAndPreparePosts</strong>(<abbr title="Illuminate\Http\Request">Request</abbr> $request, int $account_id, int $maxCreatedCount, bool $isCyclic)
+    <strong>fetchPostsAndCreateLikeTasks</strong>(<abbr title="Illuminate\Http\Request">Request</abbr> $request, int $account_id, int $maxCreatedCount, bool $isCyclic)
         </code>
     </h3>
     <div class="details">    
@@ -518,12 +518,12 @@
             
 
         <div class="method-description">
-                            <p><p>Извлекает посты из ленты новостей и подготавливает их для создания задач на лайк.</p></p>                <p><p>Этот метод выполняет несколько ключевых функций:</p>
+                            <p><p>Извлекает посты из ленты новостей и создает для них задачи на лайк.</p></p>                <p><p>Этот метод выполняет несколько ключевых функций:</p>
 <ol>
 <li>Получает посты из ленты новостей пользователя.</li>
 <li>Проверяет каждый пост на соответствие критериям для создания задачи.</li>
 <li>Если пост подходит, проверяет, не была ли для этого поста уже создана задача.</li>
-<li>Если задача не была создана, создает новую задачу на лайк.</li>
+<li>Если задача не была создана, создает новую задачу на лайк в статусе &quot;pending&quot;.</li>
 <li>Процесс продолжается до тех пор, пока не будет достигнуто максимальное количество созданных задач
 или пока не закончатся посты в ленте.</li>
 </ol></p>        
@@ -672,10 +672,10 @@
 
             </div>
                     <div class="method-item">
-                    <h3 id="method_createLikeTask">
-        <div class="location">at line 258</div>
+                    <h3 id="method_createPendingLikeTask">
+        <div class="location">at line 260</div>
         <code>            protected        <a href="../../../App/Models/Task.html"><abbr title="App\Models\Task">Task</abbr></a>
-    <strong>createLikeTask</strong>(int $accountId, array $post, bool $isCyclic)
+    <strong>createPendingLikeTask</strong>(int $accountId, array $post, bool $isCyclic)
         </code>
     </h3>
     <div class="details">    
@@ -684,7 +684,8 @@
             
 
         <div class="method-description">
-                            <p><p>Создает задачу на лайк для указанного поста.</p></p>                <p><p>Учитывает, является ли задача циклической, для установки соответствующего флага в базе данных.</p></p>        
+                            <p><p>Создает новую задачу на лайк в статусе &quot;pending&quot;.</p></p>                <p><p>Метод получает информацию о пользователе через VK API, создает запись в базе данных
+с информацией о задаче и возвращает созданную задачу.</p></p>        
         </div>
         <div class="tags">
                             <h4>Parameters</h4>
@@ -693,12 +694,12 @@
                     <tr>
                 <td>int</td>
                 <td>$accountId</td>
-                <td><p>ID аккаунта пользователя.</p></td>
+                <td><p>ID аккаунта, от имени которого будет выполняться задача.</p></td>
             </tr>
                     <tr>
                 <td>array</td>
                 <td>$post</td>
-                <td><p>Массив данных поста.</p></td>
+                <td><p>Данные поста, для которого создается задача на лайк.</p></td>
             </tr>
                     <tr>
                 <td>bool</td>
@@ -734,10 +735,10 @@
 
             </div>
                     <div class="method-item">
-                    <h3 id="method_createTasksForUsers">
-        <div class="location">at line 289</div>
+                    <h3 id="method_createLikeTasksForUserWallPosts">
+        <div class="location">at line 294</div>
         <code>                    <abbr title="Illuminate\Http\JsonResponse">JsonResponse</abbr>
-    <strong>createTasksForUsers</strong>(<abbr title="Illuminate\Http\Request">Request</abbr> $request)
+    <strong>createLikeTasksForUserWallPosts</strong>(<abbr title="Illuminate\Http\Request">Request</abbr> $request)
         </code>
     </h3>
     <div class="details">    
@@ -746,7 +747,8 @@
             
 
         <div class="method-description">
-                            <p><p>Создает задачи на лайки для списка пользователей.</p></p>                        
+                            <p><p>Создает задачи на лайки для постов со стен пользователей и добавляет их в очередь.</p></p>                <p><p>Метод принимает список доменов пользователей, получает первый пост со стены каждого пользователя,
+создает для него задачу на лайк и добавляет все созданные задачи в очередь на выполнение.</p></p>        
         </div>
         <div class="tags">
                             <h4>Parameters</h4>
@@ -755,7 +757,7 @@
                     <tr>
                 <td><abbr title="Illuminate\Http\Request">Request</abbr></td>
                 <td>$request</td>
-                <td><p>HTTP-запрос, содержащий account_id и domains (список доменов пользователей).</p></td>
+                <td><p>HTTP-запрос с параметрами.</p></td>
             </tr>
             </table>
 
@@ -765,7 +767,7 @@
                     <table class="table table-condensed">
         <tr>
             <td><abbr title="Illuminate\Http\JsonResponse">JsonResponse</abbr></td>
-            <td><p>Ответ с созданными задачами.</p></td>
+            <td><p>Ответ с информацией о созданных задачах.</p></td>
         </tr>
     </table>
 
@@ -786,10 +788,10 @@
 
             </div>
                     <div class="method-item">
-                    <h3 id="method_addLikeTaskToQueue">
-        <div class="location">at line 335</div>
+                    <h3 id="method_processAndQueuePendingLikeTasks">
+        <div class="location">at line 344</div>
         <code>                    <abbr title="Illuminate\Http\JsonResponse">JsonResponse</abbr>
-    <strong>addLikeTaskToQueue</strong>(string $token)
+    <strong>processAndQueuePendingLikeTasks</strong>(string $token)
         </code>
     </h3>
     <div class="details">    
@@ -798,7 +800,7 @@
             
 
         <div class="method-description">
-                            <p><p>Добавляет задачу на лайк в очередь.</p></p>                        
+                            <p><p>Обрабатывает задачи на лайки в статусе &quot;pending&quot; и добавляет их в очередь на выполнение.</p></p>                <p><p>Изменяет статус задач с &quot;pending&quot; на &quot;queued&quot; и создает задания в очереди Laravel.</p></p>        
         </div>
         <div class="tags">
                             <h4>Parameters</h4>
@@ -830,7 +832,7 @@
             </div>
                     <div class="method-item">
                     <h3 id="method_createCyclicTask">
-        <div class="location">at line 405</div>
+        <div class="location">at line 414</div>
         <code>                    <abbr title="Illuminate\Http\JsonResponse">JsonResponse</abbr>
     <strong>createCyclicTask</strong>(<abbr title="Illuminate\Http\Request">Request</abbr> $request)
         </code>
@@ -883,7 +885,7 @@
             </div>
                     <div class="method-item">
                     <h3 id="method_countTasksByAccountAndStatus">
-        <div class="location">at line 437</div>
+        <div class="location">at line 446</div>
         <code>                    <abbr title="Illuminate\Http\JsonResponse">JsonResponse</abbr>
     <strong>countTasksByAccountAndStatus</strong>(string|null $status = null, int|null $accountId = null)
         </code>
@@ -931,7 +933,7 @@
             </div>
                     <div class="method-item">
                     <h3 id="method_generateUniqueRandomMinutes">
-        <div class="location">at line 461</div>
+        <div class="location">at line 470</div>
         <code>                    array
     <strong>generateUniqueRandomMinutes</strong>(int $count)
         </code>
@@ -978,7 +980,7 @@
             </div>
                     <div class="method-item">
                     <h3 id="method_deleteAllTasks">
-        <div class="location">at line 485</div>
+        <div class="location">at line 494</div>
         <code>                    <abbr title="Illuminate\Http\JsonResponse">JsonResponse</abbr>
     <strong>deleteAllTasks</strong>(string|null $status = null, int|null $accountId = null)
         </code>
@@ -1026,7 +1028,7 @@
             </div>
                     <div class="method-item">
                     <h3 id="method_deleteTaskById">
-        <div class="location">at line 501</div>
+        <div class="location">at line 510</div>
         <code>                    <abbr title="Illuminate\Http\JsonResponse">JsonResponse</abbr>
     <strong>deleteTaskById</strong>(int $id)
         </code>
@@ -1069,7 +1071,7 @@
             </div>
                     <div class="method-item">
                     <h3 id="method_deleteLike">
-        <div class="location">at line 532</div>
+        <div class="location">at line 541</div>
         <code>                    <abbr title="Illuminate\Http\JsonResponse">JsonResponse</abbr>
     <strong>deleteLike</strong>(int $taskId)
         </code>
