@@ -295,7 +295,7 @@ class VkClientService
 
         $response = $this->request('wall.get', [
             'domain' => $domain,
-            'count'  => 40,
+            'count'  => 10,
             'offset' => $startFrom
         ], $access_token);
 
@@ -356,21 +356,23 @@ class VkClientService
     /**
      * Выполняет поиск пользователей ВКонтакте с применением фильтров.
      *
-     * Метод использует API ВКонтакте users.search для поиска пользователей
-     * с учетом заданных параметров фильтрации.
-     *
      * @param VkSearchFilter $filter Фильтр с параметрами поиска
      * @param int $accountId ID аккаунта, от имени которого выполняется поиск
+     * @param int $count Количество пользователей для возврата
      * @return array Результаты поиска пользователей
      * @throws VkException Если произошла ошибка при выполнении API запроса
      */
-    public function searchUsers(VkSearchFilter $filter, int $accountId): array
+    public function searchUsers(VkSearchFilter $filter, int $accountId, int $count = 10): array
     {
         $accessToken = $this->getAccessTokenByAccountID($accountId);
 
-        return $this->request('users.search', array_merge(
-            $filter->toArray()
-        ), $accessToken);
+        // Добавляем count в параметры запроса
+        $parameters = array_merge(
+            $filter->toArray(),
+            ['count' => $count]
+        );
+
+        return $this->request('users.search', $parameters, $accessToken);
     }
 
     /**

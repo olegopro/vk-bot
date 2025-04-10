@@ -87,6 +87,67 @@ class FilterController extends Controller
     }
 
     /**
+     * Находит пользователей по ID города и возвращает их screen_name (domains).
+     *
+     * @param Request $request HTTP запрос с параметрами:
+     *  - city_id: int - ID города для поиска (обязательный)
+     *  - account_id: int - ID аккаунта для выполнения поиска (обязательный)
+     *  - count: int - количество пользователей для поиска (опциональный, по умолчанию 10)
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getUsersByCity(Request $request)
+    {
+        // Валидация входящих данных
+        $validator = Validator::make($request->all(), [
+            'city_id'    => 'required|integer',
+            'account_id' => 'required|integer',
+            'count'      => 'integer|nullable'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'errors'  => $validator->errors()
+            ], 422);
+        }
+
+        try {
+            // Создаем и настраиваем фильтр для поиска
+            $filter = new VkSearchFilter();
+            $filter->setCity($request->city_id);
+
+            // Устанавливаем количество результатов, если оно передано
+            $count = $request->input('count', 10);
+
+            // Выполняем поиск через VK API
+            $response = $this->vkClient->searchUsers($filter, $request->account_id, $count);
+
+            // Извлекаем screen_name (domains) пользователей
+            $domains = [];
+            if (!empty($response['response']['items'])) {
+                foreach ($response['response']['items'] as $user) {
+                    $domains[] = $user['screen_name'];
+                }
+            }
+
+            return response()->json([
+                'success' => true,
+                'data'    => [
+                    'domains' => $domains,
+                    'count'   => count($domains)
+                ],
+                'message' => 'Найдено пользователей: ' . count($domains)
+            ]);
+
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'error'   => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
      * Получает список городов по поисковому запросу.
      *
      * Метод делает запрос к API VK для получения списка городов,

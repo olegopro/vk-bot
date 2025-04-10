@@ -133,7 +133,7 @@ class DispatchLikeToNewsfeedPost extends Command
 
                 // Вызываем метод контроллера TaskController для выполнения задачи
                 // Флаг true указывает, что это циклическая задача
-                $response = app(TaskController::class)->collectNewsfeedPostsForLikeTask($request, true);
+                $response = app(TaskController::class)->createAndQueueLikeTasksFromNewsfeed($request, true);
 
                 // Проверяем, был ли запрос успешным
                 if ($response->isSuccessful()) {

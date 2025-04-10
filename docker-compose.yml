@@ -22,7 +22,7 @@ services:
             - PHP_IDE_CONFIG="serverName=DockerServer"
             - VK_API_URL=https://api.vk.com/method/
             - VK_API_VERSION=5.199
-            - VK_API_SERVICE_KEY=${VK_API_SERVICE_KEY}
+            - VK_API_SERVICE_KEY=9078836e9078836e9078836e6a936ad6f7990789078836ef3b669b8e858f8a314638f9c
 
     nginx:
         image: nginx

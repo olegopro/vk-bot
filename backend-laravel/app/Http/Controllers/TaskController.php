@@ -107,7 +107,7 @@ final class TaskController extends Controller
     }
 
     /**
-     * Собирает посты из ленты новостей для создания задачи на лайк.
+     * Создает задачи на лайки из ленты новостей и добавляет их в очередь.
      * Дополнительно учитывает, является ли задача циклической, для корректной обработки внутри методов.
      *
      * @param Request $request HTTP-запрос.
@@ -115,7 +115,7 @@ final class TaskController extends Controller
      * @return \Illuminate\Http\JsonResponse Ответ с результатом добавления задач в очередь.
      * @throws VkException
      */
-    public function collectNewsfeedPostsForLikeTask(Request $request, $isCyclic = false)
+    public function createAndQueueLikeTasksFromNewsfeed(Request $request, $isCyclic = false)
     {
         $account_id = $request->input('account_id');
         $task_count = $request->input('task_count');
@@ -124,20 +124,20 @@ final class TaskController extends Controller
         $maxCreatedCount = $task_count;
 
         // Извлечение и подготовка постов
-        $createdCount = $this->fetchAndPreparePosts($request, $account_id, $maxCreatedCount, $isCyclic);
+        $this->fetchPostsAndCreateLikeTasks($request, $account_id, $maxCreatedCount, $isCyclic);
 
         // После обработки всех постов, добавляем задачу на лайк в очередь
-        return $this->addLikeTaskToQueue($access_token);
+        return $this->processAndQueuePendingLikeTasks($access_token);
     }
 
     /**
-     * Извлекает посты из ленты новостей и подготавливает их для создания задач на лайк.
+     * Извлекает посты из ленты новостей и создает для них задачи на лайк.
      *
      * Этот метод выполняет несколько ключевых функций:
      * 1. Получает посты из ленты новостей пользователя.
      * 2. Проверяет каждый пост на соответствие критериям для создания задачи.
      * 3. Если пост подходит, проверяет, не была ли для этого поста уже создана задача.
-     * 4. Если задача не была создана, создает новую задачу на лайк.
+     * 4. Если задача не была создана, создает новую задачу на лайк в статусе "pending".
      * 5. Процесс продолжается до тех пор, пока не будет достигнуто максимальное количество созданных задач
      *    или пока не закончатся посты в ленте.
      *
@@ -148,7 +148,7 @@ final class TaskController extends Controller
      * @return int Количество созданных задач.
      * @throws VkException
      */
-    protected function fetchAndPreparePosts($request, $account_id, $maxCreatedCount, $isCyclic)
+    protected function fetchPostsAndCreateLikeTasks($request, $account_id, $maxCreatedCount, $isCyclic)
     {
         $createdCount = 0; // Счетчик созданных задач.
         $failedAttempts = 0; // Счетчик неудачных попыток получения подходящих постов.
@@ -171,7 +171,7 @@ final class TaskController extends Controller
 
                     if (!$existingTask) {
                         // Если задачи нет, создаем новую задачу на лайк.
-                        $this->createLikeTask($account_id, $post, $isCyclic);
+                        $this->createPendingLikeTask($account_id, $post, $isCyclic);
                         $createdCount++; // Увеличиваем счетчик созданных задач.
 
                         // Если создано необходимое количество задач, прерываем цикл.
@@ -246,16 +246,18 @@ final class TaskController extends Controller
     }
 
     /**
-     * Создает задачу на лайк для указанного поста.
-     * Учитывает, является ли задача циклической, для установки соответствующего флага в базе данных.
+     * Создает новую задачу на лайк в статусе "pending".
      *
-     * @param int $accountId ID аккаунта пользователя.
-     * @param array $post Массив данных поста.
+     * Метод получает информацию о пользователе через VK API, создает запись в базе данных
+     * с информацией о задаче и возвращает созданную задачу.
+     *
+     * @param int $accountId ID аккаунта, от имени которого будет выполняться задача.
+     * @param array $post Данные поста, для которого создается задача на лайк.
      * @param bool $isCyclic Флаг, указывающий, является ли задача циклической.
      * @return Task Созданная задача.
      * @throws VkException
      */
-    protected function createLikeTask($accountId, $post, $isCyclic)
+    protected function createPendingLikeTask($accountId, $post, $isCyclic)
     {
         $username = $this->vkClient->request('users.get', [
             'fields'  => 'screen_name',
@@ -266,7 +268,7 @@ final class TaskController extends Controller
         $firstName = $username['response'][0]['first_name'] ?? 'Unknown';
         $lastName = $username['response'][0]['last_name'] ?? 'Unknown';
 
-        usleep(300000); // Задержка для имитации задержки между запросами к API
+        usleep(300000); // Пауза для имитации задержки между запросами к API
 
         return Task::create([
             'account_id' => $accountId,
@@ -280,16 +282,20 @@ final class TaskController extends Controller
     }
 
     /**
-     * Создает задачи на лайки для списка пользователей.
+     * Создает задачи на лайки для постов со стен пользователей и добавляет их в очередь.
      *
-     * @param Request $request HTTP-запрос, содержащий account_id и domains (список доменов пользователей).
-     * @return \Illuminate\Http\JsonResponse Ответ с созданными задачами.
+     * Метод принимает список доменов пользователей, получает первый пост со стены каждого пользователя,
+     * создает для него задачу на лайк и добавляет все созданные задачи в очередь на выполнение.
+     *
+     * @param Request $request HTTP-запрос с параметрами.
+     * @return \Illuminate\Http\JsonResponse Ответ с информацией о созданных задачах.
      * @throws VkException
      */
-    public function createTasksForUsers(Request $request)
+    public function createLikeTasksForUserWallPosts(Request $request)
     {
         $accountId = $request->input('account_id');
         $domains = $request->input('domains');
+        $access_token = VkClient::getAccessTokenByAccountID($accountId);
 
         if (!$accountId || !$domains || !is_array($domains)) {
             return response()->json([
@@ -314,10 +320,12 @@ final class TaskController extends Controller
                 $post = $wallPosts['data']['response']['items'][0];
 
                 // Создаем задачу на лайк для извлеченной записи
-                $task = $this->createLikeTask($accountId, $post, false);
+                $task = $this->createPendingLikeTask($accountId, $post, false);
                 $tasks[] = $task;
             }
         }
+
+        $this->processAndQueuePendingLikeTasks($access_token);
 
         return response()->json([
             'success' => true,
@@ -327,12 +335,13 @@ final class TaskController extends Controller
     }
 
     /**
-     * Добавляет задачу на лайк в очередь.
+     * Обрабатывает задачи на лайки в статусе "pending" и добавляет их в очередь на выполнение.
+     * Изменяет статус задач с "pending" на "queued" и создает задания в очереди Laravel.
      *
      * @param string $token Токен доступа для API ВКонтакте.
      * @return \Illuminate\Http\JsonResponse Ответ с информацией о задачах, добавленных в очередь.
      */
-    public function addLikeTaskToQueue($token)
+    public function processAndQueuePendingLikeTasks($token)
     {
         // Базовое значение задержки из настроек
         $basePause = DB::table('settings')

@@ -24,12 +24,12 @@ Route::prefix('tasks')->group(function() {
     Route::get('/count-by-status/{status?}/{accountId?}', [TaskController::class, 'countTasksByAccountAndStatus']);
     Route::get('/task-info/{taskId}', [TaskController::class, 'getTaskInfo']);
     Route::get('/{status?}/{accountId?}/{perPage?}', [TaskController::class, 'getTasksByStatus']);
-    Route::post('/get-posts-for-like', [TaskController::class, 'collectNewsfeedPostsForLikeTask']);
-    Route::post('/add-task-likes', [TaskController::class, 'addLikeTaskToQueue']);
+    Route::post('/get-posts-for-like', [TaskController::class, 'createAndQueueLikeTasksFromNewsfeed']);
+    Route::post('/add-task-likes', [TaskController::class, 'processAndQueuePendingLikeTasks']);
     Route::delete('/delete-like/{taskId}', [TaskController::class, 'deleteLike']);
     Route::delete('/delete-all-tasks/{status?}/{accountId?}', [TaskController::class, 'deleteAllTasks']);
     Route::delete('/delete-task-by-id/{id}', [TaskController::class, 'deleteTaskById']);
-    Route::post('/create-for-users', [TaskController::class, 'createTasksForUsers']);
+    Route::post('/create-for-users', [TaskController::class, 'createLikeTasksForUserWallPosts']);
 });
 
 Route::prefix('cyclic-tasks')->group(function() {
@@ -58,6 +58,8 @@ Route::prefix('filters')->group(function() {
     Route::post('/search', [FilterController::class, 'searchUsers']);
     // Получение списка городов для фильтрации
     Route::post('/cities', [FilterController::class, 'getCities']);
+
+    Route::post('/users-by-city', [FilterController::class, 'getUsersByCity']);
 });
 Route::get('/group/data/{id}', [AccountController::class, 'fetchGroupData']);
 

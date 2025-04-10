@@ -53,7 +53,8 @@ class VkSearchFilter
      *
      * @return array Массив параметров для API запроса
      */
-    public function toArray(): array
+    // TODO: Название метода не отражает его реальный функционал
+    public function  toArray(): array
     {
         return array_merge(
             $this->filters,

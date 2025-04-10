@@ -187,6 +187,28 @@ export const useAccountStore = defineStore('account', {
             await axios.get(`account/${ownerId}`)
                 .then(response => response.data)
                 .catch(error => showErrorNotification(error.response.data.message))
+        },
+
+        /**
+         * Создает задачи на лайки для указанных пользователей
+         * @param {number} accountId - ID аккаунта
+         * @param {Array} domains - Массив доменов пользователей
+         * @returns {Promise}
+         */
+        async createTasksForUsers(accountId, domains) {
+            return axios.post('tasks/create-for-users', {
+                account_id: accountId,
+                domains
+            })
+                .then(({ data }) => {
+                    showSuccessNotification(data.message)
+                    return data.data
+                })
+                .catch(error => {
+                    const message = error.response?.data?.message || 'Произошла ошибка при создании задач'
+                    showErrorNotification(message)
+                    throw error
+                })
         }
     },
 
