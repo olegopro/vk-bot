@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Filters\VkSearchFilter;
+use App\Filters\VkUserSearchFilter;
 use App\Services\VkClientService;
 use Exception;
 use Illuminate\Http\Request;
@@ -39,9 +39,7 @@ class FilterController extends Controller
      * поиск пользователей через API ВКонтакте. Текущая реализация
      * поддерживает базовую фильтрацию по поисковому запросу.
      *
-     * @param Request $request HTTP запрос, содержащий параметры:
-     *  - q: string - поисковый запрос (обязательный)
-     *  - account_id: int - ID аккаунта для выполнения поиска (обязательный)
+     * @param Request $request HTTP запрос с параметрами поиска
      * @return \Illuminate\Http\JsonResponse
      */
     public function searchUsers(Request $request)
@@ -50,7 +48,8 @@ class FilterController extends Controller
         $validator = Validator::make($request->all(), [
             'q'          => 'string|max:255|nullable',
             'account_id' => 'required|integer',
-            'city_id'    => 'integer|nullable'
+            'city_id'    => 'integer|nullable',
+            'count'      => 'integer|min:1|max:1000'
         ]);
 
         if ($validator->fails()) {
@@ -62,11 +61,19 @@ class FilterController extends Controller
 
         try {
             // Создаем и настраиваем фильтр для поиска
-            $filter = new VkSearchFilter();
-            $filter->setQuery($request->q);
+            $filter = new VkUserSearchFilter();
+
+            if ($request->has('q')) {
+                $filter->setQuery($request->q);
+            }
 
             if ($request->city_id) {
                 $filter->setCity($request->city_id);
+            }
+
+            // Устанавливаем количество результатов через сеттер
+            if ($request->has('count')) {
+                $filter->setCount($request->input('count'));
             }
 
             // Выполняем поиск через VK API
@@ -87,12 +94,12 @@ class FilterController extends Controller
     }
 
     /**
-     * Находит пользователей по ID города и возвращает их screen_name (domains).
+     * Получает пользователей по ID города.
      *
      * @param Request $request HTTP запрос с параметрами:
-     *  - city_id: int - ID города для поиска (обязательный)
-     *  - account_id: int - ID аккаунта для выполнения поиска (обязательный)
-     *  - count: int - количество пользователей для поиска (опциональный, по умолчанию 10)
+     *                         - account_id: ID аккаунта
+     *                         - city_id: ID города
+     *                         - count: количество пользователей (опционально)
      * @return \Illuminate\Http\JsonResponse
      */
     public function getUsersByCity(Request $request)
@@ -113,14 +120,15 @@ class FilterController extends Controller
 
         try {
             // Создаем и настраиваем фильтр для поиска
-            $filter = new VkSearchFilter();
+            $filter = new VkUserSearchFilter();
             $filter->setCity($request->city_id);
 
-            // Устанавливаем количество результатов, если оно передано
+            // Устанавливаем количество результатов через сеттер
             $count = $request->input('count', 10);
+            $filter->setCount($count);
 
             // Выполняем поиск через VK API
-            $response = $this->vkClient->searchUsers($filter, $request->account_id, $count);
+            $response = $this->vkClient->searchUsers($filter, $request->account_id);
 
             // Извлекаем screen_name (domains) пользователей
             $domains = [];
