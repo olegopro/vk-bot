@@ -50,12 +50,14 @@
                             <div
                                 v-for="city in filterStore.cities"
                                 :key="city.id"
-                                class="city-item p-2 border-bottom"
+                                :class="['city-item', 'p-2', 'border-bottom', { 'selected': selectedCity && selectedCity.id === city.id }]"
                                 @click="selectCity(city)"
                             >
                                 {{ city.title }} <span v-if="city.region">, {{ city.region }}</span>
                             </div>
                         </div>
+
+                        <!-- Кнопки перенесены в нижний footer -->
 
                         <!-- Индикатор загрузки при поиске городов -->
                         <div v-if="filterStore.isLoadingCities" class="text-center mb-3">
@@ -64,16 +66,39 @@
                             </div>
                         </div>
 
-                        <!-- Отображение выбранного города -->
-                        <div v-if="selectedCity" class="selected-city mb-3">
-                            <span class="badge bg-primary">{{ selectedCity.title }}</span>
-                        </div>
+                    </div>
+
+                    <!-- Отображение списка пользователей -->
+                    <div v-if="userResults.length > 0" class="mb-3">
+                        <h5>Найденные пользователи:</h5>
+                        <ul class="list-group user-results">
+                            <li
+                                v-for="user in userResults"
+                                :key="user.id"
+                                class="list-group-item"
+                            >
+                                {{ user.domain }}
+                            </li>
+                        </ul>
                     </div>
                 </div>
 
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" @click="modalHide">Отмена</button>
-                    <button type="submit" class="btn btn-success" :disabled="disablePost">
+                    <button
+                        v-if="searchType === 'city' && !usersFound"
+                        type="button"
+                        class="btn btn-primary"
+                        :disabled="!selectedCity"
+                        @click="findUsers">
+                        Найти пользователей
+                    </button>
+                    <button
+                        v-if="searchType === 'city' && usersFound || searchType === 'newsfeed'"
+                        type="button"
+                        class="btn btn-success"
+                        :disabled="searchType === 'city' ? !usersFound || !selectedCity || accountId === 'selectAccount' : accountId === 'selectAccount'"
+                        @click="addNewTask">
                         Создать
                         <span v-if="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
                     </button>
@@ -105,6 +130,51 @@
     const cityId = ref(0)
     const searchType = ref('newsfeed') // По умолчанию - поиск по ленте
     const selectedCity = ref('')
+    const userResults = ref([])
+    const usersFound = ref(false)
+
+    const findUsers = () => {
+        disablePost.value = true
+        loading.value = true
+
+        if (!cityId.value) {
+            showErrorNotification('Необходимо выбрать город')
+            disablePost.value = false
+            loading.value = false
+            return
+        }
+
+        // Получаем список пользователей по городу
+        filterStore.getUsersByCity(accountId.value, cityId.value, taskCount.value)
+            .then(domains => {
+                if (domains && domains.length > 0) {
+                    userResults.value = domains.map(domain => ({
+                        name: domain,
+                        domain: domain
+                    }))
+                    usersFound.value = true
+                } else {
+                    throw new Error('Не удалось найти пользователей в выбранном городе')
+                }
+            })
+            .catch(error => {
+                showErrorNotification(error.message || 'Произошла ошибка при получении списка пользователей')
+            })
+            .finally(() => {
+                disablePost.value = false
+                loading.value = false
+            })
+    }
+
+    const createTask = () => {
+        // Логика создания задачи после выбора пользователей
+        tasksStore.createTaskForUsers(userResults.value)
+            .then(response => {
+                showSuccessNotification(response)
+                modalHide()
+            })
+            .catch(error => showErrorNotification(error.message || 'Ошибка при создании задачи'))
+    }
 
     const closeModal = inject('closeModal')
 
@@ -157,23 +227,21 @@
             // Получаем список пользователей по городу
             filterStore.getUsersByCity(accountId.value, cityId.value, taskCount.value)
                 .then(domains => {
-                    // Создаем задачи на лайки для найденных пользователей
+                    // Отображаем список пользователей в модале
                     if (domains && domains.length > 0) {
-                        return accountStore.createTasksForUsers(accountId.value, domains)
+                        console.log('domains', domains)
+                        userResults.value = domains.map(domain => ({
+                            name: domain, // Using the domain as the name for now
+                            domain: domain // Same as domain for simplicity
+                        })) // Save users as objects
                     } else {
                         throw new Error('Не удалось найти пользователей в выбранном городе')
                     }
                 })
-                .then(() => {
-                    modalHide()
-                    disablePost.value = false
-                    loading.value = false
-                    accountId.value = 'selectAccount'
-                    showSuccessNotification('Задачи на лайки успешно созданы')
-                    tasksStore.fetchTasks()
-                })
                 .catch(error => {
-                    showErrorNotification(error.message || 'Произошла ошибка при создании задач')
+                    showErrorNotification(error.message || 'Произошла ошибка при получении списка пользователей')
+                })
+                .finally(() => {
                     disablePost.value = false
                     loading.value = false
                 })
@@ -207,8 +275,27 @@
                 background-color: #f8f9fa;
             }
 
+            &.selected {
+                background-color: #0000ff1a; /* Голубоватый оттенок для выделенного элемента */
+            }
+
             &:last-child {
                 border-bottom: none !important;
+            }
+        }
+    }
+
+    .user-results {
+        max-height: 200px;
+        overflow-y: auto;
+        //border: 1px solid #dee2e6;
+        border-radius: 0.375rem;
+
+        .list-group-item {
+            cursor: pointer;
+
+            &:hover {
+                background-color: #f8f9fa;
             }
         }
     }
