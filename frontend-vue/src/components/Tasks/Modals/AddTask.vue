@@ -9,6 +9,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
+
                     <!-- Выбор аккаунта и количества постов -->
                     <select class="form-select mb-3" aria-label="Default select example" v-model="accountId">
                         <option disabled selected value="selectAccount">Выберите аккаунт</option>
@@ -51,6 +52,7 @@
                                 v-for="city in filterStore.cities"
                                 :key="city.id"
                                 class="city-item p-2 border-bottom"
+                                :class="{ 'selected-city': selectedCity?.id === city.id }"
                                 @click="selectCity(city)"
                             >
                                 {{ city.title }} <span v-if="city.region">, {{ city.region }}</span>
@@ -64,10 +66,6 @@
                             </div>
                         </div>
 
-                        <!-- Отображение выбранного города -->
-                        <div v-if="selectedCity" class="selected-city mb-3">
-                            <span class="badge bg-primary">{{ selectedCity.title }}</span>
-                        </div>
                     </div>
                 </div>
 
@@ -200,12 +198,16 @@
         border: 1px solid #dee2e6;
         border-radius: 0.375rem;
 
-        .city-item {
-            cursor: pointer;
+            .city-item {
+                cursor: pointer;
 
-            &:hover {
-                background-color: #f8f9fa;
-            }
+                &:hover {
+                    background-color: #f8f9fa;
+                }
+                
+                &.selected-city {
+                    background-color: #e7f1ff;
+                }
 
             &:last-child {
                 border-bottom: none !important;
