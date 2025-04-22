@@ -3,7 +3,7 @@
     <div class="modal fade" id="addTaskModal" tabindex="-1" aria-labelledby="Add task" aria-hidden="true">
 
         <div class="modal-dialog modal-dialog-centered">
-            <form @submit.prevent="addNewTask" class="modal-content">
+            <form @submit.prevent="searchType === 'newsfeed' ? addFeedTask() : addCityTask()" class="modal-content">
                 <div class="modal-header">
                     <h1 class="modal-title fs-5" id="Delete task">Добавление задачи</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -71,7 +71,7 @@
 
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" @click="modalHide">Отмена</button>
-                    <button type="submit" class="btn btn-success" :disabled="disablePost">
+                    <button type="submit" class="btn btn-success" :disabled="searchType === 'city' ? (disablePost || !isCitySelected) : disablePost">
                         Создать
                         <span v-if="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
                     </button>
@@ -82,7 +82,7 @@
 </template>
 
 <script setup>
-    import { ref, watch, inject, onMounted, onUnmounted } from 'vue'
+    import { ref, watch, inject, computed } from 'vue'
     import { useAccountStore } from '@/stores/AccountStore'
     import { useAccountsStore } from '../../../stores/AccountsStore'
     import { showErrorNotification, showSuccessNotification } from '../../../helpers/notyfHelper'
@@ -97,6 +97,7 @@
 
     const accountId = ref('selectAccount')
     const disablePost = ref(true)
+    const isCitySelected = computed(() => cityId.value > 0)
     const loading = ref(false)
     const taskCount = ref(10)
     const cityName = ref('')
@@ -121,74 +122,62 @@
     }
 
     // Выбор города из списка
-    const selectCity = city => {
+    const selectCity = city => handleCitySelection(city)
+
+    const startRequest = () => {
+        disablePost.value = true
+        loading.value = true
+    }
+
+    const resetFormState = () => {
+        disablePost.value = false
+        loading.value = false
+    }
+
+    const handleSuccess = (response) => {
+        modalHide()
+        resetFormState()
+
+        accountId.value = 'selectAccount'
+        showSuccessNotification(response)
+        tasksStore.fetchTasks()
+    }
+
+    const handleError = (error) => {
+        resetFormState()
+        showErrorNotification(error?.message || error)
+    }
+
+    const handleCitySelection = (city) => {
         selectedCity.value = city
         cityName.value = city.title
         cityId.value = city.id
     }
 
-    const addNewTask = () => {
-        disablePost.value = true
-        loading.value = true
+    const addFeedTask = () => {
+        startRequest()
 
-        if (searchType.value === 'newsfeed') {
-            // Существующая логика поиска по ленте
-            accountStore.addPostsToLike(accountId.value, taskCount.value)
-                .then(response => {
-                    modalHide()
-                    disablePost.value = false
-                    loading.value = false
-                    accountId.value = 'selectAccount'
-                    showSuccessNotification(response)
-                    tasksStore.fetchTasks()
-                })
-                .catch(error => showErrorNotification(error))
-        } else {
-            // Новая логика поиска по городу
-            if (!cityId.value) {
-                showErrorNotification('Необходимо выбрать город')
-                disablePost.value = false
-                loading.value = false
-                return
-            }
+        accountStore.addPostsToLike(accountId.value, taskCount.value)
+            .then(handleSuccess)
+            .catch(handleError)
+    }
 
-            // Получаем список пользователей по городу
-            filterStore.getUsersByCity(accountId.value, cityId.value, taskCount.value)
-                .then(domains => {
-                    // Создаем задачи на лайки для найденных пользователей
-                    if (domains && domains.length > 0) {
-                        return accountStore.createTasksForUsers(accountId.value, domains)
-                    } else {
-                        throw new Error('Не удалось найти пользователей в выбранном городе')
-                    }
-                })
-                .then(() => {
-                    modalHide()
-                    disablePost.value = false
-                    loading.value = false
-                    accountId.value = 'selectAccount'
-                    showSuccessNotification('Задачи на лайки успешно созданы')
-                    tasksStore.fetchTasks()
-                })
-                .catch(error => {
-                    showErrorNotification(error.message || 'Произошла ошибка при создании задач')
-                    disablePost.value = false
-                    loading.value = false
-                })
-        }
+    const addCityTask = () => {
+        startRequest()
+
+        filterStore.getUsersByCity(accountId.value, cityId.value, taskCount.value)
+            .then(domains => accountStore.createTasksForUsers(accountId.value, domains))
+            .then(handleSuccess)
+            .catch(handleError)
     }
 
     const modalHide = () => {
         closeModal('addTaskModal')
-        // Сброс состояния при закрытии модального окна
         cityName.value = ''
         selectedCity.value = null
         cityId.value = 0
         searchType.value = 'newsfeed'
     }
-
-    onMounted(() => console.log('AddTaskModal onMounted'))
-    onUnmounted(() => console.log('AddTaskModal onUnmounted'))
 </script>
 
 <style scoped lang="scss">
@@ -198,16 +187,16 @@
         border: 1px solid #dee2e6;
         border-radius: 0.375rem;
 
-            .city-item {
-                cursor: pointer;
+        .city-item {
+            cursor: pointer;
 
-                &:hover {
-                    background-color: #f8f9fa;
-                }
-                
-                &.selected-city {
-                    background-color: #e7f1ff;
-                }
+            &:hover {
+                background-color: #f8f9fa;
+            }
+
+            &.selected-city {
+                background-color: #e7f1ff;
+            }
 
             &:last-child {
                 border-bottom: none !important;
