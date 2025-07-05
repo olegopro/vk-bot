@@ -1,7 +1,7 @@
 import { debounce } from 'lodash'
 import { ref } from 'vue'
 
-export const vh = ref(null)
+export const vh = ref<number>()
 
 export const setVhVariable = () => {
     document.addEventListener('DOMContentLoaded', function () {
