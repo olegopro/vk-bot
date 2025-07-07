@@ -6,6 +6,7 @@ use App\Facades\VkClient;
 use App\Jobs\addLikeToPost;
 use App\Models\Account;
 use App\Models\Task;
+use App\OpenApi\Schemas\AccountResponseSchema;
 use App\Repositories\AccountRepositoryInterface;
 use App\Services\LoggingServiceInterface;
 use App\Services\VkClientService;
@@ -13,6 +14,7 @@ use ATehnix\VkClient\Exceptions\VkException;
 use DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use OpenApi\Attributes as OA;
 
 /**
  * Контроллер для управления аккаунтами.
@@ -33,6 +35,22 @@ final class AccountController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
+    #[OA\Get(
+        path: '/account/all-accounts',
+        description: 'Возвращает список всех добавленных аккаунтов ВКонтакте с их основной информацией',
+        summary: 'Получить все аккаунты ВКонтакте',
+        tags: ['Accounts']
+    )]
+    #[OA\Response(
+        response: 200,
+        description: 'Успешное получение списка аккаунтов',
+        content: new OA\JsonContent(ref: AccountResponseSchema::ACCOUNT_LIST_RESPONSE_REF)
+    )]
+    #[OA\Response(
+        response: 500,
+        description: 'Внутренняя ошибка сервера',
+        content: new OA\JsonContent(ref: AccountResponseSchema::ERROR_RESPONSE_REF)
+    )]
     public function fetchAllAccounts()
     {
         return response()->json(VkClient::fetchAllAccounts());

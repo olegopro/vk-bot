@@ -1,0 +1,138 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "VK Bot API",
+        "description": "API для управления VK ботом",
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "/api",
+            "description": "API Server"
+        }
+    ],
+    "paths": {
+        "/account/all-accounts": {
+            "get": {
+                "tags": [
+                    "Accounts"
+                ],
+                "summary": "Получить все аккаунты ВКонтакте",
+                "description": "Возвращает список всех добавленных аккаунтов ВКонтакте с их основной информацией",
+                "operationId": "a38e4dcfd39c7cb857f35835d8828cf3",
+                "responses": {
+                    "200": {
+                        "description": "Успешное получение списка аккаунтов",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AccountListResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка сервера",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "Account": {
+                "description": "Модель аккаунта ВКонтакте",
+                "properties": {
+                    "account_id": {
+                        "description": "Уникальный идентификатор аккаунта ВК",
+                        "type": "integer",
+                        "example": 123456789
+                    },
+                    "access_token": {
+                        "description": "Токен доступа к API ВКонтакте",
+                        "type": "string",
+                        "example": "vk1.a.abc123def456..."
+                    },
+                    "screen_name": {
+                        "description": "Короткое имя пользователя",
+                        "type": "string",
+                        "example": "john_doe",
+                        "nullable": true
+                    },
+                    "first_name": {
+                        "description": "Имя пользователя",
+                        "type": "string",
+                        "example": "Иван",
+                        "nullable": true
+                    },
+                    "last_name": {
+                        "description": "Фамилия пользователя",
+                        "type": "string",
+                        "example": "Иванов",
+                        "nullable": true
+                    },
+                    "bdate": {
+                        "description": "Дата рождения",
+                        "type": "string",
+                        "format": "date",
+                        "example": "1990-01-01",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "AccountListResponse": {
+                "description": "Ответ со списком аккаунтов ВКонтакте",
+                "properties": {
+                    "success": {
+                        "description": "Статус успешности запроса",
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "data": {
+                        "description": "Массив аккаунтов ВКонтакте",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Account"
+                        }
+                    },
+                    "message": {
+                        "description": "Сообщение о результате операции",
+                        "type": "string",
+                        "example": "Список аккаунтов получен"
+                    }
+                },
+                "type": "object"
+            },
+            "ErrorResponse": {
+                "description": "Ответ с ошибкой",
+                "properties": {
+                    "success": {
+                        "description": "Статус успешности запроса",
+                        "type": "boolean",
+                        "example": false
+                    },
+                    "message": {
+                        "description": "Сообщение об ошибке",
+                        "type": "string",
+                        "example": "Произошла ошибка при получении данных"
+                    }
+                },
+                "type": "object"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Accounts",
+            "description": "Accounts"
+        }
+    ]
+}

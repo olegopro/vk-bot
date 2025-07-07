@@ -110,9 +110,9 @@
 </template>
 
 <script setup>
-    import { onMounted, ref, provide, shallowRef, computed } from 'vue'
+    import { onMounted, ref, provide, shallowRef } from 'vue'
     import { useCyclicTasksStore } from '../stores/CyclicTasksStore'
-    import { useAccountsStore } from '../stores/AccountsStore'
+    import { useAccountsStore } from '../stores/AccountStore'
     import TableThread from '../components/CyclicTasks/TableThread.vue'
     import DeleteCyclicTask from '../components/CyclicTasks/Modals/DeleteCyclicTask.vue'
     import AddCyclicTask from '../components/CyclicTasks/Modals/AddCyclicTask.vue'

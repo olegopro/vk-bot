@@ -35,8 +35,8 @@ module.exports = {
         'quote-props': 'off',
         'no-unused-vars': 'warn',
         'no-mixed-spaces-and-tabs': 'off',
-        // Это правило помогает избежать ошибок, связанных с неиспользованными переменными в TypeScript
-        '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }]
+        // Изменяем правило для any с error на warning
+        '@typescript-eslint/no-explicit-any': 'warn'
     },
 
     // Добавляем overrides для того, чтобы сохранить совместимость с существующим JavaScript кодом

@@ -20,7 +20,7 @@
 
 <script setup>
     import { defineProps, inject } from 'vue'
-    import { useAccountsStore } from '@/stores/AccountsStore'
+    import { useAccountsStore } from '@/stores/AccountStore'
 
     const closeModal = inject('closeModal')
 

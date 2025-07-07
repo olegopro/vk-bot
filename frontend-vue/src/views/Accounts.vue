@@ -109,7 +109,7 @@
     import { useAccountsStore } from '@/stores/AccountsStore'
     import AddAccount from '../components/Accounts/Modals/AddAccount.vue'
     import DeleteAccount from '../components/Accounts/Modals/DeleteAccount.vue'
-    import { computed, onMounted, onUnmounted, provide, ref, shallowRef } from 'vue'
+    import { onMounted, onUnmounted, provide, ref, shallowRef } from 'vue'
     import { debounce } from 'lodash'
     import { useModal } from '@/composables/useModal.ts'
 

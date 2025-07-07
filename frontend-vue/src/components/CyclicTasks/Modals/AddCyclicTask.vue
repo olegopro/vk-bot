@@ -65,7 +65,7 @@
 <script setup>
     import { ref, watch, onMounted, onUnmounted, inject } from 'vue'
     import { useAccountsStore } from '../../../stores/AccountsStore'
-    import { showErrorNotification, showSuccessNotification } from '../../../helpers/notyfHelper'
+    import { showErrorNotification } from '../../../helpers/notyfHelper'
     import { useCyclicTasksStore } from '../../../stores/CyclicTasksStore'
     import TimePicker from '../TimePicker.vue'
 

@@ -5,20 +5,6 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-/**
- *  Модель CyclicTask представляет циклическую задачу автоматической постановки лайков на посты в ВКонтакте.
- *
- *  Циклическая задача выполняется по заданному расписанию и включает в себя информацию о:
- *  - общем количестве задач (лайков)
- *  - оставшемся количестве задач
- *  - количестве задач, которые должны выполняться за час
- *  - расписании выполнения (в какие дни недели и часы задача активна)
- *  - распределении лайков внутри часа (в какие минуты должны ставиться лайки)
- *  - статусе выполнения (active, pause, done)
- *
- * @method void decrement($column)
- * @method void increment($column)
- */
 class CyclicTask extends Model
 {
     use HasFactory;

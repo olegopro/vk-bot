@@ -2,10 +2,36 @@ import { defineStore } from 'pinia'
 import axios from '@/helpers/axiosConfig'
 import axiosThrottle from 'axios-request-throttle'
 import { showErrorNotification, showSuccessNotification } from '@/helpers/notyfHelper'
+import type { Nullable } from '@/types'
+
+interface OwnerData {
+    id: number | string
+    friends_count?: number
+    [key: string]: any // для дополнительных свойств из API
+}
+
+interface AccountStoreState {
+    account: any[]
+    accounts: any[]
+    pagination: any
+    isLoading: boolean
+    ownerData: OwnerData[]
+    accountFollowers: Record<string, any[]>
+    accountFriends: Record<string, any[]>
+    accountFriendsCount: any[]
+    accountNewsFeed: any[]
+    nextFrom: Nullable<string>
+    previousNextFrom: Nullable<string>
+    isOwnerDataLoading: any
+    isLoadingFeed: boolean
+}
 
 export const useAccountStore = defineStore('account', {
-    state: () => ({
+    state: (): AccountStoreState => ({
         account: [],
+        accounts: [],
+        pagination: {},
+        isLoading: false,
         ownerData: [],
         accountFollowers: {},
         accountFriends: {},
@@ -18,20 +44,21 @@ export const useAccountStore = defineStore('account', {
     }),
 
     actions: {
-        async fetchAccount(id) {
-            const { data } = await axios.get(`accounts/${id}`)
-            const index = this.account.findIndex((item) => item.id === data.id)
+        // TODO: Метод не используется
+        // async fetchAccount(id) {
+        //     const { data } = await axios.get(`accounts/${id}`)
+        //     const index = this.account.findIndex((item) => item.id === data.id)
+        //
+        //     if (index !== -1) {
+        //         // Объект с таким же идентификатором уже существует, обновляем его
+        //         this.account[index] = { ...this.account[index], ...data }
+        //     } else {
+        //         // Добавляем новый объект в массив
+        //         this.account.push(data)
+        //     }
+        // },
 
-            if (index !== -1) {
-                // Объект с таким же идентификатором уже существует, обновляем его
-                this.account[index] = { ...this.account[index], ...data }
-            } else {
-                // Добавляем новый объект в массив
-                this.account.push(data)
-            }
-        },
-
-        async fetchOwnerData(accountId, ownerId, taskId = null) {
+        async fetchOwnerData(accountId: string, ownerId: string, taskId = null) {
             this.isOwnerDataLoading = taskId
 
             // Поиск владельца по ID в массиве ownerData
@@ -73,22 +100,22 @@ export const useAccountStore = defineStore('account', {
                 .finally(() => this.isOwnerDataLoading = null)
         },
 
-        async fetchAccountFollowers(accountId) {
+        async fetchAccountFollowers(accountId: string) {
             axios.get(`account/followers/${accountId}`)
                 .then(response => this.accountFollowers[accountId] = response.data.response.items)
         },
 
-        async fetchAccountFriends(accountId) {
+        async fetchAccountFriends(accountId: string) {
             axios.get(`account/friends/${accountId}`)
                 .then(response => this.accountFriends[accountId] = response.data.response.items)
         },
 
-        async fetchAccountFriendsCount(id) {
+        async fetchAccountFriendsCount(id: string) {
             const { data } = await axios.get(`account/friends/count/${id}`)
             this.accountFriendsCount = data
         },
 
-        async fetchAccountNewsFeed(accountID, startFrom = null) {
+        async fetchAccountNewsFeed(accountId: string, startFrom: Nullable<string>) {
             if (startFrom !== null && startFrom === this.previousNextFrom) return
 
             this.previousNextFrom = startFrom
@@ -97,7 +124,7 @@ export const useAccountStore = defineStore('account', {
             axiosThrottle.use(localAxios, { requestsPerSecond: 5 })
 
             localAxios.post('account/newsfeed', {
-                account_id: accountID,
+                account_id: accountId,
                 start_from: startFrom
             })
                 .then(({ data: { data: { response }, message } }) => {
@@ -121,8 +148,8 @@ export const useAccountStore = defineStore('account', {
                     showSuccessNotification(message)
                 })
                 .catch(() => {
-                    this.fetchAccountNewsFeed(accountID, this.nextFrom)
-                    // повторный запрос новостей для аккаунта в случае ошибки
+                    this.fetchAccountNewsFeed(accountId, this.nextFrom)
+                    // повторный запрос новостей для аккаунта в случае  ошибки
 
                     showErrorNotification('Новые данные ленты не получены')
                 })
@@ -219,3 +246,6 @@ export const useAccountStore = defineStore('account', {
         getAccountById: state => (id) => state.account.find(account => account.id === Math.abs(id))
     }
 })
+
+// Экспорт для обратной совместимости
+export const useAccountsStore = useAccountStore

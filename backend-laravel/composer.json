@@ -8,6 +8,7 @@
         "php": "^7.3|^8.0",
         "ext-json": "*",
         "atehnix/vk-client": "^1.4",
+        "darkaonline/l5-swagger": "^8.6",
         "fruitcake/laravel-cors": "dev-develop",
         "guzzlehttp/guzzle": "^7",
         "laravel/framework": "^10",
