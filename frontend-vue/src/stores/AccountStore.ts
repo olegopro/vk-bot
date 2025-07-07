@@ -12,9 +12,6 @@ interface OwnerData {
 
 interface AccountStoreState {
     account: any[]
-    accounts: any[]
-    pagination: any
-    isLoading: boolean
     ownerData: OwnerData[]
     accountFollowers: Record<string, any[]>
     accountFriends: Record<string, any[]>
@@ -29,9 +26,6 @@ interface AccountStoreState {
 export const useAccountStore = defineStore('account', {
     state: (): AccountStoreState => ({
         account: [],
-        accounts: [],
-        pagination: {},
-        isLoading: false,
         ownerData: [],
         accountFollowers: {},
         accountFriends: {},

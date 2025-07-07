@@ -2,30 +2,39 @@ import { defineStore } from 'pinia'
 import axios from '@/helpers/axiosConfig'
 import { showErrorNotification, showSuccessNotification } from '@/helpers/notyfHelper'
 
+interface Account {
+    account_id: number
+    access_token: string
+    screen_name: string
+    first_name: string
+    last_name: string
+    bdate?: string
+}
+
+interface AccountsStoreState {
+    accounts: Account[]
+    isLoading: boolean
+}
+
 export const useAccountsStore = defineStore('accounts', {
-    state: () => ({
+    state: (): AccountsStoreState => ({
         accounts: [],
-        isLoading: false,
-        pagination: {}
+        isLoading: false
     }),
 
     actions: {
-        async fetchAccounts(page = 1) {
+        async fetchAccounts() {
             this.isLoading = true
-            await axios.get(`account/all-accounts?page=${page}`)
+            await axios.get('account/all-accounts')
                 .then(({ data }) => {
-                    page === 1
-                        ? this.accounts = data.data
-                        : this.accounts = [...this.accounts, ...data.data]
-
-                    this.pagination = data.pagination
+                    this.accounts = data.data
                     showSuccessNotification(data.message)
                 })
                 .catch(() => showErrorNotification('Ошибка получения аккаунтов'))
                 .finally(() => this.isLoading = false)
         },
 
-        async addAccount(accessToken) {
+        async addAccount(accessToken: string) {
             await axios.post('account/add', { access_token: accessToken })
                 .then(({ data }) => {
                     this.accounts.push(data.data)
@@ -34,11 +43,10 @@ export const useAccountsStore = defineStore('accounts', {
                 .catch(error => showErrorNotification(error.response.data.message))
         },
 
-        async deleteAccount(accountId) {
+        async deleteAccount(accountId: number) {
             await axios.delete(`account/delete-account/${accountId}`)
                 .then(({ data }) => {
                     this.accounts = this.accounts.filter(account => account.account_id !== accountId)
-                    this.pagination.total--
                     showSuccessNotification(data.message)
                 })
                 .catch(({ data }) => showErrorNotification(data.error))

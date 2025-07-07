@@ -132,7 +132,7 @@
     import { onMounted, onUnmounted, provide, ref, shallowRef, watch, computed } from 'vue'
     import { useTasksStore } from '@/stores/TasksStore'
     import { useAccountStore } from '@/stores/AccountStore'
-    import { useAccountsStore } from '@/stores/AccountsStore'
+    import { useAccountsStore } from '../stores/AccountsStore'
     import { showErrorNotification } from '@/helpers/notyfHelper'
     import { useModal } from '@/composables/useModal.ts'
     import { debounce } from 'lodash'

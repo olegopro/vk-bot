@@ -14,7 +14,7 @@
                     </template>
 
                      <template v-else>
-                        <span class="me-1">{{ accountsStore.pagination.total }}</span> / <span class="ms-1">{{ accountsStore.accounts.length }}</span>
+                        <span class="me-1">{{ accountsStore.accounts.length }}</span>
                     </template>
                 </span>
             </h6>
@@ -106,7 +106,7 @@
 </template>
 
 <script setup>
-    import { useAccountsStore } from '@/stores/AccountsStore'
+    import { useAccountsStore } from '../stores/AccountsStore'
     import AddAccount from '../components/Accounts/Modals/AddAccount.vue'
     import DeleteAccount from '../components/Accounts/Modals/DeleteAccount.vue'
     import { onMounted, onUnmounted, provide, ref, shallowRef } from 'vue'
@@ -119,13 +119,11 @@
     const selectedAccount = ref({ login: '', id: '' })
     const modalComponent = shallowRef(null)
     const observer = ref(null)
-    const currentPage = ref(1)
 
     provide('closeModal', closeModal)
 
-    const debouncedFetchAccounts = debounce((page) => {
-        accountsStore.isLoading = true
-        accountsStore.fetchAccounts(page).then(() => currentPage.value++)
+    const debouncedFetchAccounts = debounce(() => {
+        accountsStore.fetchAccounts()
     }, 500, {
         'leading': true, // Вызываться в начале периода ожидания
         'trailing': false // Дополнительный вызов в конце периода не требуется
@@ -145,16 +143,13 @@
     onMounted(() => {
         console.log('Accounts onMounted')
         accountsStore.accounts = []
-        debouncedFetchAccounts(currentPage.value)
+        debouncedFetchAccounts()
 
         // Устанавливаем observer
         observer.value = new IntersectionObserver(entries => {
             entries.forEach(entry => {
-                if (
-                    entry.isIntersecting &&
-                    accountsStore.accounts.length !== accountsStore.pagination.total
-                ) {
-                    debouncedFetchAccounts(currentPage.value)
+                if (entry.isIntersecting) {
+                    debouncedFetchAccounts()
                 }
             })
         })

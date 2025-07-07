@@ -31,7 +31,7 @@
 
 <script setup>
     import { computed, inject, ref } from 'vue'
-    import { useAccountsStore } from '@/stores/AccountsStore'
+    import { useAccountsStore } from '../../../stores/AccountsStore'
 
     const accountsStore = useAccountsStore()
     const accessToken = ref(null)

@@ -43,6 +43,147 @@
                     }
                 }
             }
+        },
+        "/account/add": {
+            "post": {
+                "tags": [
+                    "Accounts"
+                ],
+                "summary": "Добавить аккаунт ВКонтакте",
+                "description": "Устанавливает и сохраняет данные аккаунта ВКонтакте по токену доступа",
+                "operationId": "0793d7723b0afa23c719eb96280e723a",
+                "requestBody": {
+                    "description": "Данные для добавления аккаунта",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "access_token": {
+                                        "description": "Токен доступа к API ВКонтакте",
+                                        "type": "string",
+                                        "example": "vk1.a.abc123def456..."
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Данные аккаунта успешно установлены",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "description": "Статус успешности запроса",
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/Account"
+                                        },
+                                        "message": {
+                                            "description": "Сообщение о результате операции",
+                                            "type": "string",
+                                            "example": "Аккаунт успешно добавлен"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Ошибка валидации или неверный токен",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка сервера",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/account/delete-account/{id}": {
+            "delete": {
+                "tags": [
+                    "Accounts"
+                ],
+                "summary": "Удалить аккаунт ВКонтакте",
+                "description": "Удаляет аккаунт ВКонтакте из системы по его идентификатору",
+                "operationId": "8a240ae09e9b3403423f708c165c5db9",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Идентификатор аккаунта для удаления",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 123456789
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Аккаунт успешно удален",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "description": "Статус успешности запроса",
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "description": "Сообщение о результате операции",
+                                            "type": "string",
+                                            "example": "Аккаунт успешно удален"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Аккаунт не найден",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка сервера",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     },
     "components": {
