@@ -450,3 +450,4 @@ $RECYCLE.BIN/
 
 # End of https://www.toptal.com/developers/gitignore/api/phpstorm+all,macos,windows,laravel,vuejs,vue,yarn,node,intellij,visualstudiocode
 /.idea/codeStyles/codeStyleConfig.xml
+/.idea/codeStyles/Project.xml
