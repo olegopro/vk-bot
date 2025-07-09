@@ -123,7 +123,7 @@
     provide('closeModal', closeModal)
 
     const debouncedFetchAccounts = debounce(() => {
-        accountsStore.fetchAccounts()
+        accountsStore.fetchAccounts.execute()
     }, 500, {
         'leading': true, // Вызываться в начале периода ожидания
         'trailing': false // Дополнительный вызов в конце периода не требуется

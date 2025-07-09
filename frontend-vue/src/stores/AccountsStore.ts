@@ -1,55 +1,63 @@
 import { defineStore } from 'pinia'
+import { ref } from 'vue'
 import axios from '@/helpers/axiosConfig'
-import { showErrorNotification, showSuccessNotification } from '@/helpers/notyfHelper'
+import { showSuccessNotification } from '@/helpers/notyfHelper'
+import useApi from '@/composables/useApi'
+import {
+    Account,
+    AccountListResponse,
+    AccountResponse,
+    DeleteAccountResponse,
+    AddAccountRequest
+} from '@/models/AccountModel'
 
-interface Account {
-    account_id: number
-    access_token: string
-    screen_name: string
-    first_name: string
-    last_name: string
-    bdate?: string
-}
+export const useAccountsStore = defineStore('accounts', () => {
+    const accounts = ref<Account[]>([])
 
-interface AccountsStoreState {
-    accounts: Account[]
-    isLoading: boolean
-}
+    /**
+     * Получает все аккаунты ВКонтакте
+     */
+    const fetchAccounts = useApi(async () => {
+        const response = await axios.get<AccountListResponse>('account/all-accounts')
+        accounts.value = response.data.data
+        showSuccessNotification(response.data.message)
 
-export const useAccountsStore = defineStore('accounts', {
-    state: (): AccountsStoreState => ({
-        accounts: [],
-        isLoading: false
-    }),
+        return response.data
+    })
 
-    actions: {
-        async fetchAccounts() {
-            this.isLoading = true
-            await axios.get('account/all-accounts')
-                .then(({ data }) => {
-                    this.accounts = data.data
-                    showSuccessNotification(data.message)
-                })
-                .catch(() => showErrorNotification('Ошибка получения аккаунтов'))
-                .finally(() => this.isLoading = false)
-        },
+    /**
+     * Добавляет новый аккаунт ВКонтакте
+     */
+    const addAccount = useApi(async (parameters?: { accessToken: string }) => {
+        if (!parameters) throw new Error('Не указан токен доступа')
 
-        async addAccount(accessToken: string) {
-            await axios.post('account/add', { access_token: accessToken })
-                .then(({ data }) => {
-                    this.accounts.push(data.data)
-                    showSuccessNotification(data.message)
-                })
-                .catch(error => showErrorNotification(error.response.data.message))
-        },
+        const request: AddAccountRequest = { access_token: parameters.accessToken }
+        const response = await axios.post<AccountResponse>('account/add', request)
 
-        async deleteAccount(accountId: number) {
-            await axios.delete(`account/delete-account/${accountId}`)
-                .then(({ data }) => {
-                    this.accounts = this.accounts.filter(account => account.account_id !== accountId)
-                    showSuccessNotification(data.message)
-                })
-                .catch(({ data }) => showErrorNotification(data.error))
-        }
+        accounts.value.push(response.data.data)
+        showSuccessNotification(response.data.message)
+
+        return response.data
+    })
+
+    /**
+     * Удаляет аккаунт ВКонтакте
+     */
+    const deleteAccount = useApi(async (parameters?: { accountId: number }) => {
+        if (!parameters) throw new Error('Не указан ID аккаунта')
+
+        const response = await axios.delete<DeleteAccountResponse>(`account/delete-account/${parameters.accountId}`)
+
+        accounts.value = accounts.value.filter(account => account.account_id !== parameters.accountId)
+        showSuccessNotification(response.data.message)
+
+        return response.data
+    })
+
+    return {
+        accounts,
+        fetchAccounts,
+        addAccount,
+        deleteAccount
     }
 })

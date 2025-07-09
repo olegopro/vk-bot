@@ -39,14 +39,11 @@
     const closeModal = inject('closeModal')
 
     const addAccount = () => {
-        accountsStore.addAccount(accessToken.value)
+        accountsStore.addAccount.execute({ accessToken: accessToken.value })
             .then(() => modalHide())
             .catch(() => disableSubmit.value = true)
     }
 
     const modalHide = () => closeModal('addAccountModal')
-
-    const disableSubmit = computed(() => {
-        return !(accessToken.value && accessToken.value.length > 3)
-    })
+    const disableSubmit = computed(() => !(accessToken.value && accessToken.value.length > 3))
 </script>

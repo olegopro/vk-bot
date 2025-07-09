@@ -20,7 +20,7 @@
 
 <script setup>
     import { defineProps, inject } from 'vue'
-    import { useAccountsStore } from '@/stores/AccountStore'
+    import { useAccountsStore } from '@/stores/AccountsStore'
 
     const closeModal = inject('closeModal')
 
@@ -28,5 +28,5 @@
     const props = defineProps(['login', 'accountId'])
 
     const modalHide = () => closeModal('deleteAccountModal')
-    const deleteAccount = () => accountsStore.deleteAccount(props.accountId).then(() => modalHide())
+    const deleteAccount = () => accountsStore.deleteAccount.execute({ accountId: props.accountId }).then(() => modalHide())
 </script>
