@@ -1184,13 +1184,6 @@
   resolved "https://registry.yarnpkg.com/@trysound/sax/-/sax-0.2.0.tgz#cccaab758af56761eb7bf37af6f03f326dd798ad"
   integrity sha512-L7z9BgrNEcYyUYtF+HaEfiS5ebkh9jXqbszz7pC0hRBPaatV0XjSD3+eHrpqFemQfgwiFF0QPIarnIihIDn7OA==
 
-"@types/axios@^0.14.0":
-  version "0.14.4"
-  resolved "https://registry.yarnpkg.com/@types/axios/-/axios-0.14.4.tgz#174e3a05fe7677f13bc719f0d2a427f5defacedf"
-  integrity sha512-9JgOaunvQdsQ/qW2OPmE5+hCeUB52lQSolecrFrthct55QekhmXEwT203s20RL+UHtCQc15y3VXpby9E7Kkh/g==
-  dependencies:
-    axios "*"
-
 "@types/body-parser@*":
   version "1.19.5"
   resolved "https://registry.yarnpkg.com/@types/body-parser/-/body-parser-1.19.5.tgz#04ce9a3b677dc8bd681a17da1ab9835dc9d3ede4"
@@ -2406,18 +2399,17 @@ available-typed-arrays@^1.0.7:
   dependencies:
     possible-typed-array-names "^1.0.0"
 
-axios-request-throttle@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/axios-request-throttle/-/axios-request-throttle-1.0.0.tgz#254d866f7e1aedef6fc0d743cd09b339e0893b8c"
-  integrity sha512-NYh7kZkgSJZyIohqrvQEzr4uygqbxXb769kbphkwgYNAJm5eDg33mqHLA2pwHKC1uqbTfNpmjmzWdUdo+ptBWg==
+axios-rate-limit@^1.4.0:
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/axios-rate-limit/-/axios-rate-limit-1.4.0.tgz#c8eab732cf22dd0d431d5b04d9fc1836b05c0ebd"
+  integrity sha512-uM5PbmSUdSle1I+59Av/wpLuNRobfatIR+FyylSoHcVHT20ohjflNnLMEHZQr7N2QVG/Wlt8jekIPhWwoKtpXQ==
   dependencies:
-    "@types/axios" "^0.14.0"
-    promise-throttle "^1.1.2"
+    axios ">=0.18.0"
 
-axios@*, axios@^1.6.7:
-  version "1.7.7"
-  resolved "https://registry.yarnpkg.com/axios/-/axios-1.7.7.tgz#2f554296f9892a72ac8d8e4c5b79c14a91d0a47f"
-  integrity sha512-S4kL7XrjgBmvdGut0sN3yJxqYzrDOnivkBiN0OFs6hLiUam3UPvswUo0kqGyhqUZGEOytHyumEdXsAkgCOUf3Q==
+axios@>=0.18.0, axios@^1.10.0:
+  version "1.10.0"
+  resolved "https://registry.yarnpkg.com/axios/-/axios-1.10.0.tgz#af320aee8632eaf2a400b6a1979fa75856f38d54"
+  integrity sha512-/1xYAC4MP/HEG+3duIhFr4ZQXR4sQXOIe+o6sdqzeykGLx6Upp/1p8MHqhINOvGeP7xyNHe7tsiJByc4SSVUxw==
   dependencies:
     follow-redirects "^1.15.6"
     form-data "^4.0.0"
@@ -6403,11 +6395,6 @@ progress@^2.0.3:
   version "2.0.3"
   resolved "https://registry.yarnpkg.com/progress/-/progress-2.0.3.tgz#7e8cf8d8f5b8f239c1bc68beb4eb78567d572ef8"
   integrity sha512-7PiHtLll5LdnKIMw100I+8xJXR5gW2QwWYkT6iJva0bXitZKa/XMrSbdmg3r2Xnaidz9Qumd0VPaMrZlF9V9sA==
-
-promise-throttle@^1.1.2:
-  version "1.1.2"
-  resolved "https://registry.yarnpkg.com/promise-throttle/-/promise-throttle-1.1.2.tgz#8a59d0424b6f9673aa8405c8b6bd4b5e4f7f71db"
-  integrity sha512-dij7vjyXNewuuN/gyr+TX2KRjw48mbV5FEtgyXaIoJjGYAKT0au23/voNvy9eS4UNJjx2KUdEcO5Yyfc1h7vWQ==
 
 proxy-addr@~2.0.7:
   version "2.0.7"

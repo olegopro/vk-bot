@@ -70,7 +70,7 @@ export default <T, D extends ApiResponseWrapper<any>>(
       showErrorNotification(error.value)
 
       // Пробрасываем ошибку для дальнейшей обработки в store
-      // throw exception
+      throw exception
     } finally {
       // Сбрасываем состояние загрузки независимо от результата
       loading.value = false

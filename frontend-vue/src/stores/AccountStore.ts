@@ -1,6 +1,5 @@
 import { defineStore } from 'pinia'
 import axios from '@/helpers/axiosConfig'
-import axiosThrottle from 'axios-request-throttle'
 import { showErrorNotification, showSuccessNotification } from '@/helpers/notyfHelper'
 import type { Nullable } from '@/types'
 
@@ -38,20 +37,6 @@ export const useAccountStore = defineStore('account', {
     }),
 
     actions: {
-        // TODO: Метод не используется
-        // async fetchAccount(id) {
-        //     const { data } = await axios.get(`accounts/${id}`)
-        //     const index = this.account.findIndex((item) => item.id === data.id)
-        //
-        //     if (index !== -1) {
-        //         // Объект с таким же идентификатором уже существует, обновляем его
-        //         this.account[index] = { ...this.account[index], ...data }
-        //     } else {
-        //         // Добавляем новый объект в массив
-        //         this.account.push(data)
-        //     }
-        // },
-
         async fetchOwnerData(accountId: string, ownerId: string, taskId = null) {
             this.isOwnerDataLoading = taskId
 
@@ -114,10 +99,7 @@ export const useAccountStore = defineStore('account', {
 
             this.previousNextFrom = startFrom
 
-            const localAxios = axios
-            axiosThrottle.use(localAxios, { requestsPerSecond: 5 })
-
-            localAxios.post('account/newsfeed', {
+            axios.post('account/newsfeed', {
                 account_id: accountId,
                 start_from: startFrom
             })
