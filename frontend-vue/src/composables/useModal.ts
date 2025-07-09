@@ -1,9 +1,10 @@
 import { ref, Ref, nextTick } from 'vue'
 import { Modal } from 'bootstrap'
+import { Component } from '@vue/runtime-core'
 
 // Определение типа для модальных окон
 interface Modals {
-    [key: string]: Modal | undefined; // Интерфейс для объекта, хранящего модальные окна
+  [key: string]: Modal | undefined // Интерфейс для объекта, хранящего модальные окна
 }
 
 export function useModal() {
@@ -12,7 +13,7 @@ export function useModal() {
   const isOpen: Ref<boolean> = ref<boolean>(false)
 
   // Функция для подготовки модального окна к показу, устанавливает isOpen в true
-  const preparedModal = <T>(component: T): T => {
+  const preparedModal = <T extends Component>(component: T): T => {
     isOpen.value = true // Отмечаем, что модальное окно готово к показу
     return component // Возвращаем компонент
   }

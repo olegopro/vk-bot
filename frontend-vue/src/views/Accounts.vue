@@ -1,17 +1,19 @@
-<script setup>
-  import { useAccountsStore } from '../stores/AccountsStore'
-  import AddAccount from '../components/Accounts/Modals/AddAccount.vue'
-  import DeleteAccount from '../components/Accounts/Modals/DeleteAccount.vue'
+<script setup lang="ts">
+  import { useAccountsStore } from '@/stores/AccountsStore'
   import { onMounted, onUnmounted, provide, ref, shallowRef } from 'vue'
+  import type { Component } from '@vue/runtime-core'
   import { debounce } from 'lodash'
-  import { useModal } from '@/composables/useModal.ts'
+  import { useModal } from '@/composables/useModal'
+  import AddAccount from '@/components/Accounts/Modals/AddAccount.vue'
+  import DeleteAccount from '@/components/Accounts/Modals/DeleteAccount.vue'
+  import { Nullable } from '@/types'
 
   const { isOpen, preparedModal, showModal, closeModal } = useModal()
 
   const accountsStore = useAccountsStore()
   const selectedAccount = ref({ login: '', id: '' })
-  const modalComponent = shallowRef(null)
-  const observer = ref(null)
+  const modalComponent = shallowRef<Nullable<Component>>(null)
+  const observer = ref<Nullable<IntersectionObserver>>(null)
 
   provide('closeModal', closeModal)
 
@@ -34,7 +36,6 @@
   }
 
   onMounted(() => {
-    console.log('Accounts onMounted')
     accountsStore.accounts = []
     debouncedFetchAccounts()
 
@@ -53,8 +54,7 @@
   })
 
   onUnmounted(() => {
-    console.log('Accounts onUnmounted')
-    if (observer.value) observer.value.disconnect() // Очищаем observer при размонтировании
+    if (observer.value) observer.value.disconnect()
   })
 </script>
 
@@ -64,8 +64,7 @@
       <h1 class="h2 mb-0 me-3">Список аккаунтов</h1>
 
       <h6 class="mb-0" style="pointer-events: none">
-        <span class="badge btn btn-secondary d-flex items-center fw-bold"
-          style="padding: 8px
+        <span class="badge btn btn-secondary d-flex items-center fw-bold" style="padding: 8px
                ">
           <template v-if="accountsStore.isLoading && !accountsStore.accounts.length">
             <span class="spinner-border" role="status" style="width: 12px; height: 12px;">
@@ -81,10 +80,7 @@
     </div>
 
     <div class="col">
-      <button class="btn btn-success btn-action float-end"
-        type="button"
-        @click="showAddAccountModal"
-      >
+      <button class="btn btn-success btn-action float-end" type="button" @click="showAddAccountModal">
         Добавить аккаунт
       </button>
     </div>
@@ -111,17 +107,14 @@
               <td>{{ account.screen_name }}</td>
 
               <td>
-                <router-link custom :to="{name: 'Account', params: {id: account.account_id}}" v-slot="{navigate}">
+                <router-link custom :to="{ name: 'Account', params: { id: account.account_id } }" v-slot="{ navigate }">
                   <a class="btn btn-primary me-2 button-style" @click="navigate">
                     <i class="bi bi-info-circle" />
                   </a>
                 </router-link>
 
-                <button
-                  class="btn btn-danger button-style"
-                  type="button"
-                  @click="showDeleteAccountModal(account.screen_name, account.account_id)"
-                >
+                <button class="btn btn-danger button-style" type="button"
+                  @click="showDeleteAccountModal(account.screen_name, account.account_id)">
                   <i class="bi bi-trash3" />
                 </button>
               </td>
@@ -155,12 +148,7 @@
   </div>
 
   <Teleport to="body">
-    <component v-if="isOpen"
-      @mounted="showModal"
-      :is="modalComponent"
-      :login="selectedAccount.login"
-      :accountId="selectedAccount.id"
-    />
+    <component v-if="isOpen" :is="modalComponent" :login="selectedAccount.login" :accountId="selectedAccount.id" />
   </Teleport>
 
 </template>

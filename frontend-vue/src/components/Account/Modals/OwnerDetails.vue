@@ -39,27 +39,27 @@
 
       </div>
     </div>
-  </div>
+    </div>
 </template>
 
 <style lang="scss" scoped>
-    :deep(img) {
-        width: 200px;
-        height: 200px;
-        border-radius: 0.5rem;
-    }
+  :deep(img) {
+    width: 200px;
+    height: 200px;
+    border-radius: 0.5rem;
+  }
 
-    :deep(.online-status) {
-        position: absolute;
-        right: 0;
-    }
+  :deep(.online-status) {
+    position: absolute;
+    right: 0;
+  }
 
-    :deep(.stub) {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 200px;
-        height: 200px;
-        border-right: 1px solid whitesmoke;
-    }
+  :deep(.stub) {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 200px;
+    height: 200px;
+    border-right: 1px solid whitesmoke;
+  }
 </style>
