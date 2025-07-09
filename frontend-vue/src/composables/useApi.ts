@@ -64,7 +64,7 @@ export default <T, D extends ApiResponseWrapper<any>>(
       // Возвращаем ответ для случаев, когда нужен доступ к полному response
       // (например, для получения headers, status кода и т.д.)
       return response
-   } catch (exception: unknown) {
+    } catch (exception: unknown) {
       // Извлекаем сообщение из объекта ошибки или используем дефолтное
       error.value = (exception instanceof Error ? exception.message : 'Произошла ошибка')
       showErrorNotification(error.value)

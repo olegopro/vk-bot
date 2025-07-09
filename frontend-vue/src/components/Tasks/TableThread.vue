@@ -1,66 +1,66 @@
-<template>
-    <tr>
-        <th scope="row">ID {{ task.id }}</th>
-        <td class="user-name inner-shadow">
-            <div class="flex-container" @click="showAccountDetailsModal(task.account_id, task.owner_id, task.id)" >
-                {{ task.first_name }} {{ task.last_name }}
-
-                <span v-if="accountStore.isOwnerDataLoading === task.id" class="spinner-border ms-2" role="status" style="width: 1rem; height: 1rem;">
-                    <span class="visually-hidden">Loading...</span>
-                </span>
-                <i  v-else class="bi bi-person-circle ms-2" style="font-size: 1rem; opacity: 0.75" />
-            </div>
-        </td>
-
-        <td>
-            <TaskStatus :type="task.status" :errorMessage="task.error_message" />
-        </td>
-
-        <td>
-            <button
-                class="btn btn-primary button-style me-2"
-                type="button"
-                @click="showTaskDetailsModal(task.id)"
-                :disabled="tasksStore.isTaskDetailsLoading === task.id"
-            >
-                <span v-if="tasksStore.isTaskDetailsLoading === task.id" class="spinner-border" role="status" style="width: 1rem; height: 1rem;">
-                    <span class="visually-hidden">Loading...</span>
-                </span>
-                <i v-else class="bi bi-info-circle" />
-
-            </button>
-
-            <button class="btn btn-danger button-style" @click="props.showDeleteTaskModal(task.id)">
-                <i class="bi bi-trash3" />
-            </button>
-        </td>
-
-        <td>{{ dateFormat(task.run_at) }}</td>
-        <td>{{ dateFormat(task.created_at) }}</td>
-    </tr>
-</template>
-
 <script setup>
-    import { defineProps, toRefs } from 'vue'
-    import TaskStatus from './TaskStatus.vue'
-    import { format } from 'date-fns'
-    import { useTasksStore } from '@/stores/TasksStore'
-    import { useAccountStore } from '@/stores/AccountStore'
+  import { defineProps, toRefs } from 'vue'
+  import TaskStatus from './TaskStatus.vue'
+  import { format } from 'date-fns'
+  import { useTasksStore } from '@/stores/TasksStore'
+  import { useAccountStore } from '@/stores/AccountStore'
 
-    const props = defineProps({
-        task: Object,
-        showTaskDetailsModal: Function,
-        showDeleteTaskModal: Function,
-        showAccountDetailsModal: Function
-    })
+  const props = defineProps({
+    task: Object,
+    showTaskDetailsModal: Function,
+    showDeleteTaskModal: Function,
+    showAccountDetailsModal: Function
+  })
 
-    const { task } = toRefs(props)
+  const { task } = toRefs(props)
 
-    const tasksStore = useTasksStore()
-    const accountStore = useAccountStore()
+  const tasksStore = useTasksStore()
+  const accountStore = useAccountStore()
 
-    const dateFormat = (date) => format(new Date(date), 'yyyy-MM-dd HH:mm:ss')
+  const dateFormat = (date) => format(new Date(date), 'yyyy-MM-dd HH:mm:ss')
 </script>
+
+<template>
+  <tr>
+    <th scope="row">ID {{ task.id }}</th>
+    <td class="user-name inner-shadow">
+      <div class="flex-container" @click="showAccountDetailsModal(task.account_id, task.owner_id, task.id)" >
+        {{ task.first_name }} {{ task.last_name }}
+
+        <span v-if="accountStore.isOwnerDataLoading === task.id" class="spinner-border ms-2" role="status" style="width: 1rem; height: 1rem;">
+          <span class="visually-hidden">Loading...</span>
+        </span>
+        <i  v-else class="bi bi-person-circle ms-2" style="font-size: 1rem; opacity: 0.75" />
+      </div>
+    </td>
+
+    <td>
+      <TaskStatus :type="task.status" :errorMessage="task.error_message" />
+    </td>
+
+    <td>
+      <button
+        class="btn btn-primary button-style me-2"
+        type="button"
+        @click="showTaskDetailsModal(task.id)"
+        :disabled="tasksStore.isTaskDetailsLoading === task.id"
+      >
+        <span v-if="tasksStore.isTaskDetailsLoading === task.id" class="spinner-border" role="status" style="width: 1rem; height: 1rem;">
+          <span class="visually-hidden">Loading...</span>
+        </span>
+        <i v-else class="bi bi-info-circle" />
+
+      </button>
+
+      <button class="btn btn-danger button-style" @click="props.showDeleteTaskModal(task.id)">
+        <i class="bi bi-trash3" />
+      </button>
+    </td>
+
+    <td>{{ dateFormat(task.run_at) }}</td>
+    <td>{{ dateFormat(task.created_at) }}</td>
+  </tr>
+</template>
 
 <style scoped lang="scss">
     .flex-container {

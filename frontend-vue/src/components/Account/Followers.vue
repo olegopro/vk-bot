@@ -1,32 +1,32 @@
-<template>
-    <div class="row mt-5">
-        <h1>Подписчики</h1>
-        <div class="col-2" v-for="follower in state.friends" :key="follower.id">
-            <div class="card">
-                <img class="bd-placeholder-img card-img-top" width="100%" height="200" alt="" :src="follower.photo_200" />
-                <div class="card-body">
-                    <p class="card-text">{{ follower.first_name }} {{ follower.last_name }}</p>
-                </div>
-            </div>
-        </div>
-    </div>
-</template>
-
 <script setup>
-    import { onMounted, computed, reactive } from 'vue'
-    import { useRoute } from 'vue-router'
-    import { useAccountStore } from '@/stores/AccountStore'
+  import { onMounted, computed, reactive } from 'vue'
+  import { useRoute } from 'vue-router'
+  import { useAccountStore } from '@/stores/AccountStore'
 
-    const route = useRoute()
-    const accountStore = useAccountStore()
+  const route = useRoute()
+  const accountStore = useAccountStore()
 
-    const state = reactive({
-        id: route.params.id,
-        friends: computed(() => accountStore.getAccountFollowers(state.id))
-    })
+  const state = reactive({
+    id: route.params.id,
+    friends: computed(() => accountStore.getAccountFollowers(state.id))
+  })
 
-    onMounted(() => accountStore.fetchAccountFollowers(state.id))
+  onMounted(() => accountStore.fetchAccountFollowers(state.id))
 </script>
+
+<template>
+  <div class="row mt-5">
+    <h1>Подписчики</h1>
+    <div class="col-2" v-for="follower in state.friends" :key="follower.id">
+      <div class="card">
+        <img class="bd-placeholder-img card-img-top" width="100%" height="200" alt="" :src="follower.photo_200" />
+        <div class="card-body">
+          <p class="card-text">{{ follower.first_name }} {{ follower.last_name }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
 
 <style scoped lang="scss">
     .card {

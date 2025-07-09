@@ -7,60 +7,60 @@ import Settings from '../views/Settings.vue'
 import CyclicTasks from '../views/CyclicTasks.vue'
 
 const routes = [
-    {
-        path: '/',
-        name: 'Home',
-        component: Accounts,
-        meta: {
-            layout: 'main'
-        }
-    },
-    {
-        path: '/tasks/:status?/:accountId?',
-        name: 'Tasks',
-        component: Tasks,
-        meta: {
-            layout: 'main'
-        }
-    },
-    {
-        path: '/cyclic-tasks/:status?/:accountId?',
-        name: 'CyclicTasks',
-        component: CyclicTasks,
-        meta: {
-            layout: 'main'
-        }
-    },
-    {
-        path: '/account/:id',
-        name: 'Account',
-        component: Account,
-        meta: {
-            layout: 'main'
-        }
-    },
-    {
-        path: '/statistics',
-        name: 'Statistics',
-        component: Statistics,
-        meta: {
-            layout: 'main'
-        }
-    },
-    {
-        path: '/settings',
-        name: 'Settings',
-        component: Settings,
-        meta: {
-            layout: 'main'
-        }
+  {
+    path: '/',
+    name: 'Home',
+    component: Accounts,
+    meta: {
+      layout: 'main'
     }
+  },
+  {
+    path: '/tasks/:status?/:accountId?',
+    name: 'Tasks',
+    component: Tasks,
+    meta: {
+      layout: 'main'
+    }
+  },
+  {
+    path: '/cyclic-tasks/:status?/:accountId?',
+    name: 'CyclicTasks',
+    component: CyclicTasks,
+    meta: {
+      layout: 'main'
+    }
+  },
+  {
+    path: '/account/:id',
+    name: 'Account',
+    component: Account,
+    meta: {
+      layout: 'main'
+    }
+  },
+  {
+    path: '/statistics',
+    name: 'Statistics',
+    component: Statistics,
+    meta: {
+      layout: 'main'
+    }
+  },
+  {
+    path: '/settings',
+    name: 'Settings',
+    component: Settings,
+    meta: {
+      layout: 'main'
+    }
+  }
 ]
 
 const router = createRouter({
-    history: createWebHistory(process.env.BASE_URL),
-    routes,
-    linkActiveClass: 'active'
+  history: createWebHistory(process.env.BASE_URL),
+  routes,
+  linkActiveClass: 'active'
 })
 
 export default router

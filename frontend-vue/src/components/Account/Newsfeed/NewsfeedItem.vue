@@ -1,153 +1,153 @@
-<template>
-    <div v-masonry-tile
-         :class="[currentColumnClass, 'item', 'mb-4', 'placeholder-glow']"
-         @mouseleave="hideDetailedInfo"
-    >
-        <button class="account-info-btn mr-1"
-                :class="{ 'opacity-100': showDetailedInfoButton === index || likedPostIndex === index }"
-                @click="emitShowOwnerDetailsModal(post.source_id, index)"
-                @mouseover="ownerInfo(post.source_id, index); toggleDetailedInfoBtn(index, true)"
-        >
-            <i :class="iconClasses.info" v-if="!post.source_id" />
-            <i :class="iconClasses.person" v-if="post.source_id > 0" />
-            <i :class="iconClasses.people" v-if="post.source_id < 0" />
-        </button>
-
-        <div class="placeholder-wrapper" v-if="loadingStatus[index]">
-            <transition name="fade">
-                <span class="placeholder bg-danger" v-show="loadingStatus[index]" />
-            </transition>
-        </div>
-
-        <button class="like-button">
-            <i :class="post.likes.user_likes === 1 ? 'bi bi-heart-fill text-danger' : ''"></i>
-        </button>
-
-        <div class="content-wrapper"
-             :style="post.likes.user_likes === 1 ? {'box-shadow': '0 0 0 2px var(--bs-danger)'} : {}"
-             :class="{'radial-red-background': post.likes.user_likes !== 1 }"
-             @mouseover="toggleDetailedInfoBtn(index, true)"
-             @mouseleave="toggleDetailedInfoBtn(index, false)"
-        >
-            <img class="card-img-top"
-                 :style="post.likes.user_likes !== 1 ? { cursor: 'pointer'}: {}"
-                 :src="getAdjustedQualityImageUrl(post.attachments[0].photo.sizes, currentColumnClass)"
-                 @click="post.likes.user_likes !== 1 && addLikeToPost(post.owner_id, post.post_id, index)"
-                 alt=""
-            />
-
-            <PerfectScrollbar :class="{'pe-auto': showDetailedInfo === index }" class="ps-detailed-info">
-                <div class="detailed-info" :class="{ 'opacity-100': showDetailedInfo === index }">
-                    <p class="mb-1" :class="columnSettings.fontClass" v-if="ownerDataById?.first_name">
-                        <b>{{ ownerDataById?.first_name }} {{ ownerDataById?.last_name }}</b>
-                    </p>
-
-                    <p class="mb-1" :class="columnSettings.fontClass" v-if="ownerDataById?.name">
-                        <b>{{ ownerDataById?.name }}</b>
-                    </p>
-                    <p class="mb-1" :class="columnSettings.fontClass" v-if="ownerDataById?.description">
-                        <b>Описание:</b> {{ ownerDataById?.description }}
-                    </p>
-
-                    <p class="mb-1" :class="columnSettings.fontClass" v-if="ownerDataById?.last_seen?.time">
-                        <b>Онлайн: </b> {{ date(ownerDataById?.last_seen?.time) }}
-                    </p>
-
-                    <p class="mb-1" :class="columnSettings.fontClass" v-if="ownerDataById?.status">
-                        <b>Статус:</b> {{ ownerDataById?.status }}
-                    </p>
-
-                    <p class="mb-1" :class="columnSettings.fontClass" v-if="ownerDataById?.country?.title">
-                        <b>Страна:</b> {{ ownerDataById?.country?.title }}
-                    </p>
-
-                    <p class="mb-1" :class="columnSettings.fontClass" v-if="ownerDataById?.city?.title">
-                        <b>Город:</b> {{ ownerDataById?.city?.title }}
-                    </p>
-
-                    <p class="mb-1" :class="columnSettings.fontClass" v-if="ownerDataById?.friends_count">
-                        <b>Друзья:</b> {{ ownerDataById?.friends_count }}
-                    </p>
-
-                    <p class="mb-1" :class="columnSettings.fontClass" v-if="ownerDataById?.followers_count">
-                        <b>Подписчики:</b> {{ ownerDataById?.followers_count }}
-                    </p>
-
-                    <p class="mb-1" :class="columnSettings.fontClass" v-if="ownerDataById?.members_count">
-                        <b>Подписчики:</b> {{ ownerDataById?.members_count }}
-                    </p>
-                </div>
-            </PerfectScrollbar>
-        </div>
-    </div>
-</template>
-
 <script setup>
-    import { ref, toRefs } from 'vue'
-    import { useAccountStore } from '../../../stores/AccountStore'
-    import { showErrorNotification } from '../../../helpers/notyfHelper'
-    import { useImageUrl } from '../../../composables/useImageUrl'
+  import { ref, toRefs } from 'vue'
+  import { useAccountStore } from '../../../stores/AccountStore'
+  import { showErrorNotification } from '../../../helpers/notyfHelper'
+  import { useImageUrl } from '../../../composables/useImageUrl'
 
-    const props = defineProps({
-        index: Number,
-        post: Object,
-        currentColumnClass: String,
-        loadingStatus: Array,
-        iconClasses: Object,
-        columnSettings: Object,
-        userId: String
-    })
+  const props = defineProps({
+    index: Number,
+    post: Object,
+    currentColumnClass: String,
+    loadingStatus: Array,
+    iconClasses: Object,
+    columnSettings: Object,
+    userId: String
+  })
 
-    const emit = defineEmits(['showOwnerDetailsModal'])
+  const emit = defineEmits(['showOwnerDetailsModal'])
 
-    const {
-        post,
-        index,
-        currentColumnClass,
-        loadingStatus,
-        iconClasses,
-        columnSettings,
-        userId
-    } = toRefs(props)
+  const {
+    post,
+    index,
+    currentColumnClass,
+    loadingStatus,
+    iconClasses,
+    columnSettings,
+    userId
+  } = toRefs(props)
 
-    const showDetailedInfo = ref(null)
-    const showDetailedInfoButton = ref(null)
-    const ownerDataById = ref(null)
-    const likedPostIndex = ref(null)
+  const showDetailedInfo = ref(null)
+  const showDetailedInfoButton = ref(null)
+  const ownerDataById = ref(null)
+  const likedPostIndex = ref(null)
 
-    const accountStore = useAccountStore()
-    const { getAdjustedQualityImageUrl } = useImageUrl()
+  const accountStore = useAccountStore()
+  const { getAdjustedQualityImageUrl } = useImageUrl()
 
-    const addLikeToPost = async (ownerId, itemId, index) => {
-        likedPostIndex.value = index
-        loadingStatus.value[index] = true
+  const addLikeToPost = async (ownerId, itemId, index) => {
+    likedPostIndex.value = index
+    loadingStatus.value[index] = true
 
-        await accountStore.addLike(userId.value, ownerId, itemId)
-            .then(() => accountStore.accountNewsFeed[index].likes.user_likes = 1)
-            .catch(error => showErrorNotification(error.message))
-            .finally(() => (loadingStatus.value[index] = false))
-    }
+    await accountStore.addLike(userId.value, ownerId, itemId)
+      .then(() => accountStore.accountNewsFeed[index].likes.user_likes = 1)
+      .catch(error => showErrorNotification(error.message))
+      .finally(() => (loadingStatus.value[index] = false))
+  }
 
-    const date = (timestamp) => new Date(timestamp * 1000).toLocaleTimeString('ru-RU')
-    const hideDetailedInfo = () => (showDetailedInfo.value = false)
-    const toggleDetailedInfoBtn = (index, show) => showDetailedInfoButton.value = show ? index : null
+  const date = (timestamp) => new Date(timestamp * 1000).toLocaleTimeString('ru-RU')
+  const hideDetailedInfo = () => (showDetailedInfo.value = false)
+  const toggleDetailedInfoBtn = (index, show) => showDetailedInfoButton.value = show ? index : null
 
-    const emitShowOwnerDetailsModal = (accountId, index) => {
-        emit('showOwnerDetailsModal', { accountId, index })
-    }
+  const emitShowOwnerDetailsModal = (accountId, index) => {
+    emit('showOwnerDetailsModal', { accountId, index })
+  }
 
-    const ownerInfo = (accountId, index) => {
-        showDetailedInfo.value = index
-        ownerDataById.value = null
+  const ownerInfo = (accountId, index) => {
+    showDetailedInfo.value = index
+    ownerDataById.value = null
 
-        const fetchData = accountId > 0
-            ? accountStore.fetchOwnerData(userId.value, accountId)
-            : accountStore.fetchGroupData(accountId)
+    const fetchData = accountId > 0
+      ? accountStore.fetchOwnerData(userId.value, accountId)
+      : accountStore.fetchGroupData(accountId)
 
-        fetchData.then(() => ownerDataById.value = accountStore.getOwnerDataById(accountId))
-            .catch(({ response }) => showErrorNotification(response.data.message))
-    }
+    fetchData.then(() => ownerDataById.value = accountStore.getOwnerDataById(accountId))
+      .catch(({ response }) => showErrorNotification(response.data.message))
+  }
 </script>
+
+<template>
+  <div v-masonry-tile
+    :class="[currentColumnClass, 'item', 'mb-4', 'placeholder-glow']"
+    @mouseleave="hideDetailedInfo"
+  >
+    <button class="account-info-btn mr-1"
+      :class="{ 'opacity-100': showDetailedInfoButton === index || likedPostIndex === index }"
+      @click="emitShowOwnerDetailsModal(post.source_id, index)"
+      @mouseover="ownerInfo(post.source_id, index); toggleDetailedInfoBtn(index, true)"
+    >
+      <i :class="iconClasses.info" v-if="!post.source_id" />
+      <i :class="iconClasses.person" v-if="post.source_id > 0" />
+      <i :class="iconClasses.people" v-if="post.source_id < 0" />
+    </button>
+
+    <div class="placeholder-wrapper" v-if="loadingStatus[index]">
+      <transition name="fade">
+        <span class="placeholder bg-danger" v-show="loadingStatus[index]" />
+      </transition>
+    </div>
+
+    <button class="like-button">
+      <i :class="post.likes.user_likes === 1 ? 'bi bi-heart-fill text-danger' : ''"></i>
+    </button>
+
+    <div class="content-wrapper"
+      :style="post.likes.user_likes === 1 ? {'box-shadow': '0 0 0 2px var(--bs-danger)'} : {}"
+      :class="{'radial-red-background': post.likes.user_likes !== 1 }"
+      @mouseover="toggleDetailedInfoBtn(index, true)"
+      @mouseleave="toggleDetailedInfoBtn(index, false)"
+    >
+      <img class="card-img-top"
+        :style="post.likes.user_likes !== 1 ? { cursor: 'pointer'}: {}"
+        :src="getAdjustedQualityImageUrl(post.attachments[0].photo.sizes, currentColumnClass)"
+        @click="post.likes.user_likes !== 1 && addLikeToPost(post.owner_id, post.post_id, index)"
+        alt=""
+      />
+
+      <PerfectScrollbar :class="{'pe-auto': showDetailedInfo === index }" class="ps-detailed-info">
+        <div class="detailed-info" :class="{ 'opacity-100': showDetailedInfo === index }">
+          <p class="mb-1" :class="columnSettings.fontClass" v-if="ownerDataById?.first_name">
+            <b>{{ ownerDataById?.first_name }} {{ ownerDataById?.last_name }}</b>
+          </p>
+
+          <p class="mb-1" :class="columnSettings.fontClass" v-if="ownerDataById?.name">
+            <b>{{ ownerDataById?.name }}</b>
+          </p>
+          <p class="mb-1" :class="columnSettings.fontClass" v-if="ownerDataById?.description">
+            <b>Описание:</b> {{ ownerDataById?.description }}
+          </p>
+
+          <p class="mb-1" :class="columnSettings.fontClass" v-if="ownerDataById?.last_seen?.time">
+            <b>Онлайн: </b> {{ date(ownerDataById?.last_seen?.time) }}
+          </p>
+
+          <p class="mb-1" :class="columnSettings.fontClass" v-if="ownerDataById?.status">
+            <b>Статус:</b> {{ ownerDataById?.status }}
+          </p>
+
+          <p class="mb-1" :class="columnSettings.fontClass" v-if="ownerDataById?.country?.title">
+            <b>Страна:</b> {{ ownerDataById?.country?.title }}
+          </p>
+
+          <p class="mb-1" :class="columnSettings.fontClass" v-if="ownerDataById?.city?.title">
+            <b>Город:</b> {{ ownerDataById?.city?.title }}
+          </p>
+
+          <p class="mb-1" :class="columnSettings.fontClass" v-if="ownerDataById?.friends_count">
+            <b>Друзья:</b> {{ ownerDataById?.friends_count }}
+          </p>
+
+          <p class="mb-1" :class="columnSettings.fontClass" v-if="ownerDataById?.followers_count">
+            <b>Подписчики:</b> {{ ownerDataById?.followers_count }}
+          </p>
+
+          <p class="mb-1" :class="columnSettings.fontClass" v-if="ownerDataById?.members_count">
+            <b>Подписчики:</b> {{ ownerDataById?.members_count }}
+          </p>
+        </div>
+      </PerfectScrollbar>
+    </div>
+  </div>
+</template>
 
 <style lang="scss" scoped>
     .item {

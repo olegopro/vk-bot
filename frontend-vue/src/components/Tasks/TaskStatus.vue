@@ -1,54 +1,54 @@
-<template>
-    <span :class="['badge', className]">
-		{{ text }}
-        <i v-if="errorMessage" class="bi bi-info-circle ms-1" data-bs-toggle="tooltip" data-bs-placement="top" :data-bs-title="errorMessage" />
-	</span>
-</template>
-
 <script>
-    import { Tooltip } from 'bootstrap'
+  import { Tooltip } from 'bootstrap'
 
-    export default {
-        props: ['type', 'errorMessage'],
+  export default {
+    props: ['type', 'errorMessage'],
 
-        data() {
-            return {
-                classMap: {
-                    active: 'text-bg-primary',
-                    canceled: 'text-bg-danger',
-                    failed: 'text-bg-danger',
-                    done: 'text-bg-success',
-                    pending: 'text-bg-secondary',
-                    queued: 'text-bg-secondary'
-                },
-
-                textMap: {
-                    active: 'Выполняется',
-                    failed: 'Ошибка',
-                    canceled: 'Отмена',
-                    done: 'Выполнена',
-                    pending: 'Обрабатывается',
-                    queued: 'Ожидание'
-                }
-            }
+    data() {
+      return {
+        classMap: {
+          active: 'text-bg-primary',
+          canceled: 'text-bg-danger',
+          failed: 'text-bg-danger',
+          done: 'text-bg-success',
+          pending: 'text-bg-secondary',
+          queued: 'text-bg-secondary'
         },
 
-        computed: {
-            className() {
-                return this.classMap[this.type]
-            },
-
-            text() {
-                return this.textMap[this.type]
-            }
-        },
-
-        mounted() {
-            const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
-            [...tooltipTriggerList].map(tooltipTriggerEl => new Tooltip(tooltipTriggerEl))
+        textMap: {
+          active: 'Выполняется',
+          failed: 'Ошибка',
+          canceled: 'Отмена',
+          done: 'Выполнена',
+          pending: 'Обрабатывается',
+          queued: 'Ожидание'
         }
+      }
+    },
+
+    computed: {
+      className() {
+        return this.classMap[this.type]
+      },
+
+      text() {
+        return this.textMap[this.type]
+      }
+    },
+
+    mounted() {
+      const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+      [...tooltipTriggerList].map(tooltipTriggerEl => new Tooltip(tooltipTriggerEl))
     }
+  }
 </script>
+
+<template>
+  <span :class="['badge', className]">
+    {{ text }}
+    <i v-if="errorMessage" class="bi bi-info-circle ms-1" data-bs-toggle="tooltip" data-bs-placement="top" :data-bs-title="errorMessage" />
+  </span>
+</template>
 
 <style scoped lang="scss">
     span {
