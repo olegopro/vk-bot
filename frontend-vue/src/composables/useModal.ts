@@ -2,25 +2,26 @@ import { type Component, ref, nextTick, ComponentInternalInstance, type Componen
 import { Modal } from 'bootstrap'
 import { Nullable } from '@/types'
 import { showErrorNotification } from '@/helpers/notyfHelper'
+import type { ModalProps } from '@/types'
 
 // Определение типа для модальных окон
 interface Modals {
-  [key: string]: Modal | undefined // Интерфейс для объекта, хранящего модальные окна
+  [key: string]: Modal // Интерфейс для объекта, хранящего модальные окна
 }
 
 // Глобальное состояние модальных окон
-const modal = ref<Modals>({})
+const modals = ref<Modals>({})
 const isOpen = ref<boolean>(false)
 const currentComponent = ref<Nullable<Component>>(null)
-const currentProps = ref<Nullable<Record<string, any>>>(null)
-const GlobalModalRef = ref<ComponentInternalInstance | null>(null)
+const currentProps = ref<Nullable<ModalProps>>(null)
+const GlobalModalRef = ref<Nullable<ComponentInternalInstance>>(null)
 
 export function useModal() {
   // Функция для показа модального окна
-  const showModal = async (component: Component, props?: Record<string, any>): Promise<void> => {
+  const showModal = async (component: Component, props?: ModalProps): Promise<void> => {
     // Устанавливаем текущий компонент и пропсы
     currentComponent.value = component
-    currentProps.value = props || null
+    currentProps.value = props ?? null
     isOpen.value = true
 
     await nextTick() // Ждем следующего "тика" Vue
@@ -38,7 +39,7 @@ export function useModal() {
     const modalKey = currentModal.id
 
     // Если модального окна нет в нашем реактивном объекте modal, создаем его
-    if (!modal.value[modalKey]) {
+    if (!modals.value[modalKey]) {
       const modalInstance = new Modal(currentModal)
 
       // Устанавливаем слушатель события 'hidden' для очистки
@@ -46,19 +47,19 @@ export function useModal() {
         isOpen.value = false
         currentComponent.value = null
         currentProps.value = null
-        delete modal.value[modalKey]
+        delete modals.value[modalKey]
       })
 
-      modal.value[modalKey] = modalInstance
+      modals.value[modalKey] = modalInstance
     }
 
     // Показываем модальное окно
-    modal.value[modalKey].show()
+    modals.value[modalKey].show()
   }
 
   // Функция для закрытия модального окна
   const closeModal = (modalId: string): void => {
-    const modalToClose = modal.value[modalId] // Получаем модальное окно по ID
+    const modalToClose = modals.value[modalId] // Получаем модальное окно по ID
     modalToClose?.hide() // Если модальное окно найдено, скрываем его
   }
 
