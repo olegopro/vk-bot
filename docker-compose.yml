@@ -7,7 +7,6 @@ services:
             - mysql
         volumes:
             - ./backend-laravel:/var/www/html
-            - /var/www/html/vendor/
         environment:
             - APP_ENV=local
             - APP_DEBUG=true

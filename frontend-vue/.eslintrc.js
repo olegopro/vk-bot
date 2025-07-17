@@ -29,6 +29,8 @@ module.exports = {
     'vue/require-explicit-emits': 'error',
     'vue/multi-word-component-names': 'off',
     'no-return-assign': 'off',
+    'func-call-spacing': 'off',
+    'no-trailing-spaces': 'off',
     // Изменяем правило для any с error на warning
     '@typescript-eslint/no-explicit-any': 'warn',
     // Настройка отступов для тега <script> в Vue файлах
@@ -36,7 +38,7 @@ module.exports = {
       baseIndent: 1,
       switchCase: 1
     }],
-    // Настройка отступов для тега <template> в Vue файлах
+    // Настройка отступов для тега <template> в файлах Vue
     'vue/html-indent': ['error', 2, {
       baseIndent: 1,
       attribute: 1,

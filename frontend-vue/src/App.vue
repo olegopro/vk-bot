@@ -1,10 +1,12 @@
 <script>
 
   import MainLayout from './layouts/MainLayout.vue'
+  import GlobalModal from './components/GlobalModal.vue'
 
   export default {
     components: {
-      MainLayout
+      MainLayout,
+      GlobalModal
     },
 
     computed: {
@@ -17,4 +19,5 @@
 
 <template>
   <component :is="layout" />
+  <GlobalModal />
 </template>

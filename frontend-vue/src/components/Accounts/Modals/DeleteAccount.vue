@@ -2,6 +2,7 @@
   import { defineProps, inject } from 'vue'
   import { useAccountsStore } from '@/stores/AccountsStore'
 
+  const modalId = 'deleteAccountModal'
   const closeModal = inject('closeModal')
 
   const accountsStore = useAccountsStore()
@@ -12,7 +13,7 @@
 </script>
 
 <template>
-  <div class="modal fade" id="deleteAccountModal" tabindex="-1" aria-labelledby="Delete account" aria-hidden="true">
+  <div class="modal fade" :id="modalId" tabindex="-1" aria-labelledby="Delete account" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
       <form @submit.prevent="deleteAccount" class="modal-content">
         <div class="modal-header">

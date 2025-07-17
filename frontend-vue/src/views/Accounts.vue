@@ -1,34 +1,17 @@
 <script setup lang="ts">
   import { useAccountsStore } from '@/stores/AccountsStore'
-  import { onMounted, provide, ref, shallowRef } from 'vue'
-  import type { Component } from 'vue'
+  import { onMounted } from 'vue'
   import { useModal } from '@/composables/useModal'
   import AddAccount from '@/components/Accounts/Modals/AddAccount.vue'
   import DeleteAccount from '@/components/Accounts/Modals/DeleteAccount.vue'
-  import { Nullable } from '@/types'
 
-  const { isOpen, preparedModal, showModal, closeModal } = useModal()
-
+  const { showModal } = useModal()
   const accountsStore = useAccountsStore()
-  const selectedAccount = ref({ login: '', id: '' })
-  const modalComponent = shallowRef<Nullable<Component>>(null)
 
-  provide('closeModal', closeModal)
+  const showAddAccount = () => showModal(AddAccount)
+  const showDeleteAccount = (login: string, id: number) => showModal(DeleteAccount, { login, accountId: id })
 
-  const showAddAccountModal = () => {
-    modalComponent.value = preparedModal(AddAccount)
-    showModal('addAccountModal')
-  }
-
-  const showDeleteAccountModal = (login, id) => {
-    selectedAccount.value = { login, id }
-    modalComponent.value = preparedModal(DeleteAccount)
-    showModal('deleteAccountModal')
-  }
-
-  onMounted(() => {
-    accountsStore.fetchAccounts.execute()
-  })
+  onMounted(() => accountsStore.fetchAccounts.execute())
 </script>
 
 <template>
@@ -52,7 +35,7 @@
     </div>
 
     <div class="col">
-      <button class="btn btn-success btn-action float-end" type="button" @click="showAddAccountModal">
+      <button class="btn btn-success btn-action float-end" type="button" @click="showAddAccount">
         Добавить аккаунт
       </button>
     </div>
@@ -86,7 +69,7 @@
                 </router-link>
 
                 <button class="btn btn-danger button-style" type="button"
-                  @click="showDeleteAccountModal(account.screen_name, account.account_id)">
+                  @click="showDeleteAccount(account.screen_name, account.account_id)">
                   <i class="bi bi-trash3" />
                 </button>
               </td>
@@ -112,13 +95,5 @@
       </PerfectScrollbar>
     </div>
   </div>
-
-  <Teleport to="body">
-    <component v-if="isOpen"
-      :is="modalComponent"
-      :login="selectedAccount.login"
-      :accountId="selectedAccount.id"
-    />
-  </Teleport>
 
 </template>

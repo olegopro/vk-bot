@@ -1,52 +1,59 @@
-import { ref, Ref, nextTick } from 'vue'
+import { type Component, ref, nextTick, ComponentInternalInstance, type ComponentPublicInstance } from 'vue'
 import { Modal } from 'bootstrap'
-import { Component } from '@vue/runtime-core'
+import { Nullable } from '@/types'
+import { showErrorNotification } from '@/helpers/notyfHelper'
 
 // Определение типа для модальных окон
 interface Modals {
   [key: string]: Modal | undefined // Интерфейс для объекта, хранящего модальные окна
 }
 
+// Глобальное состояние модальных окон
+const modal = ref<Modals>({})
+const isOpen = ref<boolean>(false)
+const currentComponent = ref<Nullable<Component>>(null)
+const currentProps = ref<Nullable<Record<string, any>>>(null)
+const GlobalModalRef = ref<ComponentInternalInstance | null>(null)
+
 export function useModal() {
-  // Создаем реактивные ссылки для хранения состояния модальных окон и их видимости
-  const modal: Ref<Modals> = ref<Modals>({})
-  const isOpen: Ref<boolean> = ref<boolean>(false)
+  // Функция для показа модального окна
+  const showModal = async (component: Component, props?: Record<string, any>): Promise<void> => {
+    // Устанавливаем текущий компонент и пропсы
+    currentComponent.value = component
+    currentProps.value = props || null
+    isOpen.value = true
 
-  // Функция для подготовки модального окна к показу, устанавливает isOpen в true
-  const preparedModal = <T extends Component>(component: T): T => {
-    isOpen.value = true // Отмечаем, что модальное окно готово к показу
-    return component // Возвращаем компонент
-  }
+    await nextTick() // Ждем следующего "тика" Vue
 
-  // Асинхронная функция для отображения модального окна
-  const showModal = async (modalId: string): Promise<void> => {
-    await nextTick() // Ждем следующего "тика" Vue, чтобы убедиться, что DOM обновлен
+    // Получаем компонент через ref
+    const currentModal = (GlobalModalRef.value?.refs?.modalComponentRef as ComponentPublicInstance)?.$el as Nullable<HTMLElement>
 
-    // Получаем элемент модального окна по ID
-    const currentModal = document.getElementById(modalId)
-
-    // Если элемент не найден, выводим ошибку и выходим из функции
     if (!currentModal) {
-      console.error(`Модальное окно с ID ${modalId} не найдено в DOM дереве.`)
-      isOpen.value = false // Устанавливаем состояние видимости в false
+      showErrorNotification('Не удалось получить DOM элемент модального компонента')
+      isOpen.value = false
       return
     }
 
+    // Используем ID элемента модального окна как ключ для экземпляра модального окна
+    const modalKey = currentModal.id
+
     // Если модального окна нет в нашем реактивном объекте modal, создаем его
-    if (!modal.value[modalId]) {
-      const modalInstance = new Modal(currentModal) // Создаем экземпляр модального окна Bootstrap
+    if (!modal.value[modalKey]) {
+      const modalInstance = new Modal(currentModal)
 
-      // Устанавливаем слушатель события 'hidden' для очистки и удаления модального окна
+      // Устанавливаем слушатель события 'hidden' для очистки
       currentModal.addEventListener('hidden.bs.modal', () => {
-        modalInstance.dispose() // Удаляем модальное окно
-        delete modal.value[modalId] // Удаляем запись из объекта modals
-        isOpen.value = false // Устанавливаем состояние видимости в false
-      }, { once: true })
+        isOpen.value = false
+        currentComponent.value = null
+        currentProps.value = null
+        delete modal.value[modalKey]
+      })
 
-      modal.value[modalId] = modalInstance // Сохраняем экземпляр модального окна в объекте modals
+      modal.value[modalKey] = modalInstance
     }
 
-    modal.value[modalId]?.show() // Показываем модальное окно, если оно есть
+    // Показываем модальное окно
+    modal.value[modalKey].show()
   }
 
   // Функция для закрытия модального окна
@@ -55,6 +62,17 @@ export function useModal() {
     modalToClose?.hide() // Если модальное окно найдено, скрываем его
   }
 
-  // Возвращаем функции и состояния для использования во вне
-  return { isOpen, preparedModal, showModal, closeModal }
+  // Функция для регистрации GlobalModal ref
+  const setGlobalModalRef = (globalModalRef: Nullable<ComponentInternalInstance>): void => {
+    GlobalModalRef.value = globalModalRef
+  }
+
+  return {
+    isOpen,
+    currentComponent,
+    currentProps,
+    showModal,
+    closeModal,
+    setGlobalModalRef
+  }
 }
