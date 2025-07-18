@@ -2,14 +2,14 @@
   import { useAccountsStore } from '@/stores/AccountsStore'
   import { onMounted } from 'vue'
   import { useModal } from '@/composables/useModal'
-  import AddAccount from '@/components/Accounts/Modals/AddAccount.vue'
-  import DeleteAccount from '@/components/Accounts/Modals/DeleteAccount.vue'
+  import AddAccountModal from '@/components/Accounts/Modals/AddAccountModal.vue'
+  import DeleteAccountModal from '@/components/Accounts/Modals/DeleteAccountModal.vue'
 
   const { showModal } = useModal()
   const accountsStore = useAccountsStore()
 
-  const showAddAccount = () => showModal(AddAccount)
-  const showDeleteAccount = (login: string, id: number) => showModal(DeleteAccount, { login, accountId: id })
+  const showAddAccount = () => showModal(AddAccountModal)
+  const showDeleteAccount = (login: string, id: number) => showModal(DeleteAccountModal, { login, accountId: id })
 
   onMounted(() => accountsStore.fetchAccounts.execute())
 </script>
