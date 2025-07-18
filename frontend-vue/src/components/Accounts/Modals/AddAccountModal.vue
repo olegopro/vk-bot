@@ -1,11 +1,12 @@
-<script setup>
-  import { computed, ref } from 'vue'
-  import { useAccountsStore } from '../../../stores/AccountsStore'
+<script setup lang="ts">
+  import { ref, getCurrentInstance, watch } from 'vue'
+  import { useAccountsStore } from '@/stores/AccountsStore'
   import { useModal } from '@/composables/useModal'
 
-  const modalId = 'addAccountModal'
+  const modalId = getCurrentInstance()?.type.__name
   const accountsStore = useAccountsStore()
-  const accessToken = ref(null)
+  const accessToken = ref <string> ('')
+  const disableSubmit = ref<boolean>(true) 
   const { closeModal } = useModal()
 
   const addAccount = () => {
@@ -14,7 +15,7 @@
       .catch(() => disableSubmit.value = true)
   }
 
-  const disableSubmit = computed(() => !(accessToken.value && accessToken.value.length > 3))
+  watch(accessToken, value => disableSubmit.value = !(value?.length > 3), { immediate: true })
 </script>
 
 <template>
