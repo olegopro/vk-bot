@@ -1,16 +1,20 @@
 <script setup>
-  import { ref, watch, inject, computed } from 'vue'
+  import { ref, watch, computed, getCurrentInstance } from 'vue'
   import { useAccountStore } from '@/stores/AccountStore'
   import { useAccountsStore } from '../../../stores/AccountsStore'
   import { showErrorNotification, showSuccessNotification } from '../../../helpers/notyfHelper'
   import { useTasksStore } from '../../../stores/TasksStore'
   import { useFilterStore } from '../../../stores/FilterStore'
   import { useDebounceFn } from '@vueuse/core'
+  import { useModal } from '../../../composables/useModal'
 
   const accountStore = useAccountStore()
   const accountsStore = useAccountsStore()
   const tasksStore = useTasksStore()
   const filterStore = useFilterStore()
+  const { closeModal } = useModal()
+
+  const modalId = getCurrentInstance()?.type.__name
 
   const accountId = ref('selectAccount')
   const disablePost = ref(true)
@@ -21,8 +25,6 @@
   const cityId = ref(0)
   const searchType = ref('newsfeed') // По умолчанию - поиск по ленте
   const selectedCity = ref('')
-
-  const closeModal = inject('closeModal')
 
   watch(accountId, newVal => disablePost.value = newVal === 'selectAccount')
 
@@ -89,7 +91,7 @@
   }
 
   const modalHide = () => {
-    closeModal('addTaskModal')
+    closeModal(modalId)
     cityName.value = ''
     selectedCity.value = null
     cityId.value = 0
@@ -99,7 +101,7 @@
 
 <template>
 
-  <div class="modal fade" id="addTaskModal" tabindex="-1" aria-labelledby="Add task" aria-hidden="true">
+  <div class="modal fade" :id="modalId" tabindex="-1" aria-labelledby="Add task" aria-hidden="true">
 
     <div class="modal-dialog modal-dialog-centered">
       <form @submit.prevent="searchType === 'newsfeed' ? addFeedTask() : addCityTask()" class="modal-content">
@@ -181,26 +183,26 @@
 </template>
 
 <style scoped lang="scss">
-    .city-results {
-        max-height: 200px;
-        overflow-y: auto;
-        border: 1px solid #dee2e6;
-        border-radius: 0.375rem;
+  .city-results {
+    max-height: 200px;
+    overflow-y: auto;
+    border: 1px solid #dee2e6;
+    border-radius: 0.375rem;
 
-        .city-item {
-            cursor: pointer;
+    .city-item {
+      cursor: pointer;
 
-            &:hover {
-                background-color: #f8f9fa;
-            }
+      &:hover {
+        background-color: #f8f9fa;
+      }
 
-            &.selected-city {
-                background-color: #e7f1ff;
-            }
+      &.selected-city {
+        background-color: #e7f1ff;
+      }
 
-            &:last-child {
-                border-bottom: none !important;
-            }
-        }
+      &:last-child {
+        border-bottom: none !important;
+      }
     }
+  }
 </style>

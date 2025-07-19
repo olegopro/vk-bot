@@ -1,6 +1,6 @@
 <script setup>
   import { useRoute, useRouter } from 'vue-router'
-  import { onMounted, onUnmounted, provide, ref, shallowRef, watch, computed } from 'vue'
+  import { onMounted, onUnmounted, ref, watch, computed } from 'vue'
   import { useTasksStore } from '@/stores/TasksStore'
   import { useAccountStore } from '@/stores/AccountStore'
   import { useAccountsStore } from '../stores/AccountsStore'
@@ -21,8 +21,7 @@
   const router = useRouter()
   const observer = ref(null)
   const perfectScrollbarRef = ref(null)
-  const modalComponent = shallowRef(null)
-  const { isOpen, preparedModal, showModal, closeModal } = useModal()
+  const { showModal } = useModal()
 
   const taskId = ref(0)
   const currentPage = ref(1)
@@ -32,8 +31,6 @@
 
   const accountDetailsData = ref(null)
   const taskDetailsData = ref(null)
-
-  provide('closeModal', closeModal)
 
   watch(() => tasksStore.tasks.length, newLength => {
     if (newLength > 0 && !observer.value) {
@@ -172,19 +169,12 @@
     tasksStore.getTasksCountByStatus(currentStatus.value, selectedAccountId.value)
   }
 
-  const showAddTaskModal = () => {
-    modalComponent.value = preparedModal(AddTask)
-    showModal('addTaskModal')
-  }
-
   onMounted(() => {
-    console.log('Tasks onMounted')
-
     tasksStore.tasks = []
     debouncedFetchTasks(currentStatus.value, selectedAccountId.value, currentPage.value)
 
     processRouteParams()
-    accountsStore.fetchAccounts()
+    accountsStore.fetchAccounts.execute()
   })
 
   onUnmounted(() => {
@@ -233,7 +223,7 @@
 
       <button class="btn btn-success btn-action"
         type="button"
-        @click="showAddTaskModal"
+        @click="showModal(AddTask)"
       >
         Добавить задачу
       </button>
@@ -308,7 +298,7 @@
     </div>
   </div>
 
-  <Teleport to="body">
+  <!--<Teleport to="body">
     <component v-if="isOpen"
       @mounted="showModal"
       :is="modalComponent"
@@ -318,6 +308,6 @@
       :taskData="taskDetailsData"
       :accountData="accountDetailsData"
     />
-  </Teleport>
+  </Teleport>-->
 
 </template>

@@ -1,5 +1,6 @@
 import axios, { AxiosInstance } from 'axios'
 import rateLimit from 'axios-rate-limit'
+import type { RateLimitedAxiosInstance } from 'axios-rate-limit'
 
 // Настройка базового URL и глобальных параметров axios
 const axiosInstance: AxiosInstance = axios.create({
@@ -8,9 +9,8 @@ const axiosInstance: AxiosInstance = axios.create({
 })
 
 // Применение ограничения на частоту запросов (10 запросов в секунду)
-const throttledInstance = rateLimit(axiosInstance as any, {
+const throttledInstance: RateLimitedAxiosInstance = rateLimit(axiosInstance, {
   maxRequests: 10,
   perMilliseconds: 1000
-}) as AxiosInstance
-
+})
 export default throttledInstance

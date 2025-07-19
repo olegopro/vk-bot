@@ -24,7 +24,8 @@
       ],
       "@types": [
         "src/types"
-      ]
+      ],
+      "axios": ["./node_modules/axios/index.d.ts"]
     },
     "lib": [
       "ES2020",
