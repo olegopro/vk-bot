@@ -4,11 +4,12 @@
   import { format } from 'date-fns'
   import { useTasksStore } from '@/stores/TasksStore'
   import { useAccountStore } from '@/stores/AccountStore'
+  import { useModal } from '../../composables/useModal'
+  import deleteTaskModal from './Modals/DeleteTaskModal.vue'
 
   const props = defineProps({
     task: Object,
     showTaskDetailsModal: Function,
-    showDeleteTaskModal: Function,
     showAccountDetailsModal: Function
   })
 
@@ -16,6 +17,7 @@
 
   const tasksStore = useTasksStore()
   const accountStore = useAccountStore()
+  const { showModal } = useModal()
 
   const dateFormat = (date) => format(new Date(date), 'yyyy-MM-dd HH:mm:ss')
 </script>
@@ -52,7 +54,8 @@
 
       </button>
 
-      <button class="btn btn-danger button-style" @click="props.showDeleteTaskModal(task.id)">
+      <!--<button class="btn btn-danger button-style" @click="props.showDeleteTaskModal(task.id)">-->
+      <button class="btn btn-danger button-style" @click="showModal(deleteTaskModal, {taskId: task.id})">
         <i class="bi bi-trash3" />
       </button>
     </td>

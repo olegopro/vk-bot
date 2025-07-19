@@ -1,9 +1,9 @@
-<script setup>
+<script setup lang="ts">
   import { useRoute, useRouter } from 'vue-router'
   import { onMounted, onUnmounted, ref, watch, computed } from 'vue'
   import { useTasksStore } from '@/stores/TasksStore'
   import { useAccountStore } from '@/stores/AccountStore'
-  import { useAccountsStore } from '../stores/AccountsStore'
+  import { useAccountsStore } from '@/stores/AccountsStore'
   import { showErrorNotification } from '@/helpers/notyfHelper'
   import { useModal } from '@/composables/useModal.ts'
   import { debounce } from 'lodash'
@@ -11,7 +11,7 @@
   import TableThread from '../components/Tasks/TableThread.vue'
   import AccountDetails from '../components/Tasks/Modals/AccountDetails.vue'
   import TaskDetails from '../components/Tasks/Modals/TaskDetails.vue'
-  import DeleteTask from '../components/Tasks/Modals/DeleteTask.vue'
+  import DeleteTaskModal from '../components/Tasks/Modals/DeleteTaskModal.vue'
   import DeleteAllTasks from '../components/Tasks/Modals/DeleteAllTasks.vue'
 
   const tasksStore = useTasksStore()
@@ -139,8 +139,7 @@
       const ownerData = accountStore.getOwnerDataById(ownerId)
       accountDetailsData.value = { ...ownerData }
 
-      modalComponent.value = preparedModal(AccountDetails)
-      showModal('accountDetailsModal')
+      showModal(AccountDetails)
     })
       .catch(error => showErrorNotification(error.response.data.message))
   }
@@ -158,7 +157,7 @@
 
   const showDeleteTaskModal = (id) => {
     taskId.value = id
-    modalComponent.value = preparedModal(DeleteTask)
+    modalComponent.value = preparedModal(DeleteTaskModal)
     showModal('deleteTaskModal')
   }
 
@@ -178,7 +177,6 @@
   })
 
   onUnmounted(() => {
-    console.log('Tasks onUnmounted')
     if (observer.value) observer.value.disconnect()
   })
 </script>
@@ -197,7 +195,6 @@
     </div>
 
     <div class="col d-flex justify-content-end">
-
       <select class="form-select me-3" style="width: 210px;" @change="filterTasks" v-model="currentStatus">
         <option value="">{{ tasksStore.totalTasksCount !== null ? `Все задачи (${tasksStore.totalTasksCount})` : 'Загрузка...' }}</option>
         <option value="failed">{{ tasksStore.totalTasksFailed !== null ? `C ошибками (${tasksStore.totalTasksFailed})` : 'Загрузка...' }}</option>
@@ -227,9 +224,7 @@
       >
         Добавить задачу
       </button>
-
     </div>
-
   </div>
 
   <div class="row">
