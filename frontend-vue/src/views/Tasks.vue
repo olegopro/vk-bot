@@ -9,7 +9,7 @@
   import { debounce } from 'lodash'
   import AddTask from '../components/Tasks/Modals/AddTask.vue'
   import TableThread from '../components/Tasks/TableThread.vue'
-  import AccountDetails from '../components/Tasks/Modals/AccountDetails.vue'
+  import AccountDetailsModal from '../components/Tasks/Modals/AccountDetailsModal.vue'
   import TaskDetails from '../components/Tasks/Modals/TaskDetails.vue'
   import DeleteTaskModal from '../components/Tasks/Modals/DeleteTaskModal.vue'
   import DeleteAllTasksModal from '../components/Tasks/Modals/DeleteAllTasksModal.vue'
@@ -29,7 +29,7 @@
   const currentStatus = ref<string>(route.params.status as string || '')
   const selectedAccountId = ref<string>(route.params.accountId as string || '')
 
-  const accountDetailsData = ref(null)
+  const accountDetailsData = ref<object>({})
   const taskDetailsData = ref(null)
 
   watch(() => tasksStore.tasks.length, newLength => {
@@ -131,16 +131,16 @@
     }
   })
 
-  const showAccountDetailsModal = (accountId, ownerId, taskId) => {
+  const showAccountDetailsModal = (accountId: number, ownerId: number, taskId: number | null) => {
     console.log(accountId)
-    accountDetailsData.value = null
 
-    accountStore.fetchOwnerData(accountId, ownerId, taskId).then(() => {
-      const ownerData = accountStore.getOwnerDataById(ownerId)
-      accountDetailsData.value = { ...ownerData }
+    accountStore.fetchOwnerData(accountId, ownerId, taskId)
+      .then(() => {
+        const ownerData = accountStore.getOwnerDataById(ownerId)
+        accountDetailsData.value = { ...ownerData }
 
-      showModal(AccountDetails)
-    })
+        showModal(AccountDetailsModal, { accountData: accountDetailsData.value })
+      })
       .catch(error => showErrorNotification(error.response.data.message))
   }
 

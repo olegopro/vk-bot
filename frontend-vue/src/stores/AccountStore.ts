@@ -38,7 +38,7 @@ export const useAccountStore = defineStore('account', {
   }),
 
   actions: {
-    async fetchOwnerData(accountId: string, ownerId: string, taskId = null) {
+    async fetchOwnerData(accountId: number, ownerId: number, taskId = null) {
       this.isOwnerDataLoading = taskId
 
       // Поиск владельца по ID в массиве ownerData

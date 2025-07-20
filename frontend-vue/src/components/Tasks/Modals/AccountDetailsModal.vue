@@ -1,10 +1,10 @@
-<script setup>
+<script setup lang="ts">
   import { computed, defineProps, inject, onMounted, onUnmounted } from 'vue'
   import OnlineStatus from '../../Account/OnlineStatus.vue'
 
-  const props = defineProps({
-    accountData: Object
-  })
+  const props = defineProps<{
+    accountData: object
+  }>()
 
   const modals = inject('modals')
 
@@ -23,8 +23,8 @@
 
   const date = (timestamp) => new Date(timestamp * 1000).toLocaleTimeString('ru-RU')
 
-  onMounted(() => console.log('AccountDetails onMounted'))
-  onUnmounted(() => console.log('AccountDetails onUnmounted'))
+  onMounted(() => console.log('AccountDetailsModal onMounted'))
+  onUnmounted(() => console.log('AccountDetailsModal onUnmounted'))
 </script>
 
 <template>
