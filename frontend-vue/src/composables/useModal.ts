@@ -1,6 +1,6 @@
-import { type Component, ref, nextTick, ComponentInternalInstance, type ComponentPublicInstance } from 'vue'
+import { ref, nextTick, ComponentInternalInstance, type ComponentPublicInstance, Component } from 'vue'
 import { Modal } from 'bootstrap'
-import { Nullable } from '@/types'
+import { Nullable, ComponentProps } from '@/types'
 import { showErrorNotification } from '@/helpers/notyfHelper'
 import type { ModalProps } from '@/types'
 
@@ -17,9 +17,8 @@ const currentProps = ref<Nullable<ModalProps>>(null)
 const GlobalModalRef = ref<Nullable<ComponentInternalInstance>>(null)
 
 export function useModal() {
-  // Функция для показа модального окна
-  const showModal = async (component: Component, props?: ModalProps): Promise<void> => {
-    // Устанавливаем текущий компонент и пропсы
+  const showModal = async <T extends Component>(component: T, props?: ComponentProps<T>): Promise<void> => {
+  // Устанавливаем текущий компонент и пропсы
     currentComponent.value = component
     currentProps.value = props ?? null
     isOpen.value = true
