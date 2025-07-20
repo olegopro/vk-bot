@@ -5,14 +5,14 @@
   import { useAccountStore } from '@/stores/AccountStore'
   import { useAccountsStore } from '@/stores/AccountsStore'
   import { showErrorNotification } from '@/helpers/notyfHelper'
-  import { useModal } from '@/composables/useModal.ts'
+  import { useModal } from '@/composables/useModal'
   import { debounce } from 'lodash'
   import AddTask from '../components/Tasks/Modals/AddTask.vue'
   import TableThread from '../components/Tasks/TableThread.vue'
   import AccountDetails from '../components/Tasks/Modals/AccountDetails.vue'
   import TaskDetails from '../components/Tasks/Modals/TaskDetails.vue'
   import DeleteTaskModal from '../components/Tasks/Modals/DeleteTaskModal.vue'
-  import DeleteAllTasks from '../components/Tasks/Modals/DeleteAllTasks.vue'
+  import DeleteAllTasksModal from '../components/Tasks/Modals/DeleteAllTasksModal.vue'
 
   const tasksStore = useTasksStore()
   const accountsStore = useAccountsStore()
@@ -26,8 +26,8 @@
   const taskId = ref(0)
   const currentPage = ref(1)
 
-  const currentStatus = ref(route.params.status || '')
-  const selectedAccountId = ref(route.params.accountId || '')
+  const currentStatus = ref<string>(route.params.status as string || '')
+  const selectedAccountId = ref<string>(route.params.accountId as string || '')
 
   const accountDetailsData = ref(null)
   const taskDetailsData = ref(null)
@@ -162,8 +162,10 @@
   }
 
   const showDeleteAllTasksModal = () => {
-    modalComponent.value = preparedModal(DeleteAllTasks)
-    showModal('deleteAllTasksModal')
+    showModal(DeleteAllTasksModal, {
+      selectedTasksStatus: currentStatus.value,
+      selectedAccountId: selectedAccountId.value
+    })
 
     tasksStore.getTasksCountByStatus(currentStatus.value, selectedAccountId.value)
   }
