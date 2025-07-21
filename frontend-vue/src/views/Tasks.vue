@@ -10,7 +10,6 @@
   import AddTask from '../components/Tasks/Modals/AddTask.vue'
   import TableThread from '../components/Tasks/TableThread.vue'
   import AccountDetailsModal from '../components/Tasks/Modals/AccountDetailsModal.vue'
-  import TaskDetails from '../components/Tasks/Modals/TaskDetails.vue'
   import DeleteTaskModal from '../components/Tasks/Modals/DeleteTaskModal.vue'
   import DeleteAllTasksModal from '../components/Tasks/Modals/DeleteAllTasksModal.vue'
 
@@ -30,7 +29,6 @@
   const selectedAccountId = ref<string>(route.params.accountId as string || '')
 
   const accountDetailsData = ref<object>({})
-  const taskDetailsData = ref(null)
 
   watch(() => tasksStore.tasks.length, newLength => {
     if (newLength > 0 && !observer.value) {
@@ -144,17 +142,6 @@
       .catch(error => showErrorNotification(error.response.data.message))
   }
 
-  const showTaskDetailsModal = async newTaskId => {
-    taskDetailsData.value = null
-
-    await tasksStore.fetchTaskDetails(newTaskId).then(response => {
-      taskDetailsData.value = { ...response, taskId: newTaskId }
-      modalComponent.value = preparedModal(TaskDetails)
-      showModal('taskDetailsModal')
-    })
-      .catch(error => showErrorNotification(error.response.data.message))
-  }
-
   const showDeleteTaskModal = (id) => {
     taskId.value = id
     modalComponent.value = preparedModal(DeleteTaskModal)
@@ -265,7 +252,6 @@
               v-for="task in tasksStore.tasks"
               :task="task"
               :key="task.id"
-              :showTaskDetailsModal="showTaskDetailsModal"
               :showDeleteTaskModal="showDeleteTaskModal"
               :showAccountDetailsModal="showAccountDetailsModal"
             />

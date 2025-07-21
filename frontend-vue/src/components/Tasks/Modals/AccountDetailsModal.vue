@@ -1,12 +1,14 @@
 <script setup lang="ts">
-  import { computed, defineProps, inject, onMounted, onUnmounted } from 'vue'
-  import OnlineStatus from '../../Account/OnlineStatus.vue'
+  import { computed, defineProps, getCurrentInstance, onMounted, onUnmounted } from 'vue'
+  import { useModal } from '@/composables/useModal'
+  import OnlineStatus from '@/components/Account/OnlineStatus.vue'
 
   const props = defineProps<{
     accountData: object
   }>()
 
-  const modals = inject('modals')
+  const modalId = getCurrentInstance()?.type.__name
+  const { closeModal } = useModal()
 
   const formattedSex = computed(() => {
     switch (props.accountData.sex) {
@@ -19,8 +21,6 @@
     }
   })
 
-  const modalHide = () => modals.value.accountDetailsModal.hide()
-
   const date = (timestamp) => new Date(timestamp * 1000).toLocaleTimeString('ru-RU')
 
   onMounted(() => console.log('AccountDetailsModal onMounted'))
@@ -28,7 +28,7 @@
 </script>
 
 <template>
-  <div class="modal fade" id="accountDetailsModal" tabindex="-1" aria-labelledby="Task details" aria-hidden="true">
+  <div class="modal fade" :id="modalId" tabindex="-1" aria-labelledby="Task details" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
         <div class="modal-header" v-if="props.accountData">
@@ -37,7 +37,7 @@
 
           </h1>
           <OnlineStatus class="h-6" :type="props.accountData.online === 0 ? 'offline' : 'online'" />
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          <button type="button" class="btn-close" @click="closeModal(modalId)" aria-label="Close"></button>
         </div>
 
         <div class="modal-body py-2" v-if="props.accountData">
@@ -65,7 +65,7 @@
         </div>
 
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" @click="modalHide">Закрыть</button>
+          <button type="button" class="btn btn-secondary" @click="closeModal(modalId)">Закрыть</button>
         </div>
       </div>
     </div>
@@ -73,14 +73,14 @@
 </template>
 
 <style scoped lang="scss">
-    #ownerDetailsModal {
-        .modal-body {
-            img {
-                width: 100%;
-                height: 100%;
-                object-fit: cover;
-                object-position: center;
-            }
-        }
+  #ownerDetailsModal {
+    .modal-body {
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center;
+      }
     }
+  }
 </style>

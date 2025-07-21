@@ -1,48 +1,45 @@
 <script setup>
-  import { ref, computed, defineProps, inject, onMounted, onUnmounted } from 'vue'
+  import { ref, computed, defineProps, getCurrentInstance } from 'vue'
   import { format } from 'date-fns'
   import { useTasksStore } from '@/stores/TasksStore'
   import { showErrorNotification } from '@/helpers/notyfHelper'
+  import { useModal } from '../../../composables/useModal'
 
   const props = defineProps({
-    taskData: Object
+    taskId: [String, Number]
   })
 
+  const modalId = getCurrentInstance()?.type.__name
   const tasksStore = useTasksStore()
   const disableSubmit = ref(false)
-
-  const closeModal = inject('closeModal')
+  const { closeModal } = useModal()
 
   const isUserLiked = computed(() => {
-    if (props.taskData && props.taskData.liked_users && props.taskData.account_id) {
-      return props.taskData.liked_users.some(user => user.id === props.taskData.account_id)
+    const task = tasksStore.getTaskById(props.taskId)
+    if (tasksStore.taskDetails && tasksStore.taskDetails.liked_users && task && task.account_id) {
+      return tasksStore.taskDetails.liked_users.some(user => user.id === task.account_id)
     }
 
     return false
   })
 
-  const modalHide = () => closeModal('taskDetailsModal')
-
   const formatData = timestamp => format(new Date(timestamp * 1000), 'yyyy-MM-dd HH:mm:ss')
 
   const deleteLikeById = () => {
     disableSubmit.value = true
-    tasksStore.deleteLike(props.taskData.taskId)
-      .then(() => tasksStore.fetchTaskDetails(props.taskData.taskId))
+    tasksStore.deleteLike(props.taskId)
+      .then(() => tasksStore.fetchTaskDetails(props.taskId))
       .catch(data => showErrorNotification(data.response.data.message))
       .finally(() => disableSubmit.value = false)
   }
-
-  onMounted(() => console.log('TaskDetails onMounted'))
-  onUnmounted(() => console.log('TaskDetails onUnmounted'))
 </script>
 
 <template>
-  <div class="modal fade" id="taskDetailsModal" tabindex="-1" aria-labelledby="Task details" aria-hidden="true">
+  <div class="modal fade" :id="modalId" tabindex="-1" aria-labelledby="Task details" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
         <div class="modal-header" v-if="tasksStore.taskDetails">
-          <h1 class="modal-title fs-5" id="Delete task">Информация о задаче #{{ taskData.taskId }}</h1>
+          <h1 class="modal-title fs-5" id="Delete task">Информация о задаче #{{ taskId }}</h1>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
 
@@ -101,7 +98,7 @@
           >
             Отменить лайк
           </button>
-          <button type="button" class="btn btn-secondary" @click="modalHide">Закрыть</button>
+          <button type="button" class="btn btn-secondary" @click="closeModal(modalId)">Закрыть</button>
         </div>
       </div>
     </div>
@@ -109,55 +106,55 @@
 </template>
 
 <style scoped lang="scss">
-    #taskDetails {
-        .modal-body {
-            img {
-                width: 200px;
-                height: 200px;
-                object-fit: cover;
-                object-position: center;
-            }
+  #taskDetails {
+    .modal-body {
+      img {
+        width: 200px;
+        height: 200px;
+        object-fit: cover;
+        object-position: center;
+      }
 
+      .accordion {
+        .accordion-item {
+          .accordion-header {
+            .accordion-button {
+              box-shadow: none;
+            }
+          }
+
+          #listOfLikes {
             .accordion {
-                .accordion-item {
-                    .accordion-header {
-                        .accordion-button {
-                            box-shadow: none;
-                        }
-                    }
+              .accordion-item {
+                border-radius: 0 !important;
 
-                    #listOfLikes {
-                        .accordion {
-                            .accordion-item {
-                                border-radius: 0 !important;
-
-                                &:first-child {
-                                    border-radius: 0;
-                                }
-
-                                &:last-child {
-                                    border: none;
-
-                                    .accordion-button.collapsed {
-                                        border-bottom-right-radius: var(--bs-accordion-border-radius);
-                                        border-bottom-left-radius: var(--bs-accordion-border-radius);
-                                    }
-                                }
-
-                                .accordion-header {
-                                    border-radius: 0;
-
-                                    button {
-                                        border-radius: 0;
-                                    }
-                                }
-                            }
-                        }
-                    }
+                &:first-child {
+                  border-radius: 0;
                 }
-            }
 
+                &:last-child {
+                  border: none;
+
+                  .accordion-button.collapsed {
+                    border-bottom-right-radius: var(--bs-accordion-border-radius);
+                    border-bottom-left-radius: var(--bs-accordion-border-radius);
+                  }
+                }
+
+                .accordion-header {
+                  border-radius: 0;
+
+                  button {
+                    border-radius: 0;
+                  }
+                }
+              }
+            }
+          }
         }
+      }
+
     }
+  }
 
 </style>

@@ -184,6 +184,60 @@
                     }
                 }
             }
+        },
+        "/task-info/{taskId}": {
+            "get": {
+                "tags": [
+                    "Tasks"
+                ],
+                "summary": "Получить информацию о задаче",
+                "description": "Получает подробную информацию о задаче по её идентификатору, включая данные поста, лайки и пользователей",
+                "operationId": "798baf382d84a8a5f91b1c949428f058",
+                "parameters": [
+                    {
+                        "name": "taskId",
+                        "in": "path",
+                        "description": "Идентификатор задачи",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 123
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Успешное получение информации о задаче",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TaskInfoResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Задача не найдена",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TaskErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка сервера",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TaskErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     },
     "components": {
@@ -267,6 +321,153 @@
                     }
                 },
                 "type": "object"
+            },
+            "TaskInfoResponse": {
+                "description": "Ответ с информацией о задаче",
+                "properties": {
+                    "success": {
+                        "description": "Статус успешности запроса",
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "data": {
+                        "description": "Данные о задаче",
+                        "properties": {
+                            "attachments": {
+                                "description": "Вложения поста",
+                                "type": "array",
+                                "items": {
+                                    "properties": {
+                                        "type": {
+                                            "description": "Тип вложения",
+                                            "type": "string",
+                                            "example": "photo"
+                                        },
+                                        "photo": {
+                                            "description": "Данные фотографии",
+                                            "properties": {
+                                                "id": {
+                                                    "description": "ID фотографии",
+                                                    "type": "integer",
+                                                    "example": 457277432
+                                                },
+                                                "owner_id": {
+                                                    "description": "ID владельца фотографии",
+                                                    "type": "integer",
+                                                    "example": 357817305
+                                                },
+                                                "sizes": {
+                                                    "description": "Размеры фотографии",
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "type": {
+                                                                "description": "Тип размера",
+                                                                "type": "string",
+                                                                "example": "x"
+                                                            },
+                                                            "width": {
+                                                                "description": "Ширина",
+                                                                "type": "integer",
+                                                                "example": 640
+                                                            },
+                                                            "height": {
+                                                                "description": "Высота",
+                                                                "type": "integer",
+                                                                "example": 395
+                                                            },
+                                                            "url": {
+                                                                "description": "URL изображения",
+                                                                "type": "string",
+                                                                "example": "https://sun9-41.userapi.com/s/v1/if2/..."
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            },
+                            "likes": {
+                                "description": "Информация о лайках",
+                                "properties": {
+                                    "count": {
+                                        "description": "Количество лайков",
+                                        "type": "integer",
+                                        "example": 9
+                                    },
+                                    "user_likes": {
+                                        "description": "Поставил ли текущий пользователь лайк",
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "can_like": {
+                                        "description": "Может ли пользователь поставить лайк",
+                                        "type": "integer",
+                                        "example": 0
+                                    }
+                                },
+                                "type": "object"
+                            },
+                            "liked_users": {
+                                "description": "Пользователи, поставившие лайки",
+                                "type": "array",
+                                "items": {
+                                    "properties": {
+                                        "id": {
+                                            "description": "ID пользователя",
+                                            "type": "integer",
+                                            "example": 713861431
+                                        },
+                                        "first_name": {
+                                            "description": "Имя пользователя",
+                                            "type": "string",
+                                            "example": "Андрей"
+                                        },
+                                        "last_name": {
+                                            "description": "Фамилия пользователя",
+                                            "type": "string",
+                                            "example": "Терещенко"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            },
+                            "account_id": {
+                                "description": "ID аккаунта из модели Task",
+                                "type": "integer",
+                                "example": 9121607
+                            }
+                        },
+                        "type": "object"
+                    },
+                    "message": {
+                        "description": "Сообщение о результате операции",
+                        "type": "string",
+                        "example": "Данные о задаче получены"
+                    }
+                },
+                "type": "object"
+            },
+            "TaskErrorResponse": {
+                "description": "Ответ с ошибкой",
+                "properties": {
+                    "success": {
+                        "description": "Статус успешности запроса",
+                        "type": "boolean",
+                        "example": false
+                    },
+                    "message": {
+                        "description": "Сообщение об ошибке",
+                        "type": "string",
+                        "example": "Произошла ошибка при получении данных о задаче"
+                    }
+                },
+                "type": "object"
             }
         }
     },
@@ -274,6 +475,10 @@
         {
             "name": "Accounts",
             "description": "Accounts"
+        },
+        {
+            "name": "Tasks",
+            "description": "Tasks"
         }
     ]
 }

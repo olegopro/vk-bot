@@ -333,7 +333,7 @@ class VkClientService
     /**
      * Получает данные пользователей по их ID.
      *
-     * @param array $users_ids Массив ID пользователей.
+     * @param string $users_ids Массив ID пользователей.
      * @return array Данные пользователей.
      * @throws VkException
      */

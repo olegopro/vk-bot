@@ -1,9 +1,9 @@
 <script setup lang="ts">
-  import { defineProps } from 'vue'
+  import { defineProps, getCurrentInstance } from 'vue'
   import { useAccountsStore } from '@/stores/AccountsStore'
   import { useModal } from '@/composables/useModal'
 
-  const modalId = 'deleteAccountModal'
+  const modalId = getCurrentInstance()?.type.__name
   const { closeModal } = useModal()
   const accountsStore = useAccountsStore()
 

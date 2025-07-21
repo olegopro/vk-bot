@@ -6,6 +6,7 @@ use App\Facades\VkClient;
 use App\Jobs\addLikeToPost;
 use App\Models\CyclicTask;
 use App\Models\Task;
+use App\OpenApi\Schemas\TaskResponseSchema;
 use App\Repositories\AccountRepositoryInterface;
 use App\Repositories\TaskRepositoryInterface;
 use App\Services\LoggingServiceInterface;
@@ -16,9 +17,10 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Log;
+use OpenApi\Attributes as OA;
 
 /**
- * Контроллер для управления задачами связанными с лайками в социальной сети ВКонтакте.
+ * Контроллер для управления задачами, связанными с лайками в социальной сети ВКонтакте.
  */
 final class TaskController extends Controller
 {
@@ -72,6 +74,37 @@ final class TaskController extends Controller
      * @return \Illuminate\Http\JsonResponse Ответ с данными о задаче.
      * @throws VkException
      */
+    #[OA\Get(
+        path: '/task-info/{taskId}',
+        description: 'Получает подробную информацию о задаче по её идентификатору, включая данные поста, лайки и пользователей',
+        summary: 'Получить информацию о задаче',
+        tags: ['Tasks']
+    )]
+    #[OA\Parameter(
+        name: 'taskId',
+        description: 'Идентификатор задачи',
+        in: 'path',
+        required: true,
+        schema: new OA\Schema(
+            type: 'integer',
+            example: 123
+        )
+    )]
+    #[OA\Response(
+        response: 200,
+        description: 'Успешное получение информации о задаче',
+        content: new OA\JsonContent(ref: TaskResponseSchema::TASK_INFO_RESPONSE_REF)
+    )]
+    #[OA\Response(
+        response: 404,
+        description: 'Задача не найдена',
+        content: new OA\JsonContent(ref: TaskResponseSchema::ERROR_RESPONSE_REF)
+    )]
+    #[OA\Response(
+        response: 500,
+        description: 'Внутренняя ошибка сервера',
+        content: new OA\JsonContent(ref: TaskResponseSchema::ERROR_RESPONSE_REF)
+    )]
     public function getTaskInfo($taskId)
     {
         $taskData = $this->taskRepository->findTask($taskId);
@@ -93,11 +126,15 @@ final class TaskController extends Controller
 
         $usersResponse = VkClient::fetchUsers($userIds);
 
-        // Деструктуризация 'response' для получения первого элемента
-        list($response) = $postResponse['response'];
+        // Извлекаем только нужные данные из поста
+        $postData = $postResponse['response']['items'][0];
 
-        $response['liked_users'] = $usersResponse['data']['response']; // Информация о пользователях
-        $response['account_id'] = $accountId;
+        $response = [
+            'attachments' => $postData['attachments'] ?? [],
+            'likes' => $postData['likes'] ?? [],
+            'liked_users' => $usersResponse['data']['response'], // Информация о пользователях
+            'account_id' => $accountId
+        ];
 
         return response()->json([
             'success' => true,
