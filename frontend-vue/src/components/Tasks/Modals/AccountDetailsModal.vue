@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { computed, defineProps, getCurrentInstance, onMounted, onUnmounted } from 'vue'
+  import { computed, defineProps, getCurrentInstance} from 'vue'
   import { useModal } from '@/composables/useModal'
   import OnlineStatus from '@/components/Account/OnlineStatus.vue'
 
@@ -22,9 +22,6 @@
   })
 
   const date = (timestamp) => new Date(timestamp * 1000).toLocaleTimeString('ru-RU')
-
-  onMounted(() => console.log('AccountDetailsModal onMounted'))
-  onUnmounted(() => console.log('AccountDetailsModal onUnmounted'))
 </script>
 
 <template>

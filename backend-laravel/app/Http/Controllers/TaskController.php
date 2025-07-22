@@ -48,6 +48,73 @@ final class TaskController extends Controller
      * @param int|null $accountId ID аккаунта для фильтрации.
      * @return \Illuminate\Http\JsonResponse Ответ с данными о задачах.
      */
+    #[OA\Get(
+        path: '/tasks/{status?}/{accountId?}',
+        description: 'Получает список задач с возможностью фильтрации по статусу и ID аккаунта. Поддерживает пагинацию и возвращает статистику по статусам задач.',
+        summary: 'Получить список задач',
+        tags: ['Tasks']
+    )]
+    #[OA\Parameter(
+        name: 'status',
+        description: 'Статус задачи для фильтрации (queued, done, failed)',
+        in: 'path',
+        required: false,
+        schema: new OA\Schema(
+            type: 'string',
+            enum: ['queued', 'done', 'failed'],
+            example: 'queued'
+        )
+    )]
+    #[OA\Parameter(
+        name: 'accountId',
+        description: 'ID аккаунта для фильтрации задач',
+        in: 'path',
+        required: false,
+        schema: new OA\Schema(
+            type: 'integer',
+            example: 9121607
+        )
+    )]
+    #[OA\Parameter(
+        name: 'page',
+        description: 'Номер страницы для пагинации',
+        in: 'query',
+        required: false,
+        schema: new OA\Schema(
+            type: 'integer',
+            minimum: 1,
+            default: 1,
+            example: 1
+        )
+    )]
+    #[OA\Parameter(
+        name: 'perPage',
+        description: 'Количество элементов на странице',
+        in: 'query',
+        required: false,
+        schema: new OA\Schema(
+            type: 'integer',
+            minimum: 1,
+            maximum: 100,
+            default: 30,
+            example: 30
+        )
+    )]
+    #[OA\Response(
+        response: 200,
+        description: 'Успешное получение списка задач',
+        content: new OA\JsonContent(ref: TaskResponseSchema::TASKS_LIST_RESPONSE_REF)
+    )]
+    #[OA\Response(
+        response: 400,
+        description: 'Неверные параметры запроса',
+        content: new OA\JsonContent(ref: TaskResponseSchema::ERROR_RESPONSE_REF)
+    )]
+    #[OA\Response(
+        response: 500,
+        description: 'Внутренняя ошибка сервера',
+        content: new OA\JsonContent(ref: TaskResponseSchema::ERROR_RESPONSE_REF)
+    )]
     public function getTasksByStatus(Request $request, $status = null, $accountId = null)
     {
         $perPage = (int) $request->query('perPage', 30);

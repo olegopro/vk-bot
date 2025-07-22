@@ -45,11 +45,9 @@ export const useTasksStore = defineStore('tasks', {
       // Вычисляем adjustedTotal, добавляя к totalTasksCountByStatus количество удаленных задач.
       // Это необходимо для корректировки пагинации с учетом недавно удаленных задач.
       const adjustedTotal = totalTasksCountByStatus + this.deletedTasksCount
-      console.log('adjustedTotal', adjustedTotal)
 
       // Рассчитываем общее количество страниц, разделив adjustedTotal на количество задач на странице.
       const totalPages = Math.ceil(adjustedTotal / this.tasksPerPage)
-      console.log('totalPages', totalPages)
 
       // Если текущая страница не первая, проверяем, нужно ли корректировать effectivePerPage.
       if (page > 1) {
@@ -58,12 +56,10 @@ export const useTasksStore = defineStore('tasks', {
           // Для не последних страниц увеличиваем effectivePerPage на количество удаленных задач,
           // чтобы компенсировать удаление и заполнить страницу полностью.
           effectivePerPage += this.deletedTasksCount
-          console.log('effectivePerPage', effectivePerPage)
         } else {
           // Если это последняя страница, вычисляем количество задач, которые должны быть на этой странице.
           // Это делается путем вычитания из adjustedTotal количества задач на предыдущих страницах.
           const tasksLeftForLastPage = adjustedTotal - (this.tasksPerPage * (page - 1))
-          console.log('tasksLeftForLastPage', tasksLeftForLastPage)
 
           // Корректируем effectivePerPage, чтобы на последней странице было не больше задач, чем осталось.
           // Используем Math.min для выбора меньшего из двух значений: расчетного количества задач
@@ -74,7 +70,6 @@ export const useTasksStore = defineStore('tasks', {
         }
       }
 
-      console.log('effectivePerPage', effectivePerPage)
       /*
                 Формирование базового URL для запроса.
                 Если параметр status задан (не пустая строка), то он добавляется к URL.
@@ -192,5 +187,18 @@ export const useTasksStore = defineStore('tasks', {
           showSuccessNotification(data.message)
         })
     }
-  }
+  },
+
+  getters: {
+    getTaskById: (state) => (taskId) => state.tasks.find(task => task.id === taskId),
+
+    isUserLiked: (state) => (taskId) => {
+      const task = state.tasks.find(task => task.id === taskId)
+      if (state.taskDetails && state.taskDetails.liked_users && task && task.account_id) {
+        return state.taskDetails.liked_users.some(user => user.id === task.account_id)
+      }
+
+      return false
+    }
+  },
 })

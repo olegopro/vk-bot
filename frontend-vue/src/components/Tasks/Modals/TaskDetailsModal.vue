@@ -1,27 +1,20 @@
-<script setup>
+<script setup lang="ts">
   import { ref, computed, defineProps, getCurrentInstance } from 'vue'
   import { format } from 'date-fns'
   import { useTasksStore } from '@/stores/TasksStore'
   import { showErrorNotification } from '@/helpers/notyfHelper'
-  import { useModal } from '../../../composables/useModal'
+  import { useModal } from '@/composables/useModal'
 
-  const props = defineProps({
-    taskId: [String, Number]
-  })
+  const props = defineProps<{
+    taskId: number
+  }>()
 
   const modalId = getCurrentInstance()?.type.__name
   const tasksStore = useTasksStore()
   const disableSubmit = ref(false)
   const { closeModal } = useModal()
 
-  const isUserLiked = computed(() => {
-    const task = tasksStore.getTaskById(props.taskId)
-    if (tasksStore.taskDetails && tasksStore.taskDetails.liked_users && task && task.account_id) {
-      return tasksStore.taskDetails.liked_users.some(user => user.id === task.account_id)
-    }
-
-    return false
-  })
+  const isUserLiked = computed(() => tasksStore.isUserLiked(props.taskId))
 
   const formatData = timestamp => format(new Date(timestamp * 1000), 'yyyy-MM-dd HH:mm:ss')
 

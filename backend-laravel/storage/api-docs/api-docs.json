@@ -185,6 +185,100 @@
                 }
             }
         },
+        "/tasks/{status?}/{accountId?}": {
+            "get": {
+                "tags": [
+                    "Tasks"
+                ],
+                "summary": "Получить список задач",
+                "description": "Получает список задач с возможностью фильтрации по статусу и ID аккаунта. Поддерживает пагинацию и возвращает статистику по статусам задач.",
+                "operationId": "a138c77953221a911eddc63ebc0175a8",
+                "parameters": [
+                    {
+                        "name": "status",
+                        "in": "path",
+                        "description": "Статус задачи для фильтрации (queued, done, failed)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "queued",
+                                "done",
+                                "failed"
+                            ],
+                            "example": "queued"
+                        }
+                    },
+                    {
+                        "name": "accountId",
+                        "in": "path",
+                        "description": "ID аккаунта для фильтрации задач",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 9121607
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Номер страницы для пагинации",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 1,
+                            "minimum": 1,
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "perPage",
+                        "in": "query",
+                        "description": "Количество элементов на странице",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 30,
+                            "maximum": 100,
+                            "minimum": 1,
+                            "example": 30
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Успешное получение списка задач",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TasksListResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Неверные параметры запроса",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TaskErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка сервера",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TaskErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/task-info/{taskId}": {
             "get": {
                 "tags": [
@@ -465,6 +559,231 @@
                         "description": "Сообщение об ошибке",
                         "type": "string",
                         "example": "Произошла ошибка при получении данных о задаче"
+                    }
+                },
+                "type": "object"
+            },
+            "Task": {
+                "description": "Модель задачи",
+                "properties": {
+                    "id": {
+                        "description": "ID задачи",
+                        "type": "integer",
+                        "example": 123
+                    },
+                    "job_id": {
+                        "description": "ID задания в очереди",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "account_id": {
+                        "description": "ID аккаунта",
+                        "type": "integer",
+                        "example": 9121607
+                    },
+                    "first_name": {
+                        "description": "Имя пользователя",
+                        "type": "string",
+                        "example": "Андрей"
+                    },
+                    "last_name": {
+                        "description": "Фамилия пользователя",
+                        "type": "string",
+                        "example": "Терещенко"
+                    },
+                    "owner_id": {
+                        "description": "ID владельца поста",
+                        "type": "integer",
+                        "example": 357817305
+                    },
+                    "item_id": {
+                        "description": "ID поста",
+                        "type": "integer",
+                        "example": 457277432
+                    },
+                    "status": {
+                        "description": "Статус задачи",
+                        "type": "string",
+                        "enum": [
+                            "queued",
+                            "done",
+                            "failed"
+                        ],
+                        "example": "queued"
+                    },
+                    "is_cyclic": {
+                        "description": "Является ли задача циклической",
+                        "type": "integer",
+                        "example": 0
+                    },
+                    "error_message": {
+                        "description": "Сообщение об ошибке (если есть)",
+                        "type": "string",
+                        "example": null,
+                        "nullable": true
+                    },
+                    "run_at": {
+                        "description": "Время запуска задачи",
+                        "type": "string",
+                        "example": "2025-07-19 18:31:08"
+                    },
+                    "created_at": {
+                        "description": "Время создания задачи",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2024-01-15T10:00:00Z"
+                    },
+                    "updated_at": {
+                        "description": "Время последнего обновления задачи",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2024-01-15T10:30:00Z"
+                    }
+                },
+                "type": "object"
+            },
+            "Pagination": {
+                "description": "Модель пагинации",
+                "properties": {
+                    "current_page": {
+                        "description": "Текущая страница",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "data": {
+                        "description": "Данные на текущей странице",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Task"
+                        }
+                    },
+                    "first_page_url": {
+                        "description": "URL первой страницы",
+                        "type": "string",
+                        "example": "http://localhost/api/tasks?page=1"
+                    },
+                    "from": {
+                        "description": "Номер первого элемента на странице",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "last_page": {
+                        "description": "Номер последней страницы",
+                        "type": "integer",
+                        "example": 5
+                    },
+                    "last_page_url": {
+                        "description": "URL последней страницы",
+                        "type": "string",
+                        "example": "http://localhost/api/tasks?page=5"
+                    },
+                    "next_page_url": {
+                        "description": "URL следующей страницы",
+                        "type": "string",
+                        "example": "http://localhost/api/tasks?page=2",
+                        "nullable": true
+                    },
+                    "path": {
+                        "description": "Базовый путь",
+                        "type": "string",
+                        "example": "http://localhost/api/tasks"
+                    },
+                    "per_page": {
+                        "description": "Количество элементов на странице",
+                        "type": "integer",
+                        "example": 30
+                    },
+                    "prev_page_url": {
+                        "description": "URL предыдущей страницы",
+                        "type": "string",
+                        "example": null,
+                        "nullable": true
+                    },
+                    "to": {
+                        "description": "Номер последнего элемента на странице",
+                        "type": "integer",
+                        "example": 30
+                    },
+                    "total": {
+                        "description": "Общее количество элементов",
+                        "type": "integer",
+                        "example": 150
+                    },
+                    "links": {
+                        "description": "Ссылки для навигации по страницам",
+                        "type": "array",
+                        "items": {
+                            "properties": {
+                                "url": {
+                                    "description": "URL ссылки",
+                                    "type": "string",
+                                    "example": "http://localhost:8080/api/tasks?page=1",
+                                    "nullable": true
+                                },
+                                "label": {
+                                    "description": "Текст ссылки",
+                                    "type": "string",
+                                    "example": "1"
+                                },
+                                "active": {
+                                    "description": "Активна ли ссылка",
+                                    "type": "boolean",
+                                    "example": true
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "TasksListResponse": {
+                "description": "Ответ со списком задач",
+                "properties": {
+                    "success": {
+                        "description": "Статус успешности запроса",
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "data": {
+                        "description": "Данные ответа",
+                        "properties": {
+                            "total": {
+                                "description": "Общее количество задач",
+                                "type": "integer",
+                                "example": 150
+                            },
+                            "statuses": {
+                                "description": "Количество задач по статусам",
+                                "properties": {
+                                    "failed": {
+                                        "description": "Количество неудачных задач",
+                                        "type": "integer",
+                                        "example": 10
+                                    },
+                                    "queued": {
+                                        "description": "Количество задач в очереди",
+                                        "type": "integer",
+                                        "example": 50
+                                    },
+                                    "done": {
+                                        "description": "Количество выполненных задач",
+                                        "type": "integer",
+                                        "example": 90
+                                    }
+                                },
+                                "type": "object"
+                            },
+                            "tasks": {
+                                "$ref": "#/components/schemas/Pagination"
+                            }
+                        },
+                        "type": "object"
+                    },
+                    "message": {
+                        "description": "Сообщение о результате операции",
+                        "type": "string",
+                        "example": "Список задач получен"
                     }
                 },
                 "type": "object"
