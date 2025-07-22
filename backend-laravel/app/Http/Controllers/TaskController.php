@@ -653,6 +653,42 @@ final class TaskController extends Controller
      * @param int $id ID задачи для удаления.
      * @return \Illuminate\Http\JsonResponse Ответ об успешном удалении задачи.
      */
+    #[OA\Delete(
+        path: '/tasks/delete-task-by-id/{id}',
+        description: 'Удаляет задачу по её идентификатору. Автоматически определяет статус задачи и выполняет соответствующее удаление.',
+        summary: 'Удалить задачу по ID',
+        tags: ['Tasks']
+    )]
+    #[OA\Parameter(
+        name: 'id',
+        description: 'Идентификатор задачи для удаления',
+        in: 'path',
+        required: true,
+        schema: new OA\Schema(
+            type: 'integer',
+            example: 12345
+        )
+    )]
+    #[OA\Response(
+        response: 200,
+        description: 'Задача успешно удалена',
+        content: new OA\JsonContent(ref: TaskResponseSchema::DELETE_SUCCESS_RESPONSE_REF)
+    )]
+    #[OA\Response(
+        response: 400,
+        description: 'Неверные параметры запроса',
+        content: new OA\JsonContent(ref: TaskResponseSchema::ERROR_RESPONSE_REF)
+    )]
+    #[OA\Response(
+        response: 404,
+        description: 'Задача не найдена',
+        content: new OA\JsonContent(ref: TaskResponseSchema::ERROR_RESPONSE_REF)
+    )]
+    #[OA\Response(
+        response: 500,
+        description: 'Внутренняя ошибка сервера',
+        content: new OA\JsonContent(ref: TaskResponseSchema::ERROR_RESPONSE_REF)
+    )]
     public function deleteTaskById($id)
     {
         $taskStatus = $this->taskRepository->getTaskStatusById($id);

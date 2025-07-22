@@ -401,6 +401,70 @@
                     }
                 }
             }
+        },
+        "/tasks/delete-task-by-id/{id}": {
+            "delete": {
+                "tags": [
+                    "Tasks"
+                ],
+                "summary": "Удалить задачу по ID",
+                "description": "Удаляет задачу по её идентификатору. Автоматически определяет статус задачи и выполняет соответствующее удаление.",
+                "operationId": "dd6531a4ffaab5b32f2cd457f7aef15a",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Идентификатор задачи для удаления",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 12345
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Задача успешно удалена",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/DeleteSuccessResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Неверные параметры запроса",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TaskErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Задача не найдена",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TaskErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка сервера",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TaskErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     },
     "components": {
@@ -869,11 +933,6 @@
                         "description": "Сообщение о результате операции",
                         "type": "string",
                         "example": "Задачи успешно удалены"
-                    },
-                    "deleted_count": {
-                        "description": "Количество удаленных задач",
-                        "type": "integer",
-                        "example": 15
                     }
                 },
                 "type": "object"
