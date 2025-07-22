@@ -242,8 +242,8 @@ use OpenApi\Attributes as OA;
             property: "error_message",
             description: "Сообщение об ошибке (если есть)",
             type: "string",
-            nullable: true,
-            example: null
+            example: null,
+            nullable: true
         ),
         new OA\Property(
             property: "run_at",
@@ -313,8 +313,8 @@ use OpenApi\Attributes as OA;
             property: "next_page_url",
             description: "URL следующей страницы",
             type: "string",
-            nullable: true,
-            example: "http://localhost/api/tasks?page=2"
+            example: "http://localhost/api/tasks?page=2",
+            nullable: true
         ),
         new OA\Property(
             property: "path",
@@ -332,8 +332,8 @@ use OpenApi\Attributes as OA;
             property: "prev_page_url",
             description: "URL предыдущей страницы",
             type: "string",
-            nullable: true,
-            example: null
+            example: null,
+            nullable: true
         ),
         new OA\Property(
             property: "to",
@@ -357,8 +357,8 @@ use OpenApi\Attributes as OA;
                         property: "url",
                         description: "URL ссылки",
                         type: "string",
-                        nullable: true,
-                        example: "http://localhost:8080/api/tasks?page=1"
+                        example: "http://localhost:8080/api/tasks?page=1",
+                        nullable: true
                     ),
                     new OA\Property(
                         property: "label",
@@ -427,8 +427,8 @@ use OpenApi\Attributes as OA;
                 ),
                 new OA\Property(
                     property: "tasks",
-                    description: "Пагинированный список задач",
-                    ref: self::PAGINATION_REF
+                    ref: self::PAGINATION_REF,
+                    description: "Пагинированный список задач"
                 )
             ],
             type: "object"
@@ -443,6 +443,26 @@ use OpenApi\Attributes as OA;
     type: "object"
 )]
 
+#[OA\Schema(
+    schema: self::DELETE_SUCCESS_RESPONSE_SCHEMA,
+    description: "Ответ об успешном удалении задач",
+    properties: [
+        new OA\Property(
+            property: "success",
+            description: "Статус успешности запроса",
+            type: "boolean",
+            example: true
+        ),
+        new OA\Property(
+            property: "message",
+            description: "Сообщение о результате операции",
+            type: "string",
+            example: "Задачи успешно удалены"
+        )
+    ],
+    type: "object"
+)]
+
 final class TaskResponseSchema
 {
     public const string TASK_INFO_RESPONSE_SCHEMA = 'TaskInfoResponse';
@@ -450,10 +470,12 @@ final class TaskResponseSchema
     public const string TASK_SCHEMA = 'Task';
     public const string PAGINATION_SCHEMA = 'Pagination';
     public const string TASKS_LIST_RESPONSE_SCHEMA = 'TasksListResponse';
+    public const string DELETE_SUCCESS_RESPONSE_SCHEMA = 'DeleteSuccessResponse';
 
     public const string TASK_INFO_RESPONSE_REF = '#/components/schemas/' . self::TASK_INFO_RESPONSE_SCHEMA;
     public const string ERROR_RESPONSE_REF = '#/components/schemas/' . self::ERROR_RESPONSE_SCHEMA;
     public const string TASK_REF = '#/components/schemas/' . self::TASK_SCHEMA;
     public const string PAGINATION_REF = '#/components/schemas/' . self::PAGINATION_SCHEMA;
     public const string TASKS_LIST_RESPONSE_REF = '#/components/schemas/' . self::TASKS_LIST_RESPONSE_SCHEMA;
+    public const string DELETE_SUCCESS_RESPONSE_REF = '#/components/schemas/' . self::DELETE_SUCCESS_RESPONSE_SCHEMA;
 }

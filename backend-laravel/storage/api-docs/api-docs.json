@@ -332,6 +332,75 @@
                     }
                 }
             }
+        },
+        "/tasks/delete-all-tasks/{status?}/{accountId?}": {
+            "delete": {
+                "tags": [
+                    "Tasks"
+                ],
+                "summary": "Удалить все задачи",
+                "description": "Удаляет все задачи на основе указанного статуса и/или ID аккаунта. Если параметры не указаны, удаляются все задачи.",
+                "operationId": "3e6f31ee7f90615a34c69cb14876ab5b",
+                "parameters": [
+                    {
+                        "name": "status",
+                        "in": "path",
+                        "description": "Статус задач для удаления (queued, done, failed). Если не указан, удаляются задачи всех статусов",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "queued",
+                                "done",
+                                "failed"
+                            ],
+                            "example": "queued"
+                        }
+                    },
+                    {
+                        "name": "accountId",
+                        "in": "path",
+                        "description": "ID аккаунта для удаления задач. Если не указан, удаляются задачи всех аккаунтов",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 9121607
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Задачи успешно удалены",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/DeleteSuccessResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Неверные параметры запроса",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TaskErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка сервера",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TaskErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     },
     "components": {
@@ -784,6 +853,27 @@
                         "description": "Сообщение о результате операции",
                         "type": "string",
                         "example": "Список задач получен"
+                    }
+                },
+                "type": "object"
+            },
+            "DeleteSuccessResponse": {
+                "description": "Ответ об успешном удалении задач",
+                "properties": {
+                    "success": {
+                        "description": "Статус успешности запроса",
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "message": {
+                        "description": "Сообщение о результате операции",
+                        "type": "string",
+                        "example": "Задачи успешно удалены"
+                    },
+                    "deleted_count": {
+                        "description": "Количество удаленных задач",
+                        "type": "integer",
+                        "example": 15
                     }
                 },
                 "type": "object"

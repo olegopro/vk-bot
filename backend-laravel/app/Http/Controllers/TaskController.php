@@ -82,8 +82,8 @@ final class TaskController extends Controller
         required: false,
         schema: new OA\Schema(
             type: 'integer',
-            minimum: 1,
             default: 1,
+            minimum: 1,
             example: 1
         )
     )]
@@ -94,9 +94,9 @@ final class TaskController extends Controller
         required: false,
         schema: new OA\Schema(
             type: 'integer',
-            minimum: 1,
-            maximum: 100,
             default: 30,
+            maximum: 100,
+            minimum: 1,
             example: 30
         )
     )]
@@ -595,6 +595,48 @@ final class TaskController extends Controller
      * @param int|null $accountId ID аккаунта для удаления задач.
      * @return \Illuminate\Http\JsonResponse Ответ об успешном удалении задач.
      */
+    #[OA\Delete(
+        path: '/tasks/delete-all-tasks/{status?}/{accountId?}',
+        description: 'Удаляет все задачи на основе указанного статуса и/или ID аккаунта. Если параметры не указаны, удаляются все задачи.',
+        summary: 'Удалить все задачи',
+        tags: ['Tasks']
+    )]
+    #[OA\Parameter(
+        name: 'status',
+        description: 'Статус задач для удаления (queued, done, failed). Если не указан, удаляются задачи всех статусов',
+        in: 'path',
+        required: false,
+        schema: new OA\Schema(
+            type: 'string',
+            enum: ['queued', 'done', 'failed'],
+            example: 'queued'
+        )
+    )]
+    #[OA\Parameter(
+        name: 'accountId',
+        description: 'ID аккаунта для удаления задач. Если не указан, удаляются задачи всех аккаунтов',
+        in: 'path',
+        required: false,
+        schema: new OA\Schema(
+            type: 'integer',
+            example: 9121607
+        )
+    )]
+    #[OA\Response(
+        response: 200,
+        description: 'Задачи успешно удалены',
+        content: new OA\JsonContent(ref: TaskResponseSchema::DELETE_SUCCESS_RESPONSE_REF)
+    )]
+    #[OA\Response(
+        response: 400,
+        description: 'Неверные параметры запроса',
+        content: new OA\JsonContent(ref: TaskResponseSchema::ERROR_RESPONSE_REF)
+    )]
+    #[OA\Response(
+        response: 500,
+        description: 'Внутренняя ошибка сервера',
+        content: new OA\JsonContent(ref: TaskResponseSchema::ERROR_RESPONSE_REF)
+    )]
     public function deleteAllTasks($status = null, $accountId = null)
     {
         $this->taskRepository->clearQueueBasedOnStatus($status, $accountId);
