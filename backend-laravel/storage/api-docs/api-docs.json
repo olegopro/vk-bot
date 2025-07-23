@@ -185,6 +185,972 @@
                 }
             }
         },
+        "/api/cyclic-tasks": {
+            "get": {
+                "tags": [
+                    "Cyclic Tasks"
+                ],
+                "summary": "Получить список циклических задач",
+                "description": "Возвращает пагинированный список всех циклических задач",
+                "operationId": "c06eede861078a1bb770724ae72d5f55",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Номер страницы для пагинации",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "perPage",
+                        "in": "query",
+                        "description": "Количество задач на странице",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "maximum": 100,
+                            "minimum": 1,
+                            "example": 30
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Список циклических задач успешно получен",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "account_id": {
+                                                        "type": "integer",
+                                                        "example": 123
+                                                    },
+                                                    "total_task_count": {
+                                                        "type": "integer",
+                                                        "example": 100
+                                                    },
+                                                    "remaining_tasks_count": {
+                                                        "type": "integer",
+                                                        "example": 75
+                                                    },
+                                                    "tasks_per_hour": {
+                                                        "type": "integer",
+                                                        "example": 5
+                                                    },
+                                                    "status": {
+                                                        "type": "string",
+                                                        "enum": [
+                                                            "active",
+                                                            "pause",
+                                                            "done"
+                                                        ],
+                                                        "example": "active"
+                                                    },
+                                                    "selected_times": {
+                                                        "type": "object",
+                                                        "example": "{\"monday\": [true, false, true]}"
+                                                    },
+                                                    "created_at": {
+                                                        "type": "string",
+                                                        "format": "date-time"
+                                                    },
+                                                    "updated_at": {
+                                                        "type": "string",
+                                                        "format": "date-time"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        },
+                                        "pagination": {
+                                            "properties": {
+                                                "total": {
+                                                    "type": "integer",
+                                                    "example": 150
+                                                },
+                                                "current_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "last_page": {
+                                                    "type": "integer",
+                                                    "example": 5
+                                                },
+                                                "per_page": {
+                                                    "type": "integer",
+                                                    "example": 30
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Список циклических задач получен"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка сервера",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Произошла ошибка при получении списка задач"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/cyclic-tasks/{taskId}": {
+            "delete": {
+                "tags": [
+                    "Cyclic Tasks"
+                ],
+                "summary": "Удалить циклическую задачу",
+                "description": "Удаляет циклическую задачу по её ID",
+                "operationId": "861099c71765014a186fb390d9e778f2",
+                "parameters": [
+                    {
+                        "name": "taskId",
+                        "in": "path",
+                        "description": "ID циклической задачи для удаления",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Циклическая задача успешно удалена",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Циклическая задача удалена"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Циклическая задача не найдена",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Циклическая задача не найдена"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка сервера",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Произошла ошибка при удалении задачи"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "tags": [
+                    "Cyclic Tasks"
+                ],
+                "summary": "Редактировать циклическую задачу",
+                "description": "Обновляет данные существующей циклической задачи",
+                "operationId": "222c1047b67979ef4328e1f93857e912",
+                "parameters": [
+                    {
+                        "name": "taskId",
+                        "in": "path",
+                        "description": "ID циклической задачи для редактирования",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "Данные для обновления циклической задачи",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "account_id": {
+                                        "description": "ID аккаунта",
+                                        "type": "integer",
+                                        "example": 123
+                                    },
+                                    "total_task_count": {
+                                        "description": "Общее количество задач",
+                                        "type": "integer",
+                                        "example": 100
+                                    },
+                                    "tasks_per_hour": {
+                                        "description": "Количество задач в час",
+                                        "type": "integer",
+                                        "example": 5
+                                    },
+                                    "status": {
+                                        "description": "Статус задачи",
+                                        "type": "string",
+                                        "enum": [
+                                            "active",
+                                            "pause",
+                                            "done"
+                                        ],
+                                        "example": "active"
+                                    },
+                                    "selected_times": {
+                                        "description": "Выбранные времена выполнения",
+                                        "type": "object",
+                                        "example": "{\"monday\": [true, false, true]}"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Циклическая задача успешно обновлена",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "account_id": {
+                                                    "type": "integer",
+                                                    "example": 123
+                                                },
+                                                "total_task_count": {
+                                                    "type": "integer",
+                                                    "example": 100
+                                                },
+                                                "remaining_tasks_count": {
+                                                    "type": "integer",
+                                                    "example": 75
+                                                },
+                                                "tasks_per_hour": {
+                                                    "type": "integer",
+                                                    "example": 5
+                                                },
+                                                "status": {
+                                                    "type": "string",
+                                                    "example": "active"
+                                                },
+                                                "selected_times": {
+                                                    "type": "object"
+                                                },
+                                                "created_at": {
+                                                    "type": "string",
+                                                    "format": "date-time"
+                                                },
+                                                "updated_at": {
+                                                    "type": "string",
+                                                    "format": "date-time"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Циклическая задача обновлена"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Циклическая задача не найдена",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Циклическая задача не найдена"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка сервера",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Произошла ошибка при обновлении задачи"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/cyclic-tasks/delete-all-cyclic-tasks": {
+            "delete": {
+                "tags": [
+                    "Cyclic Tasks"
+                ],
+                "summary": "Удалить все циклические задачи",
+                "description": "Удаляет все циклические задачи из системы",
+                "operationId": "9403fb740f41ab692c56e70d235d0b91",
+                "responses": {
+                    "200": {
+                        "description": "Все циклические задачи успешно удалены",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Все циклические задачи удалены"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка сервера",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Произошла ошибка при удалении всех задач"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/cyclic-tasks/pause-cyclic-task/{taskId}": {
+            "patch": {
+                "tags": [
+                    "Cyclic Tasks"
+                ],
+                "summary": "Приостановить/возобновить циклическую задачу",
+                "description": "Переключает статус циклической задачи между активным и приостановленным",
+                "operationId": "2993d016e72d4ee4dd758229514c4742",
+                "parameters": [
+                    {
+                        "name": "taskId",
+                        "in": "path",
+                        "description": "ID циклической задачи для изменения статуса",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Статус циклической задачи успешно изменен",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Циклическая задача поставлена на паузу"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Циклическая задача не найдена",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Циклическая задача не найдена"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка сервера",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Произошла ошибка при изменении статуса задачи"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/filters/search": {
+            "post": {
+                "tags": [
+                    "Filters"
+                ],
+                "summary": "Поиск пользователей ВКонтакте",
+                "description": "Выполняет поиск пользователей ВКонтакте с применением различных фильтров",
+                "operationId": "ae1ee18ed856185a2e55120e55dc4227",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "account_id"
+                                ],
+                                "properties": {
+                                    "q": {
+                                        "description": "Поисковый запрос",
+                                        "type": "string",
+                                        "maxLength": 255,
+                                        "example": "Иван Петров"
+                                    },
+                                    "account_id": {
+                                        "description": "ID аккаунта",
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "city_id": {
+                                        "description": "ID города для фильтрации",
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "count": {
+                                        "description": "Количество результатов",
+                                        "type": "integer",
+                                        "maximum": 1000,
+                                        "minimum": 1,
+                                        "example": 20
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Поиск пользователей выполнен успешно",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "count": {
+                                                    "description": "Количество найденных пользователей",
+                                                    "type": "integer"
+                                                },
+                                                "items": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "id": {
+                                                                "description": "ID пользователя",
+                                                                "type": "integer",
+                                                                "example": 123456
+                                                            },
+                                                            "first_name": {
+                                                                "description": "Имя",
+                                                                "type": "string",
+                                                                "example": "Иван"
+                                                            },
+                                                            "last_name": {
+                                                                "description": "Фамилия",
+                                                                "type": "string",
+                                                                "example": "Петров"
+                                                            },
+                                                            "screen_name": {
+                                                                "description": "Короткое имя (домен)",
+                                                                "type": "string",
+                                                                "example": "ivan_petrov"
+                                                            },
+                                                            "photo_200": {
+                                                                "description": "URL фотографии 200px",
+                                                                "type": "string",
+                                                                "example": "https://sun9-74.userapi.com/photo.jpg"
+                                                            },
+                                                            "city": {
+                                                                "properties": {
+                                                                    "id": {
+                                                                        "description": "ID города",
+                                                                        "type": "integer",
+                                                                        "example": 1
+                                                                    },
+                                                                    "title": {
+                                                                        "description": "Название города",
+                                                                        "type": "string",
+                                                                        "example": "Москва"
+                                                                    }
+                                                                },
+                                                                "type": "object"
+                                                            },
+                                                            "online": {
+                                                                "description": "Статус онлайн (0 - оффлайн, 1 - онлайн)",
+                                                                "type": "integer",
+                                                                "example": 1
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Поиск пользователей выполнен успешно"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Ошибка валидации",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "errors": {
+                                            "description": "Ошибки валидации",
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка сервера",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "error": {
+                                            "description": "Сообщение об ошибке",
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/filters/users-by-city": {
+            "post": {
+                "tags": [
+                    "Filters"
+                ],
+                "summary": "Получение пользователей по городу",
+                "description": "Получает список пользователей ВКонтакте по ID города",
+                "operationId": "a7dc736a60cac5b8cd430dd8c1556d37",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "city_id",
+                                    "account_id"
+                                ],
+                                "properties": {
+                                    "city_id": {
+                                        "description": "ID города",
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "account_id": {
+                                        "description": "ID аккаунта",
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "count": {
+                                        "description": "Количество пользователей (по умолчанию 10)",
+                                        "type": "integer",
+                                        "example": 10
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Список пользователей получен успешно",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "domains": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "description": "Домен пользователя (screen_name)",
+                                                        "type": "string",
+                                                        "example": "user123"
+                                                    }
+                                                },
+                                                "count": {
+                                                    "description": "Количество найденных пользователей",
+                                                    "type": "integer",
+                                                    "example": 5
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Найдено пользователей: 5"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Ошибка валидации",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "errors": {
+                                            "description": "Ошибки валидации",
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка сервера",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "error": {
+                                            "description": "Сообщение об ошибке",
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/filters/cities": {
+            "post": {
+                "tags": [
+                    "Filters"
+                ],
+                "summary": "Поиск городов",
+                "description": "Получает список городов по поисковому запросу через API ВКонтакте",
+                "operationId": "061c0055acb05941be05d1a9586a7cdc",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "q"
+                                ],
+                                "properties": {
+                                    "q": {
+                                        "description": "Поисковый запрос (минимум 2 символа)",
+                                        "type": "string",
+                                        "minLength": 2,
+                                        "example": "Москва"
+                                    },
+                                    "country_id": {
+                                        "description": "ID страны (по умолчанию 1 - Россия)",
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "count": {
+                                        "description": "Количество результатов (максимум 1000)",
+                                        "type": "integer",
+                                        "maximum": 1000,
+                                        "example": 100
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Список городов получен успешно",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "count": {
+                                                    "description": "Количество найденных городов",
+                                                    "type": "integer"
+                                                },
+                                                "items": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "id": {
+                                                                "description": "ID города",
+                                                                "type": "integer",
+                                                                "example": 1
+                                                            },
+                                                            "title": {
+                                                                "description": "Название города",
+                                                                "type": "string",
+                                                                "example": "Москва"
+                                                            },
+                                                            "area": {
+                                                                "description": "Область",
+                                                                "type": "string",
+                                                                "example": "Московская область"
+                                                            },
+                                                            "region": {
+                                                                "description": "Регион",
+                                                                "type": "string",
+                                                                "example": "Центральный федеральный округ"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Список городов получен"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Ошибка валидации",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "errors": {
+                                            "description": "Ошибки валидации",
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка сервера",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "error": {
+                                            "description": "Сообщение об ошибке",
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/settings": {
             "get": {
                 "tags": [
@@ -1643,6 +2609,14 @@
         {
             "name": "Accounts",
             "description": "Accounts"
+        },
+        {
+            "name": "Cyclic Tasks",
+            "description": "Cyclic Tasks"
+        },
+        {
+            "name": "Filters",
+            "description": "Filters"
         },
         {
             "name": "Settings",
