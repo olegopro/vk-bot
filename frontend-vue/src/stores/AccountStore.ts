@@ -7,7 +7,6 @@ import type { Nullable } from '@/types'
 import type {
   OwnerData,
   VkUser,
-  VkGroup,
   NewsItem,
   OwnerDataResponse,
   FollowersResponse,

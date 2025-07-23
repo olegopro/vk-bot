@@ -185,6 +185,144 @@
                 }
             }
         },
+        "/api/settings": {
+            "get": {
+                "tags": [
+                    "Settings"
+                ],
+                "summary": "Получить настройки приложения",
+                "description": "Возвращает все настройки приложения",
+                "operationId": "900c71fe472e27433e8ad8805f7a5157",
+                "responses": {
+                    "200": {
+                        "description": "Успешное получение настроек",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "id": {
+                                                "type": "integer",
+                                                "example": 1
+                                            },
+                                            "show_followers": {
+                                                "type": "boolean",
+                                                "example": true
+                                            },
+                                            "show_friends": {
+                                                "type": "boolean",
+                                                "example": true
+                                            },
+                                            "task_timeout": {
+                                                "type": "integer",
+                                                "example": 30
+                                            },
+                                            "created_at": {
+                                                "type": "string",
+                                                "format": "date-time"
+                                            },
+                                            "updated_at": {
+                                                "type": "string",
+                                                "format": "date-time"
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/settings/save": {
+            "post": {
+                "tags": [
+                    "Settings"
+                ],
+                "summary": "Сохранить настройки приложения",
+                "description": "Обновляет настройки приложения",
+                "operationId": "397dbab512c95e01ed1ec22a57fe07ae",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "show_followers",
+                                    "show_friends",
+                                    "task_timeout"
+                                ],
+                                "properties": {
+                                    "show_followers": {
+                                        "description": "Отображение подписчиков",
+                                        "type": "boolean",
+                                        "example": true
+                                    },
+                                    "show_friends": {
+                                        "description": "Отображение друзей",
+                                        "type": "boolean",
+                                        "example": true
+                                    },
+                                    "task_timeout": {
+                                        "description": "Таймаут задач в секундах",
+                                        "type": "integer",
+                                        "example": 30
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Настройки успешно сохранены",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Настройки сохранены"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Ошибка валидации",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Ошибка валидации"
+                                        },
+                                        "errors": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/tasks/{status?}/{accountId?}": {
             "get": {
                 "tags": [
@@ -943,6 +1081,10 @@
         {
             "name": "Accounts",
             "description": "Accounts"
+        },
+        {
+            "name": "Settings",
+            "description": "Settings"
         },
         {
             "name": "Tasks",
