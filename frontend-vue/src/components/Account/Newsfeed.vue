@@ -45,8 +45,8 @@
     ownerDataById.value = null
 
     const fetchData = accountId > 0
-      ? accountStore.fetchOwnerData(userId.value, accountId)
-      : accountStore.fetchGroupData(accountId)
+      ? accountStore.fetchOwnerData.execute({ accountId: userId.value, ownerId: accountId })
+      : accountStore.fetchGroupData.execute({ groupId: accountId })
 
     fetchData.then(() => ownerDataById.value = accountStore.getOwnerDataById(accountId))
       .catch(({ response }) => showErrorNotification(response.data.message))
@@ -88,7 +88,7 @@
 
   const loadMore = async () => {
     accountStore.isLoadingFeed = true
-    await accountStore.fetchAccountNewsFeed(userId.value, accountStore.nextFrom)
+    await accountStore.fetchAccountNewsFeed.execute({ accountId: userId.value, startFrom: accountStore.nextFrom })
       .then(() => showNewsfeed.value = true)
       .catch(() => showErrorNotification('Ошибка в loadMore()'))
   }

@@ -1,6 +1,6 @@
 <script setup>
   import { ref, computed, defineProps, watch, onMounted, onUnmounted, inject } from 'vue'
-  import { useAccountsStore } from '../../../stores/AccountStore'
+  import { useAccountsStore } from '../../../stores/AccountsStore'
   import { useCyclicTasksStore } from '../../../stores/CyclicTasksStore'
   import { showErrorNotification } from '../../../helpers/notyfHelper'
   import TimePicker from '../TimePicker.vue'

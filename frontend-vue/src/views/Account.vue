@@ -14,18 +14,15 @@
 
   const route = useRoute()
 
-  const userID = route.params.id
+  const userID = Number(route.params.id)
   const specificAccount = ref(null)
   const showNewsfeed = ref(false)
 
   const date = (timestamp) => new Date(timestamp * 1000).toLocaleTimeString('ru-RU')
 
   onMounted(async () => {
-    await accountStore.fetchOwnerData(userID, userID)
-      .then(() => {
-        console.log('await accountStore.fetchOwnerData(userID, userID)')
-        showNewsfeed.value = true
-      })
+    await accountStore.fetchOwnerData.execute({ accountId: userID, ownerId: userID })
+      .then(() => showNewsfeed.value = true)
       .catch(error => {
         console.log('error', error)
         showErrorNotification(error.response.data.message)
