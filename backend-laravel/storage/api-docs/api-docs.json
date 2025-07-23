@@ -515,6 +515,460 @@
                 }
             }
         },
+        "/tasks/get-posts-for-like": {
+            "post": {
+                "tags": [
+                    "Tasks"
+                ],
+                "summary": "Создать задачи на лайки из новостной ленты",
+                "description": "Создает и добавляет в очередь задачи на лайки из новостной ленты указанного аккаунта",
+                "operationId": "9fdb95ea93177cb8541e529f6ba5cb0c",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "account_id",
+                                    "task_count"
+                                ],
+                                "properties": {
+                                    "account_id": {
+                                        "description": "ID аккаунта для создания задач",
+                                        "type": "integer",
+                                        "example": 9121607
+                                    },
+                                    "task_count": {
+                                        "description": "Количество задач для создания",
+                                        "type": "integer",
+                                        "example": 10
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Задачи успешно созданы",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TasksListResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Неверные параметры запроса",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TaskErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка сервера",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TaskErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/tasks/create-like-tasks-for-user-wall-posts": {
+            "post": {
+                "tags": [
+                    "Tasks"
+                ],
+                "summary": "Создать задачи на лайки для постов пользователей",
+                "description": "Создает задачи на лайки для постов со стен указанных пользователей",
+                "operationId": "04344204a4f32ec4d53d1428ed4068a9",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "account_id",
+                                    "domains"
+                                ],
+                                "properties": {
+                                    "account_id": {
+                                        "description": "ID аккаунта для создания задач",
+                                        "type": "integer",
+                                        "example": 9121607
+                                    },
+                                    "domains": {
+                                        "description": "Массив доменов пользователей",
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string"
+                                        },
+                                        "example": [
+                                            "user1",
+                                            "user2",
+                                            "user3"
+                                        ]
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Задачи успешно созданы",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TasksListResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Неверные параметры запроса",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TaskErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка сервера",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TaskErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/tasks/add-task-likes": {
+            "post": {
+                "tags": [
+                    "Tasks"
+                ],
+                "summary": "Добавить задачи в очередь на выполнение",
+                "description": "Обрабатывает задачи на лайки в статусе pending и добавляет их в очередь на выполнение",
+                "operationId": "32ad09bd6a88356e131abe3f7c77d4ae",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "token"
+                                ],
+                                "properties": {
+                                    "token": {
+                                        "description": "Токен доступа для API ВКонтакте",
+                                        "type": "string",
+                                        "example": "vk1.a.abc123def456"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Задачи успешно добавлены в очередь",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "example": 123
+                                                    },
+                                                    "status": {
+                                                        "type": "string",
+                                                        "example": "pending"
+                                                    },
+                                                    "account_id": {
+                                                        "type": "integer",
+                                                        "example": 9121607
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Задачи успешно созданы и запланированы"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Неверные параметры запроса",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TaskErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка сервера",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TaskErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/tasks/create-cyclic-task": {
+            "post": {
+                "tags": [
+                    "Tasks"
+                ],
+                "summary": "Создать циклическую задачу на лайки",
+                "description": "Создает циклическую задачу на лайки с автоматическим распределением времени выполнения",
+                "operationId": "877cf1cfc7cf371ffadf735f05f74945",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "account_id",
+                                    "tasks_per_hour",
+                                    "total_task_count",
+                                    "status"
+                                ],
+                                "properties": {
+                                    "account_id": {
+                                        "description": "ID аккаунта для создания задач",
+                                        "type": "integer",
+                                        "example": 9121607
+                                    },
+                                    "tasks_per_hour": {
+                                        "description": "Количество задач в час",
+                                        "type": "integer",
+                                        "example": 10
+                                    },
+                                    "total_task_count": {
+                                        "description": "Общее количество задач",
+                                        "type": "integer",
+                                        "example": 100
+                                    },
+                                    "status": {
+                                        "description": "Статус циклической задачи",
+                                        "type": "string",
+                                        "example": "active"
+                                    },
+                                    "selected_times": {
+                                        "description": "Выбранные временные интервалы",
+                                        "type": "string",
+                                        "example": "9-18"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Циклическая задача успешно создана",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "account_id": {
+                                                    "type": "integer",
+                                                    "example": 9121607
+                                                },
+                                                "tasks_per_hour": {
+                                                    "type": "integer",
+                                                    "example": 10
+                                                },
+                                                "total_task_count": {
+                                                    "type": "integer",
+                                                    "example": 100
+                                                },
+                                                "remaining_tasks_count": {
+                                                    "type": "integer",
+                                                    "example": 100
+                                                },
+                                                "status": {
+                                                    "type": "string",
+                                                    "example": "active"
+                                                },
+                                                "likes_distribution": {
+                                                    "type": "string",
+                                                    "example": "[5,15,25,35,45,55]"
+                                                },
+                                                "selected_times": {
+                                                    "type": "string",
+                                                    "example": "9-18"
+                                                },
+                                                "started_at": {
+                                                    "type": "string",
+                                                    "format": "date-time"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Задача на постановку лайков запланирована."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Неверные параметры запроса",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TaskErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка сервера",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TaskErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/tasks/count/{status?}/{accountId?}": {
+            "get": {
+                "tags": [
+                    "Tasks"
+                ],
+                "summary": "Подсчитать количество задач",
+                "description": "Подсчитывает количество задач по указанному статусу и/или ID аккаунта",
+                "operationId": "242f0b73a6c5905e97dc177994276cb7",
+                "parameters": [
+                    {
+                        "name": "status",
+                        "in": "path",
+                        "description": "Статус задачи для фильтрации (queued, done, failed)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "queued",
+                                "done",
+                                "failed"
+                            ],
+                            "example": "queued"
+                        }
+                    },
+                    {
+                        "name": "accountId",
+                        "in": "path",
+                        "description": "ID аккаунта для фильтрации задач",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 9121607
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Количество задач успешно получено",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "integer",
+                                            "example": 42
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Количество задач получено"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Неверные параметры запроса",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TaskErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка сервера",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TaskErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/tasks/delete-all-tasks/{status?}/{accountId?}": {
             "delete": {
                 "tags": [
@@ -621,6 +1075,70 @@
                             "application/json": {
                                 "schema": {
                                     "$ref": "#/components/schemas/TaskErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Задача не найдена",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TaskErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка сервера",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TaskErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/tasks/delete-like/{taskId}": {
+            "delete": {
+                "tags": [
+                    "Tasks"
+                ],
+                "summary": "Удалить лайк по ID задачи",
+                "description": "Удаляет лайк с поста, связанного с указанной задачей",
+                "operationId": "457897257356edd26e3aaca82fec3604",
+                "parameters": [
+                    {
+                        "name": "taskId",
+                        "in": "path",
+                        "description": "ID задачи, для которой нужно удалить лайк",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 123
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Лайк успешно удален",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Лайк успешно удален"
+                                        }
+                                    },
+                                    "type": "object"
                                 }
                             }
                         }

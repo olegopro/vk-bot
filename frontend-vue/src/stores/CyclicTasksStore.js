@@ -26,11 +26,9 @@ export const useCyclicTasksStore = defineStore('cyclicTasks', {
       // Вычисляем adjustedTotal, добавляя к totalTasksCount количество удаленных задач.
       // Это необходимо для корректировки пагинации с учетом недавно удаленных задач.
       const adjustedTotal = totalCyclicTasksCount + this.deletedCyclicTasksCount
-      console.log('adjustedTotal', adjustedTotal)
 
       // Рассчитываем общее количество страниц, разделив adjustedTotal на количество задач на странице.
       const totalPages = Math.ceil(adjustedTotal / this.cyclicTasksPerPage)
-      console.log('totalPages', totalPages)
 
       // Если текущая страница не первая, проверяем, нужно ли корректировать effectivePerPage.
       if (page > 1) {
@@ -39,12 +37,10 @@ export const useCyclicTasksStore = defineStore('cyclicTasks', {
           // Для не последних страниц увеличиваем effectivePerPage на количество удаленных задач,
           // чтобы компенсировать удаление и заполнить страницу полностью.
           effectivePerPage += this.deletedCyclicTasksCount
-          console.log('effectivePerPage', effectivePerPage)
         } else {
           // Если это последняя страница, вычисляем количество задач, которые должны быть на этой странице.
           // Это делается путем вычитания из adjustedTotal количества задач на предыдущих страницах.
           const tasksLeftForLastPage = adjustedTotal - (this.cyclicTasksPerPage * (page - 1))
-          console.log('tasksLeftForLastPage', tasksLeftForLastPage)
 
           // Корректируем effectivePerPage, чтобы на последней странице было не больше задач, чем осталось.
           // Используем Math.min для выбора меньшего из двух значений: расчетного количества задач
@@ -55,7 +51,6 @@ export const useCyclicTasksStore = defineStore('cyclicTasks', {
         }
       }
 
-      console.log('effectivePerPage', effectivePerPage)
       await axios.get(`cyclic-tasks?page=${page}&perPage=${effectivePerPage}`)
         .then(({ data }) => {
           if (page === 1) {
@@ -89,7 +84,6 @@ export const useCyclicTasksStore = defineStore('cyclicTasks', {
     async editCyclicTask(taskId, taskData) {
       await axios.patch(`cyclic-tasks/${taskId}`, taskData)
         .then(({ data }) => {
-          console.log('data', data)
           // Сервер возвращает обновлённую задачу в ответе
           const updatedTask = data.data
 

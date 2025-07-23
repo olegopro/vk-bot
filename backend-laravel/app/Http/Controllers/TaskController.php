@@ -219,6 +219,47 @@ final class TaskController extends Controller
      * @return \Illuminate\Http\JsonResponse Ответ с результатом добавления задач в очередь.
      * @throws VkException
      */
+    #[OA\Post(
+        path: '/tasks/get-posts-for-like',
+        description: 'Создает и добавляет в очередь задачи на лайки из новостной ленты указанного аккаунта',
+        summary: 'Создать задачи на лайки из новостной ленты',
+        tags: ['Tasks']
+    )]
+    #[OA\RequestBody(
+        required: true,
+        content: new OA\JsonContent(
+            required: ['account_id', 'task_count'],
+            properties: [
+                new OA\Property(
+                    property: 'account_id',
+                    description: 'ID аккаунта для создания задач',
+                    type: 'integer',
+                    example: 9121607
+                ),
+                new OA\Property(
+                    property: 'task_count',
+                    description: 'Количество задач для создания',
+                    type: 'integer',
+                    example: 10
+                )
+            ]
+        )
+    )]
+    #[OA\Response(
+        response: 200,
+        description: 'Задачи успешно созданы',
+        content: new OA\JsonContent(ref: TaskResponseSchema::TASKS_LIST_RESPONSE_REF)
+    )]
+    #[OA\Response(
+        response: 400,
+        description: 'Неверные параметры запроса',
+        content: new OA\JsonContent(ref: TaskResponseSchema::ERROR_RESPONSE_REF)
+    )]
+    #[OA\Response(
+        response: 500,
+        description: 'Внутренняя ошибка сервера',
+        content: new OA\JsonContent(ref: TaskResponseSchema::ERROR_RESPONSE_REF)
+    )]
     public function createAndQueueLikeTasksFromNewsfeed(Request $request, $isCyclic = false)
     {
         $account_id = $request->input('account_id');
@@ -395,6 +436,48 @@ final class TaskController extends Controller
      * @return \Illuminate\Http\JsonResponse Ответ с информацией о созданных задачах.
      * @throws VkException
      */
+    #[OA\Post(
+        path: '/tasks/create-like-tasks-for-user-wall-posts',
+        description: 'Создает задачи на лайки для постов со стен указанных пользователей',
+        summary: 'Создать задачи на лайки для постов пользователей',
+        tags: ['Tasks']
+    )]
+    #[OA\RequestBody(
+        required: true,
+        content: new OA\JsonContent(
+            required: ['account_id', 'domains'],
+            properties: [
+                new OA\Property(
+                    property: 'account_id',
+                    description: 'ID аккаунта для создания задач',
+                    type: 'integer',
+                    example: 9121607
+                ),
+                new OA\Property(
+                    property: 'domains',
+                    description: 'Массив доменов пользователей',
+                    type: 'array',
+                    items: new OA\Items(type: 'string'),
+                    example: ['user1', 'user2', 'user3']
+                )
+            ]
+        )
+    )]
+    #[OA\Response(
+        response: 200,
+        description: 'Задачи успешно созданы',
+        content: new OA\JsonContent(ref: TaskResponseSchema::TASKS_LIST_RESPONSE_REF)
+    )]
+    #[OA\Response(
+        response: 400,
+        description: 'Неверные параметры запроса',
+        content: new OA\JsonContent(ref: TaskResponseSchema::ERROR_RESPONSE_REF)
+    )]
+    #[OA\Response(
+        response: 500,
+        description: 'Внутренняя ошибка сервера',
+        content: new OA\JsonContent(ref: TaskResponseSchema::ERROR_RESPONSE_REF)
+    )]
     public function createLikeTasksForUserWallPosts(Request $request)
     {
         $accountId = $request->input('account_id');
@@ -445,6 +528,57 @@ final class TaskController extends Controller
      * @param string $token Токен доступа для API ВКонтакте.
      * @return \Illuminate\Http\JsonResponse Ответ с информацией о задачах, добавленных в очередь.
      */
+    #[OA\Post(
+        path: '/tasks/add-task-likes',
+        description: 'Обрабатывает задачи на лайки в статусе pending и добавляет их в очередь на выполнение',
+        summary: 'Добавить задачи в очередь на выполнение',
+        tags: ['Tasks']
+    )]
+    #[OA\RequestBody(
+        required: true,
+        content: new OA\JsonContent(
+            required: ['token'],
+            properties: [
+                new OA\Property(
+                    property: 'token',
+                    description: 'Токен доступа для API ВКонтакте',
+                    type: 'string',
+                    example: 'vk1.a.abc123def456'
+                )
+            ]
+        )
+    )]
+    #[OA\Response(
+        response: 200,
+        description: 'Задачи успешно добавлены в очередь',
+        content: new OA\JsonContent(
+            properties: [
+                new OA\Property(property: 'success', type: 'boolean', example: true),
+                new OA\Property(
+                    property: 'data',
+                    type: 'array',
+                    items: new OA\Items(
+                        properties: [
+                            new OA\Property(property: 'id', type: 'integer', example: 123),
+                            new OA\Property(property: 'status', type: 'string', example: 'pending'),
+                            new OA\Property(property: 'account_id', type: 'integer', example: 9121607)
+                        ]
+                    )
+                ),
+                new OA\Property(property: 'message', type: 'string', example: 'Задачи успешно созданы и запланированы')
+            ]
+        )
+    )]
+    #[OA\Response(
+        response: 400,
+        description: 'Неверные параметры запроса',
+        content: new OA\JsonContent(ref: TaskResponseSchema::ERROR_RESPONSE_REF)
+    )]
+    #[OA\Response(
+        response: 500,
+        description: 'Внутренняя ошибка сервера',
+        content: new OA\JsonContent(ref: TaskResponseSchema::ERROR_RESPONSE_REF)
+    )]
     public function processAndQueuePendingLikeTasks($token)
     {
         // Базовое значение задержки из настроек
@@ -515,6 +649,85 @@ final class TaskController extends Controller
      * @return \Illuminate\Http\JsonResponse Ответ, содержащий статус выполнения операции,
      * данные созданной циклической задачи и сообщение об успешном создании задачи.
      */
+    #[OA\Post(
+        path: '/tasks/create-cyclic-task',
+        description: 'Создает циклическую задачу на лайки с автоматическим распределением времени выполнения',
+        summary: 'Создать циклическую задачу на лайки',
+        tags: ['Tasks']
+    )]
+    #[OA\RequestBody(
+        required: true,
+        content: new OA\JsonContent(
+            required: ['account_id', 'tasks_per_hour', 'total_task_count', 'status'],
+            properties: [
+                new OA\Property(
+                    property: 'account_id',
+                    description: 'ID аккаунта для создания задач',
+                    type: 'integer',
+                    example: 9121607
+                ),
+                new OA\Property(
+                    property: 'tasks_per_hour',
+                    description: 'Количество задач в час',
+                    type: 'integer',
+                    example: 10
+                ),
+                new OA\Property(
+                    property: 'total_task_count',
+                    description: 'Общее количество задач',
+                    type: 'integer',
+                    example: 100
+                ),
+                new OA\Property(
+                    property: 'status',
+                    description: 'Статус циклической задачи',
+                    type: 'string',
+                    example: 'active'
+                ),
+                new OA\Property(
+                    property: 'selected_times',
+                    description: 'Выбранные временные интервалы',
+                    type: 'string',
+                    example: '9-18'
+                )
+            ]
+        )
+    )]
+    #[OA\Response(
+        response: 200,
+        description: 'Циклическая задача успешно создана',
+        content: new OA\JsonContent(
+            properties: [
+                new OA\Property(property: 'success', type: 'boolean', example: true),
+                new OA\Property(
+                    property: 'data',
+                    type: 'object',
+                    properties: [
+                        new OA\Property(property: 'id', type: 'integer', example: 1),
+                        new OA\Property(property: 'account_id', type: 'integer', example: 9121607),
+                        new OA\Property(property: 'tasks_per_hour', type: 'integer', example: 10),
+                        new OA\Property(property: 'total_task_count', type: 'integer', example: 100),
+                        new OA\Property(property: 'remaining_tasks_count', type: 'integer', example: 100),
+                        new OA\Property(property: 'status', type: 'string', example: 'active'),
+                        new OA\Property(property: 'likes_distribution', type: 'string', example: '[5,15,25,35,45,55]'),
+                        new OA\Property(property: 'selected_times', type: 'string', example: '9-18'),
+                        new OA\Property(property: 'started_at', type: 'string', format: 'date-time')
+                    ]
+                ),
+                new OA\Property(property: 'message', type: 'string', example: 'Задача на постановку лайков запланирована.')
+            ]
+        )
+    )]
+    #[OA\Response(
+        response: 400,
+        description: 'Неверные параметры запроса',
+        content: new OA\JsonContent(ref: TaskResponseSchema::ERROR_RESPONSE_REF)
+    )]
+    #[OA\Response(
+        response: 500,
+        description: 'Внутренняя ошибка сервера',
+        content: new OA\JsonContent(ref: TaskResponseSchema::ERROR_RESPONSE_REF)
+    )]
     public function createCyclicTask(Request $request)
     {
         // Генерация массива уникальных случайных минут
@@ -547,6 +760,54 @@ final class TaskController extends Controller
      * @param int|null $accountId ID аккаунта для фильтрации.
      * @return \Illuminate\Http\JsonResponse Ответ с количеством задач.
      */
+    #[OA\Get(
+        path: '/tasks/count/{status?}/{accountId?}',
+        description: 'Подсчитывает количество задач по указанному статусу и/или ID аккаунта',
+        summary: 'Подсчитать количество задач',
+        tags: ['Tasks']
+    )]
+    #[OA\Parameter(
+        name: 'status',
+        description: 'Статус задачи для фильтрации (queued, done, failed)',
+        in: 'path',
+        required: false,
+        schema: new OA\Schema(
+            type: 'string',
+            enum: ['queued', 'done', 'failed'],
+            example: 'queued'
+        )
+    )]
+    #[OA\Parameter(
+        name: 'accountId',
+        description: 'ID аккаунта для фильтрации задач',
+        in: 'path',
+        required: false,
+        schema: new OA\Schema(
+            type: 'integer',
+            example: 9121607
+        )
+    )]
+    #[OA\Response(
+        response: 200,
+        description: 'Количество задач успешно получено',
+        content: new OA\JsonContent(
+            properties: [
+                new OA\Property(property: 'success', type: 'boolean', example: true),
+                new OA\Property(property: 'data', type: 'integer', example: 42),
+                new OA\Property(property: 'message', type: 'string', example: 'Количество задач получено')
+            ]
+        )
+    )]
+    #[OA\Response(
+        response: 400,
+        description: 'Неверные параметры запроса',
+        content: new OA\JsonContent(ref: TaskResponseSchema::ERROR_RESPONSE_REF)
+    )]
+    #[OA\Response(
+        response: 500,
+        description: 'Внутренняя ошибка сервера',
+        content: new OA\JsonContent(ref: TaskResponseSchema::ERROR_RESPONSE_REF)
+    )]
     public function countTasksByAccountAndStatus($status = null, $accountId = null)
     {
         $count = $this->taskRepository->countTasksByAccountAndStatus($status, $accountId);
@@ -720,6 +981,42 @@ final class TaskController extends Controller
      * @return \Illuminate\Http\JsonResponse Ответ об успешном удалении лайка или ошибке.
      * @throws VkException
      */
+    #[OA\Delete(
+        path: '/tasks/delete-like/{taskId}',
+        description: 'Удаляет лайк с поста, связанного с указанной задачей',
+        summary: 'Удалить лайк по ID задачи',
+        tags: ['Tasks']
+    )]
+    #[OA\Parameter(
+        name: 'taskId',
+        description: 'ID задачи, для которой нужно удалить лайк',
+        in: 'path',
+        required: true,
+        schema: new OA\Schema(
+            type: 'integer',
+            example: 123
+        )
+    )]
+    #[OA\Response(
+        response: 200,
+        description: 'Лайк успешно удален',
+        content: new OA\JsonContent(
+            properties: [
+                new OA\Property(property: 'success', type: 'boolean', example: true),
+                new OA\Property(property: 'message', type: 'string', example: 'Лайк успешно удален')
+            ]
+        )
+    )]
+    #[OA\Response(
+        response: 404,
+        description: 'Задача не найдена',
+        content: new OA\JsonContent(ref: TaskResponseSchema::ERROR_RESPONSE_REF)
+    )]
+    #[OA\Response(
+        response: 500,
+        description: 'Внутренняя ошибка сервера',
+        content: new OA\JsonContent(ref: TaskResponseSchema::ERROR_RESPONSE_REF)
+    )]
     public function deleteLike($taskId)
     {
         $taskData = $this->taskRepository->findTask($taskId);

@@ -59,7 +59,7 @@
   })
 
   const debouncedFetchTasks = debounce((status, accountId, page = 1) => {
-    tasksStore.fetchTasks(status, accountId, page).then(() => currentPage.value++)
+    tasksStore.fetchTasks.execute({ status, accountId, page }).then(() => currentPage.value++)
   }, 500, {
     leading: true, // Вызываться в начале периода ожидания
     trailing: false // Дополнительный вызов в конце периода не требуется
