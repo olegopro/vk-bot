@@ -8,6 +8,13 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 
 /**
+ * @OA\Tag(
+ *     name="Statistics",
+ *     description="API для работы со статистикой задач"
+ * )
+ */
+
+/**
  * Контроллер для работы со статистикой задач.
  *
  * Предоставляет методы для получения статистических данных о выполненных задачах,
@@ -15,14 +22,7 @@ use Illuminate\Support\Facades\DB;
  */
 class StatisticController extends Controller
 {
-    /**
-     * Получает статистику выполненных задач за последние 7 дней.
-     *
-     * Извлекает из базы данных задачи со статусом 'done', созданные за последние 7 дней,
-     * и возвращает их для обработки на стороне клиента.
-     *
-     * @return \Illuminate\Http\JsonResponse Ответ, содержащий статистические данные о задачах
-     */
+    // TODO: Этот метод не используется
     public function getStatistic()
     {
         $statistic = Task::where('status', 'done')
@@ -39,6 +39,34 @@ class StatisticController extends Controller
     }
 
     /**
+     * @OA\Get(
+     *     path="/api/statistics",
+     *     tags={"Statistics"},
+     *     summary="Получить статистику задач по дням недели за последние 7 дней",
+     *     description="Возвращает количество выполненных задач, сгруппированных по дням недели за последние 7 дней",
+     *     @OA\Response(
+     *         response=200,
+     *         description="Успешное получение недельной статистики",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="object",
+     *                 example={
+     *                     "Понедельник": 5,
+     *                     "Вторник": 3,
+     *                     "Среда": 7,
+     *                     "Четверг": 2,
+     *                     "Пятница": 8,
+     *                     "Суббота": 1,
+     *                     "Воскресенье": 4
+     *                 }
+     *             ),
+     *             @OA\Property(property="message", type="string", example="Статистика за последние 7 дней получена")
+     *         )
+     *     )
+     * )
+     *
      * Получает статистику выполненных задач по дням недели за последние 7 дней.
      *
      * Этот метод:

@@ -1,9 +1,9 @@
-<script setup>
+<script setup lang="ts">
   import { ref, computed, onMounted } from 'vue'
   import { Bar } from 'vue-chartjs'
   import { Chart as ChartJS, Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale } from 'chart.js'
   import ChartDataLabels from 'chartjs-plugin-datalabels'
-  import { useStatisticsStore } from '../stores/StatisticsStore'
+  import { useStatisticsStore } from '@/stores/StatisticsStore'
 
   const statisticsStore = useStatisticsStore()
 
@@ -123,7 +123,7 @@
     }
   })
 
-  onMounted(() => statisticsStore.fetchWeeklyTaskStats())
+  onMounted(() => statisticsStore.fetchWeeklyTaskStats.execute())
 </script>
 
 <template>

@@ -61,7 +61,7 @@
 
     // debouncedFetchCyclicTasks()
     debouncedFetchCyclicTasks(currentPage.value)
-    accountsStore.fetchAccounts()
+    accountsStore.fetchAccounts.execute()
 
     // Устанавливаем observer
     observer.value = new IntersectionObserver(entries => {

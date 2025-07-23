@@ -323,6 +323,50 @@
                 }
             }
         },
+        "/api/statistics": {
+            "get": {
+                "tags": [
+                    "Statistics"
+                ],
+                "summary": "Получить статистику задач по дням недели за последние 7 дней",
+                "description": "Возвращает количество выполненных задач, сгруппированных по дням недели за последние 7 дней",
+                "operationId": "afd7d4b0385f96f0fdd73b45f0a9aef1",
+                "responses": {
+                    "200": {
+                        "description": "Успешное получение недельной статистики",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "object",
+                                            "example": {
+                                                "Понедельник": 5,
+                                                "Вторник": 3,
+                                                "Среда": 7,
+                                                "Четверг": 2,
+                                                "Пятница": 8,
+                                                "Суббота": 1,
+                                                "Воскресенье": 4
+                                            }
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Статистика за последние 7 дней получена"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/tasks/{status?}/{accountId?}": {
             "get": {
                 "tags": [
@@ -1085,6 +1129,10 @@
         {
             "name": "Settings",
             "description": "Settings"
+        },
+        {
+            "name": "Statistics",
+            "description": "Statistics"
         },
         {
             "name": "Tasks",
