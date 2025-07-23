@@ -49,7 +49,7 @@
 
   const debouncedFetchCyclicTasks = debounce((page) => {
     cyclicTasksStore.isLoading = true
-    cyclicTasksStore.fetchCyclicTasks(page).then(() => currentPage.value++)
+    cyclicTasksStore.fetchCyclicTasks.execute({ page }).then(() => currentPage.value++)
   }, 500, {
     leading: true, // Вызываться в начале периода ожидания
     trailing: false // Дополнительный вызов в конце периода не требуется
