@@ -17,6 +17,18 @@ use OpenApi\Attributes as OA;
     url: '/api',
     description: 'API Server'
 )]
+#[OA\Tag(
+    name: 'Accounts',
+    description: 'Операции для управления аккаунтами ВКонтакте'
+)]
+#[OA\Tag(
+    name: 'Tasks',
+    description: 'Операции для управления задачами'
+)]
+#[OA\Tag(
+    name: 'Cyclic Tasks',
+    description: 'Операции для управления циклическими задачами'
+)]
 class Controller extends BaseController
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;

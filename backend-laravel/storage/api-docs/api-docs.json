@@ -36,7 +36,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/ErrorResponse"
+                                    "$ref": "#/components/schemas/BaseErrorResponse"
                                 }
                             }
                         }
@@ -83,7 +83,7 @@
                                             "example": true
                                         },
                                         "data": {
-                                            "$ref": "#/components/schemas/Account"
+                                            "$ref": "#/components/schemas/AccountModel"
                                         },
                                         "message": {
                                             "description": "Сообщение о результате операции",
@@ -96,22 +96,12 @@
                             }
                         }
                     },
-                    "400": {
-                        "description": "Ошибка валидации или неверный токен",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ErrorResponse"
-                                }
-                            }
-                        }
-                    },
                     "500": {
                         "description": "Внутренняя ошибка сервера",
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/ErrorResponse"
+                                    "$ref": "#/components/schemas/BaseErrorResponse"
                                 }
                             }
                         }
@@ -158,26 +148,6 @@
                                         }
                                     },
                                     "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Аккаунт не найден",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ErrorResponse"
-                                }
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "Внутренняя ошибка сервера",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ErrorResponse"
                                 }
                             }
                         }
@@ -2135,7 +2105,7 @@
     },
     "components": {
         "schemas": {
-            "Account": {
+            "AccountModel": {
                 "description": "Модель аккаунта ВКонтакте",
                 "properties": {
                     "account_id": {
@@ -2178,29 +2148,47 @@
             },
             "AccountListResponse": {
                 "description": "Ответ со списком аккаунтов ВКонтакте",
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/BaseSuccessResponse"
+                    },
+                    {
+                        "properties": {
+                            "message": {
+                                "description": "Сообщение о результате операции",
+                                "type": "string",
+                                "example": "Список аккаунтов получен"
+                            },
+                            "data": {
+                                "description": "Массив аккаунтов ВКонтакте",
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/AccountModel"
+                                }
+                            }
+                        },
+                        "type": "object"
+                    }
+                ]
+            },
+            "BaseSuccessResponse": {
+                "description": "Базовая схема успешного ответа",
                 "properties": {
                     "success": {
                         "description": "Статус успешности запроса",
                         "type": "boolean",
                         "example": true
                     },
-                    "data": {
-                        "description": "Массив аккаунтов ВКонтакте",
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/components/schemas/Account"
-                        }
-                    },
                     "message": {
                         "description": "Сообщение о результате операции",
                         "type": "string",
-                        "example": "Список аккаунтов получен"
+                        "example": "Операция выполнена успешно"
                     }
                 },
                 "type": "object"
             },
-            "ErrorResponse": {
-                "description": "Ответ с ошибкой",
+            "BaseErrorResponse": {
+                "description": "Базовая схема ответа с ошибкой",
                 "properties": {
                     "success": {
                         "description": "Статус успешности запроса",
@@ -2210,7 +2198,7 @@
                     "message": {
                         "description": "Сообщение об ошибке",
                         "type": "string",
-                        "example": "Произошла ошибка при получении данных"
+                        "example": "Произошла ошибка при выполнении операции"
                     }
                 },
                 "type": "object"
@@ -2608,11 +2596,15 @@
     "tags": [
         {
             "name": "Accounts",
-            "description": "Accounts"
+            "description": "Операции для управления аккаунтами ВКонтакте"
+        },
+        {
+            "name": "Tasks",
+            "description": "Операции для управления задачами"
         },
         {
             "name": "Cyclic Tasks",
-            "description": "Cyclic Tasks"
+            "description": "Операции для управления циклическими задачами"
         },
         {
             "name": "Filters",
@@ -2625,10 +2617,6 @@
         {
             "name": "Statistics",
             "description": "Statistics"
-        },
-        {
-            "name": "Tasks",
-            "description": "Tasks"
         }
     ]
 }

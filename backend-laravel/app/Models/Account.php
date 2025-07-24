@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use OpenApi\Attributes as OA;
 
 #[OA\Schema(
-    schema: "Account",
+    schema: "AccountModel",
     description: "Модель аккаунта ВКонтакте",
     properties: [
         new OA\Property(

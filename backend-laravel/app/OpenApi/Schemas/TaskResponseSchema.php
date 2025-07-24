@@ -5,7 +5,7 @@ namespace App\OpenApi\Schemas;
 use OpenApi\Attributes as OA;
 
 #[OA\Schema(
-    schema: self::TASK_INFO_RESPONSE_SCHEMA,
+    schema: 'TaskInfoResponse',
     description: "Ответ с информацией о задаче",
     properties: [
         new OA\Property(
@@ -160,7 +160,7 @@ use OpenApi\Attributes as OA;
 )]
 
 #[OA\Schema(
-    schema: self::ERROR_RESPONSE_SCHEMA,
+    schema: 'TaskErrorResponse',
     description: "Ответ с ошибкой",
     properties: [
         new OA\Property(
@@ -180,7 +180,7 @@ use OpenApi\Attributes as OA;
 )]
 
 #[OA\Schema(
-    schema: self::TASK_SCHEMA,
+    schema: 'Task',
     description: "Модель задачи",
     properties: [
         new OA\Property(
@@ -270,7 +270,7 @@ use OpenApi\Attributes as OA;
 )]
 
 #[OA\Schema(
-    schema: self::PAGINATION_SCHEMA,
+    schema: 'Pagination',
     description: "Модель пагинации",
     properties: [
         new OA\Property(
@@ -283,7 +283,7 @@ use OpenApi\Attributes as OA;
             property: "data",
             description: "Данные на текущей странице",
             type: "array",
-            items: new OA\Items(ref: self::TASK_REF)
+            items: new OA\Items(ref: '#/components/schemas/Task')
         ),
         new OA\Property(
             property: "first_page_url",
@@ -381,7 +381,7 @@ use OpenApi\Attributes as OA;
 )]
 
 #[OA\Schema(
-    schema: self::TASKS_LIST_RESPONSE_SCHEMA,
+    schema: 'TasksListResponse',
     description: "Ответ со списком задач",
     properties: [
         new OA\Property(
@@ -427,7 +427,7 @@ use OpenApi\Attributes as OA;
                 ),
                 new OA\Property(
                     property: "tasks",
-                    ref: self::PAGINATION_REF,
+                    ref: '#/components/schemas/Pagination',
                     description: "Пагинированный список задач"
                 )
             ],
@@ -444,7 +444,7 @@ use OpenApi\Attributes as OA;
 )]
 
 #[OA\Schema(
-    schema: self::DELETE_SUCCESS_RESPONSE_SCHEMA,
+    schema: 'DeleteSuccessResponse',
     description: "Ответ об успешном удалении задач",
     properties: [
         new OA\Property(
@@ -465,17 +465,4 @@ use OpenApi\Attributes as OA;
 
 final class TaskResponseSchema
 {
-    public const string TASK_INFO_RESPONSE_SCHEMA = 'TaskInfoResponse';
-    public const string ERROR_RESPONSE_SCHEMA = 'TaskErrorResponse';
-    public const string TASK_SCHEMA = 'Task';
-    public const string PAGINATION_SCHEMA = 'Pagination';
-    public const string TASKS_LIST_RESPONSE_SCHEMA = 'TasksListResponse';
-    public const string DELETE_SUCCESS_RESPONSE_SCHEMA = 'DeleteSuccessResponse';
-
-    public const string TASK_INFO_RESPONSE_REF = '#/components/schemas/' . self::TASK_INFO_RESPONSE_SCHEMA;
-    public const string ERROR_RESPONSE_REF = '#/components/schemas/' . self::ERROR_RESPONSE_SCHEMA;
-    public const string TASK_REF = '#/components/schemas/' . self::TASK_SCHEMA;
-    public const string PAGINATION_REF = '#/components/schemas/' . self::PAGINATION_SCHEMA;
-    public const string TASKS_LIST_RESPONSE_REF = '#/components/schemas/' . self::TASKS_LIST_RESPONSE_SCHEMA;
-    public const string DELETE_SUCCESS_RESPONSE_REF = '#/components/schemas/' . self::DELETE_SUCCESS_RESPONSE_SCHEMA;
 }

@@ -83,10 +83,9 @@ class VkClientService
 
         return [
             'success'    => true,
-            'data'       => $data->items(), // Извлекаем только массив данных
-            'message'    => 'Список аккаунтов получен'
+            'message'    => 'Список аккаунтов получен',
+            'data'       => $data->items() // Извлекаем только массив данных
         ];
-
     }
 
     /**
@@ -147,7 +146,6 @@ class VkClientService
                 'city',
             ]
         ]);
-
     }
 
     /**

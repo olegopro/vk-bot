@@ -103,17 +103,17 @@ final class TaskController extends Controller
     #[OA\Response(
         response: 200,
         description: 'Успешное получение списка задач',
-        content: new OA\JsonContent(ref: TaskResponseSchema::TASKS_LIST_RESPONSE_REF)
+        content: new OA\JsonContent(ref: '#/components/schemas/TasksListResponse')
     )]
     #[OA\Response(
         response: 400,
         description: 'Неверные параметры запроса',
-        content: new OA\JsonContent(ref: TaskResponseSchema::ERROR_RESPONSE_REF)
+        content: new OA\JsonContent(ref: '#/components/schemas/TaskErrorResponse')
     )]
     #[OA\Response(
         response: 500,
         description: 'Внутренняя ошибка сервера',
-        content: new OA\JsonContent(ref: TaskResponseSchema::ERROR_RESPONSE_REF)
+        content: new OA\JsonContent(ref: '#/components/schemas/TaskErrorResponse')
     )]
     public function getTasksByStatus(Request $request, $status = null, $accountId = null)
     {
@@ -160,17 +160,17 @@ final class TaskController extends Controller
     #[OA\Response(
         response: 200,
         description: 'Успешное получение информации о задаче',
-        content: new OA\JsonContent(ref: TaskResponseSchema::TASK_INFO_RESPONSE_REF)
+        content: new OA\JsonContent(ref: '#/components/schemas/TaskInfoResponse')
     )]
     #[OA\Response(
         response: 404,
         description: 'Задача не найдена',
-        content: new OA\JsonContent(ref: TaskResponseSchema::ERROR_RESPONSE_REF)
+        content: new OA\JsonContent(ref: '#/components/schemas/TaskErrorResponse')
     )]
     #[OA\Response(
         response: 500,
         description: 'Внутренняя ошибка сервера',
-        content: new OA\JsonContent(ref: TaskResponseSchema::ERROR_RESPONSE_REF)
+        content: new OA\JsonContent(ref: '#/components/schemas/TaskErrorResponse')
     )]
     public function getTaskInfo($taskId)
     {
@@ -248,17 +248,17 @@ final class TaskController extends Controller
     #[OA\Response(
         response: 200,
         description: 'Задачи успешно созданы',
-        content: new OA\JsonContent(ref: TaskResponseSchema::TASKS_LIST_RESPONSE_REF)
+        content: new OA\JsonContent(ref: '#/components/schemas/TasksListResponse')
     )]
     #[OA\Response(
         response: 400,
         description: 'Неверные параметры запроса',
-        content: new OA\JsonContent(ref: TaskResponseSchema::ERROR_RESPONSE_REF)
+        content: new OA\JsonContent(ref: '#/components/schemas/TaskErrorResponse')
     )]
     #[OA\Response(
         response: 500,
         description: 'Внутренняя ошибка сервера',
-        content: new OA\JsonContent(ref: TaskResponseSchema::ERROR_RESPONSE_REF)
+        content: new OA\JsonContent(ref: '#/components/schemas/TaskErrorResponse')
     )]
     public function createAndQueueLikeTasksFromNewsfeed(Request $request, $isCyclic = false)
     {
@@ -466,17 +466,17 @@ final class TaskController extends Controller
     #[OA\Response(
         response: 200,
         description: 'Задачи успешно созданы',
-        content: new OA\JsonContent(ref: TaskResponseSchema::TASKS_LIST_RESPONSE_REF)
+        content: new OA\JsonContent(ref: '#/components/schemas/TasksListResponse')
     )]
     #[OA\Response(
         response: 400,
         description: 'Неверные параметры запроса',
-        content: new OA\JsonContent(ref: TaskResponseSchema::ERROR_RESPONSE_REF)
+        content: new OA\JsonContent(ref: '#/components/schemas/TaskErrorResponse')
     )]
     #[OA\Response(
         response: 500,
         description: 'Внутренняя ошибка сервера',
-        content: new OA\JsonContent(ref: TaskResponseSchema::ERROR_RESPONSE_REF)
+        content: new OA\JsonContent(ref: '#/components/schemas/TaskErrorResponse')
     )]
     public function createLikeTasksForUserWallPosts(Request $request)
     {
@@ -572,12 +572,12 @@ final class TaskController extends Controller
     #[OA\Response(
         response: 400,
         description: 'Неверные параметры запроса',
-        content: new OA\JsonContent(ref: TaskResponseSchema::ERROR_RESPONSE_REF)
+        content: new OA\JsonContent(ref: '#/components/schemas/TaskErrorResponse')
     )]
     #[OA\Response(
         response: 500,
         description: 'Внутренняя ошибка сервера',
-        content: new OA\JsonContent(ref: TaskResponseSchema::ERROR_RESPONSE_REF)
+        content: new OA\JsonContent(ref: '#/components/schemas/TaskErrorResponse')
     )]
     public function processAndQueuePendingLikeTasks($token)
     {
@@ -721,12 +721,12 @@ final class TaskController extends Controller
     #[OA\Response(
         response: 400,
         description: 'Неверные параметры запроса',
-        content: new OA\JsonContent(ref: TaskResponseSchema::ERROR_RESPONSE_REF)
+        content: new OA\JsonContent(ref: '#/components/schemas/TaskErrorResponse')
     )]
     #[OA\Response(
         response: 500,
         description: 'Внутренняя ошибка сервера',
-        content: new OA\JsonContent(ref: TaskResponseSchema::ERROR_RESPONSE_REF)
+        content: new OA\JsonContent(ref: '#/components/schemas/TaskErrorResponse')
     )]
     public function createCyclicTask(Request $request)
     {
@@ -801,12 +801,12 @@ final class TaskController extends Controller
     #[OA\Response(
         response: 400,
         description: 'Неверные параметры запроса',
-        content: new OA\JsonContent(ref: TaskResponseSchema::ERROR_RESPONSE_REF)
+        content: new OA\JsonContent(ref: '#/components/schemas/TaskErrorResponse')
     )]
     #[OA\Response(
         response: 500,
         description: 'Внутренняя ошибка сервера',
-        content: new OA\JsonContent(ref: TaskResponseSchema::ERROR_RESPONSE_REF)
+        content: new OA\JsonContent(ref: '#/components/schemas/TaskErrorResponse')
     )]
     public function countTasksByAccountAndStatus($status = null, $accountId = null)
     {
@@ -886,17 +886,17 @@ final class TaskController extends Controller
     #[OA\Response(
         response: 200,
         description: 'Задачи успешно удалены',
-        content: new OA\JsonContent(ref: TaskResponseSchema::DELETE_SUCCESS_RESPONSE_REF)
+        content: new OA\JsonContent(ref: '#/components/schemas/DeleteSuccessResponse')
     )]
     #[OA\Response(
         response: 400,
         description: 'Неверные параметры запроса',
-        content: new OA\JsonContent(ref: TaskResponseSchema::ERROR_RESPONSE_REF)
+        content: new OA\JsonContent(ref: '#/components/schemas/TaskErrorResponse')
     )]
     #[OA\Response(
         response: 500,
         description: 'Внутренняя ошибка сервера',
-        content: new OA\JsonContent(ref: TaskResponseSchema::ERROR_RESPONSE_REF)
+        content: new OA\JsonContent(ref: '#/components/schemas/TaskErrorResponse')
     )]
     public function deleteAllTasks($status = null, $accountId = null)
     {
@@ -933,22 +933,22 @@ final class TaskController extends Controller
     #[OA\Response(
         response: 200,
         description: 'Задача успешно удалена',
-        content: new OA\JsonContent(ref: TaskResponseSchema::DELETE_SUCCESS_RESPONSE_REF)
+        content: new OA\JsonContent(ref: '#/components/schemas/DeleteSuccessResponse')
     )]
     #[OA\Response(
         response: 400,
         description: 'Неверные параметры запроса',
-        content: new OA\JsonContent(ref: TaskResponseSchema::ERROR_RESPONSE_REF)
+        content: new OA\JsonContent(ref: '#/components/schemas/TaskErrorResponse')
     )]
     #[OA\Response(
         response: 404,
         description: 'Задача не найдена',
-        content: new OA\JsonContent(ref: TaskResponseSchema::ERROR_RESPONSE_REF)
+        content: new OA\JsonContent(ref: '#/components/schemas/TaskErrorResponse')
     )]
     #[OA\Response(
         response: 500,
         description: 'Внутренняя ошибка сервера',
-        content: new OA\JsonContent(ref: TaskResponseSchema::ERROR_RESPONSE_REF)
+        content: new OA\JsonContent(ref: '#/components/schemas/TaskErrorResponse')
     )]
     public function deleteTaskById($id)
     {
@@ -1010,12 +1010,12 @@ final class TaskController extends Controller
     #[OA\Response(
         response: 404,
         description: 'Задача не найдена',
-        content: new OA\JsonContent(ref: TaskResponseSchema::ERROR_RESPONSE_REF)
+        content: new OA\JsonContent(ref: '#/components/schemas/TaskErrorResponse')
     )]
     #[OA\Response(
         response: 500,
         description: 'Внутренняя ошибка сервера',
-        content: new OA\JsonContent(ref: TaskResponseSchema::ERROR_RESPONSE_REF)
+        content: new OA\JsonContent(ref: '#/components/schemas/TaskErrorResponse')
     )]
     public function deleteLike($taskId)
     {

@@ -44,12 +44,12 @@ final class AccountController extends Controller
     #[OA\Response(
         response: 200,
         description: 'Успешное получение списка аккаунтов',
-        content: new OA\JsonContent(ref: AccountResponseSchema::ACCOUNT_LIST_RESPONSE_REF)
+        content: new OA\JsonContent(ref: '#/components/schemas/AccountListResponse')
     )]
     #[OA\Response(
         response: 500,
         description: 'Внутренняя ошибка сервера',
-        content: new OA\JsonContent(ref: AccountResponseSchema::ERROR_RESPONSE_REF)
+        content: new OA\JsonContent(ref: '#/components/schemas/BaseErrorResponse')
     )]
     public function fetchAllAccounts()
     {
@@ -195,7 +195,7 @@ final class AccountController extends Controller
                 ),
                 new OA\Property(
                     property: 'data',
-                    ref: Account::class,
+                    ref: '#/components/schemas/AccountModel',
                     description: 'Данные добавленного аккаунта'
                 ),
                 new OA\Property(
@@ -209,14 +209,9 @@ final class AccountController extends Controller
         )
     )]
     #[OA\Response(
-        response: 400,
-        description: 'Ошибка валидации или неверный токен',
-        content: new OA\JsonContent(ref: AccountResponseSchema::ERROR_RESPONSE_REF)
-    )]
-    #[OA\Response(
         response: 500,
         description: 'Внутренняя ошибка сервера',
-        content: new OA\JsonContent(ref: AccountResponseSchema::ERROR_RESPONSE_REF)
+        content: new OA\JsonContent(ref: '#/components/schemas/BaseErrorResponse')
     )]
     public function setAccountData(Request $request)
     {
@@ -289,16 +284,6 @@ final class AccountController extends Controller
             ],
             type: 'object'
         )
-    )]
-    #[OA\Response(
-        response: 404,
-        description: 'Аккаунт не найден',
-        content: new OA\JsonContent(ref: AccountResponseSchema::ERROR_RESPONSE_REF)
-    )]
-    #[OA\Response(
-        response: 500,
-        description: 'Внутренняя ошибка сервера',
-        content: new OA\JsonContent(ref: AccountResponseSchema::ERROR_RESPONSE_REF)
     )]
     public function deleteAccount($id)
     {
