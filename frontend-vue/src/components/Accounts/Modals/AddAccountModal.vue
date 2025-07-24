@@ -2,16 +2,21 @@
   import { ref, getCurrentInstance, watch } from 'vue'
   import { useAccountsStore } from '@/stores/AccountsStore'
   import { useModal } from '@/composables/useModal'
+  import { showSuccessNotification } from '@/helpers/notyfHelper'
 
   const modalId = getCurrentInstance()?.type.__name
   const accountsStore = useAccountsStore()
   const accessToken = ref <string> ('')
-  const disableSubmit = ref<boolean>(true) 
+  const disableSubmit = ref<boolean>(true)
   const { closeModal } = useModal()
 
   const addAccount = () => {
-    accountsStore.addAccount.execute({ accessToken: accessToken.value })
-      .then(() => closeModal(modalId))
+    accountsStore.addAccount.execute({ access_token: accessToken.value })
+      .then(response => {
+        closeModal(modalId)
+        showSuccessNotification(response.message)
+        accountsStore.fetchAccounts.execute()
+      })
       .catch(() => disableSubmit.value = true)
   }
 

@@ -4,6 +4,7 @@
   import { useModal } from '@/composables/useModal'
   import AddAccountModal from '@/components/Accounts/Modals/AddAccountModal.vue'
   import DeleteAccountModal from '@/components/Accounts/Modals/DeleteAccountModal.vue'
+  import { showSuccessNotification } from '@/helpers/notyfHelper'
 
   const { showModal } = useModal()
   const accountsStore = useAccountsStore()
@@ -11,7 +12,8 @@
   const showAddAccount = () => showModal(AddAccountModal)
   const showDeleteAccount = (login: string, id: number) => showModal(DeleteAccountModal, { login, accountId: id })
 
-  onMounted(() => accountsStore.fetchAccounts.execute())
+  onMounted(() => accountsStore.fetchAccounts.execute()
+    .then((response) => showSuccessNotification(response.message)))
 </script>
 
 <template>
@@ -21,14 +23,14 @@
 
       <h6 class="mb-0" style="pointer-events: none">
         <span class="badge btn btn-secondary d-flex items-center fw-bold" style="padding: 8px">
-          <template v-if="accountsStore.fetchAccounts.loading && !accountsStore.accounts.length">
+          <template v-if="accountsStore.fetchAccounts.loading">
             <span class="spinner-border" role="status" style="width: 12px; height: 12px;">
               <span class="visually-hidden">Загрузка...</span>
             </span>
           </template>
 
           <template v-else>
-            <span class="me-1">{{ accountsStore.accounts.length }}</span>
+            <span class="me-1">{{ accountsStore.fetchAccounts.data?.length || 0 }}</span>
           </template>
         </span>
       </h6>
@@ -56,7 +58,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="account in accountsStore.accounts" :key="account.account_id">
+            <tr v-for="account in accountsStore.fetchAccounts.data" :key="account.account_id">
               <th scope="row">ID {{ account.account_id }}</th>
               <td>{{ account.first_name }} {{ account.last_name }}</td>
               <td>{{ account.screen_name }}</td>
@@ -85,7 +87,7 @@
               </td>
             </tr>
 
-            <tr v-if="accountsStore.accounts.length === 0 && !accountsStore.fetchAccounts.loading" class="pe-none">
+            <tr v-if="accountsStore.fetchAccounts.data?.length === 0 && !accountsStore.fetchAccounts.loading" class="pe-none">
               <td colspan="7" style="height: 55px;">
                 Список аккаунтов пуст
               </td>

@@ -2,6 +2,7 @@
   import { defineProps, getCurrentInstance } from 'vue'
   import { useAccountsStore } from '@/stores/AccountsStore'
   import { useModal } from '@/composables/useModal'
+  import { showSuccessNotification } from '@/helpers/notyfHelper'
 
   const modalId = getCurrentInstance()?.type.__name
   const { closeModal } = useModal()
@@ -12,7 +13,11 @@
     accountId: number
   }>()
 
-  const deleteAccount = () => accountsStore.deleteAccount.execute({ accountId }).then(() => closeModal(modalId))
+  const deleteAccount = () => accountsStore.deleteAccount.execute({ accountId }).then(response => {
+    closeModal(modalId)
+    showSuccessNotification(response.message)
+    accountsStore.fetchAccounts.execute()
+  })
 </script>
 
 <template>

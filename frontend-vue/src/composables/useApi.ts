@@ -27,6 +27,7 @@ import { showErrorNotification } from '@/helpers/notyfHelper'
  * console.log(getUserData.loading.value) // состояние загрузки
  * ```
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export default <T, D extends ApiResponseWrapper<any>>(
   apiFunction: (parameters?: T) => Promise<D>
 ) => {
@@ -59,7 +60,7 @@ export default <T, D extends ApiResponseWrapper<any>>(
       const response = await apiFunction(parameters)
 
       // Сохраняем полученные данные в реактивное состояние
-      data.value = response.data
+      data.value = response?.data
 
       // Возвращаем ответ для случаев, когда нужен доступ к полному response
       // (например, для получения headers, status кода и т.д.)
