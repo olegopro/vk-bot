@@ -3,6 +3,7 @@ import { ref, computed } from 'vue'
 import axios from '@/helpers/axiosConfig'
 import { showErrorNotification, showSuccessNotification } from '@/helpers/notyfHelper'
 import useApi from '@/composables/useApi'
+import { Nullable } from '@/types'
 import {
   Task,
   TaskDetails,
@@ -18,14 +19,14 @@ import {
 
 export const useTasksStore = defineStore('tasks', () => {
   const tasks = ref<Task[]>([])
-  const totalTasksCount = ref<number | null>(null)
-  const totalTasksQueued = ref<number | null>(null)
-  const totalTasksFailed = ref<number | null>(null)
-  const totalTasksDone = ref<number | null>(null)
-  const taskCountByStatus = ref<TaskStatuses | null>(null)
+  const totalTasksCount = ref<Nullable<number>>(null)
+  const totalTasksQueued = ref<Nullable<number>>(null)
+  const totalTasksFailed = ref<Nullable<number>>(null)
+  const totalTasksDone = ref<Nullable<number>>(null)
+  const taskCountByStatus = ref<Nullable<TaskStatuses>>(null)
   const isLoading = ref<boolean>(false)
-  const isTaskDetailsLoading = ref<number | null>(null)
-  const taskDetails = ref<TaskDetails | null>(null)
+  const isTaskDetailsLoading = ref<Nullable<number>>(null)
+  const taskDetails = ref<Nullable<TaskDetails>>(null)
 
   /**
    * Получает список задач
@@ -50,9 +51,7 @@ export const useTasksStore = defineStore('tasks', () => {
 
         return response.data
       })
-      .finally(() => {
-        isLoading.value = false
-      })
+      .finally(() => isLoading.value = false)
   })
 
   /**

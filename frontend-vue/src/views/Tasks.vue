@@ -82,26 +82,6 @@
     tasksStore.fetchTasks.execute({ status: status as TaskStatus, accountId })
   }
 
-  const totalTasksByStatus = computed(() => {
-    // текущий статус задачи, полученный из параметров роута
-    const status = currentStatus.value
-
-    // Возвращаем значение в зависимости от статуса
-    switch (status) {
-      case 'queued':
-        return tasksStore.totalTasksQueued
-
-      case 'failed':
-        return tasksStore.totalTasksFailed
-
-      case 'done':
-        return tasksStore.totalTasksDone
-
-      default:
-        return tasksStore.totalTasksCount
-    }
-  })
-
   const showAccountDetailsModal = (accountId: number, ownerId: number, taskId: number | null) => {
     accountStore.fetchOwnerData.execute({ accountId, ownerId, taskId })
       .then(() => {
@@ -196,7 +176,7 @@
                     </template>
 
                     <template v-else>
-                      <span class="me-1">{{ totalTasksByStatus ? totalTasksByStatus : 0 }}</span> / <span class="ms-1">{{ tasksStore.tasks.length }}</span>
+                      <span>{{ tasksStore.tasks.length }}</span>
                     </template>
                   </span>
                 </h6>
