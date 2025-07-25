@@ -1,68 +1,41 @@
 <script setup lang="ts">
   import { useRoute, useRouter } from 'vue-router'
-  import { onMounted, onUnmounted, ref, watch, computed } from 'vue'
+  import { onMounted, ref, watch, computed } from 'vue'
   import { useTasksStore } from '@/stores/TasksStore'
   import { useAccountStore } from '@/stores/AccountStore'
   import { useAccountsStore } from '@/stores/AccountsStore'
   import { showErrorNotification } from '@/helpers/notyfHelper'
   import { useModal } from '@/composables/useModal'
-  import { debounce } from 'lodash'
   import AddTask from '../components/Tasks/Modals/AddTask.vue'
   import TableThread from '../components/Tasks/TableThread.vue'
   import AccountDetailsModal from '../components/Tasks/Modals/AccountDetailsModal.vue'
-  import DeleteTaskModal from '../components/Tasks/Modals/DeleteTaskModal.vue'
   import DeleteAllTasksModal from '../components/Tasks/Modals/DeleteAllTasksModal.vue'
+  import { TaskStatus } from '@/models/TaskModel'
 
   const tasksStore = useTasksStore()
   const accountsStore = useAccountsStore()
   const accountStore = useAccountStore()
   const route = useRoute()
   const router = useRouter()
-  const observer = ref(null)
-  const perfectScrollbarRef = ref(null)
+  const perfectScrollbarRef = ref<any>(null)
   const { showModal } = useModal()
 
-  const taskId = ref(0)
-  const currentPage = ref(1)
-
-  const currentStatus = ref<string>(route.params.status as string || '')
+  const currentStatus = ref<TaskStatus>(route.params.status as TaskStatus || '')
   const selectedAccountId = ref<string>(route.params.accountId as string || '')
 
   const accountDetailsData = ref<object>({})
 
-  watch(() => tasksStore.tasks.length, newLength => {
-    if (newLength > 0 && !observer.value) {
-      observer.value = new IntersectionObserver(entries =>
-        entries.forEach(entry => {
-          if (
-            entry.isIntersecting &&
-            totalTasksByStatus.value !== tasksStore.tasks.length
-          ) {
-            debouncedFetchTasks(currentStatus.value, selectedAccountId.value, currentPage.value)
-          }
-        }))
-
-      observer.value.observe(document.querySelector('.load-more-trigger'))
-    }
-  }, { immediate: false })
-
   // Следим за изменениями статуса и ID аккаунта
   watch([currentStatus, selectedAccountId], () => {
-    // Сброс currentPage на 1 перед загрузкой новых данных
-    debouncedFetchTasks(currentStatus.value, selectedAccountId.value, currentPage.value = 1)
+    tasksStore.fetchTasks.execute({ status: currentStatus.value, accountId: selectedAccountId.value })
   })
 
   watch(route, () => {
-    tasksStore.tasks = []
     processRouteParams()
-    perfectScrollbarRef.value.$el.scrollTop = 0
-  })
 
-  const debouncedFetchTasks = debounce((status, accountId, page = 1) => {
-    tasksStore.fetchTasks.execute({ status, accountId, page }).then(() => currentPage.value++)
-  }, 500, {
-    leading: true, // Вызываться в начале периода ожидания
-    trailing: false // Дополнительный вызов в конце периода не требуется
+    if (perfectScrollbarRef.value) {
+      perfectScrollbarRef.value.$el.scrollTop = 0
+    }
   })
 
   const processRouteParams = () => {
@@ -73,16 +46,16 @@
     if (params.status) {
       // Если параметр status присутствует, проверяем, является ли он числом и больше ли он нуля.
       // Эта проверка необходима, чтобы определить, относится ли параметр к идентификатору аккаунта.
-      if (!isNaN(params.status) && parseInt(params.status) > 0) {
+      if (!isNaN(Number(params.status)) && parseInt(params.status as TaskStatus) > 0) {
         // Если условие выполняется, значит, параметр status является идентификатором аккаунта.
         // Устанавливаем его значение в selectedAccountId компонента.
-        selectedAccountId.value = params.status
+        selectedAccountId.value = params.status as TaskStatus
         // Так как status использовался для accountId, сбрасываем currentStatus.
         currentStatus.value = '' // Сброс, указывая, что это ID аккаунта, а не статус.
       } else {
         // Если status не является числом или не больше нуля, то предполагаем, что это статус задачи.
         // Устанавливаем его значение в currentStatus компонента.
-        currentStatus.value = params.status
+        currentStatus.value = params.status as TaskStatus
       }
     }
 
@@ -91,7 +64,7 @@
     if (params.accountId) {
       // Если параметр accountId присутствует, устанавливаем его значение в selectedAccountId компонента.
       // Это позволяет явно выбрать аккаунт, не полагаясь на проверку status.
-      selectedAccountId.value = params.accountId
+      selectedAccountId.value = params.accountId as string
     }
   }
 
@@ -99,14 +72,14 @@
     const status = event.target.value || ''
     const accountId = selectedAccountId.value || ''
     router.push({ name: 'Tasks', params: { status, accountId } })
-    debouncedFetchTasks(status, accountId)
+    tasksStore.fetchTasks.execute({ status: status as TaskStatus, accountId })
   }
 
   const filterByAccount = () => {
     const status = currentStatus.value || ''
     const accountId = selectedAccountId.value || ''
     router.push({ name: 'Tasks', params: { status, accountId } })
-    debouncedFetchTasks(status, accountId)
+    tasksStore.fetchTasks.execute({ status: status as TaskStatus, accountId })
   }
 
   const totalTasksByStatus = computed(() => {
@@ -130,9 +103,7 @@
   })
 
   const showAccountDetailsModal = (accountId: number, ownerId: number, taskId: number | null) => {
-    console.log(accountId)
-
-    accountStore.fetchOwnerData(accountId, ownerId, taskId)
+    accountStore.fetchOwnerData.execute({ accountId, ownerId, taskId })
       .then(() => {
         const ownerData = accountStore.getOwnerDataById(ownerId)
         accountDetailsData.value = { ...ownerData }
@@ -142,35 +113,27 @@
       .catch(error => showErrorNotification(error.response.data.message))
   }
 
-  const showDeleteTaskModal = (id) => {
-    taskId.value = id
-    modalComponent.value = preparedModal(DeleteTaskModal)
-    showModal('deleteTaskModal')
-  }
-
   const showDeleteAllTasksModal = () => {
     showModal(DeleteAllTasksModal, {
       selectedTasksStatus: currentStatus.value,
       selectedAccountId: selectedAccountId.value
     })
 
-    tasksStore.getTasksCountByStatus(currentStatus.value, selectedAccountId.value)
+    tasksStore.getTasksCountByStatus.execute({
+      status: currentStatus.value as any,
+      accountId: selectedAccountId.value
+    })
   }
 
   onMounted(() => {
-    tasksStore.tasks = []
-    debouncedFetchTasks(currentStatus.value, selectedAccountId.value, currentPage.value)
-
     processRouteParams()
+    tasksStore.fetchTasks.execute({ status: currentStatus.value as any, accountId: selectedAccountId.value })
     accountsStore.fetchAccounts.execute()
-  })
-
-  onUnmounted(() => {
-    if (observer.value) observer.value.disconnect()
   })
 </script>
 
 <template>
+  route.params.status -- {{ route.params.status }}
   <div class="row mb-3 align-items-center">
     <div class="col d-flex align-items-center">
       <h1 class="h2 mb-0 position-relative">
@@ -192,10 +155,10 @@
       </select>
 
       <select class="form-select me-3" style="width: 280px" @change="filterByAccount" v-model="selectedAccountId">
-        <option value="" :disabled="accountsStore.accounts.length === 0">Все аккаунты</option>
+        <option value="" :disabled="accountsStore.fetchAccounts.data?.length === 0">Все аккаунты</option>
 
-        <option :value="selectedAccountId" v-if="accountsStore.accounts.length === 0 && accountsStore.isLoading" disabled>Загрузка...</option>
-        <option v-else v-for="account in accountsStore.accounts" :key="account.id" :value="account.account_id">
+        <option :value="selectedAccountId" v-if="accountsStore.accounts.length === 0 && accountsStore.fetchAccounts.loading" disabled>Загрузка...</option>
+        <option v-else v-for="account in accountsStore.fetchAccounts.data" :key="account.account_id" :value="account.account_id">
           {{ account.screen_name }} ({{ account.first_name }} {{ account.last_name }})
         </option>
       </select>
@@ -252,7 +215,6 @@
               v-for="task in tasksStore.tasks"
               :task="task"
               :key="task.id"
-              :showDeleteTaskModal="showDeleteTaskModal"
               :showAccountDetailsModal="showAccountDetailsModal"
             />
 
@@ -269,28 +231,9 @@
                 Список задач пуст
               </td>
             </tr>
-
-            <tr class="load-more-trigger">
-              <td colspan="7" class="visually-hidden">
-                <span>Загрузка...</span>
-              </td>
-            </tr>
           </tbody>
         </table>
       </PerfectScrollbar>
     </div>
   </div>
-
-  <!--<Teleport to="body">
-    <component v-if="isOpen"
-      @mounted="showModal"
-      :is="modalComponent"
-      :taskId="taskId"
-      :selectedTasksStatus="currentStatus"
-      :selectedAccountId="selectedAccountId"
-      :taskData="taskDetailsData"
-      :accountData="accountDetailsData"
-    />
-  </Teleport>-->
-
 </template>

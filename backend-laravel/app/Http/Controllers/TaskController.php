@@ -117,15 +117,13 @@ final class TaskController extends Controller
     )]
     public function getTasksByStatus(Request $request, $status = null, $accountId = null)
     {
-        $perPage = (int) $request->query('perPage', 30);
-
         // Проверяем, является ли первый параметр числом (accountId)
         if (is_numeric($status)) {
             $accountId = $status;
             $status = null;
         }
 
-        $tasks = $this->taskRepository->getTasksByStatus($status, $accountId, $perPage);
+        $tasks = $this->taskRepository->getTasksByStatus($status, $accountId, null);
 
         return response()->json([
             'success' => true,
@@ -701,7 +699,6 @@ final class TaskController extends Controller
                 new OA\Property(property: 'success', type: 'boolean', example: true),
                 new OA\Property(
                     property: 'data',
-                    type: 'object',
                     properties: [
                         new OA\Property(property: 'id', type: 'integer', example: 1),
                         new OA\Property(property: 'account_id', type: 'integer', example: 9121607),
@@ -712,7 +709,8 @@ final class TaskController extends Controller
                         new OA\Property(property: 'likes_distribution', type: 'string', example: '[5,15,25,35,45,55]'),
                         new OA\Property(property: 'selected_times', type: 'string', example: '9-18'),
                         new OA\Property(property: 'started_at', type: 'string', format: 'date-time')
-                    ]
+                    ],
+                    type: 'object'
                 ),
                 new OA\Property(property: 'message', type: 'string', example: 'Задача на постановку лайков запланирована.')
             ]

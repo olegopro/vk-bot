@@ -5,8 +5,7 @@
   import { useTasksStore } from '@/stores/TasksStore'
   import { useAccountStore } from '@/stores/AccountStore'
   import { useModal } from '../../composables/useModal'
-  import { showErrorNotification } from '@/helpers/notyfHelper'
-  import deleteTaskModal from './Modals/DeleteTaskModal.vue'
+  import DeleteTaskModal from './Modals/DeleteTaskModal.vue'
   import TaskDetailsModal from './Modals/TaskDetailsModal.vue'
 
   const props = defineProps({
@@ -23,9 +22,8 @@
   const dateFormat = (date) => format(new Date(date), 'yyyy-MM-dd HH:mm:ss')
 
   const showTaskDetailsModal = (taskId) => {
-    tasksStore.fetchTaskDetails(taskId)
+    tasksStore.fetchTaskDetails.execute({ taskId })
       .then(() => showModal(TaskDetailsModal, { taskId }))
-      .catch(error => showErrorNotification(error.response.data.message))
   }
 </script>
 
@@ -61,7 +59,7 @@
 
       </button>
 
-      <button class="btn btn-danger button-style" @click="showModal(deleteTaskModal, {taskId: task.id})">
+      <button class="btn btn-danger button-style" @click="showModal(DeleteTaskModal, { taskId: task.id })">
         <i class="bi bi-trash3" />
       </button>
     </td>

@@ -61,8 +61,12 @@ class TaskRepository implements TaskRepositoryInterface
             $query->where('account_id', $accountId);
         }
 
-        // Вместо возвращения null для 'tasks', возвращаем пагинированный список задач
-        $result['tasks'] = $query->paginate($perPage);
+        // Если perPage = null, получаем все задачи, иначе используем пагинацию
+        if ($perPage === null) {
+            $result['tasks'] = collect(['data' => $query->get()]);
+        } else {
+            $result['tasks'] = $query->paginate($perPage);
+        }
 
         return $result;
     }

@@ -26,74 +26,28 @@ export const useTasksStore = defineStore('tasks', () => {
   const isLoading = ref<boolean>(false)
   const isTaskDetailsLoading = ref<number | null>(null)
   const taskDetails = ref<TaskDetails | null>(null)
-  const tasksPerPage = ref<number>(30)
-  const deletedTasksCount = ref<number>(0)
 
   /**
-   * Получает список задач с пагинацией и фильтрацией
+   * Получает список задач
    */
   const fetchTasks = useApi(async (parameters?: {
     status?: TaskStatus
     accountId?: string | number
-    page?: number
   }) => {
-    const { status = '', accountId = '', page = 1 } = parameters || {}
-    
-    isLoading.value = true
+    const { status = '', accountId = '' } = parameters || {}
 
-    // Инициализируем переменную effectivePerPage значением tasksPerPage
-    let effectivePerPage = tasksPerPage.value
-
-    let totalTasksCountByStatus = 0
-    switch (status) {
-      case 'done':
-        totalTasksCountByStatus = totalTasksDone.value ?? 0
-        break
-      case 'failed':
-        totalTasksCountByStatus = totalTasksFailed.value ?? 0
-        break
-      case 'queued':
-        totalTasksCountByStatus = totalTasksQueued.value ?? 0
-        break
-      default:
-        totalTasksCountByStatus = totalTasksCount.value ?? 0
-    }
-
-    // Вычисляем adjustedTotal, добавляя к totalTasksCountByStatus количество удаленных задач
-    const adjustedTotal = totalTasksCountByStatus + deletedTasksCount.value
-
-    // Рассчитываем общее количество страниц
-    const totalPages = Math.ceil(adjustedTotal / tasksPerPage.value)
-
-    // Корректируем effectivePerPage для пагинации с учетом удаленных задач
-    if (page > 1) {
-      if (page < totalPages) {
-        effectivePerPage += deletedTasksCount.value
-      } else {
-        const tasksLeftForLastPage = adjustedTotal - (tasksPerPage.value * (page - 1))
-        if (deletedTasksCount.value > 0) {
-          effectivePerPage = Math.min(tasksLeftForLastPage, effectivePerPage + deletedTasksCount.value)
-        }
-      }
-    }
-
-    const url = `tasks${status ? `/${status}` : ''}${accountId ? `/${accountId}` : ''}?page=${page}&perPage=${effectivePerPage}`
+    const url = `tasks${status ? `/${status}` : ''}${accountId ? `/${accountId}` : ''}`
 
     return axios.get<TasksListResponse>(url)
       .then(response => {
-        if (page === 1) {
-          tasks.value = response.data.data.tasks.data
-          totalTasksCount.value = response.data.data.total
-          totalTasksFailed.value = response.data.data.statuses.failed
-          totalTasksQueued.value = response.data.data.statuses.queued
-          totalTasksDone.value = response.data.data.statuses.done
-        } else {
-          tasks.value = [...tasks.value, ...response.data.data.tasks.data]
-        }
+        tasks.value = response.data.data.tasks.data
+        totalTasksCount.value = response.data.data.total
+        totalTasksFailed.value = response.data.data.statuses.failed
+        totalTasksQueued.value = response.data.data.statuses.queued
+        totalTasksDone.value = response.data.data.statuses.done
 
-        deletedTasksCount.value = 0
         showSuccessNotification(response.data.message)
-        
+
         return response.data
       })
       .finally(() => {
@@ -106,9 +60,9 @@ export const useTasksStore = defineStore('tasks', () => {
    */
   const fetchTaskDetails = useApi(async (parameters?: { taskId: number }) => {
     if (!parameters) throw new Error('Не указан ID задачи')
-    
+
     isTaskDetailsLoading.value = parameters.taskId
-    
+
     return axios.get<TaskDetailsResponse>(`tasks/task-info/${parameters.taskId}`)
       .then(response => {
         taskDetails.value = response.data.data
@@ -133,7 +87,7 @@ export const useTasksStore = defineStore('tasks', () => {
       .then(response => {
         taskCountByStatus.value = response.data.data
         showSuccessNotification(response.data.message)
-        
+
         return response.data
       })
       .catch(error => {
@@ -147,7 +101,7 @@ export const useTasksStore = defineStore('tasks', () => {
    */
   const deleteLike = useApi(async (parameters?: { taskId: number }) => {
     if (!parameters) throw new Error('Не указан ID задачи')
-    
+
     return axios.delete<DeleteLikeResponse>(`tasks/delete-like/${parameters.taskId}`)
       .then(async response => {
         await fetchTaskDetails.execute({ taskId: parameters.taskId })
@@ -163,44 +117,14 @@ export const useTasksStore = defineStore('tasks', () => {
   /**
    * Удаляет задачу по ID
    */
-  const deleteTask = useApi(async (parameters?: { id: number }) => {
+  const deleteTask = useApi(async (parameters?: { id: number, }) => {
     if (!parameters) throw new Error('Не указан ID задачи')
-    
+
     return axios.delete<DeleteTaskResponse>(`tasks/delete-task-by-id/${parameters.id}`)
-      .then(response => {
-        const task = tasks.value.find(task => task.id === parameters.id)
-
-        // Удаляем задачу из списка задач
-        const index = tasks.value.findIndex(task => task.id === parameters.id)
-        if (index !== -1) tasks.value.splice(index, 1)
-
-        // Уменьшаем общий счетчик задач
-        totalTasksCount.value = totalTasksCount.value && totalTasksCount.value > 0 ? totalTasksCount.value - 1 : 0
-
-        // Обновляем счетчики по статусам задач
-        if (task) {
-          switch (task.status) {
-            case 'failed':
-              totalTasksFailed.value = totalTasksFailed.value && totalTasksFailed.value > 0 ? totalTasksFailed.value - 1 : 0
-              break
-            case 'queued':
-              totalTasksQueued.value = totalTasksQueued.value && totalTasksQueued.value > 0 ? totalTasksQueued.value - 1 : 0
-              break
-            case 'done':
-              totalTasksDone.value = totalTasksDone.value && totalTasksDone.value > 0 ? totalTasksDone.value - 1 : 0
-              break
-          }
-        }
-
-        // Увеличиваем счетчик удаленных задач
-        deletedTasksCount.value++
-
+      .then(async response => {
         showSuccessNotification(response.data.message)
+
         return response.data
-      })
-      .catch(error => {
-        showErrorNotification((error as Error)?.message || 'Произошла ошибка при удалении задачи')
-        throw error
       })
   })
 
@@ -209,7 +133,7 @@ export const useTasksStore = defineStore('tasks', () => {
    */
   const deleteSingleTaskById = useApi(async (parameters?: { id: number }) => {
     if (!parameters) throw new Error('Не указан ID задачи')
-    
+
     return axios.delete<DeleteTaskResponse>(`tasks/delete-task-by-id/${parameters.id}`)
       .then(response => {
         tasks.value = tasks.value.filter(task => task.id !== parameters.id)
@@ -225,7 +149,7 @@ export const useTasksStore = defineStore('tasks', () => {
     accountId?: string | number
   }) => {
     const { status, accountId } = parameters || {}
-    
+
     // Проверяем, определены ли параметры status и accountId
     const statusPart = status ? `/${status}` : '/null'
     const accountIdPart = accountId ? `/${accountId}` : ''
@@ -235,7 +159,7 @@ export const useTasksStore = defineStore('tasks', () => {
     return axios.delete<DeleteTaskResponse>(url)
       .then(response => {
         tasks.value = []
-        
+
         // Обновляем счетчики
         if (status) {
           switch (status) {
@@ -255,7 +179,7 @@ export const useTasksStore = defineStore('tasks', () => {
           totalTasksQueued.value = 0
           totalTasksDone.value = 0
         }
-        
+
         showSuccessNotification(response.data.message)
         return response.data
       })
@@ -340,9 +264,7 @@ export const useTasksStore = defineStore('tasks', () => {
     isLoading,
     isTaskDetailsLoading,
     taskDetails,
-    tasksPerPage,
-    deletedTasksCount,
-    
+
     // Actions
     fetchTasks,
     fetchTaskDetails,
@@ -354,7 +276,7 @@ export const useTasksStore = defineStore('tasks', () => {
     createAndQueueLikeTasksFromNewsfeed,
     processAndQueuePendingLikeTasks,
     createLikeTasksForUserWallPosts,
-    
+
     // Getters
     getTaskById,
     isUserLiked
