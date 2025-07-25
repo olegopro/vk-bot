@@ -15,7 +15,7 @@ export const useAccountsStore = defineStore('accounts', () => {
    * Получает все аккаунты ВКонтакте
    */
   const fetchAccounts = useApi(async () => {
-    return (await axios.get<ApiResponseWrapper<AddAccountResponse[]>>('account/all-accounts')).data
+    return (await axios.get<ApiResponseWrapper<AddAccountResponse[]>>('accounts/all-accounts')).data
   })
 
   /**
@@ -23,7 +23,7 @@ export const useAccountsStore = defineStore('accounts', () => {
    */
   const addAccount = useApi(async (parameters?: AddAccountRequest) => {
     if (!parameters) throw new Error('Не указан токен доступа')
-    return (await axios.post<ApiResponseWrapper<AddAccountResponse>>('account/add', { access_token: parameters.access_token })).data
+    return (await axios.post<ApiResponseWrapper<AddAccountResponse>>('accounts/add-account', { access_token: parameters.access_token })).data
   })
 
   /**
@@ -31,7 +31,7 @@ export const useAccountsStore = defineStore('accounts', () => {
    */
   const deleteAccount = useApi(async (parameters?: { accountId: number }) => {
     if (!parameters) throw new Error('Не указан ID аккаунта')
-    return (await axios.delete<ApiResponseWrapper<null>>(`account/delete-account/${parameters.accountId}`)).data
+    return (await axios.delete<ApiResponseWrapper<null>>(`accounts/delete-account/${parameters.accountId}`)).data
   })
 
   return {

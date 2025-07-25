@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AccountController;
+use App\Http\Controllers\AccountsController;
 use App\Http\Controllers\CyclicTaskController;
 use App\Http\Controllers\FilterController;
 use App\Http\Controllers\SettingsController;
@@ -41,16 +42,19 @@ Route::prefix('cyclic-tasks')->group(function() {
     Route::delete('/{taskId}', [CyclicTaskController::class, 'deleteCyclicTask']);
 });
 
+Route::prefix('accounts')->group(function() {
+    Route::get('/all-accounts', [AccountsController::class, 'fetchAllAccounts']);
+    Route::post('/add-account', [AccountsController::class, 'setAccountData']);
+    Route::delete('/delete-account/{id}', [AccountsController::class, 'deleteAccount']);
+});
+
 Route::prefix('account')->group(function() {
-    Route::get('/all-accounts', [AccountController::class, 'fetchAllAccounts']);
     Route::get('/data/{id}', [AccountController::class, 'fetchAccountData']);
     Route::get('/followers/{id}', [AccountController::class, 'fetchAccountFollowers']);
     Route::get('/friends/{id}', [AccountController::class, 'fetchAccountFriends']);
     Route::get('/friends/count/{accountId}/{ownerId?}', [AccountController::class, 'fetchAccountCountFriends']);
-    Route::post('/add', [AccountController::class, 'setAccountData']);
     Route::post('/newsfeed', [AccountController::class, 'fetchAccountNewsfeed']);
     Route::post('/like', [AccountController::class, 'addLike']);
-    Route::delete('/delete-account/{id}', [AccountController::class, 'deleteAccount']);
 });
 
 Route::prefix('filters')->group(function() {

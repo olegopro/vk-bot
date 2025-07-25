@@ -12,14 +12,14 @@
         }
     ],
     "paths": {
-        "/account/all-accounts": {
+        "/accounts/all-accounts": {
             "get": {
                 "tags": [
                     "Accounts"
                 ],
                 "summary": "Получить все аккаунты ВКонтакте",
                 "description": "Возвращает список всех добавленных аккаунтов ВКонтакте с их основной информацией",
-                "operationId": "a38e4dcfd39c7cb857f35835d8828cf3",
+                "operationId": "9e25fb3fe679b8fc20eede1939b3ec7a",
                 "responses": {
                     "200": {
                         "description": "Успешное получение списка аккаунтов",
@@ -44,14 +44,14 @@
                 }
             }
         },
-        "/account/add": {
+        "/accounts/add": {
             "post": {
                 "tags": [
                     "Accounts"
                 ],
                 "summary": "Добавить аккаунт ВКонтакте",
                 "description": "Устанавливает и сохраняет данные аккаунта ВКонтакте по токену доступа",
-                "operationId": "0793d7723b0afa23c719eb96280e723a",
+                "operationId": "ea80e9e0d91235badfeb4a8d7283d6b4",
                 "requestBody": {
                     "description": "Данные для добавления аккаунта",
                     "required": true,
@@ -109,14 +109,14 @@
                 }
             }
         },
-        "/account/delete-account/{id}": {
+        "/accounts/delete-account/{id}": {
             "delete": {
                 "tags": [
                     "Accounts"
                 ],
                 "summary": "Удалить аккаунт ВКонтакте",
                 "description": "Удаляет аккаунт ВКонтакте из системы по его идентификатору",
-                "operationId": "8a240ae09e9b3403423f708c165c5db9",
+                "operationId": "31a2a453d0a5148bec71817551db5d5c",
                 "parameters": [
                     {
                         "name": "id",
