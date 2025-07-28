@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { computed, defineProps, getCurrentInstance} from 'vue'
+  import { computed, defineProps, getCurrentInstance } from 'vue'
   import { useModal } from '@/composables/useModal'
   import OnlineStatus from '@/components/Account/OnlineStatus.vue'
 

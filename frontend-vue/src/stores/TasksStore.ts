@@ -13,16 +13,11 @@ import {
   TaskCountByStatusResponse,
   DeleteTaskResponse,
   DeleteLikeResponse,
-  CreateTasksRequest,
   TaskStatus
 } from '@/models/TaskModel'
 
 export const useTasksStore = defineStore('tasks', () => {
   const tasks = ref<Task[]>([])
-  const totalTasksCount = ref<Nullable<number>>(null)
-  const totalTasksQueued = ref<Nullable<number>>(null)
-  const totalTasksFailed = ref<Nullable<number>>(null)
-  const totalTasksDone = ref<Nullable<number>>(null)
   const taskCountByStatus = ref<Nullable<TaskStatuses>>(null)
   const isLoading = ref<boolean>(false)
   const isTaskDetailsLoading = ref<Nullable<number>>(null)
@@ -42,13 +37,7 @@ export const useTasksStore = defineStore('tasks', () => {
     return axios.get<TasksListResponse>(url)
       .then(response => {
         tasks.value = response.data.data.tasks.data
-        totalTasksCount.value = response.data.data.total
-        totalTasksFailed.value = response.data.data.statuses.failed
-        totalTasksQueued.value = response.data.data.statuses.queued
-        totalTasksDone.value = response.data.data.statuses.done
-
         showSuccessNotification(response.data.message)
-
         return response.data
       })
       .finally(() => isLoading.value = false)
@@ -225,10 +214,6 @@ export const useTasksStore = defineStore('tasks', () => {
   return {
     // State
     tasks,
-    totalTasksCount,
-    totalTasksQueued,
-    totalTasksFailed,
-    totalTasksDone,
     taskCountByStatus,
     isLoading,
     isTaskDetailsLoading,

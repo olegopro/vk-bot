@@ -50,12 +50,6 @@ export type DeleteTaskResponse = ApiResponseWrapper<null>
 
 export type DeleteLikeResponse = ApiResponseWrapper<null>
 
-export interface CreateTasksRequest {
-  account_id?: number
-  user_ids?: number[]
-  count?: number
-}
-
 export interface CreateCyclicTaskRequest {
   account_id: number
   interval_minutes: number
