@@ -34,13 +34,7 @@ export const useTasksStore = defineStore('tasks', () => {
 
     const url = `tasks${status ? `/${status}` : ''}${accountId ? `/${accountId}` : ''}`
 
-    return axios.get<TasksListResponse>(url)
-      .then(response => {
-        tasks.value = response.data.data.tasks.data
-        showSuccessNotification(response.data.message)
-        return response.data
-      })
-      .finally(() => isLoading.value = false)
+    return (await axios.get<TasksListResponse>(url)).data
   })
 
   /**

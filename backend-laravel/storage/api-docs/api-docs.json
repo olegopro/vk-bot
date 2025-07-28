@@ -1309,7 +1309,7 @@
                     "Tasks"
                 ],
                 "summary": "Получить список задач",
-                "description": "Получает список задач с возможностью фильтрации по статусу и ID аккаунта. Поддерживает пагинацию и возвращает статистику по статусам задач.",
+                "description": "Получает список задач с возможностью фильтрации по статусу и ID аккаунта. Возвращает статистику по статусам задач и полный список задач.",
                 "operationId": "a138c77953221a911eddc63ebc0175a8",
                 "parameters": [
                     {
@@ -1336,31 +1336,6 @@
                             "type": "integer",
                             "example": 9121607
                         }
-                    },
-                    {
-                        "name": "page",
-                        "in": "query",
-                        "description": "Номер страницы для пагинации",
-                        "required": false,
-                        "schema": {
-                            "type": "integer",
-                            "default": 1,
-                            "minimum": 1,
-                            "example": 1
-                        }
-                    },
-                    {
-                        "name": "perPage",
-                        "in": "query",
-                        "description": "Количество элементов на странице",
-                        "required": false,
-                        "schema": {
-                            "type": "integer",
-                            "default": 30,
-                            "maximum": 100,
-                            "minimum": 1,
-                            "example": 30
-                        }
                     }
                 ],
                 "responses": {
@@ -1369,7 +1344,111 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/TasksListResponse"
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "total": {
+                                                    "type": "integer",
+                                                    "example": 9
+                                                },
+                                                "statuses": {
+                                                    "properties": {
+                                                        "failed": {
+                                                            "type": "integer",
+                                                            "example": 0
+                                                        },
+                                                        "queued": {
+                                                            "type": "integer",
+                                                            "example": 0
+                                                        },
+                                                        "done": {
+                                                            "type": "integer",
+                                                            "example": 9
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                },
+                                                "tasks": {
+                                                    "properties": {
+                                                        "data": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "properties": {
+                                                                    "id": {
+                                                                        "type": "integer",
+                                                                        "example": 2
+                                                                    },
+                                                                    "job_id": {
+                                                                        "type": "integer",
+                                                                        "example": 2
+                                                                    },
+                                                                    "account_id": {
+                                                                        "type": "integer",
+                                                                        "example": 9121607
+                                                                    },
+                                                                    "owner_id": {
+                                                                        "type": "integer",
+                                                                        "example": 23391605
+                                                                    },
+                                                                    "first_name": {
+                                                                        "type": "string",
+                                                                        "example": "Марина"
+                                                                    },
+                                                                    "last_name": {
+                                                                        "type": "string",
+                                                                        "example": "Цепелина"
+                                                                    },
+                                                                    "item_id": {
+                                                                        "type": "integer",
+                                                                        "example": 7366
+                                                                    },
+                                                                    "error_message": {
+                                                                        "type": "string",
+                                                                        "example": null,
+                                                                        "nullable": true
+                                                                    },
+                                                                    "status": {
+                                                                        "type": "string",
+                                                                        "example": "done"
+                                                                    },
+                                                                    "is_cyclic": {
+                                                                        "type": "integer",
+                                                                        "example": 0
+                                                                    },
+                                                                    "run_at": {
+                                                                        "type": "string",
+                                                                        "example": "2025-07-28 15:45:14"
+                                                                    },
+                                                                    "created_at": {
+                                                                        "type": "string",
+                                                                        "format": "date-time",
+                                                                        "example": "2025-07-28T12:43:08.000000Z"
+                                                                    },
+                                                                    "updated_at": {
+                                                                        "type": "string",
+                                                                        "format": "date-time",
+                                                                        "example": "2025-07-28T12:45:16.000000Z"
+                                                                    }
+                                                                },
+                                                                "type": "object"
+                                                            }
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Список задач получен"
+                                        }
+                                    },
+                                    "type": "object"
                                 }
                             }
                         }

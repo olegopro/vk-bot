@@ -44,16 +44,7 @@ export const useAccountStore = defineStore('account', () => {
     const { accountId, ownerId, taskId = null } = parameters
     isOwnerDataLoading.value = taskId
 
-    // Поиск владельца по ID в массиве ownerData
-    const existingOwnerData = ownerData.value.find(owner => owner.id === ownerId)
-
-    // Если данные о владельце уже есть, немедленно возвращаем эти данные
-    if (existingOwnerData) {
-      isOwnerDataLoading.value = null
-      return { data: existingOwnerData, success: true, message: 'Данные уже загружены' }
-    }
-
-    // Если данных о владельце нет, выполняем запросы
+    // Выполняем запросы
     const responses = await Promise.all([
       axios.get<OwnerDataResponse>(`account/data/${ownerId}`),
       axios.get<FriendsCountResponse>(`account/friends/count/${accountId}/${ownerId}`)
@@ -68,15 +59,11 @@ export const useAccountStore = defineStore('account', () => {
     // Объединяем полученные данные
     const combinedData = { ...accountData, friends_count: friendsCount }
 
-    // Добавляем новые данные о владельце в массив ownerData
-    ownerData.value.push(combinedData)
-
     // Отображаем уведомления об успехе
     showSuccessNotification(ownerDataResponse.data.message)
     showSuccessNotification(friendsCountResponse.data.message)
-
     isOwnerDataLoading.value = null
-    return { data: combinedData, success: true, message: 'Данные владельца загружены' }
+    return { data: combinedData }
   })
 
   /**

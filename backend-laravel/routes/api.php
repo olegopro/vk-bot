@@ -24,7 +24,7 @@ use Illuminate\Support\Facades\Route;
 Route::prefix('tasks')->group(function() {
     Route::get('/count-by-status/{status?}/{accountId?}', [TaskController::class, 'countTasksByAccountAndStatus']);
     Route::get('/task-info/{taskId}', [TaskController::class, 'getTaskInfo']);
-    Route::get('/{status?}/{accountId?}/{perPage?}', [TaskController::class, 'getTasksByStatus']);
+    Route::get('/{status?}/{accountId?}', [TaskController::class, 'getTasksByStatus']);
     Route::post('/get-posts-for-like', [TaskController::class, 'createAndQueueLikeTasksFromNewsfeed']);
     Route::post('/add-task-likes', [TaskController::class, 'processAndQueuePendingLikeTasks']);
     Route::delete('/delete-like/{taskId}', [TaskController::class, 'deleteLike']);

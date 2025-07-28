@@ -2,22 +2,18 @@
   import { useRoute, useRouter } from 'vue-router'
   import { onMounted, ref, watch, ComponentPublicInstance } from 'vue'
   import { useTasksStore } from '@/stores/TasksStore'
-  import { useAccountStore } from '@/stores/AccountStore'
   import { useAccountsStore } from '@/stores/AccountsStore'
-  import { showErrorNotification } from '@/helpers/notyfHelper'
   import { useModal } from '@/composables/useModal'
   import { useTasksRoute } from '@/composables/useTypedRoute'
   import RouterPaths from '@/router/routerPaths'
   import AddTaskModal from '../components/Tasks/Modals/AddTaskModal.vue'
   import TableThread from '../components/Tasks/TableThread.vue'
-  import AccountDetailsModal from '../components/Tasks/Modals/AccountDetailsModal.vue'
   import DeleteAllTasksModal from '../components/Tasks/Modals/DeleteAllTasksModal.vue'
   import { TaskStatus } from '@/models/TaskModel'
   import { Nullable } from '@/types'
 
   const tasksStore = useTasksStore()
   const accountsStore = useAccountsStore()
-  const accountStore = useAccountStore()
   const route = useRoute()
   const router = useRouter()
   const perfectScrollbarRef = ref<Nullable<ComponentPublicInstance>>(null)
@@ -26,8 +22,6 @@
 
   const currentStatus = ref<TaskStatus>(routeParams.value.status || '')
   const selectedAccountId = ref<string>(routeParams.value.accountId || '')
-
-  const accountDetailsData = ref<object>({})
 
   // Следим за изменениями статуса и ID аккаунта
   watch([currentStatus, selectedAccountId], () => {
@@ -49,17 +43,6 @@
     const accountId = selectedAccountId.value || ''
     router.push(RouterPaths.tasks({ status, accountId }))
     tasksStore.fetchTasks.execute({ status, accountId })
-  }
-
-  const showAccountDetailsModal = (accountId: number, ownerId: number, taskId: number | null) => {
-    accountStore.fetchOwnerData.execute({ accountId, ownerId, taskId })
-      .then(() => {
-        const ownerData = accountStore.getOwnerDataById(ownerId)
-        accountDetailsData.value = { ...ownerData }
-
-        showModal(AccountDetailsModal, { accountData: accountDetailsData.value })
-      })
-      .catch(error => showErrorNotification(error.response.data.message))
   }
 
   const showDeleteAllTasksModal = () => {
@@ -159,10 +142,9 @@
 
           <tbody>
             <TableThread
-              v-for="task in tasksStore.tasks"
+              v-for="task in tasksStore.fetchTasks.data?.tasks.data"
               :task="task"
               :key="task.id"
-              :showAccountDetailsModal="showAccountDetailsModal"
             />
 
             <tr v-if="tasksStore.isLoading" style="height: 55px;">
@@ -173,7 +155,7 @@
               </td>
             </tr>
 
-            <tr v-if="tasksStore.tasks.length === 0 && !tasksStore.isLoading" class="pe-none">
+            <tr v-if="!tasksStore.fetchTasks.data?.tasks && !tasksStore.fetchTasks.loading" class="pe-none">
               <td colspan="7" style="height: 55px;">
                 Список задач пуст
               </td>

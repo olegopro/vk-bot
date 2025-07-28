@@ -50,7 +50,7 @@ final class TaskController extends Controller
      */
     #[OA\Get(
         path: '/tasks/{status?}/{accountId?}',
-        description: 'Получает список задач с возможностью фильтрации по статусу и ID аккаунта. Поддерживает пагинацию и возвращает статистику по статусам задач.',
+        description: 'Получает список задач с возможностью фильтрации по статусу и ID аккаунта. Возвращает статистику по статусам задач и полный список задач.',
         summary: 'Получить список задач',
         tags: ['Tasks']
     )]
@@ -75,35 +75,59 @@ final class TaskController extends Controller
             example: 9121607
         )
     )]
-    #[OA\Parameter(
-        name: 'page',
-        description: 'Номер страницы для пагинации',
-        in: 'query',
-        required: false,
-        schema: new OA\Schema(
-            type: 'integer',
-            default: 1,
-            minimum: 1,
-            example: 1
-        )
-    )]
-    #[OA\Parameter(
-        name: 'perPage',
-        description: 'Количество элементов на странице',
-        in: 'query',
-        required: false,
-        schema: new OA\Schema(
-            type: 'integer',
-            default: 30,
-            maximum: 100,
-            minimum: 1,
-            example: 30
-        )
-    )]
     #[OA\Response(
         response: 200,
         description: 'Успешное получение списка задач',
-        content: new OA\JsonContent(ref: '#/components/schemas/TasksListResponse')
+        content: new OA\JsonContent(
+            properties: [
+                new OA\Property(property: 'success', type: 'boolean', example: true),
+                new OA\Property(
+                    property: 'data',
+                    properties: [
+                        new OA\Property(property: 'total', type: 'integer', example: 9),
+                        new OA\Property(
+                            property: 'statuses',
+                            properties: [
+                                new OA\Property(property: 'failed', type: 'integer', example: 0),
+                                new OA\Property(property: 'queued', type: 'integer', example: 0),
+                                new OA\Property(property: 'done', type: 'integer', example: 9)
+                            ],
+                            type: 'object'
+                        ),
+                        new OA\Property(
+                            property: 'tasks',
+                            properties: [
+                                new OA\Property(
+                                    property: 'data',
+                                    type: 'array',
+                                    items: new OA\Items(
+                                        properties: [
+                                            new OA\Property(property: 'id', type: 'integer', example: 2),
+                                            new OA\Property(property: 'job_id', type: 'integer', example: 2),
+                                            new OA\Property(property: 'account_id', type: 'integer', example: 9121607),
+                                            new OA\Property(property: 'owner_id', type: 'integer', example: 23391605),
+                                            new OA\Property(property: 'first_name', type: 'string', example: 'Марина'),
+                                            new OA\Property(property: 'last_name', type: 'string', example: 'Цепелина'),
+                                            new OA\Property(property: 'item_id', type: 'integer', example: 7366),
+                                            new OA\Property(property: 'error_message', type: 'string', nullable: true, example: null),
+                                            new OA\Property(property: 'status', type: 'string', example: 'done'),
+                                            new OA\Property(property: 'is_cyclic', type: 'integer', example: 0),
+                                            new OA\Property(property: 'run_at', type: 'string', example: '2025-07-28 15:45:14'),
+                                            new OA\Property(property: 'created_at', type: 'string', format: 'date-time', example: '2025-07-28T12:43:08.000000Z'),
+                                            new OA\Property(property: 'updated_at', type: 'string', format: 'date-time', example: '2025-07-28T12:45:16.000000Z')
+                                        ],
+                                        type: 'object'
+                                    )
+                                )
+                            ],
+                            type: 'object'
+                        )
+                    ],
+                    type: 'object'
+                ),
+                new OA\Property(property: 'message', type: 'string', example: 'Список задач получен')
+            ]
+        )
     )]
     #[OA\Response(
         response: 400,

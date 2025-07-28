@@ -1,15 +1,21 @@
 import { ApiResponseWrapper } from './ApiModel'
 
+export type TaskStatus = 'queued' | 'done' | 'failed' | ''
+
 export interface Task {
   id: number
+  job_id: number
   account_id: number
-  status: 'queued' | 'done' | 'failed'
-  type: string
-  target_id: number
-  target_type: string
+  owner_id: number
+  first_name: string
+  last_name: string
+  item_id: number
+  error_message: string | null
+  status: TaskStatus
+  is_cyclic: number
+  run_at: string
   created_at: string
   updated_at: string
-  error_message?: string
 }
 
 export interface TaskDetails extends Task {
@@ -56,5 +62,3 @@ export interface CreateCyclicTaskRequest {
   max_likes_per_execution: number
   is_active: boolean
 }
-
-export type TaskStatus = 'queued' | 'done' | 'failed' | ''

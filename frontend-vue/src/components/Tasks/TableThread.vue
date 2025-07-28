@@ -1,19 +1,19 @@
-<script setup>
-  import { defineProps, toRefs } from 'vue'
+<script setup lang="ts">
+  import { defineProps } from 'vue'
   import TaskStatus from './TaskStatus.vue'
   import { format } from 'date-fns'
   import { useTasksStore } from '@/stores/TasksStore'
   import { useAccountStore } from '@/stores/AccountStore'
-  import { useModal } from '../../composables/useModal'
   import DeleteTaskModal from './Modals/DeleteTaskModal.vue'
   import TaskDetailsModal from './Modals/TaskDetailsModal.vue'
+  import AccountDetailsModal from './Modals/AccountDetailsModal.vue'
+  import { Task } from '@/models/TaskModel'
+  import { useModal } from '@/composables/useModal'
+  import { showErrorNotification } from '@/helpers/notyfHelper'
 
-  const props = defineProps({
-    task: Object,
-    showAccountDetailsModal: Function
-  })
+  const props = defineProps<{ task: Task }>()
 
-  const { task } = toRefs(props)
+  const { task } = props
 
   const tasksStore = useTasksStore()
   const accountStore = useAccountStore()
@@ -24,6 +24,12 @@
   const showTaskDetailsModal = (taskId) => {
     tasksStore.fetchTaskDetails.execute({ taskId })
       .then(() => showModal(TaskDetailsModal, { taskId }))
+  }
+
+  const showAccountDetailsModal = (accountId: number, ownerId: number, taskId: number | null) => {
+    accountStore.fetchOwnerData.execute({ accountId, ownerId, taskId })
+      .then(() => showModal(AccountDetailsModal))
+      .catch(error => showErrorNotification(error.response.data.message))
   }
 </script>
 
