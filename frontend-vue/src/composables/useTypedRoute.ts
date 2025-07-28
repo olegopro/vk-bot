@@ -5,20 +5,18 @@ import type { TasksRouteParams } from '@/router/routerPaths'
 
 export function useTasksRoute() {
   const route = useRoute()
-  
-  const params = computed<TasksRouteParams>(() => {
+
+  return computed<TasksRouteParams>(() => {
     const rawParams = route.params
-    
+
     return {
       status: isValidTaskStatus(rawParams.status) ? rawParams.status : '',
       accountId: typeof rawParams.accountId === 'string' ? rawParams.accountId : ''
     }
   })
-  
-  return params
 }
 
 function isValidTaskStatus(value: unknown): value is TaskStatus {
-  return typeof value === 'string' && 
+  return typeof value === 'string' &&
     (['queued', 'done', 'failed', ''].includes(value))
 }

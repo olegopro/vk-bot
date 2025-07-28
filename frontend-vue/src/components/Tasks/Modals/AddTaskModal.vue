@@ -1,12 +1,14 @@
-<script setup>
+<script setup lang="ts">
   import { ref, watch, computed, getCurrentInstance } from 'vue'
   import { useAccountStore } from '@/stores/AccountStore'
-  import { useAccountsStore } from '../../../stores/AccountsStore'
-  import { showErrorNotification, showSuccessNotification } from '../../../helpers/notyfHelper'
-  import { useTasksStore } from '../../../stores/TasksStore'
-  import { useFilterStore } from '../../../stores/FilterStore'
+  import { useAccountsStore } from '@/stores/AccountsStore'
+  import { showErrorNotification, showSuccessNotification } from '@/helpers/notyfHelper'
+  import { useTasksStore } from '@/stores/TasksStore'
+  import { useFilterStore } from '@/stores/FilterStore'
   import { useDebounceFn } from '@vueuse/core'
-  import { useModal } from '../../../composables/useModal'
+  import { useModal } from '@/composables/useModal'
+  import type { City } from '@/models/FilterModel'
+  import type { Nullable } from '@/types'
 
   const accountStore = useAccountStore()
   const accountsStore = useAccountsStore()
@@ -16,81 +18,81 @@
 
   const modalId = getCurrentInstance()?.type.__name
 
-  const accountId = ref('selectAccount')
-  const disablePost = ref(true)
+  const accountId = ref<string>('selectAccount')
+  const disablePost = ref<boolean>(true)
   const isCitySelected = computed(() => cityId.value > 0)
-  const loading = ref(false)
-  const taskCount = ref(10)
-  const cityName = ref('')
-  const cityId = ref(0)
-  const searchType = ref('newsfeed') // По умолчанию - поиск по ленте
-  const selectedCity = ref('')
+  const loading = ref<boolean>(false)
+  const taskCount = ref<number>(10)
+  const cityName = ref<string>('')
+  const cityId = ref<number>(0)
+  const searchType = ref<'newsfeed' | 'city'>('newsfeed') // По умолчанию - поиск по ленте
+  const selectedCity = ref<Nullable<City>>(null)
 
-  watch(accountId, newVal => disablePost.value = newVal === 'selectAccount')
+  watch(accountId, (newVal: string) => disablePost.value = newVal === 'selectAccount')
 
   // Функция поиска городов с задержкой в 500 мс
-  const debouncedSearchCities = useDebounceFn((query) => {
+  const debouncedSearchCities = useDebounceFn((query: string) => {
     filterStore.searchCities(query)
   }, 500)
 
   // Обработчик ввода в поле поиска города
-  const handleCityInput = () => {
+  const handleCityInput = (): void => {
     selectedCity.value = null
     cityId.value = 0
     debouncedSearchCities(cityName.value)
   }
 
   // Выбор города из списка
-  const selectCity = city => handleCitySelection(city)
+  const selectCity = (city: City): void => handleCitySelection(city)
 
-  const startRequest = () => {
+  const startRequest = (): void => {
     disablePost.value = true
     loading.value = true
   }
 
-  const resetFormState = () => {
+  const resetFormState = (): void => {
     disablePost.value = false
     loading.value = false
   }
 
-  const handleSuccess = (response) => {
+  const handleSuccess = (response: any): void => {
     modalHide()
     resetFormState()
 
     accountId.value = 'selectAccount'
     showSuccessNotification(response)
-    tasksStore.fetchTasks()
+    tasksStore.fetchTasks.execute()
   }
 
-  const handleError = (error) => {
+  const handleError = (error: any): void => {
     resetFormState()
     showErrorNotification(error?.message || error)
   }
 
-  const handleCitySelection = (city) => {
+  const handleCitySelection = (city: City): void => {
     selectedCity.value = city
     cityName.value = city.title
     cityId.value = city.id
   }
 
-  const addFeedTask = () => {
+  const addFeedTask = (): void => {
     startRequest()
 
-    accountStore.addPostsToLike(accountId.value, taskCount.value)
+    accountStore.addPostsToLike.execute({ accountId: accountId.value, taskCount: taskCount.value })
       .then(handleSuccess)
       .catch(handleError)
   }
 
-  const addCityTask = () => {
+  const addCityTask = (): void => {
     startRequest()
 
-    filterStore.getUsersByCity(accountId.value, cityId.value, taskCount.value)
-      .then(domains => accountStore.createTasksForUsers(accountId.value, domains))
+    filterStore.getUsersByCity(Number(accountId.value), cityId.value, taskCount.value)
+      .then((domains: string[]) => accountStore.createTasksForUsers.execute({ accountId: Number(accountId.value), domains }))
       .then(handleSuccess)
       .catch(handleError)
   }
 
-  const modalHide = () => {
+  const modalHide = (): void => {
     closeModal(modalId)
     cityName.value = ''
     selectedCity.value = null
@@ -114,7 +116,7 @@
           <!-- Выбор аккаунта и количества постов -->
           <select class="form-select mb-3" aria-label="Default select example" v-model="accountId">
             <option disabled selected value="selectAccount">Выберите аккаунт</option>
-            <option v-for="account in accountsStore.accounts" :key="account.id" :value="account.account_id">
+            <option v-for="account in accountsStore.fetchAccounts.data" :key="account.account_id" :value="account.account_id">
               {{ account.screen_name }} ({{ account.first_name }} {{ account.last_name }})
             </option>
           </select>

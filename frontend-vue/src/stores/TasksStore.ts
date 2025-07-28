@@ -155,92 +155,62 @@ export const useTasksStore = defineStore('tasks', () => {
 
     const url = `tasks/delete-all-tasks${statusPart}${accountIdPart}`
 
-    return axios.delete<DeleteTaskResponse>(url)
-      .then(response => {
-        tasks.value = []
-
-        // Обновляем счетчики
-        if (status) {
-          switch (status) {
-            case 'failed':
-              totalTasksFailed.value = 0
-              break
-            case 'queued':
-              totalTasksQueued.value = 0
-              break
-            case 'done':
-              totalTasksDone.value = 0
-              break
-          }
-        } else {
-          totalTasksCount.value = 0
-          totalTasksFailed.value = 0
-          totalTasksQueued.value = 0
-          totalTasksDone.value = 0
-        }
-
-        showSuccessNotification(response.data.message)
-        return response.data
-      })
-      .then(async (data) => {
-        await fetchTasks.execute({ status, accountId })
-        return data
-      })
-      .catch(error => {
-        showErrorNotification((error as Error)?.message || 'Произошла ошибка при удалении задач')
-        throw error
-      })
+    return (await axios.delete<DeleteTaskResponse>(url)).data
   })
 
   /**
    * Создает задачи лайков для постов из новостной ленты
    */
-  const createAndQueueLikeTasksFromNewsfeed = useApi(async (parameters?: CreateTasksRequest) => {
-    return axios.post<TasksListResponse>('tasks/get-posts-for-like', parameters)
-      .then(response => {
-        showSuccessNotification(response.data.message)
-        return response.data
-      })
-      .catch(error => {
-        showErrorNotification((error as Error)?.message || 'Произошла ошибка при создании задач лайков из новостной ленты')
-        throw error
-      })
-  })
+  // TODO: Неиспользуемый метод
+  // const createAndQueueLikeTasksFromNewsfeed = useApi(async (parameters?: CreateTasksRequest) => {
+  //   return axios.post<TasksListResponse>('tasks/get-posts-for-like', parameters)
+  //     .then(response => {
+  //       showSuccessNotification(response.data.message)
+  //       return response.data
+  //     })
+  //     .catch(error => {
+  //       showErrorNotification((error as Error)?.message || 'Произошла ошибка при создании задач лайков из новостной ленты')
+  //       throw error
+  //     })
+  // })
 
   /**
    * Обрабатывает и ставит в очередь задачи лайков
    */
-  const processAndQueuePendingLikeTasks = useApi(async (parameters?: CreateTasksRequest) => {
-    return axios.post<TasksListResponse>('tasks/add-task-likes', parameters)
-      .then(response => {
-        showSuccessNotification(response.data.message)
-        return response.data
-      })
-      .catch(error => {
-        showErrorNotification((error as Error)?.message || 'Произошла ошибка при обработке задач лайков')
-        throw error
-      })
-  })
+  // TODO: Неиспользуемый метод
+  // const processAndQueuePendingLikeTasks = useApi(async (parameters?: CreateTasksRequest) => {
+  //   return axios.post<TasksListResponse>('tasks/add-task-likes', parameters)
+  //     .then(response => {
+  //       showSuccessNotification(response.data.message)
+  //       return response.data
+  //     })
+  //     .catch(error => {
+  //       showErrorNotification((error as Error)?.message || 'Произошла ошибка при обработке задач лайков')
+  //       throw error
+  //     })
+  // })
 
+  // TODO: Неиспользуемый метод
   /**
    * Создает задачи лайков для постов пользователей
    */
-  const createLikeTasksForUserWallPosts = useApi(async (parameters?: CreateTasksRequest) => {
-    return axios.post<TasksListResponse>('tasks/create-for-users', parameters)
-      .then(response => {
-        showSuccessNotification(response.data.message)
-        return response.data
-      })
-      .catch(error => {
-        showErrorNotification((error as Error)?.message || 'Произошла ошибка при создании задач лайков для постов пользователя')
-        throw error
-      })
-  })
+  // const createLikeTasksForUserWallPosts = useApi(async (parameters?: CreateTasksRequest) => {
+  //   return axios.post<TasksListResponse>('tasks/create-for-users', parameters)
+  //     .then(response => {
+  //       showSuccessNotification(response.data.message)
+  //       return response.data
+  //     })
+  //     .catch(error => {
+  //       showErrorNotification((error as Error)?.message || 'Произошла ошибка при создании задач лайков для постов пользователя')
+  //       throw error
+  //     })
+  // })
 
-  // Геттеры
-  const getTaskById = computed(() => {
-    return (taskId: number) => tasks.value.find(task => task.id === taskId)
-  })
+  // Геттер
+  // TODO: Неиспользуемый метод
+  // const getTaskById = computed(() => {
+  //   return (taskId: number) => tasks.value.find(task => task.id === taskId)
+  // })
 
   const isUserLiked = computed(() => {
     return (taskId: number) => {
@@ -272,12 +242,8 @@ export const useTasksStore = defineStore('tasks', () => {
     deleteTask,
     deleteSingleTaskById,
     deleteAllTasks,
-    createAndQueueLikeTasksFromNewsfeed,
-    processAndQueuePendingLikeTasks,
-    createLikeTasksForUserWallPosts,
 
     // Getters
-    getTaskById,
     isUserLiked
   }
 })

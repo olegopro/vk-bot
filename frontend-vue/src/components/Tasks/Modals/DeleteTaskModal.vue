@@ -14,7 +14,10 @@
     disable.value = true
 
     tasksStore.deleteTask.execute({ id: taskId })
-      .then(() => closeModal(modalId))
+      .then(() => {
+        closeModal(modalId)
+        tasksStore.fetchTasks.execute()
+      })
       .finally(() => disable.value = false)
   }
 </script>

@@ -8,7 +8,7 @@
   import { useModal } from '@/composables/useModal'
   import { useTasksRoute } from '@/composables/useTypedRoute'
   import RouterPaths from '@/router/routerPaths'
-  import AddTask from '../components/Tasks/Modals/AddTask.vue'
+  import AddTaskModal from '../components/Tasks/Modals/AddTaskModal.vue'
   import TableThread from '../components/Tasks/TableThread.vue'
   import AccountDetailsModal from '../components/Tasks/Modals/AccountDetailsModal.vue'
   import DeleteAllTasksModal from '../components/Tasks/Modals/DeleteAllTasksModal.vue'
@@ -36,8 +36,9 @@
 
   watch(route, () => perfectScrollbarRef.value && (perfectScrollbarRef.value.$el.scrollTop = 0))
 
-  const filterTasks = (event) => {
-    const status: TaskStatus = event.target.value || ''
+  const filterTasks = (event: Event) => {
+    const target = event.target as HTMLSelectElement
+    const status: TaskStatus = target.value as TaskStatus || ''
     const accountId = selectedAccountId.value || ''
     router.push(RouterPaths.tasks({ status, accountId }))
     tasksStore.fetchTasks.execute({ status, accountId })
@@ -74,14 +75,12 @@
   }
 
   onMounted(() => {
-    // processRouteParams()
     tasksStore.fetchTasks.execute({ status: currentStatus.value, accountId: selectedAccountId.value })
     accountsStore.fetchAccounts.execute()
   })
 </script>
 
 <template>
-  route.params.status -- {{ route.params.status }}
   <div class="row mb-3 align-items-center">
     <div class="col d-flex align-items-center">
       <h1 class="h2 mb-0 position-relative">
@@ -96,16 +95,16 @@
 
     <div class="col d-flex justify-content-end">
       <select class="form-select me-3" style="width: 210px;" @change="filterTasks" v-model="currentStatus">
-        <option value="">{{ tasksStore.totalTasksCount !== null ? `Все задачи (${tasksStore.totalTasksCount})` : 'Загрузка...' }}</option>
-        <option value="failed">{{ tasksStore.totalTasksFailed !== null ? `C ошибками (${tasksStore.totalTasksFailed})` : 'Загрузка...' }}</option>
-        <option value="queued">{{ tasksStore.totalTasksQueued !== null ? `В ожидании (${tasksStore.totalTasksQueued})` : 'Загрузка...' }}</option>
-        <option value="done">{{ tasksStore.totalTasksDone !== null ? `Завершённые (${tasksStore.totalTasksDone})` : 'Загрузка...' }}</option>
+        <option value="">{{ tasksStore.fetchTasks.data?.total !== undefined ? `Все задачи (${tasksStore.fetchTasks.data?.total})` : 'Загрузка...' }}</option>
+        <option value="failed">{{ tasksStore.fetchTasks.data?.statuses.failed !== undefined ? `C ошибками (${tasksStore.fetchTasks.data?.statuses.failed})` : 'Загрузка...' }}</option>
+        <option value="queued">{{ tasksStore.fetchTasks.data?.statuses.queued !== undefined ? `В ожидании (${tasksStore.fetchTasks.data?.statuses.queued})` : 'Загрузка...' }}</option>
+        <option value="done">{{ tasksStore.fetchTasks.data?.statuses.done !== undefined ? `Завершённые (${tasksStore.fetchTasks.data?.statuses.done})` : 'Загрузка...' }}</option>
       </select>
 
       <select class="form-select me-3" style="width: 280px" @change="filterByAccount" v-model="selectedAccountId">
         <option value="" :disabled="accountsStore.fetchAccounts.data?.length === 0">Все аккаунты</option>
 
-        <option :value="selectedAccountId" v-if="accountsStore.accounts.length === 0 && accountsStore.fetchAccounts.loading" disabled>Загрузка...</option>
+        <option :value="selectedAccountId" v-if="accountsStore.fetchAccounts.data?.length === 0 && accountsStore.fetchAccounts.loading" disabled>Загрузка...</option>
         <option v-else v-for="account in accountsStore.fetchAccounts.data" :key="account.account_id" :value="account.account_id">
           {{ account.screen_name }} ({{ account.first_name }} {{ account.last_name }})
         </option>
@@ -120,7 +119,7 @@
 
       <button class="btn btn-success btn-action"
         type="button"
-        @click="showModal(AddTask)"
+        @click="showModal(AddTaskModal)"
       >
         Добавить задачу
       </button>

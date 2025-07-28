@@ -1,5 +1,4 @@
 import { defineStore } from 'pinia'
-import { ref } from 'vue'
 import axios from '@/helpers/axiosConfig'
 import useApi from '@/composables/useApi'
 import {
@@ -9,8 +8,6 @@ import {
 import { ApiResponseWrapper } from '@/models/ApiModel'
 
 export const useAccountsStore = defineStore('accounts', () => {
-  const accounts = ref<AddAccountResponse[]>([])
-
   /**
    * Получает все аккаунты ВКонтакте
    */
@@ -35,7 +32,6 @@ export const useAccountsStore = defineStore('accounts', () => {
   })
 
   return {
-    accounts,
     fetchAccounts,
     addAccount,
     deleteAccount
