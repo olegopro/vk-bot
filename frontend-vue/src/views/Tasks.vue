@@ -1,27 +1,31 @@
 <script setup lang="ts">
   import { useRoute, useRouter } from 'vue-router'
-  import { onMounted, ref, watch, computed } from 'vue'
+  import { onMounted, ref, watch, ComponentPublicInstance } from 'vue'
   import { useTasksStore } from '@/stores/TasksStore'
   import { useAccountStore } from '@/stores/AccountStore'
   import { useAccountsStore } from '@/stores/AccountsStore'
   import { showErrorNotification } from '@/helpers/notyfHelper'
   import { useModal } from '@/composables/useModal'
+  import { useTasksRoute } from '@/composables/useTypedRoute'
+  import RouterPaths from '@/router/routerPaths'
   import AddTask from '../components/Tasks/Modals/AddTask.vue'
   import TableThread from '../components/Tasks/TableThread.vue'
   import AccountDetailsModal from '../components/Tasks/Modals/AccountDetailsModal.vue'
   import DeleteAllTasksModal from '../components/Tasks/Modals/DeleteAllTasksModal.vue'
   import { TaskStatus } from '@/models/TaskModel'
+  import { Nullable } from '@/types'
 
   const tasksStore = useTasksStore()
   const accountsStore = useAccountsStore()
   const accountStore = useAccountStore()
   const route = useRoute()
   const router = useRouter()
-  const perfectScrollbarRef = ref<any>(null)
+  const perfectScrollbarRef = ref<Nullable<ComponentPublicInstance>>(null)
   const { showModal } = useModal()
+  const routeParams = useTasksRoute()
 
-  const currentStatus = ref<TaskStatus>(route.params.status as TaskStatus || '')
-  const selectedAccountId = ref<string>(route.params.accountId as string || '')
+  const currentStatus = ref<TaskStatus>(routeParams.value.status || '')
+  const selectedAccountId = ref<string>(routeParams.value.accountId || '')
 
   const accountDetailsData = ref<object>({})
 
@@ -30,56 +34,20 @@
     tasksStore.fetchTasks.execute({ status: currentStatus.value, accountId: selectedAccountId.value })
   })
 
-  watch(route, () => {
-    processRouteParams()
-
-    if (perfectScrollbarRef.value) {
-      perfectScrollbarRef.value.$el.scrollTop = 0
-    }
-  })
-
-  const processRouteParams = () => {
-    // Получаем текущие параметры маршрута из vue-router.
-    const params = route.params
-
-    // Проверяем наличие параметра status в URL.
-    if (params.status) {
-      // Если параметр status присутствует, проверяем, является ли он числом и больше ли он нуля.
-      // Эта проверка необходима, чтобы определить, относится ли параметр к идентификатору аккаунта.
-      if (!isNaN(Number(params.status)) && parseInt(params.status as TaskStatus) > 0) {
-        // Если условие выполняется, значит, параметр status является идентификатором аккаунта.
-        // Устанавливаем его значение в selectedAccountId компонента.
-        selectedAccountId.value = params.status as TaskStatus
-        // Так как status использовался для accountId, сбрасываем currentStatus.
-        currentStatus.value = '' // Сброс, указывая, что это ID аккаунта, а не статус.
-      } else {
-        // Если status не является числом или не больше нуля, то предполагаем, что это статус задачи.
-        // Устанавливаем его значение в currentStatus компонента.
-        currentStatus.value = params.status as TaskStatus
-      }
-    }
-
-    // Проверяем, есть ли параметр accountId в URL.
-    // Это дополнительная проверка для случаев, когда параметр accountId явно передан в URL.
-    if (params.accountId) {
-      // Если параметр accountId присутствует, устанавливаем его значение в selectedAccountId компонента.
-      // Это позволяет явно выбрать аккаунт, не полагаясь на проверку status.
-      selectedAccountId.value = params.accountId as string
-    }
-  }
+  watch(route, () => perfectScrollbarRef.value && (perfectScrollbarRef.value.$el.scrollTop = 0))
 
   const filterTasks = (event) => {
-    const status = event.target.value || ''
+    const status: TaskStatus = event.target.value || ''
     const accountId = selectedAccountId.value || ''
-    router.push({ name: 'Tasks', params: { status, accountId } })
-    tasksStore.fetchTasks.execute({ status: status as TaskStatus, accountId })
+    router.push(RouterPaths.tasks({ status, accountId }))
+    tasksStore.fetchTasks.execute({ status, accountId })
   }
 
   const filterByAccount = () => {
     const status = currentStatus.value || ''
     const accountId = selectedAccountId.value || ''
-    router.push({ name: 'Tasks', params: { status, accountId } })
-    tasksStore.fetchTasks.execute({ status: status as TaskStatus, accountId })
+    router.push(RouterPaths.tasks({ status, accountId }))
+    tasksStore.fetchTasks.execute({ status, accountId })
   }
 
   const showAccountDetailsModal = (accountId: number, ownerId: number, taskId: number | null) => {
@@ -100,14 +68,14 @@
     })
 
     tasksStore.getTasksCountByStatus.execute({
-      status: currentStatus.value as any,
+      status: currentStatus.value,
       accountId: selectedAccountId.value
     })
   }
 
   onMounted(() => {
-    processRouteParams()
-    tasksStore.fetchTasks.execute({ status: currentStatus.value as any, accountId: selectedAccountId.value })
+    // processRouteParams()
+    tasksStore.fetchTasks.execute({ status: currentStatus.value, accountId: selectedAccountId.value })
     accountsStore.fetchAccounts.execute()
   })
 </script>

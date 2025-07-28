@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import RouterPaths from './routerPaths'
 import Accounts from '../views/Accounts.vue'
 import Tasks from '../views/Tasks.vue'
 import Account from '../views/Account.vue'
@@ -8,7 +9,7 @@ import CyclicTasks from '../views/CyclicTasks.vue'
 
 const routes = [
   {
-    path: '/',
+    path: RouterPaths.home,
     name: 'Home',
     component: Accounts,
     meta: {
@@ -16,7 +17,7 @@ const routes = [
     }
   },
   {
-    path: '/tasks/:status?/:accountId?',
+    path: RouterPaths.tasks(),
     name: 'Tasks',
     component: Tasks,
     meta: {
@@ -24,7 +25,7 @@ const routes = [
     }
   },
   {
-    path: '/cyclic-tasks/:status?/:accountId?',
+    path: RouterPaths.cyclicTasks(),
     name: 'CyclicTasks',
     component: CyclicTasks,
     meta: {
@@ -32,7 +33,7 @@ const routes = [
     }
   },
   {
-    path: '/account/:id',
+    path: RouterPaths.account(),
     name: 'Account',
     component: Account,
     meta: {
@@ -40,7 +41,7 @@ const routes = [
     }
   },
   {
-    path: '/statistics',
+    path: RouterPaths.statistics,
     name: 'Statistics',
     component: Statistics,
     meta: {
@@ -48,7 +49,7 @@ const routes = [
     }
   },
   {
-    path: '/settings',
+    path: RouterPaths.settings,
     name: 'Settings',
     component: Settings,
     meta: {

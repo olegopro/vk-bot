@@ -2,9 +2,10 @@
   import { ref, defineProps, getCurrentInstance } from 'vue'
   import { useTasksStore } from '@/stores/TasksStore'
   import { useModal } from '@/composables/useModal'
+  import { TaskStatus } from '@/models/TaskModel'
 
   const { selectedTasksStatus, selectedAccountId } = defineProps<{
-    selectedTasksStatus: string,
+    selectedTasksStatus: TaskStatus,
     selectedAccountId: string
   }>()
 
