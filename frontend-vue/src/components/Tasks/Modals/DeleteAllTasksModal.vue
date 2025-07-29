@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { ref, defineProps, getCurrentInstance } from 'vue'
+  import { ref, defineProps, getCurrentInstance, computed } from 'vue'
   import { useTasksStore } from '@/stores/TasksStore'
   import { useModal } from '@/composables/useModal'
   import { TaskStatus } from '@/models/TaskModel'
@@ -13,6 +13,12 @@
   const disable = ref(false)
   const tasksStore = useTasksStore()
   const { closeModal } = useModal()
+
+  const tasksCountForDeletion = computed(() => 
+    selectedTasksStatus 
+      ? tasksStore.fetchTasks.data?.statuses[selectedTasksStatus] ?? 0
+      : tasksStore.fetchTasks.data?.total ?? 0
+  )
 
   const deleteTasks = () => {
     disable.value = true
@@ -35,7 +41,7 @@
         </div>
         <div class="modal-body">
           <p class="mb-0">
-            Удалить <strong>{{ tasksStore.taskCountByStatus }}</strong> задачи
+            Удалить <strong>{{ tasksCountForDeletion }}</strong> задачи
             <span v-if="selectedTasksStatus">со статусом <strong>{{ selectedTasksStatus }}</strong></span>
           </p>
         </div>

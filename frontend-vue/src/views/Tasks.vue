@@ -50,11 +50,6 @@
       selectedTasksStatus: currentStatus.value,
       selectedAccountId: selectedAccountId.value
     })
-
-    tasksStore.getTasksCountByStatus.execute({
-      status: currentStatus.value,
-      accountId: selectedAccountId.value
-    })
   }
 
   onMounted(() => {

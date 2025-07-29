@@ -2,6 +2,7 @@
   import { ref, defineProps, getCurrentInstance } from 'vue'
   import { useTasksStore } from '@/stores/TasksStore'
   import { useModal } from '@/composables/useModal'
+  import { showSuccessNotification } from '@/helpers/notyfHelper'
 
   const { taskId } = defineProps<{ taskId: number }>()
 
@@ -14,9 +15,10 @@
     disable.value = true
 
     tasksStore.deleteTask.execute({ id: taskId })
-      .then(() => {
+      .then((response) => {
         closeModal(modalId)
         tasksStore.fetchTasks.execute()
+        showSuccessNotification(response.message)
       })
       .finally(() => disable.value = false)
   }

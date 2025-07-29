@@ -1855,14 +1855,14 @@
                 }
             }
         },
-        "/tasks/count/{status?}/{accountId?}": {
+        "tasks/count-by-status/{status?}/{accountId?}": {
             "get": {
                 "tags": [
                     "Tasks"
                 ],
                 "summary": "Подсчитать количество задач",
                 "description": "Подсчитывает количество задач по указанному статусу и/или ID аккаунта",
-                "operationId": "242f0b73a6c5905e97dc177994276cb7",
+                "operationId": "5e28bd9bb48f3c7fa40ec19cb43458e0",
                 "parameters": [
                     {
                         "name": "status",

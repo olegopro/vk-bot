@@ -6,14 +6,12 @@ import useApi from '@/composables/useApi'
 import { Nullable } from '@/types'
 import {
   TaskDetails,
-  TaskStatuses,
   TasksListData,
   TaskStatus
 } from '@/models/TaskModel'
 import { ApiResponseWrapper } from '@/models/ApiModel'
 
 export const useTasksStore = defineStore('tasks', () => {
-  const taskCountByStatus = ref<Nullable<TaskStatuses>>(null)
   const isLoading = ref<boolean>(false)
   const isTaskDetailsLoading = ref<Nullable<number>>(null)
   const taskDetails = ref<Nullable<TaskDetails>>(null)
@@ -55,29 +53,6 @@ export const useTasksStore = defineStore('tasks', () => {
   })
 
   /**
-   * Получает количество задач по статусам
-   */
-  const getTasksCountByStatus = useApi(async (parameters?: {
-    status?: TaskStatus
-    accountId?: string | number
-  }) => {
-    const { status = '', accountId = '' } = parameters || {}
-    const url = `tasks/count-by-status${status ? `/${status}` : ''}${accountId ? `/${accountId}` : ''}`
-
-    return axios.get<ApiResponseWrapper<TaskStatuses>>(url)
-      .then(response => {
-        taskCountByStatus.value = response.data.data
-        showSuccessNotification(response.data.message)
-
-        return response.data
-      })
-      .catch(error => {
-        showErrorNotification((error as Error)?.message || 'Произошла ошибка при получении количества задач')
-        throw error
-      })
-  })
-
-  /**
    * Удаляет лайк задачи
    */
   const deleteLike = useApi(async (parameters?: { taskId: number }) => {
@@ -100,27 +75,7 @@ export const useTasksStore = defineStore('tasks', () => {
    */
   const deleteTask = useApi(async (parameters?: { id: number, }) => {
     if (!parameters) throw new Error('Не указан ID задачи')
-
-    return axios.delete<ApiResponseWrapper<null>>(`tasks/delete-task-by-id/${parameters.id}`)
-      .then(async response => {
-        showSuccessNotification(response.data.message)
-
-        return response.data
-      })
-  })
-
-  /**
-   * Удаляет одну задачу по ID (упрощенная версия)
-   */
-  const deleteSingleTaskById = useApi(async (parameters?: { id: number }) => {
-    if (!parameters) throw new Error('Не указан ID задачи')
-
-    return axios.delete<ApiResponseWrapper<null>>(`tasks/delete-task-by-id/${parameters.id}`)
-      .then(response => {
-        // Обновляем список задач после удаления
-        fetchTasks.execute()
-        return response.data
-      })
+    return (await (axios.delete<ApiResponseWrapper<null>>(`tasks/delete-task-by-id/${parameters.id}`))).data
   })
 
   /**
@@ -154,7 +109,6 @@ export const useTasksStore = defineStore('tasks', () => {
   return {
     // State
     tasks,
-    taskCountByStatus,
     isLoading,
     isTaskDetailsLoading,
     taskDetails,
@@ -162,10 +116,8 @@ export const useTasksStore = defineStore('tasks', () => {
     // Actions
     fetchTasks,
     fetchTaskDetails,
-    getTasksCountByStatus,
     deleteLike,
     deleteTask,
-    deleteSingleTaskById,
     deleteAllTasks,
 
     // Getters
