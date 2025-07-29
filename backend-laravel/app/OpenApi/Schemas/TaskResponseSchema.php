@@ -23,92 +23,59 @@ use OpenApi\Attributes as OA;
                     description: "Вложения поста",
                     type: "array",
                     items: new OA\Items(
+                        type: "object",
                         properties: [
-                            new OA\Property(
-                                property: "type",
-                                description: "Тип вложения",
-                                type: "string",
-                                example: "photo"
-                            ),
+                            new OA\Property(property: "type", type: "string", example: "photo"),
                             new OA\Property(
                                 property: "photo",
-                                description: "Данные фотографии",
+                                type: "object",
                                 properties: [
-                                    new OA\Property(
-                                        property: "id",
-                                        description: "ID фотографии",
-                                        type: "integer",
-                                        example: 457277432
-                                    ),
-                                    new OA\Property(
-                                        property: "owner_id",
-                                        description: "ID владельца фотографии",
-                                        type: "integer",
-                                        example: 357817305
-                                    ),
+                                    new OA\Property(property: "id", type: "integer", example: 457240501),
+                                    new OA\Property(property: "album_id", type: "integer", example: -7),
+                                    new OA\Property(property: "owner_id", type: "integer", example: 855285323),
+                                    new OA\Property(property: "date", type: "integer", example: 1751909007),
+                                    new OA\Property(property: "access_key", type: "string", example: "ea4a3b28739afcf1db"),
+                                    new OA\Property(property: "post_id", type: "integer", example: 801),
                                     new OA\Property(
                                         property: "sizes",
-                                        description: "Размеры фотографии",
                                         type: "array",
                                         items: new OA\Items(
+                                            type: "object",
                                             properties: [
-                                                new OA\Property(
-                                                    property: "type",
-                                                    description: "Тип размера",
-                                                    type: "string",
-                                                    example: "x"
-                                                ),
-                                                new OA\Property(
-                                                    property: "width",
-                                                    description: "Ширина",
-                                                    type: "integer",
-                                                    example: 640
-                                                ),
-                                                new OA\Property(
-                                                    property: "height",
-                                                    description: "Высота",
-                                                    type: "integer",
-                                                    example: 395
-                                                ),
-                                                new OA\Property(
-                                                    property: "url",
-                                                    description: "URL изображения",
-                                                    type: "string",
-                                                    example: "https://sun9-41.userapi.com/s/v1/if2/..."
-                                                )
-                                            ],
-                                            type: "object"
+                                                new OA\Property(property: "height", type: "integer", example: 108),
+                                                new OA\Property(property: "type", type: "string", example: "s"),
+                                                new OA\Property(property: "width", type: "integer", example: 72),
+                                                new OA\Property(property: "url", type: "string", example: "https://sun9-12.userapi.com/...")
+                                            ]
                                         )
+                                    ),
+                                    new OA\Property(property: "text", type: "string", example: ""),
+                                    new OA\Property(property: "web_view_token", type: "string", example: "a4edd72463b8e5fa23"),
+                                    new OA\Property(property: "has_tags", type: "boolean", example: false),
+                                    new OA\Property(
+                                        property: "orig_photo",
+                                        type: "object",
+                                        properties: [
+                                            new OA\Property(property: "height", type: "integer", example: 2560),
+                                            new OA\Property(property: "type", type: "string", example: "base"),
+                                            new OA\Property(property: "url", type: "string", example: "https://sun9-12.userapi.com/..."),
+                                            new OA\Property(property: "width", type: "integer", example: 1707)
+                                        ]
                                     )
-                                ],
-                                type: "object"
+                                ]
                             )
-                        ],
-                        type: "object"
+                        ]
                     )
                 ),
                 new OA\Property(
                     property: "likes",
                     description: "Информация о лайках",
                     properties: [
-                        new OA\Property(
-                            property: "count",
-                            description: "Количество лайков",
-                            type: "integer",
-                            example: 9
-                        ),
-                        new OA\Property(
-                            property: "user_likes",
-                            description: "Поставил ли текущий пользователь лайк",
-                            type: "integer",
-                            example: 1
-                        ),
-                        new OA\Property(
-                            property: "can_like",
-                            description: "Может ли пользователь поставить лайк",
-                            type: "integer",
-                            example: 0
-                        )
+                        new OA\Property(property: "can_like", type: "integer", description: "Может ли текущий пользователь поставить лайк (1 - да, 0 - нет)", example: 0),
+                        new OA\Property(property: "count", type: "integer", description: "Количество лайков", example: 1),
+                        new OA\Property(property: "user_likes", type: "integer", description: "Поставил ли текущий пользователь лайк (1 - да, 0 - нет)", example: 1),
+                        new OA\Property(property: "can_publish", type: "integer", description: "Может ли текущий пользователь сделать репост (1 - да, 0 - нет)", example: 1),
+                        new OA\Property(property: "repost_disabled", type: "boolean", description: "Отключен ли репост", example: false)
                     ],
                     type: "object"
                 ),
@@ -116,33 +83,11 @@ use OpenApi\Attributes as OA;
                     property: "liked_users",
                     description: "Пользователи, поставившие лайки",
                     type: "array",
-                    items: new OA\Items(
-                        properties: [
-                            new OA\Property(
-                                property: "id",
-                                description: "ID пользователя",
-                                type: "integer",
-                                example: 713861431
-                            ),
-                            new OA\Property(
-                                property: "first_name",
-                                description: "Имя пользователя",
-                                type: "string",
-                                example: "Андрей"
-                            ),
-                            new OA\Property(
-                                property: "last_name",
-                                description: "Фамилия пользователя",
-                                type: "string",
-                                example: "Терещенко"
-                            )
-                        ],
-                        type: "object"
-                    )
+                    items: new OA\Items(ref: "#/components/schemas/VkUser")
                 ),
                 new OA\Property(
                     property: "account_id",
-                    description: "ID аккаунта из модели Task",
+                    description: "ID аккаунта",
                     type: "integer",
                     example: 9121607
                 )

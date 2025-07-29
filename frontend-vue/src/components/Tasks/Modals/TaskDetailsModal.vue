@@ -2,7 +2,7 @@
   import { ref, computed, defineProps, getCurrentInstance } from 'vue'
   import { format } from 'date-fns'
   import { useTasksStore } from '@/stores/TasksStore'
-  import { showErrorNotification, showSuccessNotification } from '@/helpers/notyfHelper'
+  import { showSuccessNotification } from '@/helpers/notyfHelper'
   import { useModal } from '@/composables/useModal'
 
   const props = defineProps<{
@@ -16,7 +16,7 @@
 
   const isUserLiked = computed(() => {
     return (taskId: number) => {
-      const task = tasksStore.tasks.find(task => task.id === taskId)
+      const task = tasksStore.fetchTasks.data?.tasks.find(task => task.id === taskId)
       if (tasksStore.fetchTaskDetails.data?.liked_users && task?.account_id) {
         return tasksStore.fetchTaskDetails.data.liked_users.some(user => user.id === task.account_id)
       }
@@ -41,24 +41,24 @@
   <div class="modal fade" :id="modalId" tabindex="-1" aria-labelledby="Task details" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
-        <div class="modal-header" v-if="tasksStore.taskDetails">
+        <div class="modal-header" v-if="tasksStore.fetchTaskDetails.data">
           <h1 class="modal-title fs-5" id="Delete task">Информация о задаче #{{ taskId }}</h1>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
 
         <PerfectScrollbar class="ps-modal">
           <div class="modal-body py-0">
-            <div class="d-flex mb-3" v-if="tasksStore.taskDetails">
+            <div class="d-flex mb-3" v-if="tasksStore.fetchTaskDetails.data?.attachments?.[0]?.photo">
               <img :src="tasksStore.fetchTaskDetails.data.attachments[0].photo.sizes[4].url" class="rounded-1 w-100" alt="">
             </div>
 
             <div class="ps-3 d-flex flex-column">
-              <p class="mb-1 w-100">Количество лайков: <b>{{ tasksStore.fetchTaskDetails.data.likes.count }}</b></p>
-              <p>Дата публикации: <b>{{ formatData(tasksStore.fetchTaskDetails.data.attachments[0].photo.date) }}</b>
+              <p class="mb-1 w-100">Количество лайков: <b>{{ tasksStore.fetchTaskDetails.data?.likes.count }}</b></p>
+              <p>Дата публикации: <b>{{ formatData(tasksStore.fetchTaskDetails.data?.attachments[0].photo.date) }}</b>
               </p>
             </div>
 
-            <div class="accordion" v-if="tasksStore.taskDetails">
+            <div class="accordion" v-if="tasksStore.fetchTaskDetails.data">
               <div class="accordion-item">
                 <h2 class="accordion-header">
                   <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#listOfLikes" aria-expanded="false" aria-controls="listOfLikes">

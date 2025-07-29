@@ -21,10 +21,17 @@ import { showErrorNotification } from '@/helpers/notyfHelper'
  *   return await axios.get<UserResponse>(`/users/${params?.userId}`)
  * })
  *
- * // Использование
- * await getUserData.fetch({ userId: 123 })
+ * // Базовое использование
+ * await getUserData.execute({ userId: 123 })
  * console.log(getUserData.data.value) // данные пользователя
- * console.log(getUserData.loading.value) // состояние загрузки
+ * console.log(getUserData.loading.value) // общее состояние загрузки
+ *
+ * // Использование с параметризованной загрузкой
+ * await getUserData.execute({ userId: 123 }, '123') // второй параметр - ключ загрузки
+ * console.log(getUserData.isLoadingKey('123')) // проверка загрузки для конкретного ключа
+ *
+ * // В шаблоне Vue
+ * // :disabled="getUserData.loading && getUserData.isLoadingKey(userId.toString())"
  * ```
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -40,21 +47,28 @@ export default <T, D extends ApiResponseWrapper<any>>(
   /** Сообщение об ошибке, если запрос завершился неудачно */
   const error = ref<Nullable<string>>(null)
 
+  /** Set для отслеживания ключей параметризованной загрузки */
+  const loadingKeys = ref<Set<string>>(new Set())
+
   /**
    * Выполняет API запрос с управлением состоянием
    *
    * @param parameters - Параметры для передачи в API функцию
+   * @param loadingKey - Опциональный ключ для отслеживания параметризованной загрузки
    * @returns Promise с результатом выполнения API запроса
    *
    * @throws {Error} Пробрасывает ошибку для обработки в вызывающем коде
    */
-  const execute = async (parameters?: T) => {
+  const execute = async (parameters?: T, loadingKey?: string) => {
     try {
       // Очищаем предыдущую ошибку
       error.value = null
 
       // Устанавливаем состояние загрузки
       loading.value = true
+
+      // Если указан ключ параметризованной загрузки, добавляем его в Set
+      if (loadingKey) loadingKeys.value.add(loadingKey)
 
       // Выполняем API запрос
       const response = await apiFunction(parameters)
@@ -75,8 +89,19 @@ export default <T, D extends ApiResponseWrapper<any>>(
     } finally {
       // Сбрасываем состояние загрузки независимо от результата
       loading.value = false
+
+      // Если указан ключ параметризованной загрузки, удаляем его из Set
+      if (loadingKey) loadingKeys.value.delete(loadingKey)
     }
   }
+
+  /**
+   * Проверяет, выполняется ли загрузка для конкретного ключа
+   *
+   * @param key - Ключ для проверки состояния загрузки
+   * @returns true, если для указанного ключа выполняется загрузка
+   */
+  const isLoadingKey = (key: string): boolean => loadingKeys.value.has(key)
 
   return {
     /** Метод для выполнения API запроса */
@@ -86,6 +111,8 @@ export default <T, D extends ApiResponseWrapper<any>>(
     /** Реактивное состояние ошибки */
     error,
     /** Реактивные данные, полученные от API */
-    data
+    data,
+    /** Метод для проверки параметризованной загрузки по ключу */
+    isLoadingKey
   }
 }

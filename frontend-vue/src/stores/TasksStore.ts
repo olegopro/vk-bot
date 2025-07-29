@@ -32,9 +32,9 @@ export const useTasksStore = defineStore('tasks', () => {
   /**
    * Удаляет задачу по ID
    */
-  const deleteTask = useApi(async (parameters?: { id: number, }) => {
+  const deleteTask = useApi(async (parameters?: { taskId: number, }) => {
     if (!parameters) throw new Error('Не указан ID задачи')
-    return (await (axios.delete<ApiResponseWrapper<null>>(`tasks/delete-task-by-id/${parameters.id}`))).data
+    return (await (axios.delete<ApiResponseWrapper<null>>(`tasks/delete-task-by-id/${parameters.taskId}`))).data
   })
 
   /**
@@ -46,7 +46,6 @@ export const useTasksStore = defineStore('tasks', () => {
   })
 
   return {
-    // Actions
     fetchTasks,
     fetchTaskDetails,
     deleteLike,

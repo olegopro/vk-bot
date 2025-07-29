@@ -89,7 +89,7 @@
       </select>
 
       <button class="btn btn-danger btn-action me-3"
-        :disabled="tasksStore.tasks.length === 0"
+        :disabled="tasksStore.fetchTasks.data?.tasks.length === 0"
         @click="showDeleteAllTasksModal"
       >
         Удалить задачи
@@ -114,14 +114,14 @@
                 <h6 class="d-flex mb-0 pe-none justify-content-center">
                   <span class="badge btn btn-secondary d-flex items-center justify-content-center fw-bold"
                     style="padding: 8px; min-width: 80px;">
-                    <template v-if="tasksStore.isLoading && !tasksStore.tasks.length">
+                    <template v-if="tasksStore.fetchTasks.loading && !tasksStore.fetchTasks.data?.tasks.length">
                       <span class="spinner-border" role="status" style="width: 12px; height: 12px;">
                         <span class="visually-hidden">Загрузка...</span>
                       </span>
                     </template>
 
                     <template v-else>
-                      <span>{{ tasksStore.tasks.length }}</span>
+                      <span>{{ tasksStore.fetchTasks.data?.tasks.length }}</span>
                     </template>
                   </span>
                 </h6>
@@ -142,7 +142,7 @@
               :key="task.id"
             />
 
-            <tr v-if="tasksStore.isLoading" style="height: 55px;">
+            <tr v-if="tasksStore.fetchTasks.loading" style="height: 55px;">
               <td colspan="7">
                 <div class="spinner-border" role="status" style="position: relative; top: 3px;">
                   <span class="visually-hidden">Загрузка...</span>

@@ -9,11 +9,9 @@
   import AccountDetailsModal from './Modals/AccountDetailsModal.vue'
   import { Task } from '@/models/TaskModel'
   import { useModal } from '@/composables/useModal'
-  import { showErrorNotification } from '@/helpers/notyfHelper'
+  import { Nullable } from '@types'
 
-  const props = defineProps<{ task: Task }>()
-
-  const { task } = props
+  const { task } = defineProps<{ task: Task }>()
 
   const tasksStore = useTasksStore()
   const accountStore = useAccountStore()
@@ -21,15 +19,14 @@
 
   const dateFormat = (date) => format(new Date(date), 'yyyy-MM-dd HH:mm:ss')
 
-  const showTaskDetailsModal = (taskId) => {
-    tasksStore.fetchTaskDetails.execute({ taskId })
+  const showTaskDetailsModal = (taskId: number): void => {
+    tasksStore.fetchTaskDetails.execute({ taskId }, String(taskId))
       .then(() => showModal(TaskDetailsModal, { taskId }))
   }
 
-  const showAccountDetailsModal = (accountId: number, ownerId: number, taskId: number | null) => {
+  const showAccountDetailsModal = (accountId: number, ownerId: number, taskId: number) => {
     accountStore.fetchOwnerData.execute({ accountId, ownerId, taskId })
       .then(() => showModal(AccountDetailsModal))
-      .catch(error => showErrorNotification(error.response.data.message))
   }
 </script>
 
@@ -40,7 +37,7 @@
       <div class="flex-container" @click="showAccountDetailsModal(task.account_id, task.owner_id, task.id)">
         {{ task.first_name }} {{ task.last_name }}
 
-        <span v-if="accountStore.isOwnerDataLoading === task.id" class="spinner-border ms-2" role="status" style="width: 1rem; height: 1rem;">
+        <span v-if="accountStore.fetchOwnerData.isLoadingKey(String(task.id))" class="spinner-border ms-2" role="status" style="width: 1rem; height: 1rem;">
           <span class="visually-hidden">Loading...</span>
         </span>
         <i v-else class="bi bi-person-circle ms-2" style="font-size: 1rem; opacity: 0.75" />
@@ -56,9 +53,9 @@
         class="btn btn-primary button-style me-2"
         type="button"
         @click="showTaskDetailsModal(task.id)"
-        :disabled="tasksStore.isTaskDetailsLoading === task.id"
+        :disabled="tasksStore.fetchTaskDetails.loading && tasksStore.fetchTaskDetails.isLoadingKey(task.id.toString())"
       >
-        <span v-if="tasksStore.isTaskDetailsLoading === task.id" class="spinner-border" role="status" style="width: 1rem; height: 1rem;">
+        <span v-if="tasksStore.fetchTaskDetails.loading && tasksStore.fetchTaskDetails.isLoadingKey(task.id.toString())" class="spinner-border" role="status" style="width: 1rem; height: 1rem;">
           <span class="visually-hidden">Loading...</span>
         </span>
         <i v-else class="bi bi-info-circle" />
