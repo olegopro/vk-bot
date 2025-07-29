@@ -141,60 +141,6 @@ export const useTasksStore = defineStore('tasks', () => {
     return (await axios.delete<DeleteTaskResponse>(url)).data
   })
 
-  /**
-   * Создает задачи лайков для постов из новостной ленты
-   */
-  // TODO: Неиспользуемый метод
-  // const createAndQueueLikeTasksFromNewsfeed = useApi(async (parameters?: CreateTasksRequest) => {
-  //   return axios.post<TasksListResponse>('tasks/get-posts-for-like', parameters)
-  //     .then(response => {
-  //       showSuccessNotification(response.data.message)
-  //       return response.data
-  //     })
-  //     .catch(error => {
-  //       showErrorNotification((error as Error)?.message || 'Произошла ошибка при создании задач лайков из новостной ленты')
-  //       throw error
-  //     })
-  // })
-
-  /**
-   * Обрабатывает и ставит в очередь задачи лайков
-   */
-  // TODO: Неиспользуемый метод
-  // const processAndQueuePendingLikeTasks = useApi(async (parameters?: CreateTasksRequest) => {
-  //   return axios.post<TasksListResponse>('tasks/add-task-likes', parameters)
-  //     .then(response => {
-  //       showSuccessNotification(response.data.message)
-  //       return response.data
-  //     })
-  //     .catch(error => {
-  //       showErrorNotification((error as Error)?.message || 'Произошла ошибка при обработке задач лайков')
-  //       throw error
-  //     })
-  // })
-
-  // TODO: Неиспользуемый метод
-  /**
-   * Создает задачи лайков для постов пользователей
-   */
-  // const createLikeTasksForUserWallPosts = useApi(async (parameters?: CreateTasksRequest) => {
-  //   return axios.post<TasksListResponse>('tasks/create-for-users', parameters)
-  //     .then(response => {
-  //       showSuccessNotification(response.data.message)
-  //       return response.data
-  //     })
-  //     .catch(error => {
-  //       showErrorNotification((error as Error)?.message || 'Произошла ошибка при создании задач лайков для постов пользователя')
-  //       throw error
-  //     })
-  // })
-
-  // Геттер
-  // TODO: Неиспользуемый метод
-  // const getTaskById = computed(() => {
-  //   return (taskId: number) => tasks.value.find(task => task.id === taskId)
-  // })
-
   const isUserLiked = computed(() => {
     return (taskId: number) => {
       const task = tasks.value.find(task => task.id === taskId)

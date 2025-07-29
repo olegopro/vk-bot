@@ -65,8 +65,6 @@
 
     // Устанавливаем observer
     observer.value = new IntersectionObserver(entries => {
-      console.log('cyclicTasksStore.cyclicTasks.length', cyclicTasksStore.cyclicTasks.length)
-      console.log('cyclicTasksStore.totalCyclicTasksCount', cyclicTasksStore.totalCyclicTasksCount)
       entries.forEach(entry => {
         if (
           entry.isIntersecting &&
