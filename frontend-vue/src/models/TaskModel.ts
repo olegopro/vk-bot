@@ -1,5 +1,3 @@
-import { ApiResponseWrapper } from './ApiModel'
-
 export type TaskStatus = 'queued' | 'done' | 'failed' | ''
 
 export interface Task {
@@ -45,16 +43,6 @@ export interface TasksListData {
   total: number
   statuses: TaskStatuses
 }
-
-export type TasksListResponse = ApiResponseWrapper<TasksListData>
-
-export type TaskDetailsResponse = ApiResponseWrapper<TaskDetails>
-
-export type TaskCountByStatusResponse = ApiResponseWrapper<TaskStatuses>
-
-export type DeleteTaskResponse = ApiResponseWrapper<null>
-
-export type DeleteLikeResponse = ApiResponseWrapper<null>
 
 export interface CreateCyclicTaskRequest {
   account_id: number

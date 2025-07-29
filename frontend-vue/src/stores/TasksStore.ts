@@ -7,13 +7,10 @@ import { Nullable } from '@/types'
 import {
   TaskDetails,
   TaskStatuses,
-  TasksListResponse,
-  TaskDetailsResponse,
-  TaskCountByStatusResponse,
-  DeleteTaskResponse,
-  DeleteLikeResponse,
+  TasksListData,
   TaskStatus
 } from '@/models/TaskModel'
+import { ApiResponseWrapper } from '@/models/ApiModel'
 
 export const useTasksStore = defineStore('tasks', () => {
   const taskCountByStatus = ref<Nullable<TaskStatuses>>(null)
@@ -31,7 +28,7 @@ export const useTasksStore = defineStore('tasks', () => {
     const { status = '', accountId = '' } = parameters || {}
     const url = `tasks${status ? `/${status}` : ''}${accountId ? `/${accountId}` : ''}`
 
-    return (await axios.get<TasksListResponse>(url)).data
+    return (await axios.get<ApiResponseWrapper<TasksListData>>(url)).data
   })
 
   /**
@@ -47,7 +44,7 @@ export const useTasksStore = defineStore('tasks', () => {
 
     isTaskDetailsLoading.value = parameters.taskId
 
-    return axios.get<TaskDetailsResponse>(`tasks/task-info/${parameters.taskId}`)
+    return axios.get<ApiResponseWrapper<TaskDetails>>(`tasks/task-info/${parameters.taskId}`)
       .then(response => {
         taskDetails.value = response.data.data
         return response.data
@@ -67,7 +64,7 @@ export const useTasksStore = defineStore('tasks', () => {
     const { status = '', accountId = '' } = parameters || {}
     const url = `tasks/count-by-status${status ? `/${status}` : ''}${accountId ? `/${accountId}` : ''}`
 
-    return axios.get<TaskCountByStatusResponse>(url)
+    return axios.get<ApiResponseWrapper<TaskStatuses>>(url)
       .then(response => {
         taskCountByStatus.value = response.data.data
         showSuccessNotification(response.data.message)
@@ -86,7 +83,7 @@ export const useTasksStore = defineStore('tasks', () => {
   const deleteLike = useApi(async (parameters?: { taskId: number }) => {
     if (!parameters) throw new Error('Не указан ID задачи')
 
-    return axios.delete<DeleteLikeResponse>(`tasks/delete-like/${parameters.taskId}`)
+    return axios.delete<ApiResponseWrapper<null>>(`tasks/delete-like/${parameters.taskId}`)
       .then(async response => {
         await fetchTaskDetails.execute({ taskId: parameters.taskId })
         showSuccessNotification(response.data.message)
@@ -104,7 +101,7 @@ export const useTasksStore = defineStore('tasks', () => {
   const deleteTask = useApi(async (parameters?: { id: number, }) => {
     if (!parameters) throw new Error('Не указан ID задачи')
 
-    return axios.delete<DeleteTaskResponse>(`tasks/delete-task-by-id/${parameters.id}`)
+    return axios.delete<ApiResponseWrapper<null>>(`tasks/delete-task-by-id/${parameters.id}`)
       .then(async response => {
         showSuccessNotification(response.data.message)
 
@@ -118,7 +115,7 @@ export const useTasksStore = defineStore('tasks', () => {
   const deleteSingleTaskById = useApi(async (parameters?: { id: number }) => {
     if (!parameters) throw new Error('Не указан ID задачи')
 
-    return axios.delete<DeleteTaskResponse>(`tasks/delete-task-by-id/${parameters.id}`)
+    return axios.delete<ApiResponseWrapper<null>>(`tasks/delete-task-by-id/${parameters.id}`)
       .then(response => {
         // Обновляем список задач после удаления
         fetchTasks.execute()
@@ -141,7 +138,7 @@ export const useTasksStore = defineStore('tasks', () => {
 
     const url = `tasks/delete-all-tasks${statusPart}${accountIdPart}`
 
-    return (await axios.delete<DeleteTaskResponse>(url)).data
+    return (await axios.delete<ApiResponseWrapper<null>>(url)).data
   })
 
   const isUserLiked = computed(() => {
