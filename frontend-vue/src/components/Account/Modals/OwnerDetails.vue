@@ -16,9 +16,6 @@
   })
 
   const modalHide = () => closeModal('ownerDetailsModal')
-
-  onMounted(() => console.log('OwnerDetails onMounted'))
-  onUnmounted(() => console.log('OwnerDetails onUnmounted'))
 </script>
 
 <template>
@@ -39,7 +36,7 @@
 
       </div>
     </div>
-    </div>
+  </div>
 </template>
 
 <style lang="scss" scoped>
