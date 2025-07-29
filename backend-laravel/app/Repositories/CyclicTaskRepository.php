@@ -15,18 +15,17 @@ use App\Models\CyclicTask;
 class CyclicTaskRepository implements CyclicTaskRepositoryInterface
 {
     /**
-     * Получает список циклических задач с пагинацией.
+     * Получает все циклические задачи без пагинации.
      *
-     * Метод возвращает пагинированный список всех циклических задач,
-     * отсортированных по умолчанию по ID. Пагинация позволяет эффективно
-     * работать с большим количеством задач, загружая их частями.
+     * Метод возвращает коллекцию всех циклических задач из базы данных,
+     * отсортированных по ID. Используется для загрузки всех задач сразу
+     * без разбиения на страницы.
      *
-     * @param int $perPage Количество задач на страницу для пагинации (по умолчанию 30)
-     * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator Пагинатор с коллекцией циклических задач
+     * @return \Illuminate\Database\Eloquent\Collection Коллекция всех циклических задач
      */
-    public function getCyclicTasks($perPage = 30)
+    public function getAllCyclicTasks()
     {
-        return CyclicTask::paginate($perPage);
+        return CyclicTask::all();
     }
 
     /**

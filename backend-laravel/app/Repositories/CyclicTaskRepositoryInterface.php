@@ -4,7 +4,7 @@ namespace App\Repositories;
 
 interface CyclicTaskRepositoryInterface
 {
-    public function getCyclicTasks();
+    public function getAllCyclicTasks();
 
     public function deleteCyclicTask($taskId);
 

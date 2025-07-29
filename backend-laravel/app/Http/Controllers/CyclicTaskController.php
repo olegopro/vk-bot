@@ -20,26 +20,10 @@ final class CyclicTaskController extends Controller
      * @return JsonResponse
      */
     #[OA\Get(
-        path: '/api/cyclic-tasks',
-        description: 'Возвращает пагинированный список всех циклических задач',
+        path: '/cyclic-tasks',
+        description: 'Возвращает список всех циклических задач',
         summary: 'Получить список циклических задач',
         tags: ['Cyclic Tasks'],
-        parameters: [
-            new OA\Parameter(
-                name: 'page',
-                description: 'Номер страницы для пагинации',
-                in: 'query',
-                required: false,
-                schema: new OA\Schema(type: 'integer', minimum: 1, example: 1)
-            ),
-            new OA\Parameter(
-                name: 'perPage',
-                description: 'Количество задач на странице',
-                in: 'query',
-                required: false,
-                schema: new OA\Schema(type: 'integer', minimum: 1, maximum: 100, example: 30)
-            )
-        ],
         responses: [
             new OA\Response(
                 response: 200,
@@ -64,15 +48,6 @@ final class CyclicTaskController extends Controller
                                 ]
                             )
                         ),
-                        new OA\Property(
-                            property: 'pagination',
-                            properties: [
-                                new OA\Property(property: 'total', type: 'integer', example: 150),
-                                new OA\Property(property: 'current_page', type: 'integer', example: 1),
-                                new OA\Property(property: 'last_page', type: 'integer', example: 5),
-                                new OA\Property(property: 'per_page', type: 'integer', example: 30)
-                            ]
-                        ),
                         new OA\Property(property: 'message', type: 'string', example: 'Список циклических задач получен')
                     ]
                 )
@@ -91,16 +66,12 @@ final class CyclicTaskController extends Controller
     )]
     public function getCyclicTasks(Request $request): JsonResponse
     {
-        // Получаем экземпляр пагинатора
-        $cyclicTasksPaginator = $this->cyclicTaskRepository->getCyclicTasks($request->query('perPage', 30));
-
-        // Извлекаем данные пагинации
-        $pagination = collect($cyclicTasksPaginator->toArray())->except('data');
+        // Получаем все циклические задачи без пагинации
+        $cyclicTasks = $this->cyclicTaskRepository->getAllCyclicTasks();
 
         return response()->json([
             'success' => true,
-            'data'    => $cyclicTasksPaginator->items(), // Извлекаем только массив данных
-            'pagination' => $pagination, // Добавляем информацию о пагинации, если нужно
+            'data'    => $cyclicTasks,
             'message' => 'Список циклических задач получен'
         ]);
     }
@@ -113,7 +84,7 @@ final class CyclicTaskController extends Controller
      * @return JsonResponse
      */
     #[OA\Patch(
-        path: '/api/cyclic-tasks/{taskId}',
+        path: '/cyclic-tasks/{taskId}',
         description: 'Обновляет данные существующей циклической задачи',
         summary: 'Редактировать циклическую задачу',
         requestBody: new OA\RequestBody(
@@ -121,11 +92,11 @@ final class CyclicTaskController extends Controller
             required: true,
             content: new OA\JsonContent(
                 properties: [
-                    new OA\Property(property: 'account_id', type: 'integer', description: 'ID аккаунта', example: 123),
-                    new OA\Property(property: 'total_task_count', type: 'integer', description: 'Общее количество задач', example: 100),
-                    new OA\Property(property: 'tasks_per_hour', type: 'integer', description: 'Количество задач в час', example: 5),
-                    new OA\Property(property: 'status', type: 'string', enum: ['active', 'pause', 'done'], description: 'Статус задачи', example: 'active'),
-                    new OA\Property(property: 'selected_times', type: 'object', description: 'Выбранные времена выполнения', example: '{"monday": [true, false, true]}')
+                    new OA\Property(property: 'account_id', description: 'ID аккаунта', type: 'integer', example: 123),
+                    new OA\Property(property: 'total_task_count', description: 'Общее количество задач', type: 'integer', example: 100),
+                    new OA\Property(property: 'tasks_per_hour', description: 'Количество задач в час', type: 'integer', example: 5),
+                    new OA\Property(property: 'status', description: 'Статус задачи', type: 'string', enum: ['active', 'pause', 'done'], example: 'active'),
+                    new OA\Property(property: 'selected_times', description: 'Выбранные времена выполнения', type: 'object', example: '{"monday": [true, false, true]}')
                 ]
             )
         ),
@@ -188,7 +159,7 @@ final class CyclicTaskController extends Controller
     )]
     public function editCyclicTask(Request $request, $taskId): JsonResponse
     {
-        $data = $request->only(['account_id','total_task_count', 'tasks_per_hour', 'status', 'selected_times']);
+        $data = $request->only(['account_id', 'total_task_count', 'tasks_per_hour', 'status', 'selected_times']);
         $cyclicTasks = $this->cyclicTaskRepository->editCyclicTask($taskId, $data);
 
         if (!$cyclicTasks) {
@@ -213,7 +184,7 @@ final class CyclicTaskController extends Controller
      * @return JsonResponse
      */
     #[OA\Delete(
-        path: '/api/cyclic-tasks/{taskId}',
+        path: '/cyclic-tasks/{taskId}',
         description: 'Удаляет циклическую задачу по её ID',
         summary: 'Удалить циклическую задачу',
         tags: ['Cyclic Tasks'],
@@ -282,7 +253,7 @@ final class CyclicTaskController extends Controller
      * @return JsonResponse
      */
     #[OA\Delete(
-        path: '/api/cyclic-tasks/delete-all-cyclic-tasks',
+        path: '/cyclic-tasks/delete-all-cyclic-tasks',
         description: 'Удаляет все циклические задачи из системы',
         summary: 'Удалить все циклические задачи',
         tags: ['Cyclic Tasks'],
@@ -326,7 +297,7 @@ final class CyclicTaskController extends Controller
      * @return JsonResponse
      */
     #[OA\Patch(
-        path: '/api/cyclic-tasks/pause-cyclic-task/{taskId}',
+        path: '/cyclic-tasks/pause-cyclic-task/{taskId}',
         description: 'Переключает статус циклической задачи между активным и приостановленным',
         summary: 'Приостановить/возобновить циклическую задачу',
         tags: ['Cyclic Tasks'],

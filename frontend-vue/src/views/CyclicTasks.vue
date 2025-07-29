@@ -8,15 +8,12 @@
   import EditCyclicTask from '../components/CyclicTasks/Modals/EditCyclicTask.vue'
   import DeleteAllCyclicTasks from '../components/CyclicTasks/Modals/DeleteAllCyclicTasks.vue'
   import router from '../router'
-  import { debounce } from 'lodash'
   import { useModal } from '@/composables/useModal.ts'
 
   const { isOpen, preparedModal, showModal, closeModal } = useModal()
 
   const taskId = ref(null)
   const modalComponent = shallowRef(null)
-  const observer = ref(null)
-  const currentPage = ref(1)
 
   const cyclicTasksStore = useCyclicTasksStore()
   const accountsStore = useAccountsStore()
@@ -47,37 +44,12 @@
     showModal('deleteAllCyclicTasksModal')
   }
 
-  const debouncedFetchCyclicTasks = debounce((page) => {
-    cyclicTasksStore.isLoading = true
-    cyclicTasksStore.fetchCyclicTasks.execute({ page }).then(() => currentPage.value++)
-  }, 500, {
-    leading: true, // Вызываться в начале периода ожидания
-    trailing: false // Дополнительный вызов в конце периода не требуется
-  })
-
   onMounted(() => {
     cyclicTasksStore.cyclicTasks = []
     accountsStore.accounts = []
 
-    // debouncedFetchCyclicTasks()
-    debouncedFetchCyclicTasks(currentPage.value)
+    cyclicTasksStore.fetchCyclicTasks.execute()
     accountsStore.fetchAccounts.execute()
-
-    // Устанавливаем observer
-    observer.value = new IntersectionObserver(entries => {
-      entries.forEach(entry => {
-        if (
-          entry.isIntersecting &&
-          cyclicTasksStore.cyclicTasks.length !== cyclicTasksStore.totalCyclicTasksCount
-        ) {
-          debouncedFetchCyclicTasks(currentPage.value)
-        }
-      })
-    })
-
-    // Стартуем наблюдение за элементом с классом '.load-more-trigger'
-    const loadMoreTrigger = document.querySelector('.load-more-trigger')
-    if (loadMoreTrigger) observer.value.observe(loadMoreTrigger)
   })
 </script>
 
@@ -105,7 +77,7 @@
           </template>
 
           <template v-else>
-            <span class="me-1">{{ cyclicTasksStore.totalCyclicTasksCount }}</span> / <span class="ms-1">{{ cyclicTasksStore.cyclicTasks.length }}</span>
+            {{ cyclicTasksStore.cyclicTasks.length }}
           </template>
         </span>
       </h6>
@@ -170,11 +142,6 @@
               </td>
             </tr>
 
-            <tr class="load-more-trigger">
-              <td colspan="9" class="visually-hidden">
-                <span>Загрузка...</span>
-              </td>
-            </tr>
           </tbody>
         </table>
       </PerfectScrollbar>
