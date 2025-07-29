@@ -41,7 +41,7 @@ export interface TasksPaginatedData {
 }
 
 export interface TasksListData {
-  tasks: TasksPaginatedData
+  tasks: Task[]
   total: number
   statuses: TaskStatuses
 }

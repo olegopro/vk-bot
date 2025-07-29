@@ -20,22 +20,7 @@ export const useCyclicTasksStore = defineStore('cyclicTasks', () => {
    * Получает список всех циклических задач
    */
   const fetchCyclicTasks = useApi(async () => {
-    isLoading.value = true
-
-    return axios.get<{ success: boolean; data: CyclicTask[]; message: string }>('cyclic-tasks')
-      .then(response => {
-        cyclicTasks.value = response.data.data
-        showSuccessNotification(response.data.message)
-
-        return response.data
-      })
-      .catch(error => {
-        showErrorNotification((error as Error)?.message || 'Произошла ошибка при получении циклических задач')
-        throw error
-      })
-      .finally(() => {
-        isLoading.value = false
-      })
+    return (await axios.get<ApiResponseWrapper<CyclicTask[]>>('cyclic-tasks')).data
   })
 
   /**

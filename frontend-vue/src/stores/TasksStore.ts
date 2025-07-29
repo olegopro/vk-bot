@@ -5,7 +5,6 @@ import { showErrorNotification, showSuccessNotification } from '@/helpers/notyfH
 import useApi from '@/composables/useApi'
 import { Nullable } from '@/types'
 import {
-  Task,
   TaskDetails,
   TaskStatuses,
   TasksListResponse,
@@ -17,7 +16,6 @@ import {
 } from '@/models/TaskModel'
 
 export const useTasksStore = defineStore('tasks', () => {
-  const tasks = ref<Task[]>([])
   const taskCountByStatus = ref<Nullable<TaskStatuses>>(null)
   const isLoading = ref<boolean>(false)
   const isTaskDetailsLoading = ref<Nullable<number>>(null)
@@ -28,14 +26,18 @@ export const useTasksStore = defineStore('tasks', () => {
    */
   const fetchTasks = useApi(async (parameters?: {
     status?: TaskStatus
-    accountId?: string | number
+    accountId?: string
   }) => {
     const { status = '', accountId = '' } = parameters || {}
-
     const url = `tasks${status ? `/${status}` : ''}${accountId ? `/${accountId}` : ''}`
 
     return (await axios.get<TasksListResponse>(url)).data
   })
+
+  /**
+   * Вычисляемое свойство для получения списка задач
+   */
+  const tasks = computed(() => fetchTasks.data.value?.tasks || [])
 
   /**
    * Получает детальную информацию о задаче
@@ -118,7 +120,8 @@ export const useTasksStore = defineStore('tasks', () => {
 
     return axios.delete<DeleteTaskResponse>(`tasks/delete-task-by-id/${parameters.id}`)
       .then(response => {
-        tasks.value = tasks.value.filter(task => task.id !== parameters.id)
+        // Обновляем список задач после удаления
+        fetchTasks.execute()
         return response.data
       })
   })

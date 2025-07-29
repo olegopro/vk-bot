@@ -44,8 +44,8 @@
   const handleSelectedTimes = times => selectedTimes.value = times
   const modalHide = () => closeModal('addCyclicTaskModal')
 
-  onMounted(() => console.log('AddCyclicTask onMounted'))
-  onUnmounted(() => console.log('AddCyclicTask onUnmounted'))
+  onMounted(() => console.log('AddCyclicTaskModal onMounted'))
+  onUnmounted(() => console.log('AddCyclicTaskModal onUnmounted'))
 </script>
 
 <template>

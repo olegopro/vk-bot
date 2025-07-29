@@ -155,39 +155,14 @@
                 }
             }
         },
-        "/api/cyclic-tasks": {
+        "/cyclic-tasks": {
             "get": {
                 "tags": [
                     "Cyclic Tasks"
                 ],
                 "summary": "Получить список циклических задач",
-                "description": "Возвращает пагинированный список всех циклических задач",
-                "operationId": "c06eede861078a1bb770724ae72d5f55",
-                "parameters": [
-                    {
-                        "name": "page",
-                        "in": "query",
-                        "description": "Номер страницы для пагинации",
-                        "required": false,
-                        "schema": {
-                            "type": "integer",
-                            "minimum": 1,
-                            "example": 1
-                        }
-                    },
-                    {
-                        "name": "perPage",
-                        "in": "query",
-                        "description": "Количество задач на странице",
-                        "required": false,
-                        "schema": {
-                            "type": "integer",
-                            "maximum": 100,
-                            "minimum": 1,
-                            "example": 30
-                        }
-                    }
-                ],
+                "description": "Возвращает список всех циклических задач",
+                "operationId": "08d002e5f84ce2950ea40dfc974f858e",
                 "responses": {
                     "200": {
                         "description": "Список циклических задач успешно получен",
@@ -248,27 +223,6 @@
                                                 "type": "object"
                                             }
                                         },
-                                        "pagination": {
-                                            "properties": {
-                                                "total": {
-                                                    "type": "integer",
-                                                    "example": 150
-                                                },
-                                                "current_page": {
-                                                    "type": "integer",
-                                                    "example": 1
-                                                },
-                                                "last_page": {
-                                                    "type": "integer",
-                                                    "example": 5
-                                                },
-                                                "per_page": {
-                                                    "type": "integer",
-                                                    "example": 30
-                                                }
-                                            },
-                                            "type": "object"
-                                        },
                                         "message": {
                                             "type": "string",
                                             "example": "Список циклических задач получен"
@@ -302,14 +256,14 @@
                 }
             }
         },
-        "/api/cyclic-tasks/{taskId}": {
+        "/cyclic-tasks/{taskId}": {
             "delete": {
                 "tags": [
                     "Cyclic Tasks"
                 ],
                 "summary": "Удалить циклическую задачу",
                 "description": "Удаляет циклическую задачу по её ID",
-                "operationId": "861099c71765014a186fb390d9e778f2",
+                "operationId": "9e18790089ee1df72c018e41af68b49f",
                 "parameters": [
                     {
                         "name": "taskId",
@@ -391,7 +345,7 @@
                 ],
                 "summary": "Редактировать циклическую задачу",
                 "description": "Обновляет данные существующей циклической задачи",
-                "operationId": "222c1047b67979ef4328e1f93857e912",
+                "operationId": "2329cb4a97bc8bc9cd96d5bfd7777220",
                 "parameters": [
                     {
                         "name": "taskId",
@@ -551,14 +505,14 @@
                 }
             }
         },
-        "/api/cyclic-tasks/delete-all-cyclic-tasks": {
+        "/cyclic-tasks/delete-all-cyclic-tasks": {
             "delete": {
                 "tags": [
                     "Cyclic Tasks"
                 ],
                 "summary": "Удалить все циклические задачи",
                 "description": "Удаляет все циклические задачи из системы",
-                "operationId": "9403fb740f41ab692c56e70d235d0b91",
+                "operationId": "de2e58e5a8df05a9e2306a4ba73c2cb1",
                 "responses": {
                     "200": {
                         "description": "Все циклические задачи успешно удалены",
@@ -603,14 +557,14 @@
                 }
             }
         },
-        "/api/cyclic-tasks/pause-cyclic-task/{taskId}": {
+        "/cyclic-tasks/pause-cyclic-task/{taskId}": {
             "patch": {
                 "tags": [
                     "Cyclic Tasks"
                 ],
                 "summary": "Приостановить/возобновить циклическую задачу",
                 "description": "Переключает статус циклической задачи между активным и приостановленным",
-                "operationId": "2993d016e72d4ee4dd758229514c4742",
+                "operationId": "d5340f164ac07126fc2bb98223db25c8",
                 "parameters": [
                     {
                         "name": "taskId",

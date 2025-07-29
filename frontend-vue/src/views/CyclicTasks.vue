@@ -1,10 +1,10 @@
 <script setup>
-  import { onMounted, ref, provide, shallowRef } from 'vue'
+  import { onMounted, provide, ref, shallowRef } from 'vue'
   import { useCyclicTasksStore } from '../stores/CyclicTasksStore'
   import { useAccountsStore } from '../stores/AccountsStore'
   import TableThread from '../components/CyclicTasks/TableThread.vue'
   import DeleteCyclicTask from '../components/CyclicTasks/Modals/DeleteCyclicTask.vue'
-  import AddCyclicTask from '../components/CyclicTasks/Modals/AddCyclicTask.vue'
+  import AddCyclicTaskModal from '../components/CyclicTasks/Modals/AddCyclicTaskModal.vue'
   import EditCyclicTask from '../components/CyclicTasks/Modals/EditCyclicTask.vue'
   import DeleteAllCyclicTasks from '../components/CyclicTasks/Modals/DeleteAllCyclicTasks.vue'
   import router from '../router'
@@ -35,7 +35,7 @@
   }
 
   const showAddCyclicTaskModal = () => {
-    modalComponent.value = preparedModal(AddCyclicTask)
+    modalComponent.value = preparedModal(AddCyclicTaskModal)
     showModal('addCyclicTaskModal')
   }
 
@@ -45,9 +45,6 @@
   }
 
   onMounted(() => {
-    cyclicTasksStore.cyclicTasks = []
-    accountsStore.accounts = []
-
     cyclicTasksStore.fetchCyclicTasks.execute()
     accountsStore.fetchAccounts.execute()
   })
@@ -70,14 +67,14 @@
         <span class="badge btn btn-secondary d-flex items-center fw-bold"
           style="padding: 8px"
         >
-          <template v-if="cyclicTasksStore.isLoading && !cyclicTasksStore.cyclicTasks.length">
+          <template v-if="cyclicTasksStore.fetchCyclicTasks.loading && !cyclicTasksStore.fetchCyclicTasks.data?.length">
             <span class="spinner-border" role="status" style="width: 12px; height: 12px;">
               <span class="visually-hidden">Загрузка...</span>
             </span>
           </template>
 
           <template v-else>
-            {{ cyclicTasksStore.cyclicTasks.length }}
+            {{ cyclicTasksStore.fetchCyclicTasks.data?.length }}
           </template>
         </span>
       </h6>
@@ -85,7 +82,7 @@
 
     <div class="col d-flex justify-content-end">
       <button class="btn btn-danger btn-action me-3"
-        :disabled="cyclicTasksStore.cyclicTasks.length === 0"
+        :disabled="cyclicTasksStore.fetchCyclicTasks.data?.length === 0"
         @click="showDeleteAllCyclicTasksModal"
       >
         Очистить список
@@ -104,7 +101,7 @@
     <div class="col-12">
 
       <PerfectScrollbar class="ps-table">
-        <table v-if="cyclicTasksStore.cyclicTasks" class="table table-hover">
+        <table v-if="cyclicTasksStore.fetchCyclicTasks.data" class="table table-hover">
           <thead>
             <tr>
               <th scope="col" style="width: 110px;">#</th>
@@ -128,7 +125,7 @@
               :showEditCyclicTaskModal="showEditCyclicTaskModal"
             />
 
-            <tr v-if="cyclicTasksStore.isLoading" style="height: 55px;">
+            <tr v-if="cyclicTasksStore.fetchCyclicTasks.loading" style="height: 55px;">
               <td colspan="9">
                 <div class="spinner-border" role="status" style="position: relative; top: 3px;">
                   <span class="visually-hidden">Загрузка...</span>
@@ -136,7 +133,7 @@
               </td>
             </tr>
 
-            <tr v-if="cyclicTasksStore.cyclicTasks.length === 0 && !cyclicTasksStore.isLoading" class="pe-none">
+            <tr v-if="cyclicTasksStore.fetchCyclicTasks.data?.length === 0 && !cyclicTasksStore.fetchCyclicTasks.loading" class="pe-none">
               <td colspan="9" style="height: 55px;">
                 Список циклических задач пуст
               </td>

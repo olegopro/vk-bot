@@ -63,7 +63,7 @@ class TaskRepository implements TaskRepositoryInterface
 
         // Если perPage = null, получаем все задачи, иначе используем пагинацию
         if ($perPage === null) {
-            $result['tasks'] = collect(['data' => $query->get()]);
+            $result['tasks'] = $query->get();
         } else {
             $result['tasks'] = $query->paginate($perPage);
         }

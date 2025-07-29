@@ -142,7 +142,7 @@
 
           <tbody>
             <TableThread
-              v-for="task in tasksStore.fetchTasks.data?.tasks.data"
+              v-for="task in tasksStore.fetchTasks.data?.tasks"
               :task="task"
               :key="task.id"
             />
