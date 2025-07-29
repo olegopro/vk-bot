@@ -12,21 +12,14 @@ import {
 import { ApiResponseWrapper } from '@/models/ApiModel'
 
 export const useTasksStore = defineStore('tasks', () => {
-  const isLoading = ref<boolean>(false)
-  const isTaskDetailsLoading = ref<Nullable<number>>(null)
   const taskDetails = ref<Nullable<TaskDetails>>(null)
 
   /**
    * Получает список задач
    */
-  const fetchTasks = useApi(async (parameters?: {
-    status?: TaskStatus
-    accountId?: string
-  }) => {
-    const { status = '', accountId = '' } = parameters || {}
-    const url = `tasks${status ? `/${status}` : ''}${accountId ? `/${accountId}` : ''}`
-
-    return (await axios.get<ApiResponseWrapper<TasksListData>>(url)).data
+  const fetchTasks = useApi(async (parameters?: { status?: TaskStatus, accountId?: string }) => {
+    const urlParts = ['tasks', parameters?.status, parameters?.accountId].filter(Boolean)
+    return (await axios.get<ApiResponseWrapper<TasksListData>>(urlParts.join('/'))).data
   })
 
   /**
@@ -40,15 +33,10 @@ export const useTasksStore = defineStore('tasks', () => {
   const fetchTaskDetails = useApi(async (parameters?: { taskId: number }) => {
     if (!parameters) throw new Error('Не указан ID задачи')
 
-    isTaskDetailsLoading.value = parameters.taskId
-
     return axios.get<ApiResponseWrapper<TaskDetails>>(`tasks/task-info/${parameters.taskId}`)
       .then(response => {
         taskDetails.value = response.data.data
         return response.data
-      })
-      .finally(() => {
-        isTaskDetailsLoading.value = null
       })
   })
 
@@ -81,19 +69,10 @@ export const useTasksStore = defineStore('tasks', () => {
   /**
    * Удаляет все задачи по статусу и аккаунту
    */
-  const deleteAllTasks = useApi(async (parameters?: {
-    status?: TaskStatus
-    accountId?: string | number
+  const deleteAllTasks = useApi(async (parameters?: {status?: TaskStatus, accountId?: string | number
   }) => {
-    const { status, accountId } = parameters || {}
-
-    // Проверяем, определены ли параметры status и accountId
-    const statusPart = status ? `/${status}` : '/null'
-    const accountIdPart = accountId ? `/${accountId}` : ''
-
-    const url = `tasks/delete-all-tasks${statusPart}${accountIdPart}`
-
-    return (await axios.delete<ApiResponseWrapper<null>>(url)).data
+    const urlParts = ['tasks/delete-all-tasks', parameters?.status, parameters?.accountId].filter(Boolean)
+    return (await axios.delete<ApiResponseWrapper<null>>(urlParts.join('/'))).data
   })
 
   const isUserLiked = computed(() => {
@@ -109,8 +88,6 @@ export const useTasksStore = defineStore('tasks', () => {
   return {
     // State
     tasks,
-    isLoading,
-    isTaskDetailsLoading,
     taskDetails,
 
     // Actions
