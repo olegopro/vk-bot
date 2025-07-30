@@ -61,7 +61,7 @@
           <div class="modal-body py-0">
             <select class="form-select mb-3" v-model="accountId">
               <option disabled value="selectAccount">Выберите аккаунт</option>
-              <option v-for="account in accountsStore.accounts" :key="account.id" :value="account.account_id">
+              <option v-for="account in accountsStore.fetchAccounts.data" :key="account.id" :value="account.account_id">
                 {{ account.screen_name }} ({{ account.first_name }} {{ account.last_name }})
               </option>
             </select>

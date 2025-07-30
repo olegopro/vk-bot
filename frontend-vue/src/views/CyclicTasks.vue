@@ -34,11 +34,6 @@
     showModal('editCyclicTaskModal')
   }
 
-  const showAddCyclicTaskModal = () => {
-    modalComponent.value = preparedModal(AddCyclicTaskModal)
-    showModal('addCyclicTaskModal')
-  }
-
   const showDeleteAllCyclicTasksModal = () => {
     modalComponent.value = preparedModal(DeleteAllCyclicTasks)
     showModal('deleteAllCyclicTasksModal')
@@ -90,7 +85,7 @@
 
       <button class="btn btn-success btn-action"
         type="button"
-        @click="showAddCyclicTaskModal"
+        @click="showModal(AddCyclicTaskModal)"
       >
         Добавить задачу
       </button>

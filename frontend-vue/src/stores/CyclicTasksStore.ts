@@ -14,7 +14,6 @@ import type { ApiResponseWrapper } from '@/models/ApiModel'
 
 export const useCyclicTasksStore = defineStore('cyclicTasks', () => {
   const cyclicTasks = ref<CyclicTask[]>([])
-  const isLoading = ref<boolean>(false)
 
   /**
    * Получает список всех циклических задач
@@ -141,7 +140,6 @@ export const useCyclicTasksStore = defineStore('cyclicTasks', () => {
   return {
     // State
     cyclicTasks,
-    isLoading,
 
     // Actions
     fetchCyclicTasks,

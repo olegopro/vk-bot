@@ -1855,89 +1855,6 @@
                 }
             }
         },
-        "tasks/count-by-status/{status?}/{accountId?}": {
-            "get": {
-                "tags": [
-                    "Tasks"
-                ],
-                "summary": "Подсчитать количество задач",
-                "description": "Подсчитывает количество задач по указанному статусу и/или ID аккаунта",
-                "operationId": "5e28bd9bb48f3c7fa40ec19cb43458e0",
-                "parameters": [
-                    {
-                        "name": "status",
-                        "in": "path",
-                        "description": "Статус задачи для фильтрации (queued, done, failed)",
-                        "required": false,
-                        "schema": {
-                            "type": "string",
-                            "enum": [
-                                "queued",
-                                "done",
-                                "failed"
-                            ],
-                            "example": "queued"
-                        }
-                    },
-                    {
-                        "name": "accountId",
-                        "in": "path",
-                        "description": "ID аккаунта для фильтрации задач",
-                        "required": false,
-                        "schema": {
-                            "type": "integer",
-                            "example": 9121607
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Количество задач успешно получено",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "success": {
-                                            "type": "boolean",
-                                            "example": true
-                                        },
-                                        "data": {
-                                            "type": "integer",
-                                            "example": 42
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Количество задач получено"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Неверные параметры запроса",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/TaskErrorResponse"
-                                }
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "Внутренняя ошибка сервера",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/TaskErrorResponse"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
         "/tasks/delete-all-tasks/{status?}/{accountId?}": {
             "delete": {
                 "tags": [
@@ -2253,51 +2170,91 @@
                                 "items": {
                                     "properties": {
                                         "type": {
-                                            "description": "Тип вложения",
                                             "type": "string",
                                             "example": "photo"
                                         },
                                         "photo": {
-                                            "description": "Данные фотографии",
                                             "properties": {
                                                 "id": {
-                                                    "description": "ID фотографии",
                                                     "type": "integer",
-                                                    "example": 457277432
+                                                    "example": 457240501
+                                                },
+                                                "album_id": {
+                                                    "type": "integer",
+                                                    "example": -7
                                                 },
                                                 "owner_id": {
-                                                    "description": "ID владельца фотографии",
                                                     "type": "integer",
-                                                    "example": 357817305
+                                                    "example": 855285323
+                                                },
+                                                "date": {
+                                                    "type": "integer",
+                                                    "example": 1751909007
+                                                },
+                                                "access_key": {
+                                                    "type": "string",
+                                                    "example": "ea4a3b28739afcf1db"
+                                                },
+                                                "post_id": {
+                                                    "type": "integer",
+                                                    "example": 801
                                                 },
                                                 "sizes": {
-                                                    "description": "Размеры фотографии",
                                                     "type": "array",
                                                     "items": {
                                                         "properties": {
+                                                            "height": {
+                                                                "type": "integer",
+                                                                "example": 108
+                                                            },
                                                             "type": {
-                                                                "description": "Тип размера",
                                                                 "type": "string",
-                                                                "example": "x"
+                                                                "example": "s"
                                                             },
                                                             "width": {
-                                                                "description": "Ширина",
                                                                 "type": "integer",
-                                                                "example": 640
-                                                            },
-                                                            "height": {
-                                                                "description": "Высота",
-                                                                "type": "integer",
-                                                                "example": 395
+                                                                "example": 72
                                                             },
                                                             "url": {
-                                                                "description": "URL изображения",
                                                                 "type": "string",
-                                                                "example": "https://sun9-41.userapi.com/s/v1/if2/..."
+                                                                "example": "https://sun9-12.userapi.com/..."
                                                             }
                                                         },
                                                         "type": "object"
                                                     }
+                                                },
+                                                "text": {
+                                                    "type": "string",
+                                                    "example": ""
+                                                },
+                                                "web_view_token": {
+                                                    "type": "string",
+                                                    "example": "a4edd72463b8e5fa23"
+                                                },
+                                                "has_tags": {
+                                                    "type": "boolean",
+                                                    "example": false
+                                                },
+                                                "orig_photo": {
+                                                    "properties": {
+                                                        "height": {
+                                                            "type": "integer",
+                                                            "example": 2560
+                                                        },
+                                                        "type": {
+                                                            "type": "string",
+                                                            "example": "base"
+                                                        },
+                                                        "url": {
+                                                            "type": "string",
+                                                            "example": "https://sun9-12.userapi.com/..."
+                                                        },
+                                                        "width": {
+                                                            "type": "integer",
+                                                            "example": 1707
+                                                        }
+                                                    },
+                                                    "type": "object"
                                                 }
                                             },
                                             "type": "object"
@@ -2309,20 +2266,30 @@
                             "likes": {
                                 "description": "Информация о лайках",
                                 "properties": {
+                                    "can_like": {
+                                        "description": "Может ли текущий пользователь поставить лайк (1 - да, 0 - нет)",
+                                        "type": "integer",
+                                        "example": 0
+                                    },
                                     "count": {
                                         "description": "Количество лайков",
                                         "type": "integer",
-                                        "example": 9
+                                        "example": 1
                                     },
                                     "user_likes": {
-                                        "description": "Поставил ли текущий пользователь лайк",
+                                        "description": "Поставил ли текущий пользователь лайк (1 - да, 0 - нет)",
                                         "type": "integer",
                                         "example": 1
                                     },
-                                    "can_like": {
-                                        "description": "Может ли пользователь поставить лайк",
+                                    "can_publish": {
+                                        "description": "Может ли текущий пользователь сделать репост (1 - да, 0 - нет)",
                                         "type": "integer",
-                                        "example": 0
+                                        "example": 1
+                                    },
+                                    "repost_disabled": {
+                                        "description": "Отключен ли репост",
+                                        "type": "boolean",
+                                        "example": false
                                     }
                                 },
                                 "type": "object"
@@ -2331,28 +2298,11 @@
                                 "description": "Пользователи, поставившие лайки",
                                 "type": "array",
                                 "items": {
-                                    "properties": {
-                                        "id": {
-                                            "description": "ID пользователя",
-                                            "type": "integer",
-                                            "example": 713861431
-                                        },
-                                        "first_name": {
-                                            "description": "Имя пользователя",
-                                            "type": "string",
-                                            "example": "Андрей"
-                                        },
-                                        "last_name": {
-                                            "description": "Фамилия пользователя",
-                                            "type": "string",
-                                            "example": "Терещенко"
-                                        }
-                                    },
-                                    "type": "object"
+                                    "$ref": "#/components/schemas/VkUser"
                                 }
                             },
                             "account_id": {
-                                "description": "ID аккаунта из модели Task",
+                                "description": "ID аккаунта",
                                 "type": "integer",
                                 "example": 9121607
                             }
@@ -2620,6 +2570,39 @@
                         "description": "Сообщение о результате операции",
                         "type": "string",
                         "example": "Задачи успешно удалены"
+                    }
+                },
+                "type": "object"
+            },
+            "VkUser": {
+                "description": "Пользователь ВКонтакте",
+                "properties": {
+                    "id": {
+                        "description": "ID пользователя",
+                        "type": "integer",
+                        "example": 123456789
+                    },
+                    "first_name": {
+                        "description": "Имя пользователя",
+                        "type": "string",
+                        "example": "Иван"
+                    },
+                    "last_name": {
+                        "description": "Фамилия пользователя",
+                        "type": "string",
+                        "example": "Иванов"
+                    },
+                    "photo_50": {
+                        "description": "URL аватара 50x50",
+                        "type": "string",
+                        "example": "https://sun9-12.userapi.com/...",
+                        "nullable": true
+                    },
+                    "photo_100": {
+                        "description": "URL аватара 100x100",
+                        "type": "string",
+                        "example": "https://sun9-12.userapi.com/...",
+                        "nullable": true
                     }
                 },
                 "type": "object"
