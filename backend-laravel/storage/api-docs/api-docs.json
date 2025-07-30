@@ -256,6 +256,142 @@
                 }
             }
         },
+        "/cyclic-tasks/create-cyclic-task": {
+            "post": {
+                "tags": [
+                    "Cyclic Tasks"
+                ],
+                "summary": "Создать циклическую задачу на лайки",
+                "description": "Создает циклическую задачу на лайки с автоматическим распределением времени выполнения",
+                "operationId": "6e6142318858fda87bc26a9b50b06ae4",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "account_id",
+                                    "tasks_per_hour",
+                                    "total_task_count",
+                                    "status"
+                                ],
+                                "properties": {
+                                    "account_id": {
+                                        "description": "ID аккаунта для создания задач",
+                                        "type": "integer",
+                                        "example": 9121607
+                                    },
+                                    "tasks_per_hour": {
+                                        "description": "Количество задач в час",
+                                        "type": "integer",
+                                        "example": 10
+                                    },
+                                    "total_task_count": {
+                                        "description": "Общее количество задач",
+                                        "type": "integer",
+                                        "example": 100
+                                    },
+                                    "status": {
+                                        "description": "Статус циклической задачи",
+                                        "type": "string",
+                                        "example": "active"
+                                    },
+                                    "selected_times": {
+                                        "description": "Выбранные часы для каждого дня недели",
+                                        "type": "object",
+                                        "example": "{\"пн\": [true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false], \"вт\": [false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true]}"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Циклическая задача успешно создана",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "account_id": {
+                                                    "type": "integer",
+                                                    "example": 9121607
+                                                },
+                                                "tasks_per_hour": {
+                                                    "type": "integer",
+                                                    "example": 10
+                                                },
+                                                "total_task_count": {
+                                                    "type": "integer",
+                                                    "example": 100
+                                                },
+                                                "remaining_tasks_count": {
+                                                    "type": "integer",
+                                                    "example": 100
+                                                },
+                                                "status": {
+                                                    "type": "string",
+                                                    "example": "active"
+                                                },
+                                                "likes_distribution": {
+                                                    "type": "string",
+                                                    "example": "[5,15,25,35,45,55]"
+                                                },
+                                                "selected_times": {
+                                                    "type": "object",
+                                                    "example": "{\"пн\": [true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false], \"вт\": [false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true]}"
+                                                },
+                                                "started_at": {
+                                                    "type": "string",
+                                                    "format": "date-time"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Задача на постановку лайков запланирована."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Неверные параметры запроса",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TaskErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка сервера",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TaskErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/cyclic-tasks/{taskId}": {
             "delete": {
                 "tags": [
@@ -1689,142 +1825,6 @@
                                         "message": {
                                             "type": "string",
                                             "example": "Задачи успешно созданы и запланированы"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Неверные параметры запроса",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/TaskErrorResponse"
-                                }
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "Внутренняя ошибка сервера",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/TaskErrorResponse"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/tasks/create-cyclic-task": {
-            "post": {
-                "tags": [
-                    "Tasks"
-                ],
-                "summary": "Создать циклическую задачу на лайки",
-                "description": "Создает циклическую задачу на лайки с автоматическим распределением времени выполнения",
-                "operationId": "877cf1cfc7cf371ffadf735f05f74945",
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "required": [
-                                    "account_id",
-                                    "tasks_per_hour",
-                                    "total_task_count",
-                                    "status"
-                                ],
-                                "properties": {
-                                    "account_id": {
-                                        "description": "ID аккаунта для создания задач",
-                                        "type": "integer",
-                                        "example": 9121607
-                                    },
-                                    "tasks_per_hour": {
-                                        "description": "Количество задач в час",
-                                        "type": "integer",
-                                        "example": 10
-                                    },
-                                    "total_task_count": {
-                                        "description": "Общее количество задач",
-                                        "type": "integer",
-                                        "example": 100
-                                    },
-                                    "status": {
-                                        "description": "Статус циклической задачи",
-                                        "type": "string",
-                                        "example": "active"
-                                    },
-                                    "selected_times": {
-                                        "description": "Выбранные временные интервалы",
-                                        "type": "string",
-                                        "example": "9-18"
-                                    }
-                                },
-                                "type": "object"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "Циклическая задача успешно создана",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "success": {
-                                            "type": "boolean",
-                                            "example": true
-                                        },
-                                        "data": {
-                                            "properties": {
-                                                "id": {
-                                                    "type": "integer",
-                                                    "example": 1
-                                                },
-                                                "account_id": {
-                                                    "type": "integer",
-                                                    "example": 9121607
-                                                },
-                                                "tasks_per_hour": {
-                                                    "type": "integer",
-                                                    "example": 10
-                                                },
-                                                "total_task_count": {
-                                                    "type": "integer",
-                                                    "example": 100
-                                                },
-                                                "remaining_tasks_count": {
-                                                    "type": "integer",
-                                                    "example": 100
-                                                },
-                                                "status": {
-                                                    "type": "string",
-                                                    "example": "active"
-                                                },
-                                                "likes_distribution": {
-                                                    "type": "string",
-                                                    "example": "[5,15,25,35,45,55]"
-                                                },
-                                                "selected_times": {
-                                                    "type": "string",
-                                                    "example": "9-18"
-                                                },
-                                                "started_at": {
-                                                    "type": "string",
-                                                    "format": "date-time"
-                                                }
-                                            },
-                                            "type": "object"
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Задача на постановку лайков запланирована."
                                         }
                                     },
                                     "type": "object"

@@ -6,6 +6,7 @@ use App\Repositories\CyclicTaskRepositoryInterface;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use OpenApi\Attributes as OA;
+use App\Models\CyclicTask;
 
 final class CyclicTaskController extends Controller
 {
@@ -75,6 +76,129 @@ final class CyclicTaskController extends Controller
             'message' => 'Список циклических задач получен'
         ]);
     }
+
+
+    /**
+     * Создает циклическую задачу на лайки в социальной сети, используя предоставленные данные.
+     *
+     * Этот метод обрабатывает HTTP-запрос, содержащий необходимые данные для создания циклической задачи,
+     * включая идентификатор аккаунта, количество задач в час, общее количество задач и статус задачи.
+     * Он также генерирует уникальное расписание (массив уникальных случайных минут в течение часа),
+     * в которое будут выполняться задачи, и сохраняет это расписание в базе данных.
+     *
+     * @param Request $request HTTP-запрос, содержащий следующие параметры:
+     * - account_id: Идентификатор аккаунта, для которого создается задача.
+     * - tasks_per_hour: Количество задач на лайки, которое должно быть выполнено в час.
+     * - tasks_count: Общее количество задач на лайки, которое нужно выполнить.
+     * - status: Статус задачи (например, 'active').
+     *
+     * @return \Illuminate\Http\JsonResponse Ответ, содержащий статус выполнения операции,
+     * данные созданной циклической задачи и сообщение об успешном создании задачи.
+     */
+    #[OA\Post(
+        path: '/cyclic-tasks/create-cyclic-task',
+        description: 'Создает циклическую задачу на лайки с автоматическим распределением времени выполнения',
+        summary: 'Создать циклическую задачу на лайки',
+        tags: ['Cyclic Tasks']
+    )]
+    #[OA\RequestBody(
+        required: true,
+        content: new OA\JsonContent(
+            required: ['account_id', 'tasks_per_hour', 'total_task_count', 'status'],
+            properties: [
+                new OA\Property(
+                    property: 'account_id',
+                    description: 'ID аккаунта для создания задач',
+                    type: 'integer',
+                    example: 9121607
+                ),
+                new OA\Property(
+                    property: 'tasks_per_hour',
+                    description: 'Количество задач в час',
+                    type: 'integer',
+                    example: 10
+                ),
+                new OA\Property(
+                    property: 'total_task_count',
+                    description: 'Общее количество задач',
+                    type: 'integer',
+                    example: 100
+                ),
+                new OA\Property(
+                    property: 'status',
+                    description: 'Статус циклической задачи',
+                    type: 'string',
+                    example: 'active'
+                ),
+                new OA\Property(
+                    property: 'selected_times',
+                    description: 'Выбранные часы для каждого дня недели',
+                    type: 'object',
+                    example: '{"пн": [true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false], "вт": [false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true]}'
+                )
+            ]
+        )
+    )]
+    #[OA\Response(
+        response: 200,
+        description: 'Циклическая задача успешно создана',
+        content: new OA\JsonContent(
+            properties: [
+                new OA\Property(property: 'success', type: 'boolean', example: true),
+                new OA\Property(
+                    property: 'data',
+                    properties: [
+                        new OA\Property(property: 'id', type: 'integer', example: 1),
+                        new OA\Property(property: 'account_id', type: 'integer', example: 9121607),
+                        new OA\Property(property: 'tasks_per_hour', type: 'integer', example: 10),
+                        new OA\Property(property: 'total_task_count', type: 'integer', example: 100),
+                        new OA\Property(property: 'remaining_tasks_count', type: 'integer', example: 100),
+                        new OA\Property(property: 'status', type: 'string', example: 'active'),
+                        new OA\Property(property: 'likes_distribution', type: 'string', example: '[5,15,25,35,45,55]'),
+                        new OA\Property(property: 'selected_times', type: 'object', example: '{"пн": [true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false], "вт": [false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true]}'),
+                        new OA\Property(property: 'started_at', type: 'string', format: 'date-time')
+                    ],
+                    type: 'object'
+                ),
+                new OA\Property(property: 'message', type: 'string', example: 'Задача на постановку лайков запланирована.')
+            ]
+        )
+    )]
+    #[OA\Response(
+        response: 400,
+        description: 'Неверные параметры запроса',
+        content: new OA\JsonContent(ref: '#/components/schemas/TaskErrorResponse')
+    )]
+    #[OA\Response(
+        response: 500,
+        description: 'Внутренняя ошибка сервера',
+        content: new OA\JsonContent(ref: '#/components/schemas/TaskErrorResponse')
+    )]
+    public function createCyclicTask(Request $request)
+    {
+        // Генерация массива уникальных случайных минут
+        $tasksPerHour = $request->input('tasks_per_hour');
+        $uniqueMinutes = $this->generateUniqueRandomMinutes($tasksPerHour);
+
+        // Создание циклической задачи с заполнением поля likes_distribution
+        $cyclicTask = CyclicTask::create([
+            'account_id'            => $request->input('account_id'),
+            'tasks_per_hour'        => $tasksPerHour,
+            'total_task_count'      => $request->input('total_task_count'),
+            'remaining_tasks_count' => $request->input('total_task_count'),
+            'status'                => $request->input('status'),
+            'likes_distribution'    => json_encode($uniqueMinutes), // Сохраняем как строку
+            'selected_times'        => $request->input('selected_times'),
+            'started_at'            => now()
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'data'    => $cyclicTask,
+            'message' => 'Задача на постановку лайков запланирована.'
+        ]);
+    }
+
 
     /**
      * Редактировать циклическую задачу
@@ -362,5 +486,35 @@ final class CyclicTaskController extends Controller
             'success' => true,
             'message' => $message
         ]);
+    }
+
+    /**
+     * Генерирует массив уникальных случайных минут для выполнения задач в течение одного часа.
+     *
+     * Этот метод используется для создания расписания выполнения задач на лайки в социальной сети,
+     * гарантируя, что каждая задача будет запланирована на уникальную минуту в пределах одного часа.
+     * Таким образом обеспечивается равномерное распределение задач во времени.
+     *
+     * @param int $count Количество уникальных минут (задач), которое необходимо сгенерировать.
+     *                  Это значение должно быть меньше или равно 60, так как в часе 60 минут.
+     *
+     * @return array Массив, содержащий уникальные случайные минуты в диапазоне от 1 до 60.
+     *               Каждое значение в массиве указывает минуту в часе, когда должна быть выполнена задача.
+     */
+    public function generateUniqueRandomMinutes(int $count): array
+    {
+        $minutes = [];
+
+        while (count($minutes) < $count) {
+            $randomMinute = rand(1, 60);
+            if (!in_array($randomMinute, $minutes)) {
+                $minutes[] = $randomMinute;
+            }
+        }
+
+        // Сортируем массив минут по возрастанию
+        sort($minutes);
+
+        return $minutes;
     }
 }

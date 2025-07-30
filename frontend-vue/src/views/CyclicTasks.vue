@@ -19,7 +19,6 @@
   const accountsStore = useAccountsStore()
 
   provide('closeModal', closeModal)
-
   const showDeleteCyclicTaskModal = (id) => {
     taskId.value = id
 
@@ -113,7 +112,7 @@
 
           <tbody>
             <TableThread
-              v-for="cyclicTask in cyclicTasksStore.cyclicTasks"
+              v-for="cyclicTask in cyclicTasksStore.fetchCyclicTasks.data"
               :cyclicTask="cyclicTask"
               :key="cyclicTask.id"
               :showDeleteCyclicTaskModal="showDeleteCyclicTaskModal"
