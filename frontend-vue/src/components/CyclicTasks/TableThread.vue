@@ -5,7 +5,7 @@
   import { useCyclicTasksStore } from '@/stores/CyclicTasksStore'
   import { useModal } from '@/composables/useModal'
   import EditCyclicTaskModal from './Modals/EditCyclicTaskModal.vue'
-  import DeleteCyclicTaskModal from './Modals/DeleteCyclicTask.vue'
+  import DeleteCyclicTaskModalModal from './Modals/DeleteCyclicTaskModal.vue'
   import router from '../../router'
   import { CyclicTask } from '@/models/CyclicTaskModel'
 
@@ -21,10 +21,6 @@
 
   const showEditCyclicTaskModal = (taskId: number): void => {
     showModal(EditCyclicTaskModal, { taskId })
-  }
-
-  const showDeleteCyclicTaskModal = (taskId: number): void => {
-    showModal(DeleteCyclicTaskModal, { taskId })
   }
 </script>
 
@@ -71,7 +67,7 @@
         <i class="bi bi-pencil" />
       </button>
 
-      <button class="btn btn-danger button-style" @click="showDeleteCyclicTaskModal(cyclicTask.id)">
+      <button class="btn btn-danger button-style" @click="showModal(DeleteCyclicTaskModalModal, { taskId: cyclicTask.id })">
         <i class="bi bi-trash3" />
       </button>
     </td>

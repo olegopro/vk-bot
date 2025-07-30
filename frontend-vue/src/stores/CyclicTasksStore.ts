@@ -46,7 +46,6 @@ export const useCyclicTasksStore = defineStore('cyclicTasks', () => {
    */
   const deleteCyclicTask = useApi(async (parameters?: { taskId: number }) => {
     if (!parameters) throw new Error('Не указан ID циклической задачи')
-
     return (await axios.delete<DeleteCyclicTaskResponse>(`cyclic-tasks/${parameters.taskId}`)).data
   })
 
