@@ -6,16 +6,12 @@
   import AddCyclicTaskModal from '../components/CyclicTasks/Modals/AddCyclicTaskModal.vue'
   import router from '../router'
   import { useModal } from '@/composables/useModal.ts'
-  import DeleteAllCyclicTasks from '../components/CyclicTasks/Modals/DeleteAllCyclicTasks.vue'
+  import DeleteAllCyclicTasksModal from '../components/CyclicTasks/Modals/DeleteAllCyclicTasksModal.vue'
 
   const { showModal } = useModal()
 
   const cyclicTasksStore = useCyclicTasksStore()
   const accountsStore = useAccountsStore()
-
-  const showDeleteAllCyclicTasksModal = () => {
-    showModal(DeleteAllCyclicTasks)
-  }
 
   onMounted(() => {
     cyclicTasksStore.fetchCyclicTasks.execute()
@@ -56,9 +52,9 @@
     <div class="col d-flex justify-content-end">
       <button class="btn btn-danger btn-action me-3"
         :disabled="cyclicTasksStore.fetchCyclicTasks.data?.length === 0"
-        @click="showDeleteAllCyclicTasksModal"
+        @click="showModal(DeleteAllCyclicTasksModal)"
       >
-        Очистить список
+        Удалить задачи
       </button>
 
       <button class="btn btn-success btn-action"

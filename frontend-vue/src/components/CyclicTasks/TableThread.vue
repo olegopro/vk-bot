@@ -19,8 +19,9 @@
   const buttonClass = computed(() => cyclicTask.status === 'active' ? 'btn-secondary' : 'btn-success')
   const buttonIcon = computed(() => cyclicTask.status === 'active' ? 'bi-pause-circle' : 'bi-play-circle')
 
-  const showEditCyclicTaskModal = (taskId: number): void => {
-    showModal(EditCyclicTaskModal, { taskId })
+  const handlePauseTask = async () => {
+    await cyclicTasksStore.pauseCyclicTask.execute({ taskId: cyclicTask.id })
+    await cyclicTasksStore.fetchCyclicTasks.execute()
   }
 </script>
 
@@ -34,27 +35,19 @@
       </span>
     </td>
 
-    <td>
-      {{ cyclicTask.total_task_count }}
-    </td>
+    <td>{{ cyclicTask.total_task_count }}</td>
+    <td>{{ cyclicTask.remaining_tasks_count }}</td>
+    <td>{{ cyclicTask.tasks_per_hour }}</td>
 
     <td>
-      {{ cyclicTask.remaining_tasks_count }}
-    </td>
-
-    <td>
-      {{ cyclicTask.tasks_per_hour }}
-    </td>
-
-    <td>
-      <TaskStatus :type="cyclicTask.status" :errorMessage="cyclicTask.error_message" />
+      <TaskStatus :type="cyclicTask.status" :errorMessage="undefined" />
     </td>
 
     <td>
       <button
         :class="['btn', 'button-style', 'me-2', buttonClass]"
         type="button"
-        @click="cyclicTasksStore.pauseCyclicTask.execute({ taskId: cyclicTask.id })"
+        @click="handlePauseTask"
       >
         <i :class="['bi', buttonIcon]" />
       </button>
@@ -62,7 +55,7 @@
       <button
         class="btn btn-primary button-style me-2"
         type="button"
-        @click="showEditCyclicTaskModal(cyclicTask.id)"
+        @click="showModal(EditCyclicTaskModal, { taskId: cyclicTask.id })"
       >
         <i class="bi bi-pencil" />
       </button>
@@ -72,7 +65,7 @@
       </button>
     </td>
 
-    <td>{{dateFormat(cyclicTask.started_at) }}</td>
+    <td>{{ dateFormat(cyclicTask.started_at) }}</td>
     <td>{{ dateFormat(cyclicTask.created_at) }}</td>
   </tr>
 </template>

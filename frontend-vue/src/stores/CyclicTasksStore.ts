@@ -61,7 +61,6 @@ export const useCyclicTasksStore = defineStore('cyclicTasks', () => {
    */
   const pauseCyclicTask = useApi(async (parameters?: { taskId: number }) => {
     if (!parameters) throw new Error('Не указан ID циклической задачи')
-
     return (await axios.patch<ApiResponseWrapper<any>>(`cyclic-tasks/pause-cyclic-task/${parameters.taskId}`)).data
   })
 
