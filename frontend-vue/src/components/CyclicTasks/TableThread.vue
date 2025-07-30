@@ -1,23 +1,31 @@
-<script setup>
-  import { defineProps, toRefs, computed } from 'vue'
+<script setup lang="ts">
+  import { defineProps, computed } from 'vue'
   import TaskStatus from './TaskStatus.vue'
   import { format } from 'date-fns'
   import { useCyclicTasksStore } from '@/stores/CyclicTasksStore'
+  import { useModal } from '@/composables/useModal'
+  import EditCyclicTaskModal from './Modals/EditCyclicTaskModal.vue'
+  import DeleteCyclicTaskModal from './Modals/DeleteCyclicTask.vue'
   import router from '../../router'
+  import { CyclicTask } from '@/models/CyclicTaskModel'
+
+  const { cyclicTask } = defineProps<{ cyclicTask: CyclicTask }>()
 
   const cyclicTasksStore = useCyclicTasksStore()
+  const { showModal } = useModal()
 
-  const props = defineProps({
-    cyclicTask: Object,
-    showDeleteCyclicTaskModal: Function,
-    showEditCyclicTaskModal: Function
-  })
+  const navigateToAccount = (accountId: number) => router.push({ name: 'Account', params: { id: accountId } })
+  const dateFormat = (date: string) => format(new Date(date), 'yyyy-MM-dd HH:mm:ss')
+  const buttonClass = computed(() => cyclicTask.status === 'active' ? 'btn-secondary' : 'btn-success')
+  const buttonIcon = computed(() => cyclicTask.status === 'active' ? 'bi-pause-circle' : 'bi-play-circle')
 
-  const { cyclicTask } = toRefs(props)
-  const navigateToAccount = (accountId) => router.push({ name: 'Account', params: { id: accountId } })
-  const dateFormat = (date) => format(new Date(date), 'yyyy-MM-dd HH:mm:ss')
-  const buttonClass = computed(() => cyclicTask.value.status === 'active' ? 'btn-secondary' : 'btn-success')
-  const buttonIcon = computed(() => cyclicTask.value.status === 'active' ? 'bi-pause-circle' : 'bi-play-circle')
+  const showEditCyclicTaskModal = (taskId: number): void => {
+    showModal(EditCyclicTaskModal, { taskId })
+  }
+
+  const showDeleteCyclicTaskModal = (taskId: number): void => {
+    showModal(DeleteCyclicTaskModal, { taskId })
+  }
 </script>
 
 <template>
@@ -50,7 +58,7 @@
       <button
         :class="['btn', 'button-style', 'me-2', buttonClass]"
         type="button"
-        @click="cyclicTasksStore.pauseCyclicTask(cyclicTask.id)"
+        @click="cyclicTasksStore.pauseCyclicTask.execute({ taskId: cyclicTask.id })"
       >
         <i :class="['bi', buttonIcon]" />
       </button>
@@ -58,17 +66,17 @@
       <button
         class="btn btn-primary button-style me-2"
         type="button"
-        @click="props.showEditCyclicTaskModal(cyclicTask.id)"
+        @click="showEditCyclicTaskModal(cyclicTask.id)"
       >
         <i class="bi bi-pencil" />
       </button>
 
-      <button class="btn btn-danger button-style" @click="props.showDeleteCyclicTaskModal(cyclicTask.id)">
+      <button class="btn btn-danger button-style" @click="showDeleteCyclicTaskModal(cyclicTask.id)">
         <i class="bi bi-trash3" />
       </button>
     </td>
 
-    <td>{{ dateFormat(cyclicTask.started_at) }}</td>
+    <td>{{dateFormat(cyclicTask.started_at) }}</td>
     <td>{{ dateFormat(cyclicTask.created_at) }}</td>
   </tr>
 </template>

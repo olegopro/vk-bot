@@ -1,41 +1,20 @@
 <script setup>
-  import { onMounted, provide, ref, shallowRef } from 'vue'
+  import { onMounted } from 'vue'
   import { useCyclicTasksStore } from '../stores/CyclicTasksStore'
   import { useAccountsStore } from '../stores/AccountsStore'
   import TableThread from '../components/CyclicTasks/TableThread.vue'
-  import DeleteCyclicTask from '../components/CyclicTasks/Modals/DeleteCyclicTask.vue'
   import AddCyclicTaskModal from '../components/CyclicTasks/Modals/AddCyclicTaskModal.vue'
-  import EditCyclicTask from '../components/CyclicTasks/Modals/EditCyclicTask.vue'
-  import DeleteAllCyclicTasks from '../components/CyclicTasks/Modals/DeleteAllCyclicTasks.vue'
   import router from '../router'
   import { useModal } from '@/composables/useModal.ts'
+  import DeleteAllCyclicTasks from '../components/CyclicTasks/Modals/DeleteAllCyclicTasks.vue'
 
-  const { isOpen, preparedModal, showModal, closeModal } = useModal()
-
-  const taskId = ref(null)
-  const modalComponent = shallowRef(null)
+  const { showModal } = useModal()
 
   const cyclicTasksStore = useCyclicTasksStore()
   const accountsStore = useAccountsStore()
 
-  provide('closeModal', closeModal)
-  const showDeleteCyclicTaskModal = (id) => {
-    taskId.value = id
-
-    modalComponent.value = preparedModal(DeleteCyclicTask)
-    showModal('deleteCyclicTaskModal')
-  }
-
-  const showEditCyclicTaskModal = (id) => {
-    taskId.value = id
-
-    modalComponent.value = preparedModal(EditCyclicTask)
-    showModal('editCyclicTaskModal')
-  }
-
   const showDeleteAllCyclicTasksModal = () => {
-    modalComponent.value = preparedModal(DeleteAllCyclicTasks)
-    showModal('deleteAllCyclicTasksModal')
+    showModal(DeleteAllCyclicTasks)
   }
 
   onMounted(() => {
@@ -115,8 +94,6 @@
               v-for="cyclicTask in cyclicTasksStore.fetchCyclicTasks.data"
               :cyclicTask="cyclicTask"
               :key="cyclicTask.id"
-              :showDeleteCyclicTaskModal="showDeleteCyclicTaskModal"
-              :showEditCyclicTaskModal="showEditCyclicTaskModal"
             />
 
             <tr v-if="cyclicTasksStore.fetchCyclicTasks.loading" style="height: 55px;">
@@ -139,13 +116,5 @@
 
     </div>
   </div>
-
-  <Teleport to="body">
-    <component v-if="isOpen"
-      @mounted="showModal"
-      :is="modalComponent"
-      :taskId="taskId"
-    />
-  </Teleport>
 
 </template>
