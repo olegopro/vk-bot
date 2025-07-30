@@ -1,60 +1,54 @@
 <script setup>
-  import { ref, watch, onMounted, onUnmounted, inject } from 'vue'
+  import { ref, getCurrentInstance } from 'vue'
   import { useAccountsStore } from '../../../stores/AccountsStore'
-  import { showErrorNotification } from '../../../helpers/notyfHelper'
+  import { showSuccessNotification } from '../../../helpers/notyfHelper'
   import { useCyclicTasksStore } from '../../../stores/CyclicTasksStore'
   import TimePicker from '../TimePicker.vue'
+  import { useModal } from '../../../composables/useModal'
+  import AddCyclicTaskModal from './AddCyclicTaskModal.vue'
 
   const accountsStore = useAccountsStore()
   const cyclicTaskStore = useCyclicTasksStore()
+
+  const modalId = getCurrentInstance()?.type.__name
 
   const accountId = ref('selectAccount')
   const totalTaskCount = ref(1000)
   const tasksPerHour = ref(60)
   const status = ref('active')
-  const disablePost = ref(true)
-  const loading = ref(false)
   const selectedTimes = ref({})
 
-  const closeModal = inject('closeModal')
-
-  watch(accountId, newVal => disablePost.value = newVal === 'selectAccount')
+  const { closeModal } = useModal()
 
   const addNewTask = () => {
-    disablePost.value = true
-    loading.value = true
-
-    cyclicTaskStore.createCyclicTask(
-      accountId.value,
-      tasksPerHour.value,
-      totalTaskCount.value,
-      status.value,
-      selectedTimes.value
+    cyclicTaskStore.createCyclicTask.execute(
+      {
+        account_id: accountId.value,
+        tasks_per_hour: tasksPerHour.value,
+        total_task_count: totalTaskCount.value,
+        status: status.value,
+        selected_times: selectedTimes.value
+      }
     )
-      .then(() => {
-        modalHide()
-        disablePost.value = false
-        loading.value = false
+      .then(response => {
+        showSuccessNotification(response.message)
+        closeModal(modalId)
         accountId.value = 'selectAccount'
-        cyclicTaskStore.fetchCyclicTasks()
+        cyclicTaskStore.fetchCyclicTasks.execute()
       })
-      .catch(error => showErrorNotification(error))
   }
 
   const handleSelectedTimes = times => selectedTimes.value = times
-  const modalHide = () => closeModal('addCyclicTaskModal')
-
-  onMounted(() => console.log('AddCyclicTaskModal onMounted'))
-  onUnmounted(() => console.log('AddCyclicTaskModal onUnmounted'))
 </script>
 
 <template>
-  <div class="modal fade" id="addCyclicTaskModal" tabindex="-1" aria-labelledby="Add task" aria-hidden="true">
+
+  <div class="modal fade" :id="modalId" tabindex="-1" aria-labelledby="Add task" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
       <form @submit.prevent="addNewTask" class="modal-content">
         <div class="modal-header mb-1">
           <h1 class="modal-title fs-5" id="Delete task">Добавление циклической задачи</h1>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          <button type="button" class="btn-close" @click="closeModal(AddCyclicTaskModal)" aria-label="Close"></button>
         </div>
 
         <PerfectScrollbar class="ps-modal">
@@ -100,10 +94,9 @@
         </PerfectScrollbar>
 
         <div class="modal-footer mb-1">
-          <button type="button" class="btn btn-secondary" @click="modalHide">Отмена</button>
-          <button type="submit" class="btn btn-success" :disabled="disablePost">
+          <button type="button" class="btn btn-secondary" @click=closeModal(AddCyclicTaskModal)>Отмена</button>
+          <button type="submit" class="btn btn-success" :disabled="cyclicTaskStore.fetchCyclicTasks.loading">
             Создать
-            <span v-if="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
           </button>
         </div>
 
