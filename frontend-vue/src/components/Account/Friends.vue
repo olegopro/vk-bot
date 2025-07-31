@@ -34,20 +34,20 @@
 </template>
 
 <style scoped lang="scss">
-    .card {
-        border: none;
-        box-shadow: 0 1px 27px 0 rgba(34, 60, 80, 0.2);
+  .card {
+    border: none;
+    box-shadow: 0 1px 27px 0 rgba(34, 60, 80, 0.2);
 
-        .bd-placeholder-img {
-            object-fit: cover;
-        }
-
-        .card-body {
-            .card-text {
-                overflow: hidden;
-                white-space: nowrap;
-                text-overflow: ellipsis;
-            }
-        }
+    .bd-placeholder-img {
+      object-fit: cover;
     }
+
+    .card-body {
+      .card-text {
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+      }
+    }
+  }
 </style>

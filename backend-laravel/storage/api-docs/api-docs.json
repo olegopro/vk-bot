@@ -1225,36 +1225,49 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "type": "array",
-                                    "items": {
-                                        "properties": {
-                                            "id": {
-                                                "type": "integer",
-                                                "example": 1
-                                            },
-                                            "show_followers": {
-                                                "type": "boolean",
-                                                "example": true
-                                            },
-                                            "show_friends": {
-                                                "type": "boolean",
-                                                "example": true
-                                            },
-                                            "task_timeout": {
-                                                "type": "integer",
-                                                "example": 30
-                                            },
-                                            "created_at": {
-                                                "type": "string",
-                                                "format": "date-time"
-                                            },
-                                            "updated_at": {
-                                                "type": "string",
-                                                "format": "date-time"
-                                            }
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
                                         },
-                                        "type": "object"
-                                    }
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Настройки успешно получены"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "show_followers": {
+                                                        "type": "boolean",
+                                                        "example": true
+                                                    },
+                                                    "show_friends": {
+                                                        "type": "boolean",
+                                                        "example": true
+                                                    },
+                                                    "task_timeout": {
+                                                        "type": "integer",
+                                                        "example": 30
+                                                    },
+                                                    "created_at": {
+                                                        "type": "string",
+                                                        "format": "date-time"
+                                                    },
+                                                    "updated_at": {
+                                                        "type": "string",
+                                                        "format": "date-time"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
                                 }
                             }
                         }

@@ -28,7 +28,7 @@
         showErrorNotification(error.response.data.message)
       })
 
-    await settingsStore.fetchSettings()
+    await settingsStore.fetchSettings.execute()
     specificAccount.value = accountStore.getOwnerDataById(userID)
   })
 
@@ -77,9 +77,9 @@
       </div>
     </div>
   </div>
-
-  <Followers v-if="settingsStore.settings?.show_followers === 1" />
-  <Friends v-if="settingsStore.settings?.show_friends === 1" />
+  settingsStore.fetchSettings.data - {{ settingsStore.fetchSettings.data }}
+  <Followers v-if="settingsStore.fetchSettings.data?.[0]?.show_followers === 1" />
+  <Friends v-if="settingsStore.fetchSettings.data?.[0]?.show_friends === 1" />
   <Newsfeed v-if="showNewsfeed" />
 
 </template>

@@ -11,7 +11,7 @@
     friends: computed(() => accountStore.getAccountFollowers(state.id))
   })
 
-  onMounted(() => accountStore.fetchAccountFollowers(state.id))
+  onMounted(() => accountStore.fetchAccountFollowers.execute({ accountId: state.id }))
 </script>
 
 <template>
