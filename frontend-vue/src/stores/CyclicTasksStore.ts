@@ -23,14 +23,7 @@ export const useCyclicTasksStore = defineStore('cyclicTasks', () => {
    */
   const createCyclicTask = useApi(async (parameters?: CreateCyclicTaskRequest) => {
     if (!parameters) throw new Error('Не указаны параметры для создания циклической задачи')
-
-    return (await axios.post<ApiResponseWrapper<any>>('cyclic-tasks/create-cyclic-task', {
-      account_id: parameters.account_id,
-      tasks_per_hour: parameters.tasks_per_hour,
-      total_task_count: parameters.total_task_count,
-      status: parameters.status,
-      selected_times: parameters.selected_times
-    })).data
+    return (await axios.post<ApiResponseWrapper<any>>('cyclic-tasks/create-cyclic-task', parameters)).data
   })
 
   /**
