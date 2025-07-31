@@ -13,11 +13,12 @@
     accountId: number
   }>()
 
-  const deleteAccount = () => accountsStore.deleteAccount.execute({ accountId }).then(response => {
-    closeModal(modalId)
-    showSuccessNotification(response.message)
-    accountsStore.fetchAccounts.execute()
-  })
+  const deleteAccount = () => accountsStore.deleteAccount.execute({ accountId })
+    .then(response => {
+      closeModal(modalId)
+      showSuccessNotification(response.message)
+      accountsStore.fetchAccounts.execute()
+    })
 </script>
 
 <template>

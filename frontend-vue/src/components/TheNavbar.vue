@@ -28,20 +28,20 @@
 </template>
 
 <style scoped lang="scss">
-    nav {
-        padding-top: 30px;
-        padding-bottom: 30px;
+  nav {
+    padding-top: 30px;
+    padding-bottom: 30px;
 
-        .nav-link {
-            color: #636363;
+    .nav-link {
+      color: #636363;
 
-            &:hover {
-                color: #000000;
+      &:hover {
+        color: #000000;
 
-                &.active {
-                    color: white
-                }
-            }
+        &.active {
+          color: white
         }
+      }
     }
+  }
 </style>

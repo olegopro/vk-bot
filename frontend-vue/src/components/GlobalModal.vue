@@ -8,7 +8,6 @@
   const modalProps = computed(() => currentProps.value || {})
 
   onMounted(() => setGlobalModalRef(getCurrentInstance()))
-
 </script>
 
 <template>

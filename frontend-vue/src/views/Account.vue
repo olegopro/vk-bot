@@ -5,7 +5,7 @@
   import Followers from '../components/Account/Followers.vue'
   import Friends from '../components/Account/Friends.vue'
   import OnlineStatus from '../components/Account/OnlineStatus.vue'
-  import Newsfeed from '../components/Account/Newsfeed.vue'
+  import Newsfeed from '../components/Account/Newsfeed/Newsfeed.vue'
   import { useSettingsStore } from '@/stores/SettingsStore'
   import { showErrorNotification } from '@/helpers/notyfHelper'
 

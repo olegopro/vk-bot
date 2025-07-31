@@ -9,7 +9,6 @@
   import AccountDetailsModal from './Modals/AccountDetailsModal.vue'
   import { Task } from '@/models/TaskModel'
   import { useModal } from '@/composables/useModal'
-  import { Nullable } from '@types'
 
   const { task } = defineProps<{ task: Task }>()
 

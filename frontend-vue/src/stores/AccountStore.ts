@@ -147,7 +147,7 @@ export const useAccountStore = defineStore('account', () => {
       showErrorNotification('Новые данные ленты не получены')
       throw error
     } finally {
-      // установка флага загрузки в false, т.е. загрузка завершена
+      // Установка флага загрузки в false, значит загрузка завершена
       isLoadingFeed.value = false
     }
   })

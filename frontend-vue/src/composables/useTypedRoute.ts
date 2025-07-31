@@ -17,6 +17,5 @@ export function useTasksRoute() {
 }
 
 function isValidTaskStatus(value: unknown): value is TaskStatus {
-  return typeof value === 'string' &&
-    (['queued', 'done', 'failed', ''].includes(value))
+  return typeof value === 'string' && (['queued', 'done', 'failed', ''].includes(value))
 }

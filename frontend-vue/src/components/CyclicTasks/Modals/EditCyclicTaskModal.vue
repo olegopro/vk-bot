@@ -17,7 +17,7 @@
   const accountsStore = useAccountsStore()
   const cyclicTaskStore = useCyclicTasksStore()
 
-  const editedTaskData = ref<EditCyclicTaskRequest>(null)
+  const editedTaskData = ref<EditCyclicTaskRequest>({})
 
   const task = computed(() => cyclicTaskStore.fetchCyclicTasks.data?.find(task => task.id === taskId))
   watch(() => taskId, () => editedTaskData.value = { ...task.value }, { immediate: true })
