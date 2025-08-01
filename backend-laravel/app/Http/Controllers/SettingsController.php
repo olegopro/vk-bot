@@ -44,7 +44,6 @@ final class SettingsController extends Controller
                         ),
                         new OA\Property(
                             property: 'data',
-                            type: 'object',
                             properties: [
                                 new OA\Property(
                                     property: 'id',
@@ -76,7 +75,8 @@ final class SettingsController extends Controller
                                     type: 'string',
                                     format: 'date-time'
                                 )
-                            ]
+                            ],
+                            type: 'object'
                         )
                     ],
                     type: 'object'
@@ -141,7 +141,43 @@ final class SettingsController extends Controller
                         new OA\Property(
                             property: 'message',
                             type: 'string',
-                            example: 'Настройки сохранены'
+                            example: 'Настройки успешно сохранены'
+                        ),
+                        new OA\Property(
+                            property: 'data',
+                            properties: [
+                                new OA\Property(
+                                    property: 'id',
+                                    type: 'integer',
+                                    example: 1
+                                ),
+                                new OA\Property(
+                                    property: 'show_followers',
+                                    type: 'boolean',
+                                    example: true
+                                ),
+                                new OA\Property(
+                                    property: 'show_friends',
+                                    type: 'boolean',
+                                    example: true
+                                ),
+                                new OA\Property(
+                                    property: 'task_timeout',
+                                    type: 'integer',
+                                    example: 30
+                                ),
+                                new OA\Property(
+                                    property: 'created_at',
+                                    type: 'string',
+                                    format: 'date-time'
+                                ),
+                                new OA\Property(
+                                    property: 'updated_at',
+                                    type: 'string',
+                                    format: 'date-time'
+                                )
+                            ],
+                            type: 'object'
                         )
                     ],
                     type: 'object'
@@ -174,7 +210,8 @@ final class SettingsController extends Controller
     )]
     public function saveSettings(Request $request)
     {
-        Settings::find(1)->update([
+        $settings = Settings::find(1);
+        $settings->update([
             'show_followers' => $request->input('show_followers'),
             'show_friends'   => $request->input('show_friends'),
             'task_timeout'   => $request->input('task_timeout')
@@ -182,6 +219,7 @@ final class SettingsController extends Controller
 
         return response()->json([
             'success' => true,
+            'data' => $settings->fresh(),
             'message' => 'Настройки успешно сохранены'
         ]);
     }

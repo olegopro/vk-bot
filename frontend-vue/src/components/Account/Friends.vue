@@ -1,5 +1,5 @@
 <script setup>
-  import { onMounted, computed, reactive } from 'vue'
+  import { onMounted, reactive } from 'vue'
   import { useRoute } from 'vue-router'
   import { useAccountStore } from '@/stores/AccountStore'
 
@@ -7,17 +7,16 @@
   const accountStore = useAccountStore()
 
   const state = reactive({
-    id: route.params.id,
-    friends: computed(() => accountStore.getAccountFriends(state.id))
+    id: route.params.id
   })
 
-  onMounted(() => accountStore.fetchAccountFriends(state.id))
+  onMounted(() => accountStore.fetchAccountFriends.execute({ accountId: state.id }))
 </script>
 
 <template>
   <div class="row mt-5 mb-5">
     <h1>Друзья</h1>
-    <div class="col-2" v-for="friend in state.friends" :key="friend.id">
+    <div class="col-2" v-for="friend in accountStore.getAccountFriends(state.id)" :key="friend.id">
       <div class="card">
         <img class="bd-placeholder-img card-img-top"
           width="100%"

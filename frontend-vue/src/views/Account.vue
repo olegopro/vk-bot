@@ -78,8 +78,8 @@
     </div>
   </div>
   settingsStore.fetchSettings.data - {{ settingsStore.fetchSettings.data }}
-  <Followers v-if="settingsStore.fetchSettings.data?.[0]?.show_followers === 1" />
-  <Friends v-if="settingsStore.fetchSettings.data?.[0]?.show_friends === 1" />
+  <Followers v-if="settingsStore.fetchSettings.data?.show_followers" />
+  <Friends v-if="settingsStore.fetchSettings.data?.show_friends" />
   <Newsfeed v-if="showNewsfeed" />
 
 </template>
