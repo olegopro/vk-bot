@@ -10,5 +10,9 @@ class Settings extends Model
     use HasFactory;
 
     protected $fillable = ['show_followers', 'show_friends', 'task_timeout'];
+    protected $casts = [
+        'show_followers' => 'boolean',
+        'show_friends' => 'boolean',
+    ];
     public $timestamps = false;
 }

@@ -16,6 +16,6 @@ export interface SaveSettingsRequest {
   task_timeout: number
 }
 
-export type SettingsResponse = ApiResponseWrapper<Settings[]>
+export type SettingsResponse = ApiResponseWrapper<Settings>
 
 export type SaveSettingsResponse = ApiResponseWrapper<Settings>

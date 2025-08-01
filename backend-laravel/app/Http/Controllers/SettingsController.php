@@ -23,7 +23,7 @@ final class SettingsController extends Controller
 {
     #[OA\Get(
         path: '/api/settings',
-        description: 'Возвращает все настройки приложения',
+        description: 'Возвращает настройки приложения',
         summary: 'Получить настройки приложения',
         tags: ['Settings'],
         responses: [
@@ -44,42 +44,39 @@ final class SettingsController extends Controller
                         ),
                         new OA\Property(
                             property: 'data',
-                            type: 'array',
-                            items: new OA\Items(
-                                properties: [
-                                    new OA\Property(
-                                        property: 'id',
-                                        type: 'integer',
-                                        example: 1
-                                    ),
-                                    new OA\Property(
-                                        property: 'show_followers',
-                                        type: 'boolean',
-                                        example: true
-                                    ),
-                                    new OA\Property(
-                                        property: 'show_friends',
-                                        type: 'boolean',
-                                        example: true
-                                    ),
-                                    new OA\Property(
-                                        property: 'task_timeout',
-                                        type: 'integer',
-                                        example: 30
-                                    ),
-                                    new OA\Property(
-                                        property: 'created_at',
-                                        type: 'string',
-                                        format: 'date-time'
-                                    ),
-                                    new OA\Property(
-                                        property: 'updated_at',
-                                        type: 'string',
-                                        format: 'date-time'
-                                    )
-                                ],
-                                type: 'object'
-                            )
+                            type: 'object',
+                            properties: [
+                                new OA\Property(
+                                    property: 'id',
+                                    type: 'integer',
+                                    example: 1
+                                ),
+                                new OA\Property(
+                                    property: 'show_followers',
+                                    type: 'boolean',
+                                    example: true
+                                ),
+                                new OA\Property(
+                                    property: 'show_friends',
+                                    type: 'boolean',
+                                    example: true
+                                ),
+                                new OA\Property(
+                                    property: 'task_timeout',
+                                    type: 'integer',
+                                    example: 30
+                                ),
+                                new OA\Property(
+                                    property: 'created_at',
+                                    type: 'string',
+                                    format: 'date-time'
+                                ),
+                                new OA\Property(
+                                    property: 'updated_at',
+                                    type: 'string',
+                                    format: 'date-time'
+                                )
+                            ]
                         )
                     ],
                     type: 'object'
@@ -89,7 +86,7 @@ final class SettingsController extends Controller
     )]
     public function getSettings()
     {
-        $settings = Settings::all();
+        $settings = Settings::first();
 
         return response()->json([
             'success' => true,
