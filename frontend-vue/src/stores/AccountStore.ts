@@ -73,7 +73,7 @@ export const useAccountStore = defineStore('account', () => {
     if (!parameters) throw new Error('Не указан ID аккаунта')
 
     const response = await axios.get<FollowersResponse>(`account/followers/${parameters.accountId}`)
-    accountFollowers.value[parameters.accountId] = response.data.data.response.items
+    accountFollowers.value[parameters.accountId] = response.data.data
     showSuccessNotification(response.data.message)
 
     return response.data
@@ -86,7 +86,7 @@ export const useAccountStore = defineStore('account', () => {
     if (!parameters) throw new Error('Не указан ID аккаунта')
 
     const response = await axios.get<FriendsResponse>(`account/friends/${parameters.accountId}`)
-    accountFriends.value[parameters.accountId] = response.data.data.response.items
+    accountFriends.value[parameters.accountId] = response.data.data
     showSuccessNotification(response.data.message)
 
     return response.data
@@ -97,12 +97,7 @@ export const useAccountStore = defineStore('account', () => {
    */
   const fetchAccountFriendsCount = useApi(async (parameters?: { id: string }) => {
     if (!parameters) throw new Error('Не указан ID')
-
-    const response = await axios.get<FriendsCountResponse>(`account/friends/count/${parameters.id}`)
-    accountFriendsCount.value[parameters.id] = response.data.data.response.count
-    showSuccessNotification(response.data.message)
-
-    return response.data
+    return (await axios.get<FriendsCountResponse>(`account/friends/count/${parameters.id}`)).data
   })
 
   /**
@@ -155,7 +150,11 @@ export const useAccountStore = defineStore('account', () => {
   /**
    * Добавляет лайк к посту
    */
-  const addLike = useApi(async (parameters?: { accountId: number | string; ownerId: number | string; itemId: number | string }) => {
+  const addLike = useApi(async (parameters?: {
+    accountId: number | string;
+    ownerId: number | string;
+    itemId: number | string
+  }) => {
     if (!parameters) throw new Error('Не указаны параметры')
 
     const request: LikeRequest = {
@@ -268,8 +267,6 @@ export const useAccountStore = defineStore('account', () => {
   })
 
   // Геттеры
-  const getAccountFollowers = computed(() => (accountId: string) => accountFollowers.value[accountId] || [])
-  const getAccountFriends = computed(() => (accountId: string) => accountFriends.value[accountId] || [])
   const getOwnerDataById = computed(() => (id: number | string) => ownerData.value.find(user => user.id === Math.abs(Number(id))))
   const getAccountById = computed(() => (id: number | string) => account.value.find(account => account.id === Math.abs(Number(id))))
 
@@ -301,8 +298,6 @@ export const useAccountStore = defineStore('account', () => {
     createTasksForUsers,
 
     // Геттеры
-    getAccountFollowers,
-    getAccountFriends,
     getOwnerDataById,
     getAccountById
   }

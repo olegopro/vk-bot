@@ -65,7 +65,13 @@ final class AccountController extends Controller
      */
     public function fetchAccountFollowers($id, $limit = 6)
     {
-        return response()->json(VkClient::fetchAccountFollowers($id, $limit));
+        $response = VkClient::fetchAccountFollowers($id, $limit);
+        
+        return response()->json([
+            'success' => true,
+            'message' => 'Список подписчиков получен',
+            'data' => $response['response']['items'] ?? []
+        ]);
     }
 
     /**
@@ -78,7 +84,13 @@ final class AccountController extends Controller
      */
     public function fetchAccountFriends($id, $limit = 6)
     {
-        return response()->json(VkClient::fetchAccountFriends($id, $limit));
+        $response = VkClient::fetchAccountFriends($id, $limit);
+        
+        return response()->json([
+            'success' => true,
+            'message' => 'Список друзей получен',
+            'data' => $response['response']['items'] ?? []
+        ]);
     }
 
     /**

@@ -7,29 +7,24 @@
   import OnlineStatus from '../components/Account/OnlineStatus.vue'
   import Newsfeed from '../components/Account/Newsfeed/Newsfeed.vue'
   import { useSettingsStore } from '@/stores/SettingsStore'
-  import { showErrorNotification } from '@/helpers/notyfHelper'
 
   const accountStore = useAccountStore()
   const settingsStore = useSettingsStore()
 
   const route = useRoute()
 
-  const userID = Number(route.params.id)
+  const userId = Number(route.params.id)
   const specificAccount = ref(null)
   const showNewsfeed = ref(false)
 
   const date = (timestamp) => new Date(timestamp * 1000).toLocaleTimeString('ru-RU')
 
   onMounted(async () => {
-    await accountStore.fetchOwnerData.execute({ accountId: userID, ownerId: userID })
+    await accountStore.fetchOwnerData.execute({ accountId: userId, ownerId: userId })
       .then(() => showNewsfeed.value = true)
-      .catch(error => {
-        console.log('error', error)
-        showErrorNotification(error.response.data.message)
-      })
 
-    await settingsStore.fetchSettings.execute()
-    specificAccount.value = accountStore.getOwnerDataById(userID)
+    settingsStore.fetchSettings.execute()
+    specificAccount.value = accountStore.getOwnerDataById(userId)
   })
 
 </script>
@@ -77,9 +72,8 @@
       </div>
     </div>
   </div>
-  settingsStore.fetchSettings.data - {{ settingsStore.fetchSettings.data }}
-  <Followers v-if="settingsStore.fetchSettings.data?.show_followers" />
-  <Friends v-if="settingsStore.fetchSettings.data?.show_friends" />
+  <Followers v-if="settingsStore.fetchSettings.data?.show_followers" :user-id="userId" />
+  <Friends v-if="settingsStore.fetchSettings.data?.show_friends" :user-id="userId" />
   <Newsfeed v-if="showNewsfeed" />
 
 </template>

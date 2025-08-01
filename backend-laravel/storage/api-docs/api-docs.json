@@ -1217,7 +1217,7 @@
                     "Settings"
                 ],
                 "summary": "Получить настройки приложения",
-                "description": "Возвращает все настройки приложения",
+                "description": "Возвращает настройки приложения",
                 "operationId": "900c71fe472e27433e8ad8805f7a5157",
                 "responses": {
                     "200": {
@@ -1235,36 +1235,33 @@
                                             "example": "Настройки успешно получены"
                                         },
                                         "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "properties": {
-                                                    "id": {
-                                                        "type": "integer",
-                                                        "example": 1
-                                                    },
-                                                    "show_followers": {
-                                                        "type": "boolean",
-                                                        "example": true
-                                                    },
-                                                    "show_friends": {
-                                                        "type": "boolean",
-                                                        "example": true
-                                                    },
-                                                    "task_timeout": {
-                                                        "type": "integer",
-                                                        "example": 30
-                                                    },
-                                                    "created_at": {
-                                                        "type": "string",
-                                                        "format": "date-time"
-                                                    },
-                                                    "updated_at": {
-                                                        "type": "string",
-                                                        "format": "date-time"
-                                                    }
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 1
                                                 },
-                                                "type": "object"
-                                            }
+                                                "show_followers": {
+                                                    "type": "boolean",
+                                                    "example": true
+                                                },
+                                                "show_friends": {
+                                                    "type": "boolean",
+                                                    "example": true
+                                                },
+                                                "task_timeout": {
+                                                    "type": "integer",
+                                                    "example": 30
+                                                },
+                                                "created_at": {
+                                                    "type": "string",
+                                                    "format": "date-time"
+                                                },
+                                                "updated_at": {
+                                                    "type": "string",
+                                                    "format": "date-time"
+                                                }
+                                            },
+                                            "type": "object"
                                         }
                                     },
                                     "type": "object"
@@ -1328,7 +1325,36 @@
                                         },
                                         "message": {
                                             "type": "string",
-                                            "example": "Настройки сохранены"
+                                            "example": "Настройки успешно сохранены"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "show_followers": {
+                                                    "type": "boolean",
+                                                    "example": true
+                                                },
+                                                "show_friends": {
+                                                    "type": "boolean",
+                                                    "example": true
+                                                },
+                                                "task_timeout": {
+                                                    "type": "integer",
+                                                    "example": 30
+                                                },
+                                                "created_at": {
+                                                    "type": "string",
+                                                    "format": "date-time"
+                                                },
+                                                "updated_at": {
+                                                    "type": "string",
+                                                    "format": "date-time"
+                                                }
+                                            },
+                                            "type": "object"
                                         }
                                     },
                                     "type": "object"

@@ -1,22 +1,17 @@
-<script setup>
-  import { onMounted, reactive } from 'vue'
-  import { useRoute } from 'vue-router'
+<script setup lang="ts">
+  import { onMounted } from 'vue'
   import { useAccountStore } from '@/stores/AccountStore'
 
-  const route = useRoute()
   const accountStore = useAccountStore()
+  const { userId } = defineProps<{ userId: string }>()
 
-  const state = reactive({
-    id: route.params.id
-  })
-
-  onMounted(() => accountStore.fetchAccountFriends.execute({ accountId: state.id }))
+  onMounted(() => accountStore.fetchAccountFriends.execute({ accountId: userId }))
 </script>
 
 <template>
   <div class="row mt-5 mb-5">
     <h1>Друзья</h1>
-    <div class="col-2" v-for="friend in accountStore.getAccountFriends(state.id)" :key="friend.id">
+    <div class="col-2" v-for="friend in accountStore.fetchAccountFriends.data" :key="friend.id">
       <div class="card">
         <img class="bd-placeholder-img card-img-top"
           width="100%"
