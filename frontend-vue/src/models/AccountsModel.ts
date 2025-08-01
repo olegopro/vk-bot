@@ -59,8 +59,17 @@ export interface NewsFeedResponse {
   [key: string]: any
 }
 
-export type OwnerDataResponse = ApiResponseWrapper<OwnerData[]>
-export type FriendsCountResponse = ApiResponseWrapper<{ count: number }>
+// Базовые типы ответов без обертки ApiResponseWrapper
+export interface OwnerDataApiResponse {
+  response: OwnerData[]
+}
+
+export interface FriendsCountApiResponse {
+  response: {
+    id: string
+    count: number
+  }
+}
 export type NewsFeedApiResponse = ApiResponseWrapper<NewsFeedResponse>
 
 export interface LikeRequest {

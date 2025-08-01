@@ -5,13 +5,13 @@
   const accountStore = useAccountStore()
   const { userId } = defineProps<{ userId: number }>()
 
-  onMounted(() => accountStore.fetchAccountFollowers.execute({ accountId: userId.toString() }))
+  onMounted(() => accountStore.fetchAccountFollowers.execute({ accountId: userId }))
 </script>
 
 <template>
   <div class="row mt-5">
     <h1>Подписчики</h1>
-    <div class="col-2" v-for="follower in accountStore.accountFollowers[userId] || []" :key="follower.id">
+    <div class="col-2" v-for="follower in accountStore.fetchAccountFollowers.data" :key="follower.id">
       <div class="card">
         <img class="bd-placeholder-img card-img-top" width="100%" height="200" alt="" :src="follower.photo_200" />
         <div class="card-body">

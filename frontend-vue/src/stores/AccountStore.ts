@@ -8,8 +8,8 @@ import type {
   OwnerData,
   VkUser,
   NewsItem,
-  OwnerDataResponse,
-  FriendsCountResponse,
+  OwnerDataApiResponse,
+  FriendsCountApiResponse,
   NewsFeedApiResponse,
   LikeRequest,
   LikeResponse,
@@ -45,9 +45,11 @@ export const useAccountStore = defineStore('account', () => {
 
     // Выполняем запросы
     const responses = await Promise.all([
-      axios.get<OwnerDataResponse>(`account/data/${ownerId}`),
-      axios.get<FriendsCountResponse>(`account/friends/count/${accountId}/${ownerId}`)
+      axios.get<ApiResponseWrapper<OwnerDataApiResponse>>(`account/data/${ownerId}`),
+      axios.get<ApiResponseWrapper<FriendsCountApiResponse>>(`account/friends/count/${accountId}/${ownerId}`)
     ])
+
+    console.log('responses', responses)
 
     const ownerDataResponse = responses[0]
     const friendsCountResponse = responses[1]
@@ -62,13 +64,17 @@ export const useAccountStore = defineStore('account', () => {
     showSuccessNotification(ownerDataResponse.data.message)
     showSuccessNotification(friendsCountResponse.data.message)
     isOwnerDataLoading.value = null
-    return { data: combinedData }
+    return {
+      data: combinedData,
+      success: true,
+      message: 'Данные владельца аккаунта получены'
+    }
   })
 
   /**
    * Получает подписчиков аккаунта
    */
-  const fetchAccountFollowers = useApi(async (parameters?: { accountId: string }) => {
+  const fetchAccountFollowers = useApi(async (parameters?: { accountId: number }) => {
     if (!parameters) throw new Error('Не указан ID аккаунта')
     return (await axios.get<ApiResponseWrapper<VkUser[]>>(`account/followers/${parameters.accountId}`)).data
   })
@@ -76,7 +82,7 @@ export const useAccountStore = defineStore('account', () => {
   /**
    * Получает друзей аккаунта
    */
-  const fetchAccountFriends = useApi(async (parameters?: { accountId: string }) => {
+  const fetchAccountFriends = useApi(async (parameters?: { accountId: number }) => {
     if (!parameters) throw new Error('Не указан ID аккаунта')
     return (await axios.get<ApiResponseWrapper<VkUser>>(`account/friends/${parameters.accountId}`)).data
   })
@@ -86,7 +92,7 @@ export const useAccountStore = defineStore('account', () => {
    */
   const fetchAccountFriendsCount = useApi(async (parameters?: { id: string }) => {
     if (!parameters) throw new Error('Не указан ID')
-    return (await axios.get<FriendsCountResponse>(`account/friends/count/${parameters.id}`)).data
+    return (await axios.get<ApiResponseWrapper<FriendsCountApiResponse>>(`account/friends/count/${parameters.id}`)).data
   })
 
   /**

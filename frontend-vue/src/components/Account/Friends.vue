@@ -3,7 +3,7 @@
   import { useAccountStore } from '@/stores/AccountStore'
 
   const accountStore = useAccountStore()
-  const { userId } = defineProps<{ userId: string }>()
+  const { userId } = defineProps<{ userId: number }>()
 
   onMounted(() => accountStore.fetchAccountFriends.execute({ accountId: userId }))
 </script>
