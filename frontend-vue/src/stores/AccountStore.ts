@@ -9,8 +9,6 @@ import type {
   VkUser,
   NewsItem,
   OwnerDataResponse,
-  FollowersResponse,
-  FriendsResponse,
   FriendsCountResponse,
   NewsFeedApiResponse,
   LikeRequest,
@@ -21,6 +19,7 @@ import type {
   CreateTasksResponse,
   GroupDataResponse
 } from '@/models/AccountsModel'
+import type { ApiResponseWrapper } from '@/models/ApiModel'
 
 export const useAccountStore = defineStore('account', () => {
   // Состояние
@@ -71,12 +70,7 @@ export const useAccountStore = defineStore('account', () => {
    */
   const fetchAccountFollowers = useApi(async (parameters?: { accountId: string }) => {
     if (!parameters) throw new Error('Не указан ID аккаунта')
-
-    const response = await axios.get<FollowersResponse>(`account/followers/${parameters.accountId}`)
-    accountFollowers.value[parameters.accountId] = response.data.data
-    showSuccessNotification(response.data.message)
-
-    return response.data
+    return (await axios.get<ApiResponseWrapper<VkUser[]>>(`account/followers/${parameters.accountId}`)).data
   })
 
   /**
@@ -84,12 +78,7 @@ export const useAccountStore = defineStore('account', () => {
    */
   const fetchAccountFriends = useApi(async (parameters?: { accountId: string }) => {
     if (!parameters) throw new Error('Не указан ID аккаунта')
-
-    const response = await axios.get<FriendsResponse>(`account/friends/${parameters.accountId}`)
-    accountFriends.value[parameters.accountId] = response.data.data
-    showSuccessNotification(response.data.message)
-
-    return response.data
+    return (await axios.get<ApiResponseWrapper<VkUser>>(`account/friends/${parameters.accountId}`)).data
   })
 
   /**
@@ -121,7 +110,7 @@ export const useAccountStore = defineStore('account', () => {
         start_from: startFrom
       })
 
-      const { data: { response: feedResponse }, message } = response.data
+      const { data: feedResponse, message } = response.data
 
       // фильтрация массива items, оставляя только те элементы, у которых первое вложение имеет тип 'photo'
       const result = feedResponse.items.filter(item => item.attachments?.[0]?.type === 'photo')
@@ -218,7 +207,7 @@ export const useAccountStore = defineStore('account', () => {
     }
 
     const response = await axios.get<GroupDataResponse>(`group/data/${Math.abs(Number(groupId))}`)
-    addOwnerData(response.data.data.response[0])
+    addOwnerData(response.data.data[0])
     showSuccessNotification(response.data.message)
 
     return response.data

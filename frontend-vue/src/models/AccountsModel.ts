@@ -59,15 +59,9 @@ export interface NewsFeedResponse {
   [key: string]: any
 }
 
-export type OwnerDataResponse = ApiResponseWrapper<{ response: OwnerData[] }>
-
-export type FriendsCountResponse = ApiResponseWrapper<{ response: { count: number } }>
-
-export type FollowersResponse = ApiResponseWrapper<{ response: { items: VkUser[] } }>
-
-export type FriendsResponse = ApiResponseWrapper<{ response: { items: VkUser[] } }>
-
-export type NewsFeedApiResponse = ApiResponseWrapper<{ response: NewsFeedResponse }>
+export type OwnerDataResponse = ApiResponseWrapper<OwnerData[]>
+export type FriendsCountResponse = ApiResponseWrapper<{ count: number }>
+export type NewsFeedApiResponse = ApiResponseWrapper<NewsFeedResponse>
 
 export interface LikeRequest {
   account_id: number | string
@@ -96,4 +90,4 @@ export interface NewsFeedRequest {
   start_from: string | null
 }
 
-export type GroupDataResponse = ApiResponseWrapper<{ response: VkGroup[] }>
+export type GroupDataResponse = ApiResponseWrapper<VkGroup[]>
