@@ -6,6 +6,7 @@
   import { debounce } from 'lodash'
   import { useModal } from '@/composables/useModal'
   import NewsfeedItem from './NewsfeedItem.vue'
+  import OwnerDetailsModal from '../Modals/OwnerDetailsModal.vue'
 
   const accountStore = useAccountStore()
   const route = useRoute()
@@ -18,7 +19,7 @@
   const modalComponent = shallowRef(null)
   const ownerDataById = ref(null)
   const showDetailedInfo = ref(null)
-  const { isOpen, preparedModal, showModal, closeModal } = useModal()
+  const { isOpen, showModal, closeModal } = useModal()
 
   const iconClasses = ref({
     info: 'bi bi-info-circle',
@@ -99,8 +100,7 @@
 
   const handleShowOwnerDetailsModal = ({ accountId, index }) => {
     ownerInfo(accountId, index)
-    modalComponent.value = preparedModal(OwnerDetails)
-    showModal('ownerDetailsModal')
+    showModal(OwnerDetailsModal)
   }
 
   onMounted(() => {
@@ -149,7 +149,6 @@
       :current-column-class="currentColumnClass"
       :loading-status="loadingStatus"
       :icon-classes="iconClasses"
-      :column-settings="columnSettings"
       :user-id="userId"
       @showOwnerDetailsModal="handleShowOwnerDetailsModal"
     />

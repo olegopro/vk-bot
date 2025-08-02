@@ -37,13 +37,9 @@ export const useAccountStore = defineStore('account', () => {
   /**
    * Получает данные владельца аккаунта
    */
-  const fetchOwnerData = useApi(async (parameters?: { accountId: number; ownerId: number; taskId?: any }) => {
+  const fetchOwnerData = useApi(async (parameters?: { ownerId: number }) => {
     if (!parameters) throw new Error('Не указаны параметры')
-
-    const { ownerId, taskId = null } = parameters
-    isOwnerDataLoading.value = taskId
-
-    return (await (axios.get<ApiResponseWrapper<OwnerDataApiResponse>>(`account/data/${ownerId}`))).data
+    return (await (axios.get<ApiResponseWrapper<OwnerDataApiResponse>>(`account/data/${parameters.ownerId}`))).data
   })
 
   /**
@@ -135,19 +131,6 @@ export const useAccountStore = defineStore('account', () => {
 
     const response = await axios.post<LikeResponse>('account/like', request)
     showSuccessNotification(response.data.message)
-
-    return response.data
-  })
-
-  /**
-   * Получает screen name по ID (TODO: Нигде не используется)
-   */
-  const getScreenNameById = useApi(async (parameters?: { accountId: number | string }) => {
-    if (!parameters) throw new Error('Не указан ID аккаунта')
-
-    const response = await axios.post('account/get-screen-name-by-id', {
-      user_id: parameters.accountId
-    })
 
     return response.data
   })
@@ -260,7 +243,6 @@ export const useAccountStore = defineStore('account', () => {
     fetchAccountFriendsCount,
     fetchAccountNewsFeed,
     addLike,
-    getScreenNameById,
     addPostsToLike,
     fetchGroupData,
     addOwnerData,

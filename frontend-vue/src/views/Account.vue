@@ -31,21 +31,21 @@
   <div class="row">
     <div class="col-12">
       <div class="d-flex account">
-        <div v-if="!accountStore.fetchOwnerData.data.photo_200" class="stub">
+        <div v-if="!accountStore.fetchOwnerData.data?.photo_200" class="stub">
           <div class="spinner-border" style="width: 3rem; height: 3rem;" role="status"></div>
         </div>
-        <img v-else class="col-3 ps-0" width="200" height="200" :src="accountStore.fetchOwnerData.data.photo_200" alt="">
+        <img v-else class="col-3 ps-0" width="200" height="200" :src="accountStore.fetchOwnerData.data?.photo_200" alt="">
         <div class="col-4 p-3 d-flex flex-column justify-content-between">
           <div>
-            <h2>{{ accountStore.fetchOwnerData.data.first_name }} {{accountStore.fetchOwnerData.data.last_name }}</h2>
-            <h3>{{ accountStore.fetchOwnerData.data.screen_name }}</h3>
+            <h2>{{ accountStore.fetchOwnerData.data?.first_name }} {{accountStore.fetchOwnerData.data?.last_name }}</h2>
+            <h3>{{ accountStore.fetchOwnerData.data?.screen_name }}</h3>
           </div>
           <div class="mb-3">
-            <p>Статус - {{ accountStore.fetchOwnerData.data.status }}</p>
+            <p>Статус - {{ accountStore.fetchOwnerData.data?.status }}</p>
             <p>
               Последняя активность -
-              <span v-if="accountStore.fetchOwnerData.data">
-                {{ date(accountStore.fetchOwnerData.data.last_seen?.time) }}
+              <span v-if="accountStore.fetchOwnerData?.data">
+                {{ date(accountStore.fetchOwnerData.data?.last_seen?.time) }}
               </span>
             </p>
           </div>
@@ -53,19 +53,19 @@
         <div class="col-4 p-3 d-flex flex-column">
           <h4 class="mb-3">
             <i class="bi bi-person-fill-check me-3 fs-3 text-success" />
-            Друзья - {{accountStore.fetchOwnerData.data.friends_count }}
+            Друзья - {{accountStore.fetchOwnerData.data?.friends_count }}
           </h4>
           <h4 class="mb-3">
             <i class="bi bi-person-heart me-3 fs-3 text-danger" />
-            Подписчики - {{ accountStore.fetchOwnerData.data.followers_count }}
+            Подписчики - {{ accountStore.fetchOwnerData.data?.followers_count }}
           </h4>
           <h4>
             <i class="bi bi-buildings-fill me-3 fs-3 text-primary" />
-            Город - {{ accountStore.fetchOwnerData.data.city?.title }}
+            Город - {{ accountStore.fetchOwnerData.data?.city?.title }}
           </h4>
         </div>
         <div class="col p-3" v-if="accountStore.fetchOwnerData.data">
-          <OnlineStatus :type="accountStore.fetchOwnerData.data.online === 0 ? 'offline' : 'online'" />
+          <OnlineStatus :type="accountStore.fetchOwnerData.data?.online === 0 ? 'offline' : 'online'" />
         </div>
       </div>
     </div>
