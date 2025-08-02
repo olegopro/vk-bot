@@ -276,8 +276,8 @@ class VkClientService
 
         return [
             'success' => true,
-            'data'    => $response,
-            'message' => 'Получены новые данные ленты'
+            'message' => 'Получены новые данные ленты',
+            'data'    => $response['response']
         ];
     }
 

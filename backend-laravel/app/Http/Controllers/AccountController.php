@@ -7,6 +7,7 @@ use App\Jobs\addLikeToPost;
 use App\Models\Account;
 use App\Models\Task;
 use App\OpenApi\Schemas\AccountResponseSchema;
+use App\OpenApi\Schemas\NewsfeedResponseSchema;
 use App\OpenApi\Schemas\VkUserDataSchema;
 use App\Repositories\AccountRepositoryInterface;
 use App\Services\LoggingServiceInterface;
@@ -165,6 +166,52 @@ final class AccountController extends Controller
      * @return \Illuminate\Http\JsonResponse
      * @throws VkException
      */
+    #[OA\Post(
+        path: '/api/account/newsfeed',
+        description: 'Получает новостную ленту аккаунта ВКонтакте',
+        summary: 'Получить новостную ленту аккаунта',
+        requestBody: new OA\RequestBody(
+            description: 'Параметры для получения новостной ленты',
+            required: true,
+            content: new OA\JsonContent(
+                required: ['account_id'],
+                properties: [
+                    new OA\Property(
+                        property: 'account_id',
+                        description: 'ID аккаунта',
+                        type: 'integer',
+                        example: 123456789
+                    ),
+                    new OA\Property(
+                        property: 'start_from',
+                        description: 'Маркер для пагинации (не обязательный)',
+                        type: 'string',
+                        example: 'news_feed~3AA2ASgCBQPS8qggoQSUAdLyq-223862623_21815:1632147324:40',
+                        nullable: true
+                    )
+                ],
+                type: 'object'
+            )
+        ),
+        tags: ['Account'],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Новостная лента успешно получена',
+                content: new OA\JsonContent(ref: '#/components/schemas/NewsfeedResponseSchema')
+            ),
+            new OA\Response(
+                response: 400,
+                description: 'Некорректный запрос',
+                content: new OA\JsonContent(ref: '#/components/schemas/BaseErrorResponse')
+            ),
+            new OA\Response(
+                response: 500,
+                description: 'Внутренняя ошибка сервера',
+                content: new OA\JsonContent(ref: '#/components/schemas/BaseErrorResponse')
+            )
+        ]
+    )]
     public function fetchAccountNewsfeed(Request $request)
     {
         return response()->json(VkClient::fetchAccountNewsfeed(
@@ -198,5 +245,4 @@ final class AccountController extends Controller
             )
         );
     }
-
 }

@@ -66,6 +66,75 @@
                 }
             }
         },
+        "/api/account/newsfeed": {
+            "post": {
+                "tags": [
+                    "Account"
+                ],
+                "summary": "Получить новостную ленту аккаунта",
+                "description": "Получает новостную ленту аккаунта ВКонтакте",
+                "operationId": "65fbab6bfc9ef8035a3051f627d45e9e",
+                "requestBody": {
+                    "description": "Параметры для получения новостной ленты",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "account_id"
+                                ],
+                                "properties": {
+                                    "account_id": {
+                                        "description": "ID аккаунта",
+                                        "type": "integer",
+                                        "example": 123456789
+                                    },
+                                    "start_from": {
+                                        "description": "Маркер для пагинации (не обязательный)",
+                                        "type": "string",
+                                        "example": "news_feed~3AA2ASgCBQPS8qggoQSUAdLyq-223862623_21815:1632147324:40",
+                                        "nullable": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Новостная лента успешно получена",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/NewsfeedResponseSchema"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Некорректный запрос",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/BaseErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка сервера",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/BaseErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/accounts/all-accounts": {
             "get": {
                 "tags": [
@@ -2246,6 +2315,205 @@
                 },
                 "type": "object"
             },
+            "NewsfeedResponseSchema": {
+                "description": "Схема ответа для новостной ленты аккаунта",
+                "properties": {
+                    "success": {
+                        "description": "Статус успешности запроса",
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "message": {
+                        "description": "Сообщение о результате операции",
+                        "type": "string",
+                        "example": "Получены новые данные ленты"
+                    },
+                    "data": {
+                        "description": "Данные новостной ленты",
+                        "properties": {
+                            "items": {
+                                "description": "Список элементов новостной ленты",
+                                "type": "array",
+                                "items": {
+                                    "properties": {
+                                        "type": {
+                                            "description": "Тип элемента новостной ленты",
+                                            "type": "string",
+                                            "example": "post"
+                                        },
+                                        "source_id": {
+                                            "description": "ID источника публикации",
+                                            "type": "integer",
+                                            "example": 3757268
+                                        },
+                                        "date": {
+                                            "description": "Дата публикации в формате timestamp",
+                                            "type": "integer",
+                                            "example": 1754168183
+                                        },
+                                        "post_id": {
+                                            "description": "ID поста",
+                                            "type": "integer",
+                                            "example": 4401
+                                        },
+                                        "owner_id": {
+                                            "description": "ID владельца поста",
+                                            "type": "integer",
+                                            "example": 3757268
+                                        },
+                                        "text": {
+                                            "description": "Текст поста",
+                                            "type": "string",
+                                            "example": ""
+                                        },
+                                        "attachments": {
+                                            "description": "Прикрепления к посту",
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object"
+                                            }
+                                        },
+                                        "likes": {
+                                            "description": "Информация о лайках",
+                                            "properties": {
+                                                "can_like": {
+                                                    "description": "Можно ли поставить лайк",
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "count": {
+                                                    "description": "Количество лайков",
+                                                    "type": "integer",
+                                                    "example": 0
+                                                },
+                                                "user_likes": {
+                                                    "description": "Поставил ли пользователь лайк",
+                                                    "type": "integer",
+                                                    "example": 0
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "reposts": {
+                                            "description": "Информация о репостах",
+                                            "properties": {
+                                                "count": {
+                                                    "description": "Количество репостов",
+                                                    "type": "integer",
+                                                    "example": 0
+                                                },
+                                                "user_reposted": {
+                                                    "description": "Сделал ли пользователь репост",
+                                                    "type": "integer",
+                                                    "example": 0
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "comments": {
+                                            "description": "Информация о комментариях",
+                                            "properties": {
+                                                "can_post": {
+                                                    "description": "Можно ли комментировать",
+                                                    "type": "integer",
+                                                    "example": 0
+                                                },
+                                                "count": {
+                                                    "description": "Количество комментариев",
+                                                    "type": "integer",
+                                                    "example": 0
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            },
+                            "profiles": {
+                                "description": "Список профилей пользователей",
+                                "type": "array",
+                                "items": {
+                                    "properties": {
+                                        "id": {
+                                            "description": "ID пользователя",
+                                            "type": "integer",
+                                            "example": 3757268
+                                        },
+                                        "first_name": {
+                                            "description": "Имя пользователя",
+                                            "type": "string",
+                                            "example": "Анастасия"
+                                        },
+                                        "last_name": {
+                                            "description": "Фамилия пользователя",
+                                            "type": "string",
+                                            "example": "Смирнова"
+                                        },
+                                        "screen_name": {
+                                            "description": "Короткое имя пользователя",
+                                            "type": "string",
+                                            "example": "nastenchka"
+                                        },
+                                        "photo_50": {
+                                            "description": "URL аватара 50x50",
+                                            "type": "string",
+                                            "format": "url"
+                                        },
+                                        "photo_100": {
+                                            "description": "URL аватара 100x100",
+                                            "type": "string",
+                                            "format": "url"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            },
+                            "groups": {
+                                "description": "Список групп",
+                                "type": "array",
+                                "items": {
+                                    "properties": {
+                                        "id": {
+                                            "description": "ID группы",
+                                            "type": "integer",
+                                            "example": 23064236
+                                        },
+                                        "name": {
+                                            "description": "Название группы",
+                                            "type": "string",
+                                            "example": "Четкие Приколы"
+                                        },
+                                        "screen_name": {
+                                            "description": "Короткое имя группы",
+                                            "type": "string",
+                                            "example": "ilikes"
+                                        },
+                                        "photo_50": {
+                                            "description": "URL аватара группы 50x50",
+                                            "type": "string",
+                                            "format": "url"
+                                        },
+                                        "photo_100": {
+                                            "description": "URL аватара группы 100x100",
+                                            "type": "string",
+                                            "format": "url"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            },
+                            "next_from": {
+                                "description": "Маркер для получения следующей страницы",
+                                "type": "string",
+                                "example": "news_feed~3AA2ASgCBQPS8qgg5_-223862623_21815:1632147324:40"
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "type": "object"
+            },
             "TaskInfoResponse": {
                 "description": "Ответ с информацией о задаче",
                 "properties": {
@@ -2771,11 +3039,7 @@
                                 "example": "Информация о профиле получена"
                             },
                             "data": {
-                                "description": "Массив данных пользователей ВКонтакте",
-                                "type": "array",
-                                "items": {
-                                    "$ref": "#/components/schemas/VkUserData"
-                                }
+                                "$ref": "#/components/schemas/VkUserData"
                             }
                         },
                         "type": "object"
