@@ -68,14 +68,12 @@
 </template>
 
 <style scoped lang="scss">
-  #ownerDetailsModal {
-    .modal-body {
-      img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        object-position: center;
-      }
+  .modal-body {
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
     }
   }
 </style>

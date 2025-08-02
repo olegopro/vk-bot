@@ -3,6 +3,9 @@
   import { useAccountStore } from '../../../stores/AccountStore'
   import { showErrorNotification } from '../../../helpers/notyfHelper'
   import { useImageUrl } from '../../../composables/useImageUrl'
+  import { useModal } from '../../../composables/useModal'
+  import AccountDetailsModal from '../Modals/AccountDetailsModal.vue'
+  import GroupDetailsModal from '../Modals/GroupDetailsModal.vue'
 
   const props = defineProps({
     index: Number,
@@ -12,8 +15,6 @@
     iconClasses: Object,
     userId: String
   })
-
-  const emit = defineEmits(['showOwnerDetailsModal'])
 
   const {
     post,
@@ -28,6 +29,7 @@
 
   const accountStore = useAccountStore()
   const { getAdjustedQualityImageUrl } = useImageUrl()
+  const { showModal } = useModal()
 
   const addLikeToPost = async (ownerId, itemId, index) => {
     likedPostIndex.value = index
@@ -39,8 +41,19 @@
       .finally(() => (loadingStatus.value[index] = false))
   }
 
-  const emitShowOwnerDetailsModal = (accountId, index) => {
-    emit('showOwnerDetailsModal', { accountId, index })
+  const showOwnerDetailsModal = async (accountId) => {
+    console.log('accountId', accountId)
+
+    if (accountId < 0) {
+      // Отрицательный ID - это группа
+      await accountStore.fetchGroupData.execute({ groupId: Math.abs(accountId) })
+      console.log('accountStore.fetchGroupData', accountStore.fetchGroupData.data)
+      await showModal(GroupDetailsModal)
+    } else {
+      // Положительный ID - это пользователь
+      await accountStore.fetchOwnerData.execute({ accountId: userId.value, ownerId: accountId })
+      await showModal(AccountDetailsModal)
+    }
   }
 </script>
 
@@ -49,7 +62,7 @@
     :class="[currentColumnClass, 'item', 'mb-4', 'placeholder-glow']"
   >
     <button class="account-info-btn mr-1"
-      @click="emitShowOwnerDetailsModal(post.source_id, index)"
+      @click="showOwnerDetailsModal(post.source_id)"
     >
       <i :class="iconClasses.info" v-if="!post.source_id" />
       <i :class="iconClasses.person" v-if="post.source_id > 0" />

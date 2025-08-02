@@ -33,6 +33,12 @@ export interface VkGroup {
   photo_50?: string
   photo_100?: string
   photo_200?: string
+  status?: string
+  members_count?: number
+  city?: {
+    title?: string
+    [key: string]: any
+  }
 
   [key: string]: any
 }
@@ -96,4 +102,4 @@ export interface NewsFeedRequest {
   start_from: string | null
 }
 
-export type GroupDataResponse = ApiResponseWrapper<VkGroup[]>
+export type GroupDataResponse = ApiResponseWrapper<VkGroup>

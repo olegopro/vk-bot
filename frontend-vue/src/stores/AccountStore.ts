@@ -5,7 +5,6 @@ import { showErrorNotification, showSuccessNotification } from '@/helpers/notyfH
 import useApi from '@/composables/useApi'
 import type { Nullable } from '@/types'
 import type {
-  OwnerData,
   VkUser,
   NewsItem,
   OwnerDataApiResponse,
@@ -24,7 +23,6 @@ import type { ApiResponseWrapper } from '@/models/ApiModel'
 export const useAccountStore = defineStore('account', () => {
   // Состояние
   const account = ref<any[]>([])
-  const ownerData = ref<OwnerData[]>([])
   const accountFollowers = ref<Record<string, VkUser[]>>({})
   const accountFriends = ref<Record<string, VkUser[]>>({})
   const accountFriendsCount = ref<Record<string, number>>({})
@@ -158,39 +156,8 @@ export const useAccountStore = defineStore('account', () => {
    */
   const fetchGroupData = useApi(async (parameters?: { groupId: number | string }) => {
     if (!parameters) throw new Error('Не указан ID группы')
-
-    const { groupId } = parameters
-
-    // Поиск владельца по ID в массиве ownerData
-    const existingGroupData = ownerData.value.find(owner => owner.id === Math.abs(Number(groupId)))
-    console.log('existingGroupData', existingGroupData)
-
-    // Если данные о владельце уже есть, немедленно возвращаем эти данные
-    if (existingGroupData) {
-      return { data: existingGroupData, success: true, message: 'Данные группы уже загружены' }
-    }
-
-    const response = await axios.get<GroupDataResponse>(`group/data/${Math.abs(Number(groupId))}`)
-    addOwnerData(response.data.data[0])
-    showSuccessNotification(response.data.message)
-
-    return response.data
+    return (await axios.get<ApiResponseWrapper<GroupDataResponse>>(`group/data/${Math.abs(Number(parameters.groupId))}`)).data
   })
-
-  /**
-   * Добавляет или обновляет данные владельца
-   */
-  const addOwnerData = (accountData: OwnerData) => {
-    const index = ownerData.value.findIndex((item) => item.id === accountData.id)
-
-    if (index !== -1) {
-      // Объект с таким же идентификатором уже существует, обновляем его
-      ownerData.value[index] = { ...ownerData.value[index], ...accountData }
-    } else {
-      // Добавляем новый объект в массив
-      ownerData.value.push(accountData)
-    }
-  }
 
   /**
    * Получает детали аккаунта
@@ -220,13 +187,11 @@ export const useAccountStore = defineStore('account', () => {
   })
 
   // Геттеры
-  const getOwnerDataById = computed(() => (id: number | string) => ownerData.value.find(user => user.id === Math.abs(Number(id))))
   const getAccountById = computed(() => (id: number | string) => account.value.find(account => account.id === Math.abs(Number(id))))
 
   return {
     // Состояние
     account,
-    ownerData,
     accountFollowers,
     accountFriends,
     accountFriendsCount,
@@ -245,12 +210,10 @@ export const useAccountStore = defineStore('account', () => {
     addLike,
     addPostsToLike,
     fetchGroupData,
-    addOwnerData,
     getAccountDetails,
     createTasksForUsers,
 
     // Геттеры
-    getOwnerDataById,
     getAccountById
   }
 })

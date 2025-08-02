@@ -6,7 +6,6 @@
   import { debounce } from 'lodash'
   import { useModal } from '@/composables/useModal'
   import NewsfeedItem from './NewsfeedItem.vue'
-  import OwnerDetailsModal from '../Modals/OwnerDetailsModal.vue'
 
   const accountStore = useAccountStore()
   const route = useRoute()
@@ -40,17 +39,7 @@
 
   provide('closeModal', closeModal)
 
-  const ownerInfo = (accountId, index) => {
-    showDetailedInfo.value = index
-    ownerDataById.value = null
 
-    const fetchData = accountId > 0
-      ? accountStore.fetchOwnerData.execute({ accountId: userId.value, ownerId: accountId })
-      : accountStore.fetchGroupData.execute({ groupId: accountId })
-
-    fetchData.then(() => ownerDataById.value = accountStore.getOwnerDataById(accountId))
-      .catch(({ response }) => showErrorNotification(response.data.message))
-  }
 
   const changeColumnClass = async (newClass) => {
     // Очищаем текущую ленту новостей и сбрасываем состояния пагинации
@@ -97,11 +86,6 @@
     leading: true, // Вызываться в начале периода ожидания
     trailing: false // Дополнительный вызов в конце периода не требуется
   })
-
-  const handleShowOwnerDetailsModal = ({ accountId, index }) => {
-    ownerInfo(accountId, index)
-    showModal(OwnerDetailsModal)
-  }
 
   onMounted(() => {
     userId.value = route.params.id
@@ -150,7 +134,6 @@
       :loading-status="loadingStatus"
       :icon-classes="iconClasses"
       :user-id="userId"
-      @showOwnerDetailsModal="handleShowOwnerDetailsModal"
     />
   </div>
 

@@ -133,7 +133,7 @@ class VkClientService
      */
     public function fetchGroupData($id)
     {
-        return $this->request('groups.getById', [
+        $response = $this->request('groups.getById', [
             'group_id' => $id,
             'fields'   => [
                 'photo_200',
@@ -146,6 +146,12 @@ class VkClientService
                 'city',
             ]
         ]);
+
+        return [
+            'success' => true,
+            'data'    => $response['response']['groups'][0],
+            'message' => 'Информация о группе получена'
+        ];
     }
 
     /**
