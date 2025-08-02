@@ -1,7 +1,7 @@
 <script setup>
   import { onMounted, onUnmounted, provide, ref, shallowRef } from 'vue'
   import { useAccountStore } from '@/stores/AccountStore'
-  import { showErrorNotification } from '@/helpers/notyfHelper'
+  import { showSuccessNotification } from '@/helpers/notyfHelper'
   import { useRoute } from 'vue-router'
   import { debounce } from 'lodash'
   import { useModal } from '@/composables/useModal'
@@ -17,8 +17,19 @@
   const showNewsfeed = ref(true)
   const modalComponent = shallowRef(null)
   const ownerDataById = ref(null)
-  const showDetailedInfo = ref(null)
   const { isOpen, showModal, closeModal } = useModal()
+
+  // Локальное состояние для новостной ленты
+  const accountNewsFeed = ref([])
+  const nextFrom = ref(null)
+  const previousNextFrom = ref(null)
+
+  // Обновление лайка в локальном массиве
+  const updateLike = (index) => {
+    if (accountNewsFeed.value[index] && accountNewsFeed.value[index].likes) {
+      accountNewsFeed.value[index].likes.user_likes = 1
+    }
+  }
 
   const iconClasses = ref({
     info: 'bi bi-info-circle',
@@ -39,13 +50,11 @@
 
   provide('closeModal', closeModal)
 
-
-
   const changeColumnClass = async (newClass) => {
     // Очищаем текущую ленту новостей и сбрасываем состояния пагинации
-    accountStore.accountNewsFeed = []
-    accountStore.nextFrom = null
-    accountStore.previousNextFrom = null
+    accountNewsFeed.value = []
+    nextFrom.value = null
+    previousNextFrom.value = null
 
     // Скрываем ленту новостей во время загрузки
     showNewsfeed.value = false
@@ -76,10 +85,35 @@
   }
 
   const loadMore = async () => {
-    accountStore.isLoadingFeed = true
-    await accountStore.fetchAccountNewsFeed.execute({ accountId: userId.value, startFrom: accountStore.nextFrom })
-      .then(() => showNewsfeed.value = true)
-      .catch(() => showErrorNotification('Ошибка в loadMore()'))
+    // Проверка на дублирование запросов
+    if (nextFrom.value !== null && nextFrom.value === previousNextFrom.value) {
+      return
+    }
+
+    previousNextFrom.value = nextFrom.value
+
+    await accountStore.fetchAccountNewsFeed.execute({
+      accountId: userId.value,
+      startFrom: nextFrom.value
+    })
+      .then(response => {
+        const { data, message } = response
+
+        // фильтрация массива items, оставляя только те элементы, у которых первое вложение имеет тип 'photo'
+        const result = data.items.filter(item => item.attachments?.[0]?.type === 'photo')
+
+        // сохранение маркера для следующего запроса новостей из response
+        nextFrom.value = data.next_from || null
+
+        // если начальный маркер равен null, очистить ленту новостей
+        if (previousNextFrom.value === null) accountNewsFeed.value = []
+
+        // добавление отфильтрованных новостей к текущему списку новостей в аккаунте
+        accountNewsFeed.value = [...accountNewsFeed.value, ...result]
+
+        showSuccessNotification(message)
+        showNewsfeed.value = true
+      })
   }
 
   const debounceLoadMore = debounce(() => loadMore(), 500, {
@@ -89,9 +123,8 @@
 
   onMounted(() => {
     userId.value = route.params.id
-    accountStore.nextFrom = null
-    accountStore.accountNewsFeed = []
-    accountStore.isLoadingFeed = true
+    nextFrom.value = null
+    accountNewsFeed.value = []
 
     observer = new IntersectionObserver(entries => {
       entries.forEach(entry => {
@@ -102,7 +135,7 @@
     }, { threshold: 0 })
 
     observer.observe(document.getElementById('loader'))
-    loadingStatus.value = new Array(accountStore.accountNewsFeed.length).fill(false)
+    loadingStatus.value = new Array(accountNewsFeed.value.length).fill(false)
   })
 
   onUnmounted(() => {
@@ -115,7 +148,7 @@
     <div class="col-3 d-flex justify-content-end change-grid-columns">
       <i :class="[
            columnSettings.columnClass === option.class ? option.iconFill : option.icon,'bi','me-2',
-           accountStore.isLoadingFeed ? 'pe-none' : ''
+           accountStore.fetchAccountNewsFeed.loading ? 'pe-none' : ''
          ]"
         v-for="option in columnOptions"
         :key="option.class"
@@ -126,7 +159,7 @@
 
   <div v-masonry item-selector=".item" v-if="showNewsfeed" transition-duration="0s" class="row">
     <NewsfeedItem
-      v-for="(post, index) in accountStore.accountNewsFeed"
+      v-for="(post, index) in accountNewsFeed"
       :key="index"
       :index="index"
       :post="post"
@@ -134,12 +167,13 @@
       :loading-status="loadingStatus"
       :icon-classes="iconClasses"
       :user-id="userId"
+      @update-like="updateLike"
     />
   </div>
 
   <div class="row justify-content-center mt-2 mb-4" id="loader">
     <transition name="fade">
-      <div class="feed-spinner spinner-border" role="status" v-show="accountStore.isLoadingFeed">
+      <div class="feed-spinner spinner-border" role="status" v-show="accountStore.fetchAccountNewsFeed.loading">
         <span class="visually-hidden">Загрузка...</span>
       </div>
     </transition>

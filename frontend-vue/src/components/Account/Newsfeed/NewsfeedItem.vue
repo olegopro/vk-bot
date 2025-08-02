@@ -16,6 +16,8 @@
     userId: String
   })
 
+  const emit = defineEmits(['update-like'])
+
   const {
     post,
     index,
@@ -43,7 +45,7 @@
       }
     })
       .then(response => {
-        accountStore.accountNewsFeed[index].likes.user_likes = 1
+        emit('update-like', index)
         showSuccessNotification(response.message)
       })
       .catch(error => showErrorNotification(error.message))

@@ -1,13 +1,10 @@
 import { defineStore } from 'pinia'
-import { ref } from 'vue'
 import axios from '@/helpers/axiosConfig'
-import { showErrorNotification, showSuccessNotification } from '@/helpers/notyfHelper'
 import useApi from '@/composables/useApi'
 import type { Nullable } from '@/types'
 import type {
   VkUser,
   VkGroup,
-  NewsItem,
   OwnerDataApiResponse,
   FriendsCountApiResponse,
   NewsFeedApiResponse,
@@ -21,12 +18,6 @@ import type {
 import type { ApiResponseWrapper } from '@/models/ApiModel'
 
 export const useAccountStore = defineStore('account', () => {
-  // Состояние
-  const accountNewsFeed = ref<NewsItem[]>([])
-  const nextFrom = ref<Nullable<string>>(null)
-  const previousNextFrom = ref<Nullable<string>>(null)
-  const isLoadingFeed = ref<boolean>(false)
-
   /**
    * Получает данные владельца аккаунта
    */
@@ -72,46 +63,10 @@ export const useAccountStore = defineStore('account', () => {
    */
   const fetchAccountNewsFeed = useApi(async (parameters?: { accountId: string; startFrom: Nullable<string> }) => {
     if (!parameters) throw new Error('Не указаны параметры')
-
-    const { accountId, startFrom } = parameters
-
-    if (startFrom !== null && startFrom === previousNextFrom.value) {
-      return { data: null, success: true, message: 'Данные уже загружены' }
-    }
-
-    previousNextFrom.value = startFrom
-    isLoadingFeed.value = true
-
-    try {
-      const response = await axios.post<NewsFeedApiResponse>('account/newsfeed', {
-        account_id: accountId,
-        start_from: startFrom
-      })
-
-      const { data: { response: feedResponse }, message } = response.data
-
-      // фильтрация массива items, оставляя только те элементы, у которых первое вложение имеет тип 'photo'
-      const result = feedResponse.items.filter(item => item.attachments?.[0]?.type === 'photo')
-
-      // сохранение маркера для следующего запроса новостей из response
-      nextFrom.value = feedResponse.next_from || null
-
-      // если начальный маркер равен null, очистить ленту новостей
-      if (startFrom === null) accountNewsFeed.value = []
-
-      // добавление отфильтрованных новостей к текущему списку новостей в аккаунте
-      accountNewsFeed.value = [...accountNewsFeed.value, ...result]
-
-      showSuccessNotification(message)
-      return response.data
-    } catch (error) {
-      // повторный запрос новостей для аккаунта в случае ошибки
-      showErrorNotification('Новые данные ленты не получены')
-      throw error
-    } finally {
-      // Установка флага загрузки в false, значит загрузка завершена
-      isLoadingFeed.value = false
-    }
+    return (await axios.post<NewsFeedApiResponse>('account/newsfeed', {
+      account_id: parameters.accountId,
+      start_from: parameters.startFrom
+    })).data
   })
 
   /**
@@ -139,12 +94,6 @@ export const useAccountStore = defineStore('account', () => {
   })
 
   return {
-    // Состояние
-    accountNewsFeed,
-    nextFrom,
-    previousNextFrom,
-    isLoadingFeed,
-
     // Методы
     fetchOwnerData,
     fetchAccountFollowers,
