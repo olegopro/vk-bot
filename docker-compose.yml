@@ -21,7 +21,7 @@ services:
             - PHP_IDE_CONFIG="serverName=DockerServer"
             - VK_API_URL=https://api.vk.com/method/
             - VK_API_VERSION=5.199
-            - VK_API_SERVICE_KEY=9078836e9078836e9078836e6a936ad6f7990789078836ef3b669b8e858f8a314638f9c
+            - VK_API_SERVICE_KEY=9078836e9078836e90788
 
     nginx:
         image: nginx
@@ -43,10 +43,9 @@ services:
             - "3000:3000"
         volumes:
             - ./frontend-vue:/app
-            - /app/node_modules
 
     mysql:
-        image: mysql:8.3.0
+        image: mysql:9.2.0
         restart: unless-stopped
         ports:
             - "3306:3306"
