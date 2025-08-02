@@ -78,7 +78,12 @@
   const addFeedTask = (): void => {
     startRequest()
 
-    accountStore.addPostsToLike.execute({ accountId: accountId.value, taskCount: taskCount.value })
+    accountStore.addPostsToLike.execute({ 
+      postsData: {
+        account_id: accountId.value,
+        task_count: taskCount.value
+      }
+    })
       .then(handleSuccess)
       .catch(handleError)
   }
@@ -87,7 +92,12 @@
     startRequest()
 
     filterStore.getUsersByCity(Number(accountId.value), cityId.value, taskCount.value)
-      .then((domains: string[]) => accountStore.createTasksForUsers.execute({ accountId: Number(accountId.value), domains }))
+      .then((domains: string[]) => accountStore.createTasksForUsers.execute({ 
+        tasksData: {
+          account_id: Number(accountId.value),
+          domains
+        }
+      }))
       .then(handleSuccess)
       .catch(handleError)
   }

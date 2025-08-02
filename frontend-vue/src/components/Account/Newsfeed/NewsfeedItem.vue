@@ -51,12 +51,9 @@
   }
 
   const showOwnerDetailsModal = async (accountId) => {
-    console.log('accountId', accountId)
-
     if (accountId < 0) {
       // Отрицательный ID - это группа
       await accountStore.fetchGroupData.execute({ groupId: Math.abs(accountId) })
-      console.log('accountStore.fetchGroupData', accountStore.fetchGroupData.data)
       await showModal(GroupDetailsModal)
     } else {
       // Положительный ID - это пользователь
@@ -67,9 +64,7 @@
 </script>
 
 <template>
-  <div v-masonry-tile
-    :class="[currentColumnClass, 'item', 'mb-4', 'placeholder-glow']"
-  >
+  <div v-masonry-tile :class="[currentColumnClass, 'item', 'mb-4', 'placeholder-glow']">
     <button class="account-info-btn mr-1"
       @click="showOwnerDetailsModal(post.source_id)"
     >

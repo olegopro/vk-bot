@@ -125,46 +125,17 @@ export const useAccountStore = defineStore('account', () => {
   /**
    * Добавляет посты для лайков
    */
-  const addPostsToLike = useApi(async (parameters?: { accountId: number | string; taskCount: number }) => {
-    if (!parameters) throw new Error('Не указаны параметры')
-
-    const request: PostsForLikeRequest = {
-      account_id: parameters.accountId,
-      task_count: parameters.taskCount
-    }
-
-    const response = await axios.post<PostsForLikeResponse>('tasks/get-posts-for-like', request)
-    accountNewsFeed.value = [...accountNewsFeed.value, ...response.data.data]
-    showSuccessNotification(response.data.message)
-
-    return response.data
-  })
-
-  /**
-   * Получает детали аккаунта
-   */
-  const getAccountDetails = useApi(async (parameters?: { ownerId: number | string }) => {
-    if (!parameters) throw new Error('Не указан ID владельца')
-
-    const response = await axios.get(`account/${parameters.ownerId}`)
-    return response.data
+  const addPostsToLike = useApi(async (parameters?: { postsData: PostsForLikeRequest }) => {
+    if (!parameters) throw new Error('Не указаны параметры для добавления постов')
+    return (await axios.post<PostsForLikeResponse>('tasks/get-posts-for-like', parameters.postsData)).data
   })
 
   /**
    * Создает задачи на лайки для указанных пользователей
    */
-  const createTasksForUsers = useApi(async (parameters?: { accountId: number; domains: string[] }) => {
-    if (!parameters) throw new Error('Не указаны параметры')
-
-    const request: CreateTasksRequest = {
-      account_id: parameters.accountId,
-      domains: parameters.domains
-    }
-
-    const response = await axios.post<CreateTasksResponse>('tasks/create-for-users', request)
-    showSuccessNotification(response.data.message)
-
-    return response.data
+  const createTasksForUsers = useApi(async (parameters?: { tasksData: CreateTasksRequest }) => {
+    if (!parameters) throw new Error('Не указаны параметры для создания задач')
+    return (await axios.post<CreateTasksResponse>('tasks/create-for-users', parameters.tasksData)).data
   })
 
   return {
@@ -183,7 +154,6 @@ export const useAccountStore = defineStore('account', () => {
     addLike,
     addPostsToLike,
     fetchGroupData,
-    getAccountDetails,
     createTasksForUsers
   }
 })
