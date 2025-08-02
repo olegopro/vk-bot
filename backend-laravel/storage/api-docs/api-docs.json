@@ -12,6 +12,60 @@
         }
     ],
     "paths": {
+        "/api/account/data/{id}": {
+            "get": {
+                "tags": [
+                    "Account"
+                ],
+                "summary": "Получить данные аккаунта",
+                "description": "Получает расширенные данные пользователя ВКонтакте по его ID",
+                "operationId": "af8eae92de548d818801df43e191b6a2",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID пользователя ВКонтакте",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "123456789"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Данные пользователя успешно получены",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/VkUserDataResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Некорректный запрос",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/BaseErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка сервера",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/BaseErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/accounts/all-accounts": {
             "get": {
                 "tags": [
@@ -2613,6 +2667,121 @@
                 },
                 "type": "object"
             },
+            "VkUserData": {
+                "description": "Данные пользователя ВКонтакте с расширенной информацией",
+                "properties": {
+                    "id": {
+                        "description": "ID пользователя",
+                        "type": "integer",
+                        "example": 123456789
+                    },
+                    "first_name": {
+                        "description": "Имя пользователя",
+                        "type": "string",
+                        "example": "Иван"
+                    },
+                    "last_name": {
+                        "description": "Фамилия пользователя",
+                        "type": "string",
+                        "example": "Иванов"
+                    },
+                    "screen_name": {
+                        "description": "Короткое имя (никнейм) пользователя",
+                        "type": "string",
+                        "example": "ivanov",
+                        "nullable": true
+                    },
+                    "photo_50": {
+                        "description": "URL аватара 50x50",
+                        "type": "string",
+                        "example": "https://sun9-12.userapi.com/...",
+                        "nullable": true
+                    },
+                    "photo_100": {
+                        "description": "URL аватара 100x100",
+                        "type": "string",
+                        "example": "https://sun9-12.userapi.com/...",
+                        "nullable": true
+                    },
+                    "photo_200": {
+                        "description": "URL аватара 200x200",
+                        "type": "string",
+                        "example": "https://sun9-12.userapi.com/...",
+                        "nullable": true
+                    },
+                    "status": {
+                        "description": "Статус пользователя",
+                        "type": "string",
+                        "example": "Хорошее настроение!",
+                        "nullable": true
+                    },
+                    "last_seen": {
+                        "description": "Информация о последнем визите",
+                        "type": "object",
+                        "nullable": true
+                    },
+                    "followers_count": {
+                        "description": "Количество подписчиков",
+                        "type": "integer",
+                        "example": 150,
+                        "nullable": true
+                    },
+                    "city": {
+                        "description": "Информация о городе",
+                        "type": "object",
+                        "nullable": true
+                    },
+                    "online": {
+                        "description": "Статус онлайн",
+                        "type": "integer",
+                        "example": 1,
+                        "nullable": true
+                    },
+                    "bdate": {
+                        "description": "Дата рождения",
+                        "type": "string",
+                        "example": "15.10.1990",
+                        "nullable": true
+                    },
+                    "country": {
+                        "description": "Информация о стране",
+                        "type": "object",
+                        "nullable": true
+                    },
+                    "sex": {
+                        "description": "Пол пользователя (1 - женский, 2 - мужской)",
+                        "type": "integer",
+                        "example": 2,
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "VkUserDataResponse": {
+                "description": "Ответ с данными пользователя ВКонтакте",
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/BaseSuccessResponse"
+                    },
+                    {
+                        "properties": {
+                            "message": {
+                                "description": "Сообщение о результате операции",
+                                "type": "string",
+                                "example": "Информация о профиле получена"
+                            },
+                            "data": {
+                                "description": "Массив данных пользователей ВКонтакте",
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/VkUserData"
+                                }
+                            }
+                        },
+                        "type": "object"
+                    }
+                ]
+            },
             "VkUser": {
                 "description": "Пользователь ВКонтакте",
                 "properties": {
@@ -2660,6 +2829,10 @@
         {
             "name": "Cyclic Tasks",
             "description": "Операции для управления циклическими задачами"
+        },
+        {
+            "name": "Account",
+            "description": "Account"
         },
         {
             "name": "Filters",

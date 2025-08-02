@@ -7,6 +7,7 @@ use App\Jobs\addLikeToPost;
 use App\Models\Account;
 use App\Models\Task;
 use App\OpenApi\Schemas\AccountResponseSchema;
+use App\OpenApi\Schemas\VkUserDataSchema;
 use App\Repositories\AccountRepositoryInterface;
 use App\Services\LoggingServiceInterface;
 use App\Services\VkClientService;
@@ -38,6 +39,38 @@ final class AccountController extends Controller
      * @return \Illuminate\Http\JsonResponse
      * @throws VkException
      */
+    #[OA\Get(
+        path: '/api/account/data/{id}',
+        description: 'Получает расширенные данные пользователя ВКонтакте по его ID',
+        summary: 'Получить данные аккаунта',
+        tags: ['Account'],
+        parameters: [
+            new OA\Parameter(
+                name: 'id',
+                description: 'ID пользователя ВКонтакте',
+                in: 'path',
+                required: true,
+                schema: new OA\Schema(type: 'string', example: '123456789')
+            )
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Данные пользователя успешно получены',
+                content: new OA\JsonContent(ref: '#/components/schemas/VkUserDataResponse')
+            ),
+            new OA\Response(
+                response: 400,
+                description: 'Некорректный запрос',
+                content: new OA\JsonContent(ref: '#/components/schemas/BaseErrorResponse')
+            ),
+            new OA\Response(
+                response: 500,
+                description: 'Внутренняя ошибка сервера',
+                content: new OA\JsonContent(ref: '#/components/schemas/BaseErrorResponse')
+            )
+        ]
+    )]
     public function fetchAccountData($ids)
     {
         return response()->json(VkClient::fetchAccountData($ids));
@@ -66,7 +99,7 @@ final class AccountController extends Controller
     public function fetchAccountFollowers($id, $limit = 6)
     {
         $response = VkClient::fetchAccountFollowers($id, $limit);
-        
+
         return response()->json([
             'success' => true,
             'message' => 'Список подписчиков получен',
@@ -85,7 +118,7 @@ final class AccountController extends Controller
     public function fetchAccountFriends($id, $limit = 6)
     {
         $response = VkClient::fetchAccountFriends($id, $limit);
-        
+
         return response()->json([
             'success' => true,
             'message' => 'Список друзей получен',

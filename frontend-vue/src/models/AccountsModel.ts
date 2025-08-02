@@ -59,10 +59,7 @@ export interface NewsFeedResponse {
   [key: string]: any
 }
 
-// Базовые типы ответов без обертки ApiResponseWrapper
-export interface OwnerDataApiResponse {
-  response: OwnerData[]
-}
+export type OwnerDataApiResponse = OwnerData
 
 export interface FriendsCountApiResponse {
   response: {

@@ -26,9 +26,9 @@ class VkClientService
      */
     private $accountRepository;
 
-    const API_URI = 'https://api.vk.com/method/';
-    const API_VERSION = '5.62';
-    const API_TIMEOUT = 30.0;
+    const string API_URI = 'https://api.vk.com/method/';
+    const string API_VERSION = '5.62';
+    const float API_TIMEOUT = 30.0;
 
     /**
      * Конструктор класса VkClientService.
@@ -119,7 +119,7 @@ class VkClientService
 
         return [
             'success' => true,
-            'data'    => $response,
+            'data'    => $response['response'][0],
             'message' => 'Информация о профиле получена'
         ];
     }

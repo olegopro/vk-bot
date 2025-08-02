@@ -40,35 +40,10 @@ export const useAccountStore = defineStore('account', () => {
   const fetchOwnerData = useApi(async (parameters?: { accountId: number; ownerId: number; taskId?: any }) => {
     if (!parameters) throw new Error('Не указаны параметры')
 
-    const { accountId, ownerId, taskId = null } = parameters
+    const { ownerId, taskId = null } = parameters
     isOwnerDataLoading.value = taskId
 
-    // Выполняем запросы
-    const responses = await Promise.all([
-      axios.get<ApiResponseWrapper<OwnerDataApiResponse>>(`account/data/${ownerId}`),
-      axios.get<ApiResponseWrapper<FriendsCountApiResponse>>(`account/friends/count/${accountId}/${ownerId}`)
-    ])
-
-    console.log('responses', responses)
-
-    const ownerDataResponse = responses[0]
-    const friendsCountResponse = responses[1]
-
-    const accountData = ownerDataResponse.data.data.response[0]
-    const friendsCount = friendsCountResponse.data.data.response.count
-
-    // Объединяем полученные данные
-    const combinedData = { ...accountData, friends_count: friendsCount }
-
-    // Отображаем уведомления об успехе
-    showSuccessNotification(ownerDataResponse.data.message)
-    showSuccessNotification(friendsCountResponse.data.message)
-    isOwnerDataLoading.value = null
-    return {
-      data: combinedData,
-      success: true,
-      message: 'Данные владельца аккаунта получены'
-    }
+    return (await (axios.get<ApiResponseWrapper<OwnerDataApiResponse>>(`account/data/${ownerId}`))).data
   })
 
   /**
@@ -116,7 +91,7 @@ export const useAccountStore = defineStore('account', () => {
         start_from: startFrom
       })
 
-      const { data: feedResponse, message } = response.data
+      const { data: { response: feedResponse }, message } = response.data
 
       // фильтрация массива items, оставляя только те элементы, у которых первое вложение имеет тип 'photo'
       const result = feedResponse.items.filter(item => item.attachments?.[0]?.type === 'photo')
