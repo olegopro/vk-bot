@@ -1,21 +1,29 @@
 <script setup lang="ts">
   import { computed, getCurrentInstance } from 'vue'
   import { useModal } from '@/composables/useModal'
+  import { useAccountStore } from '@/stores/AccountStore'
   import { OwnerData } from '@/models/AccountsModel'
   import Account from './OwnerDetails/Account.vue'
   import Group from './OwnerDetails/Group.vue'
 
   const modalId = getCurrentInstance()?.type.__name
   const { closeModal } = useModal()
+  const accountStore = useAccountStore()
 
   const { ownerData } = defineProps<{
     ownerData: OwnerData
   }>()
 
+  // Получаем данные из стора
+  const ownerDataFromStore = computed(() => accountStore.fetchOwnerData.data)
+
+  // Используем данные из стора, если они доступны, иначе из пропса
+  const currentOwnerData = computed(() => ownerDataFromStore.value || ownerData)
+
   const ownerType = computed(() => {
-    if (ownerData?.type) {
+    if (currentOwnerData.value?.type) {
       return 'group'
-    } else if (ownerData?.first_name) {
+    } else if (currentOwnerData.value?.first_name) {
       return 'account'
     }
     return null
@@ -30,10 +38,10 @@
           <h1 class="modal-title fs-5">Детали владельца</h1>
           <button type="button" class="btn-close" @click="closeModal(modalId)" aria-label="Close"></button>
         </div>
-        
+
         <div class="modal-body">
-          <Account v-if="ownerType === 'account'" :accountData="ownerData" />
-          <Group v-if="ownerType === 'group'" :groupData="ownerData" />
+          <Account v-if="ownerType === 'account'" :accountData="currentOwnerData" />
+          <Group v-if="ownerType === 'group'" :groupData="currentOwnerData" />
         </div>
 
         <div class="modal-footer">
