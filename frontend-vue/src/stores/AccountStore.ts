@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { ref, computed } from 'vue'
+import { ref } from 'vue'
 import axios from '@/helpers/axiosConfig'
 import { showErrorNotification, showSuccessNotification } from '@/helpers/notyfHelper'
 import useApi from '@/composables/useApi'
@@ -22,14 +22,9 @@ import type { ApiResponseWrapper } from '@/models/ApiModel'
 
 export const useAccountStore = defineStore('account', () => {
   // Состояние
-  const account = ref<any[]>([])
-  const accountFollowers = ref<Record<string, VkUser[]>>({})
-  const accountFriends = ref<Record<string, VkUser[]>>({})
-  const accountFriendsCount = ref<Record<string, number>>({})
   const accountNewsFeed = ref<NewsItem[]>([])
   const nextFrom = ref<Nullable<string>>(null)
   const previousNextFrom = ref<Nullable<string>>(null)
-  const isOwnerDataLoading = ref<any>(null)
   const isLoadingFeed = ref<boolean>(false)
 
   /**
@@ -122,23 +117,9 @@ export const useAccountStore = defineStore('account', () => {
   /**
    * Добавляет лайк к посту
    */
-  const addLike = useApi(async (parameters?: {
-    accountId: number | string;
-    ownerId: number | string;
-    itemId: number | string
-  }) => {
-    if (!parameters) throw new Error('Не указаны параметры')
-
-    const request: LikeRequest = {
-      account_id: parameters.accountId,
-      owner_id: parameters.ownerId,
-      item_id: parameters.itemId
-    }
-
-    const response = await axios.post<LikeResponse>('account/like', request)
-    showSuccessNotification(response.data.message)
-
-    return response.data
+  const addLike = useApi(async (parameters?: { likeData: LikeRequest }) => {
+    if (!parameters) throw new Error('Не указаны параметры для добавления лайка')
+    return (await axios.post<LikeResponse>('account/like', parameters.likeData)).data
   })
 
   /**
@@ -186,19 +167,11 @@ export const useAccountStore = defineStore('account', () => {
     return response.data
   })
 
-  // Геттеры
-  const getAccountById = computed(() => (id: number | string) => account.value.find(account => account.id === Math.abs(Number(id))))
-
   return {
     // Состояние
-    account,
-    accountFollowers,
-    accountFriends,
-    accountFriendsCount,
     accountNewsFeed,
     nextFrom,
     previousNextFrom,
-    isOwnerDataLoading,
     isLoadingFeed,
 
     // Методы
@@ -211,9 +184,6 @@ export const useAccountStore = defineStore('account', () => {
     addPostsToLike,
     fetchGroupData,
     getAccountDetails,
-    createTasksForUsers,
-
-    // Геттеры
-    getAccountById
+    createTasksForUsers
   }
 })

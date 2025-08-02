@@ -1,7 +1,7 @@
 <script setup>
   import { ref, toRefs } from 'vue'
   import { useAccountStore } from '../../../stores/AccountStore'
-  import { showErrorNotification } from '../../../helpers/notyfHelper'
+  import { showErrorNotification, showSuccessNotification } from '../../../helpers/notyfHelper'
   import { useImageUrl } from '../../../composables/useImageUrl'
   import { useModal } from '../../../composables/useModal'
   import AccountDetailsModal from '../Modals/AccountDetailsModal.vue'
@@ -35,8 +35,17 @@
     likedPostIndex.value = index
     loadingStatus.value[index] = true
 
-    await accountStore.addLike(userId.value, ownerId, itemId)
-      .then(() => accountStore.accountNewsFeed[index].likes.user_likes = 1)
+    await accountStore.addLike.execute({
+      likeData: {
+        account_id: userId.value,
+        owner_id: ownerId,
+        item_id: itemId
+      }
+    })
+      .then(response => {
+        accountStore.accountNewsFeed[index].likes.user_likes = 1
+        showSuccessNotification(response.message)
+      })
       .catch(error => showErrorNotification(error.message))
       .finally(() => (loadingStatus.value[index] = false))
   }
