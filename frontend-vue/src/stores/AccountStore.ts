@@ -6,6 +6,7 @@ import useApi from '@/composables/useApi'
 import type { Nullable } from '@/types'
 import type {
   VkUser,
+  VkGroup,
   NewsItem,
   OwnerDataApiResponse,
   FriendsCountApiResponse,
@@ -15,8 +16,7 @@ import type {
   PostsForLikeRequest,
   PostsForLikeResponse,
   CreateTasksRequest,
-  CreateTasksResponse,
-  GroupDataResponse
+  CreateTasksResponse
 } from '@/models/AccountsModel'
 import type { ApiResponseWrapper } from '@/models/ApiModel'
 
@@ -38,6 +38,14 @@ export const useAccountStore = defineStore('account', () => {
   const fetchOwnerData = useApi(async (parameters?: { ownerId: number }) => {
     if (!parameters) throw new Error('Не указаны параметры')
     return (await (axios.get<ApiResponseWrapper<OwnerDataApiResponse>>(`account/data/${parameters.ownerId}`))).data
+  })
+
+  /**
+   * Получает данные группы
+   */
+  const fetchGroupData = useApi(async (parameters?: { groupId: number | string }) => {
+    if (!parameters) throw new Error('Не указан ID группы')
+    return (await axios.get<ApiResponseWrapper<VkGroup>>(`group/data/${Math.abs(Number(parameters.groupId))}`)).data
   })
 
   /**
@@ -149,14 +157,6 @@ export const useAccountStore = defineStore('account', () => {
     showSuccessNotification(response.data.message)
 
     return response.data
-  })
-
-  /**
-   * Получает данные группы
-   */
-  const fetchGroupData = useApi(async (parameters?: { groupId: number | string }) => {
-    if (!parameters) throw new Error('Не указан ID группы')
-    return (await axios.get<ApiResponseWrapper<GroupDataResponse>>(`group/data/${Math.abs(Number(parameters.groupId))}`)).data
   })
 
   /**

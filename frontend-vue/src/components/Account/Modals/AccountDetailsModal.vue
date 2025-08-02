@@ -8,7 +8,6 @@
   const { closeModal } = useModal()
   const accountStore = useAccountStore()
 
-  // Используем данные из API через .data
   const currentAccountData = computed(() => accountStore.fetchOwnerData.data)
 
   // Метод для форматирования даты
@@ -40,10 +39,10 @@
 
                     <img v-else width="200" height="200" :src="currentAccountData?.photo_200" alt="">
 
-                    <OnlineStatus 
-                      v-if="currentAccountData?.photo_200" 
-                      :type="currentAccountData?.online === 0 ? 'offline' : 'online'" 
-                      class="online-status" 
+                    <OnlineStatus
+                      v-if="currentAccountData?.photo_200"
+                      :type="currentAccountData?.online === 0 ? 'offline' : 'online'"
+                      class="online-status"
                     />
                   </div>
 

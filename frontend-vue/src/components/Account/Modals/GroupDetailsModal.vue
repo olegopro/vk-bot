@@ -7,7 +7,6 @@
   const { closeModal } = useModal()
   const accountStore = useAccountStore()
 
-  // Используем данные из API через .data
   const currentGroupData = computed(() => accountStore.fetchGroupData.data)
 </script>
 
