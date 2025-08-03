@@ -28,11 +28,40 @@
   const searchType = ref<'newsfeed' | 'city'>('newsfeed') // По умолчанию - поиск по ленте
   const selectedCity = ref<Nullable<City>>(null)
 
+  // Локальные состояния для работы с фильтрами
+  const cities = ref<City[]>([])
+  const isLoadingCities = ref<boolean>(false)
+  const isLoadingUsers = ref<boolean>(false)
+
   watch(accountId, (newVal: string) => disablePost.value = newVal === 'selectAccount')
 
   // Функция поиска городов с задержкой в 500 мс
   const debouncedSearchCities = useDebounceFn((query: string) => {
-    filterStore.searchCities(query)
+    if (query.length < 2) {
+      cities.value = []
+      return
+    }
+
+    isLoadingCities.value = true
+    filterStore.searchCities.execute({ 
+      citiesData: {
+        q: query,
+        country_id: 1,
+        count: 10
+      }
+    })
+      .then(response => {
+        cities.value = response.data.items
+        showSuccessNotification(response.message)
+      })
+      .catch(error => {
+        const message = error.response?.data?.message || error.message || 'Произошла ошибка при поиске городов'
+        showErrorNotification(message)
+        cities.value = []
+      })
+      .finally(() => {
+        isLoadingCities.value = false
+      })
   }, 500)
 
   // Обработчик ввода в поле поиска города
@@ -73,6 +102,7 @@
     selectedCity.value = city
     cityName.value = city.title
     cityId.value = city.id
+    cities.value = []
   }
 
   const addFeedTask = (): void => {
@@ -90,16 +120,31 @@
 
   const addCityTask = (): void => {
     startRequest()
+    isLoadingUsers.value = true
 
-    filterStore.getUsersByCity(Number(accountId.value), cityId.value, taskCount.value)
-      .then((domains: string[]) => accountStore.createTasksForUsers.execute({ 
-        tasksData: {
-          account_id: Number(accountId.value),
-          domains
+    filterStore.getUsersByCity.execute({ 
+      usersData: {
+        account_id: Number(accountId.value),
+        city_id: cityId.value,
+        count: taskCount.value
+      }
+    })
+      .then(response => {
+        if (response.data.domains) {
+          return accountStore.createTasksForUsers.execute({ 
+            tasksData: {
+              account_id: Number(accountId.value),
+              domains: response.data.domains
+            }
+          })
         }
-      }))
+        throw new Error('Не удалось получить список пользователей')
+      })
       .then(handleSuccess)
       .catch(handleError)
+      .finally(() => {
+        isLoadingUsers.value = false
+      })
   }
 
   const modalHide = (): void => {
@@ -108,6 +153,7 @@
     selectedCity.value = null
     cityId.value = 0
     searchType.value = 'newsfeed'
+    cities.value = []
   }
 </script>
 
@@ -160,9 +206,9 @@
             </div>
 
             <!-- Отображение результатов поиска города -->
-            <div v-if="filterStore.cities.length > 0" class="city-results mb-3">
+            <div v-if="cities.length > 0" class="city-results mb-3">
               <div
-                v-for="city in filterStore.cities"
+                v-for="city in cities"
                 :key="city.id"
                 class="city-item p-2 border-bottom"
                 :class="{ 'selected-city': selectedCity?.id === city.id }"
@@ -173,9 +219,16 @@
             </div>
 
             <!-- Индикатор загрузки при поиске городов -->
-            <div v-if="filterStore.isLoadingCities" class="text-center mb-3">
+            <div v-if="isLoadingCities" class="text-center mb-3">
               <div class="spinner-border spinner-border-sm" role="status">
                 <span class="visually-hidden">Загрузка...</span>
+              </div>
+            </div>
+
+            <!-- Индикатор загрузки при поиске пользователей -->
+            <div v-if="isLoadingUsers" class="text-center mb-3">
+              <div class="spinner-border spinner-border-sm" role="status">
+                <span class="visually-hidden">Поиск пользователей...</span>
               </div>
             </div>
 

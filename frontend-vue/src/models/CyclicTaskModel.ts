@@ -1,5 +1,3 @@
-import { ApiResponseWrapper } from './ApiModel'
-
 export interface CyclicTask {
   id: number
   account_id: number
@@ -33,12 +31,6 @@ export interface CyclicTasksListData {
     per_page: number
   }
 }
-
-export type CyclicTasksListResponse = ApiResponseWrapper<CyclicTasksListData>
-
-export type CyclicTaskResponse = ApiResponseWrapper<CyclicTask>
-
-export type DeleteCyclicTaskResponse = ApiResponseWrapper<null>
 
 export interface CreateCyclicTaskRequest {
   account_id: number

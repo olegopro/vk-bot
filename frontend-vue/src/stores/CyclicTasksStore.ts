@@ -3,8 +3,6 @@ import axios from '@/helpers/axiosConfig'
 import useApi from '@/composables/useApi'
 import type {
   CyclicTask,
-  CyclicTaskResponse,
-  DeleteCyclicTaskResponse,
   CreateCyclicTaskRequest,
   EditCyclicTaskRequest
 } from '@/models/CyclicTaskModel'
@@ -23,7 +21,7 @@ export const useCyclicTasksStore = defineStore('cyclicTasks', () => {
    */
   const createCyclicTask = useApi(async (parameters?: CreateCyclicTaskRequest) => {
     if (!parameters) throw new Error('Не указаны параметры для создания циклической задачи')
-    return (await axios.post<ApiResponseWrapper<any>>('cyclic-tasks/create-cyclic-task', parameters)).data
+    return (await axios.post<ApiResponseWrapper<null>>('cyclic-tasks/create-cyclic-task', parameters)).data
   })
 
   /**
@@ -31,7 +29,7 @@ export const useCyclicTasksStore = defineStore('cyclicTasks', () => {
    */
   const editCyclicTask = useApi(async (parameters?: { taskId: number; taskData: EditCyclicTaskRequest }) => {
     if (!parameters) throw new Error('Не указаны параметры для редактирования циклической задачи')
-    return (await axios.patch<CyclicTaskResponse>(`cyclic-tasks/${parameters.taskId}`, parameters.taskData)).data
+    return (await axios.patch<ApiResponseWrapper<CyclicTask>>(`cyclic-tasks/${parameters.taskId}`, parameters.taskData)).data
   })
 
   /**
@@ -39,14 +37,14 @@ export const useCyclicTasksStore = defineStore('cyclicTasks', () => {
    */
   const deleteCyclicTask = useApi(async (parameters?: { taskId: number }) => {
     if (!parameters) throw new Error('Не указан ID циклической задачи')
-    return (await axios.delete<DeleteCyclicTaskResponse>(`cyclic-tasks/${parameters.taskId}`)).data
+    return (await axios.delete<ApiResponseWrapper<null>>(`cyclic-tasks/${parameters.taskId}`)).data
   })
 
   /**
    * Удаляет все циклические задачи
    */
   const deleteAllCyclicTasks = useApi(async () => {
-    return (await axios.delete<DeleteCyclicTaskResponse>('cyclic-tasks/delete-all-cyclic-tasks')).data
+    return (await axios.delete<ApiResponseWrapper<null>>('cyclic-tasks/delete-all-cyclic-tasks')).data
   })
 
   /**
@@ -54,11 +52,10 @@ export const useCyclicTasksStore = defineStore('cyclicTasks', () => {
    */
   const pauseCyclicTask = useApi(async (parameters?: { taskId: number }) => {
     if (!parameters) throw new Error('Не указан ID циклической задачи')
-    return (await axios.patch<ApiResponseWrapper<any>>(`cyclic-tasks/pause-cyclic-task/${parameters.taskId}`)).data
+    return (await axios.patch<ApiResponseWrapper<null>>(`cyclic-tasks/pause-cyclic-task/${parameters.taskId}`)).data
   })
 
   return {
-    // Actions
     fetchCyclicTasks,
     createCyclicTask,
     editCyclicTask,

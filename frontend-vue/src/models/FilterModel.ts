@@ -41,15 +41,15 @@ export interface UsersByCityData {
   count?: number
 }
 
-// Типы ответов API
-export type CitySearchResponse = {
-  success: boolean
-  data: CitySearchData
-  message: string
+// Типы для запросов
+export interface CitySearchRequest {
+  q: string
+  country_id?: number
+  count?: number
 }
 
-export type UsersByCityResponse = {
-  success: boolean
-  data: UsersByCityData
-  message: string
+export interface UsersByCityRequest {
+  account_id: number
+  city_id: number
+  count?: number
 }
