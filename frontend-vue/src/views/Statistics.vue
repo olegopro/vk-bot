@@ -4,23 +4,26 @@
   import { Chart as ChartJS, Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale } from 'chart.js'
   import ChartDataLabels from 'chartjs-plugin-datalabels'
   import { useStatisticsStore } from '@/stores/StatisticsStore'
+  import { showSuccessNotification } from '@/helpers/notyfHelper'
 
   const statisticsStore = useStatisticsStore()
 
   ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale, ChartDataLabels)
 
   const chartData = computed(() => {
-    if (Object.keys(statisticsStore.weeklyTaskStats).length === 0) {
+    const data = statisticsStore.fetchWeeklyTaskStats.data
+    
+    if (!data || !Object.keys(data).length) {
       // Возвращаем пустую структуру данных, если ещё не загружены
       return { labels: [], datasets: [] }
     }
 
     return {
-      labels: Object.keys(statisticsStore.weeklyTaskStats),
+      labels: Object.keys(data),
 
       datasets: [
         {
-          data: Object.values(statisticsStore.weeklyTaskStats),
+          data: Object.values(data),
           backgroundColor: [
             'rgba(255, 99, 132, 0.2)',
             'rgba(54, 162, 235, 0.2)',
@@ -89,8 +92,8 @@
       },
 
       tooltip: {
-        position: 'nearest', // Устанавливает tooltip появляющийся ближе к точке
-        yAlign: 'bottom', // Позиционирование tooltip сверху точки
+        position: 'nearest' as const, // Устанавливает tooltip появляющийся ближе к точке
+        yAlign: 'bottom' as const, // Позиционирование tooltip сверху точки
 
         titleFont: {
           size: 16 // Размер шрифта для заголовка всплывающей подсказки
@@ -106,8 +109,8 @@
       },
 
       datalabels: {
-        align: 'center',
-        anchor: 'center',
+        align: 'center' as const,
+        anchor: 'center' as const,
 
         color: '#000', // Установите цвет текста, чтобы он хорошо смотрелся на фоне колонки
 
@@ -123,7 +126,9 @@
     }
   })
 
-  onMounted(() => statisticsStore.fetchWeeklyTaskStats.execute())
+  onMounted(() => statisticsStore.fetchWeeklyTaskStats.execute()
+    .then(response => showSuccessNotification(response.message))
+  )
 </script>
 
 <template>
