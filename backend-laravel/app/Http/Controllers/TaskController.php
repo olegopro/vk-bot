@@ -323,8 +323,8 @@ final class TaskController extends Controller
         do {
             // Получаем посты из ленты новостей аккаунта.
             $result = $this->accountController->fetchAccountNewsfeed($request)->getData(true);
-            $data = $result['data']['response']['items']; // Посты из ленты новостей.
-            $next_from = $result['data']['response']['next_from']; // Курсор для следующего запроса.
+            $data = $result['data']['items']; // Посты из ленты новостей.
+            $next_from = $result['data']['next_from']; // Курсор для следующего запроса.
 
             $attemptFailed = true; // Предполагаем, что попытка неудачна до обнаружения подходящего поста.
 

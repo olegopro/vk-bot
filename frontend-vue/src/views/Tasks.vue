@@ -6,11 +6,11 @@
   import { useModal } from '@/composables/useModal'
   import { useTasksRoute } from '@/composables/useTypedRoute'
   import RouterPaths from '@/router/routerPaths'
-  import AddTaskModal from '../components/Tasks/Modals/AddTaskModal.vue'
   import TableThread from '../components/Tasks/TableThread.vue'
   import DeleteAllTasksModal from '../components/Tasks/Modals/DeleteAllTasksModal.vue'
   import { TaskStatus } from '@/models/TaskModel'
   import { Nullable } from '@/types'
+  import AddTaskModal from '@/components/Tasks/Modals/AddTaskModal.vue'
 
   const tasksStore = useTasksStore()
   const accountsStore = useAccountsStore()

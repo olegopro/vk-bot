@@ -22,14 +22,17 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::prefix('tasks')->group(function() {
+    // Специфичные роуты должны быть ПЕРЕД общими роутами
     Route::get('/task-info/{taskId}', [TaskController::class, 'getTaskInfo']);
-    Route::get('/{status?}/{accountId?}', [TaskController::class, 'getTasksByStatus']);
     Route::post('/get-posts-for-like', [TaskController::class, 'createAndQueueLikeTasksFromNewsfeed']);
     Route::post('/add-task-likes', [TaskController::class, 'processAndQueuePendingLikeTasks']);
     Route::delete('/delete-like/{taskId}', [TaskController::class, 'deleteLike']);
     Route::delete('/delete-all-tasks/{status?}/{accountId?}', [TaskController::class, 'deleteAllTasks']);
     Route::delete('/delete-task-by-id/{id}', [TaskController::class, 'deleteTaskById']);
     Route::post('/create-for-users', [TaskController::class, 'createLikeTasksForUserWallPosts']);
+    
+    // Общий роут ОБЯЗАТЕЛЬНО должен быть в самом конце
+    Route::get('/{status?}/{accountId?}', [TaskController::class, 'getTasksByStatus']);
 });
 
 Route::prefix('cyclic-tasks')->group(function() {
