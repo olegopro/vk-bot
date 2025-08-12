@@ -2,7 +2,7 @@
   import { ref, computed } from 'vue'
   import { useAccountStore } from '@/stores/AccountStore'
   import { useFilterStore } from '@/stores/FilterStore'
-  import { showErrorNotification, showSuccessNotification } from '@/helpers/notyfHelper'
+  import { showSuccessNotification } from '@/helpers/notyfHelper'
   import { useDebounceFn } from '@vueuse/core'
   import type { City } from '@/models/FilterModel'
   import type { Nullable } from '@/types'
@@ -26,7 +26,7 @@
   const selectedCity = ref<Nullable<City>>(null)
   const cities = ref<City[]>([])
 
-  const isCitySelected = computed(() => cityId.value > 0)
+  const isCitySelected = computed<boolean>(() => cityId.value > 0)
 
   // Функция поиска городов с задержкой в 500 мс
   const debouncedSearchCities = useDebounceFn((query: string) => {
@@ -56,8 +56,6 @@
   }
 
   // Выбор города из списка
-  const selectCity = (city: City): void => handleCitySelection(city)
-
   const handleCitySelection = (city: City): void => {
     selectedCity.value = city
     cityName.value = city.title
@@ -75,25 +73,13 @@
   }
 
   const addCityTask = (): void => {
-    filterStore.getUsersByCity.execute({
-      usersData: {
+    accountStore.createTasksForCity.execute({
+      cityData: {
         account_id: Number(props.accountId),
         city_id: cityId.value,
         count: props.taskCount
       }
-    })
-      .then(response => {
-        if (response.data.domains) {
-          return accountStore.createTasksForUsers.execute({
-            tasksData: {
-              account_id: Number(props.accountId),
-              domains: response.data.domains
-            }
-          })
-        }
-        throw new Error('Не удалось получить список пользователей')
-      })
-      .then(handleSuccess)
+    }).then(handleSuccess)
   }
 </script>
 
@@ -118,7 +104,7 @@
         :key="city.id"
         class="city-item p-2 border-bottom"
         :class="{ 'selected-city': selectedCity?.id === city.id }"
-        @click="selectCity(city)"
+        @click="handleCitySelection(city)"
       >
         {{ city.title }} <span v-if="city.region">, {{ city.region }}</span>
       </div>
@@ -132,7 +118,7 @@
     </div>
 
     <!-- Индикатор загрузки при поиске пользователей -->
-    <div v-if="filterStore.getUsersByCity.loading" class="text-center mb-3">
+    <div v-if="accountStore.createTasksForCity.loading" class="text-center mb-3">
       <div class="spinner-border spinner-border-sm" role="status">
         <span class="visually-hidden">Поиск пользователей...</span>
       </div>
@@ -141,9 +127,9 @@
     <form @submit.prevent="addCityTask">
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" @click="emit('cancel')">Отмена</button>
-        <button type="submit" class="btn btn-success" :disabled="accountStore.createTasksForUsers.loading || !isCitySelected">
+        <button type="submit" class="btn btn-success" :disabled="accountStore.createTasksForCity.loading || !isCitySelected">
           Создать
-          <span v-if="accountStore.createTasksForUsers.loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+          <span v-if="accountStore.createTasksForCity.loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
         </button>
       </div>
     </form>

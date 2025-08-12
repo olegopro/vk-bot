@@ -93,6 +93,14 @@ export const useAccountStore = defineStore('account', () => {
     return (await axios.post<CreateTasksResponse>('tasks/create-for-users', parameters.tasksData)).data
   })
 
+  /**
+   * Создает задачи на лайки для пользователей из выбранного города
+   */
+  const createTasksForCity = useApi(async (parameters?: { cityData: { account_id: number; city_id: number; count?: number } }) => {
+    if (!parameters) throw new Error('Не указаны параметры для создания задач по городу')
+    return (await axios.post<CreateTasksResponse>('tasks/create-for-city', parameters.cityData)).data
+  })
+
   return {
     // Методы
     fetchOwnerData,
@@ -103,6 +111,7 @@ export const useAccountStore = defineStore('account', () => {
     addLike,
     addPostsToLike,
     fetchGroupData,
-    createTasksForUsers
+    createTasksForUsers,
+    createTasksForCity
   }
 })
