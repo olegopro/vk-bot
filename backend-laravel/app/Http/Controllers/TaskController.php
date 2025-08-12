@@ -211,7 +211,7 @@ final class TaskController extends Controller
         $access_token = $this->accountRepository->getAccessTokenByAccountID($accountId);
 
         $postResponse = $this->vkClient->request('wall.getById', [
-            'posts' => $ownerId . '_' . $postId,
+            'posts' => "{$ownerId}_{$postId}",
         ], $access_token);
 
         $likesResponse = VkClient::fetchLikes($access_token, 'post', $ownerId, $postId);

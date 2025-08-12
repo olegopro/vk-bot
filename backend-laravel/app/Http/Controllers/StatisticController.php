@@ -3,16 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\Task;
-use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\DB;
+use OpenApi\Attributes as OA;
 
-/**
- * @OA\Tag(
- *     name="Statistics",
- *     description="API для работы со статистикой задач"
- * )
- */
+#[OA\Tag(
+    name: "Statistics",
+    description: "API для работы со статистикой задач"
+)]
 
 /**
  * Контроллер для работы со статистикой задач.
@@ -38,35 +35,37 @@ class StatisticController extends Controller
         ]);
     }
 
+    #[OA\Get(
+        path: '/api/statistics',
+        tags: ['Statistics'],
+        summary: 'Получить статистику задач по дням недели за последние 7 дней',
+        description: 'Возвращает количество выполненных задач, сгруппированных по дням недели за последние 7 дней'
+    )]
+    #[OA\Response(
+        response: 200,
+        description: 'Успешное получение недельной статистики',
+        content: new OA\JsonContent(
+            properties: [
+                new OA\Property(property: 'success', type: 'boolean', example: true),
+                new OA\Property(
+                    property: 'data',
+                    type: 'object',
+                    example: [
+                        'Понедельник' => 5,
+                        'Вторник' => 3,
+                        'Среда' => 7,
+                        'Четверг' => 2,
+                        'Пятница' => 8,
+                        'Суббота' => 1,
+                        'Воскресенье' => 4,
+                    ]
+                ),
+                new OA\Property(property: 'message', type: 'string', example: 'Статистика за последние 7 дней получена')
+            ]
+        )
+    )]
+
     /**
-     * @OA\Get(
-     *     path="/api/statistics",
-     *     tags={"Statistics"},
-     *     summary="Получить статистику задач по дням недели за последние 7 дней",
-     *     description="Возвращает количество выполненных задач, сгруппированных по дням недели за последние 7 дней",
-     *     @OA\Response(
-     *         response=200,
-     *         description="Успешное получение недельной статистики",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(
-     *                 property="data",
-     *                 type="object",
-     *                 example={
-     *                     "Понедельник": 5,
-     *                     "Вторник": 3,
-     *                     "Среда": 7,
-     *                     "Четверг": 2,
-     *                     "Пятница": 8,
-     *                     "Суббота": 1,
-     *                     "Воскресенье": 4
-     *                 }
-     *             ),
-     *             @OA\Property(property="message", type="string", example="Статистика за последние 7 дней получена")
-     *         )
-     *     )
-     * )
-     *
      * Получает статистику выполненных задач по дням недели за последние 7 дней.
      *
      * Этот метод:
