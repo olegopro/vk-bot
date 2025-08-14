@@ -118,7 +118,7 @@
           size: 16 // Увеличенный размер шрифта для меток
         },
 
-        formatter: (value) => {
+        formatter: (value: number) => {
           // Если значение равно 0, не отображать метку
           return value !== 0 ? value : ''
         }

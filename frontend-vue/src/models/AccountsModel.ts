@@ -1,5 +1,11 @@
 import { ApiResponseWrapper } from './ApiModel'
 
+// Интерфейс для информации о последнем визите пользователя VK
+export interface VkLastSeen {
+  platform: number // Платформа (1 - мобильная версия, 2 - iPhone, 3 - iPad, 4 - Android, 5 - Windows Phone, 6 - Windows 10, 7 - полная версия сайта)
+  time: number // Время последнего визита в формате Unix timestamp
+}
+
 // Типы для AccountStore
 export interface OwnerData {
   id: number | string
@@ -10,6 +16,7 @@ export interface OwnerData {
   photo_50?: string
   photo_100?: string
   photo_200?: string
+  last_seen?: VkLastSeen
 
   [key: string]: any // для дополнительных свойств из API
 }

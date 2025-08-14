@@ -55,7 +55,10 @@
                   </div>
 
                   <div class="mb-3">
-                    <p>Последняя активность - {{ date(currentAccountData?.last_seen?.time) }}</p>
+                    <p>Последняя активность - {{ currentAccountData?.last_seen?.time
+                      ? date(currentAccountData.last_seen.time)
+                      : 'Неизвестно' }}
+                    </p>
                   </div>
                 </div>
                 <div class="col-12 d-flex flex-column">

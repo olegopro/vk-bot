@@ -16,15 +16,15 @@
   const accountStore = useAccountStore()
   const { showModal } = useModal()
 
-  const dateFormat = (date) => format(new Date(date), 'yyyy-MM-dd HH:mm:ss')
+  const dateFormat = (date: string | number | Date) => format(new Date(date), 'yyyy-MM-dd HH:mm:ss')
 
   const showTaskDetailsModal = (taskId: number): void => {
     tasksStore.fetchTaskDetails.execute({ taskId }, String(taskId))
       .then(() => showModal(TaskDetailsModal, { taskId }))
   }
 
-  const showAccountDetailsModal = (accountId: number, ownerId: number, taskId: number) => {
-    accountStore.fetchOwnerData.execute({ accountId, ownerId, taskId })
+  const showAccountDetailsModal = (accountId: number, ownerId: number) => {
+    accountStore.fetchOwnerData.execute({ ownerId })
       .then(() => showModal(AccountDetailsModal))
   }
 </script>
@@ -33,7 +33,7 @@
   <tr>
     <th scope="row">ID {{ task.id }}</th>
     <td class="user-name inner-shadow">
-      <div class="flex-container" @click="showAccountDetailsModal(task.account_id, task.owner_id, task.id)">
+      <div class="flex-container" @click="showAccountDetailsModal(task.account_id, task.owner_id)">
         {{ task.first_name }} {{ task.last_name }}
 
         <span v-if="accountStore.fetchOwnerData.isLoadingKey(String(task.id))" class="spinner-border ms-2" role="status" style="width: 1rem; height: 1rem;">

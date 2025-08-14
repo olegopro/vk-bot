@@ -13,9 +13,10 @@
   }
 
   const props = defineProps<CitySearchProps>()
+
   const emit = defineEmits<{
-    (e: 'success', response: any): void
-    (e: 'cancel'): void
+    success: [response: any]
+    cancel: []
   }>()
 
   const accountStore = useAccountStore()

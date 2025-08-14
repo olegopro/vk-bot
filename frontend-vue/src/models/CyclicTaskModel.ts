@@ -7,7 +7,7 @@ export interface CyclicTask {
   likes_distribution?: string
   selected_times?: Record<string, boolean[]>
   status: 'active' | 'done' | 'pause'
-  started_at?: string
+  started_at: string
   created_at: string
   updated_at: string
   first_name?: string

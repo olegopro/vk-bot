@@ -24,7 +24,7 @@
     }
   })
 
-  const formatData = timestamp => format(new Date(timestamp * 1000), 'yyyy-MM-dd HH:mm:ss')
+  const formatData = (timestamp: number) => format(new Date(timestamp * 1000), 'yyyy-MM-dd HH:mm:ss')
 
   const deleteLikeById = () => {
     disableSubmit.value = true
@@ -54,7 +54,10 @@
 
             <div class="ps-3 d-flex flex-column">
               <p class="mb-1 w-100">Количество лайков: <b>{{ tasksStore.fetchTaskDetails.data?.likes.count }}</b></p>
-              <p>Дата публикации: <b>{{ formatData(tasksStore.fetchTaskDetails.data?.attachments[0].photo.date) }}</b>
+              <p>Дата публикации: <b>{{ tasksStore.fetchTaskDetails.data?.attachments[0].photo.date 
+                ? formatData(tasksStore.fetchTaskDetails.data.attachments[0].photo.date) 
+                : 'Неизвестно' }}
+              </b>
               </p>
             </div>
 
@@ -71,7 +74,7 @@
                     <div class="accordion">
                       <div class="accordion-item" v-for="user in tasksStore.fetchTaskDetails.data.liked_users" :key="user.id">
                         <h2 class="accordion-header">
-                          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" :data-bs-target="'#id' + user.id " aria-expanded="false" :aria-controls="user.id">
+                          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" :data-bs-target="'#id' + user.id " aria-expanded="false" :aria-controls="'id' + user.id">
                             {{ user.first_name }} {{ user.last_name }}
                           </button>
                         </h2>

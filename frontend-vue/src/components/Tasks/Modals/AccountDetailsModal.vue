@@ -19,7 +19,7 @@
     }
   })
 
-  const date = (timestamp) => new Date(timestamp * 1000).toLocaleTimeString('ru-RU')
+  const date = (timestamp: number) => new Date(timestamp * 1000).toLocaleTimeString('ru-RU')
 </script>
 
 <template>
@@ -49,7 +49,12 @@
               <p class="mb-1"><b>Пол:</b> {{ formattedSex }}</p>
               <p class="mb-1"><b>День рождения:</b> {{ accountStore.fetchOwnerData.data.bdate }}</p>
               <p class="mb-0">
-                <b>{{ formattedSex === 'Мужской' ? 'Был' : 'Была' }} в сети: </b> {{ date(accountStore.fetchOwnerData.data.last_seen?.time) }}
+                <b>{{ formattedSex === 'Мужской' ? 'Был' : 'Была' }} в сети: </b>
+                {{
+                  accountStore.fetchOwnerData.data.last_seen?.time
+                    ? date(accountStore.fetchOwnerData.data.last_seen.time)
+                    : 'Неизвестно'
+                }}
               </p>
             </div>
           </div>
