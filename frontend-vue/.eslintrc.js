@@ -31,8 +31,7 @@ module.exports = {
     'no-return-assign': 'off',
     'func-call-spacing': 'off',
     'no-trailing-spaces': 'off',
-    // Изменяем правило для any с error на warning
-    '@typescript-eslint/no-explicit-any': 'warn',
+    '@typescript-eslint/no-explicit-any': 'error',
     // Настройка отступов для тега <script> в Vue файлах
     'vue/script-indent': ['error', 2, {
       baseIndent: 1,

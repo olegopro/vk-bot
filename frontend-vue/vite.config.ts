@@ -13,6 +13,9 @@ export default defineConfig({
     checker({
       typescript: true,
       vueTsc: true,
+      eslint: {
+        lintCommand: 'eslint "./src/**/*.{ts,vue}"'
+      },
       overlay: {
         initialIsOpen: true
       }

@@ -19,11 +19,9 @@ export interface VkNewsFeedItem {
   text: string
   attachments?: Array<{
     type: string
-    photo?: any
-    [key: string]: any
+    photo: string
+    [key: string]: string
   }>
-
-  [key: string]: any
 }
 
 // Интерфейс для пользователя VK
@@ -43,8 +41,14 @@ export interface VkUser {
   }
   friends_count?: number
   followers_count?: number
-
-  [key: string]: any
+  name?: string
+  online?: number
+  status?: string
+  sex?: number
+  country?: {
+    title?: string
+  }
+  bdate?: string
 }
 
 // Интерфейс для информации о последнем визите пользователя VK
@@ -65,10 +69,7 @@ export interface VkGroup {
   members_count?: number
   city?: {
     title?: string
-    [key: string]: any
   }
-
-  [key: string]: any
 }
 
 // Интерфейс для вложения VK

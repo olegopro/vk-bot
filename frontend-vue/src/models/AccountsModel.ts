@@ -3,8 +3,6 @@ import { VkUser, VkGroup, VkNewsFeedItem } from '../types/vkontakte'
 export interface NewsFeedResponse {
   items: VkNewsFeedItem[]
   next_from?: string
-
-  [key: string]: any
 }
 
 export interface FriendsCountApiResponse {
@@ -21,7 +19,7 @@ export type GroupDataResponse = VkGroup
 
 export type AccountFollowersResponse = VkUser[]
 
-export type AccountFriendsResponse = VkUser
+export type AccountFriendsResponse = VkUser[]
 
 export type PostsForLikeResponse = VkNewsFeedItem[]
 

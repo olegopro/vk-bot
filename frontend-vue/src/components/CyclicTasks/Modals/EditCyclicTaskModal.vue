@@ -39,7 +39,7 @@
     })
   }
 
-  const handleSelectedTimes = (times: any) => editedTaskData.value.selected_times = times
+  const handleSelectedTimes = (times: Record<string, boolean[]>) => editedTaskData.value.selected_times = times
 </script>
 
 <template>

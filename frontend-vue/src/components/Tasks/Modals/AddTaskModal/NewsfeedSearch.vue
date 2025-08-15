@@ -1,5 +1,7 @@
 <script setup lang="ts">
   import { useAccountStore } from '@/stores/AccountStore'
+  import type { ApiResponseWrapper } from '@/models/ApiModel'
+  import type { VkNewsFeedItem } from '@/types/vkontakte'
 
   interface NewsfeedSearchProps {
     accountId: string
@@ -8,8 +10,8 @@
 
   const props = defineProps<NewsfeedSearchProps>()
   const emit = defineEmits<{
-    (e: 'success', response: any): void
-    (e: 'cancel'): void
+    success: [response: ApiResponseWrapper<VkNewsFeedItem[]>]
+    cancel: []
   }>()
 
   const accountStore = useAccountStore()
@@ -21,7 +23,7 @@
         task_count: props.taskCount
       }
     })
-      .then(response => emit('success', response))
+      .then((response: ApiResponseWrapper<VkNewsFeedItem[]>) => emit('success', response))
   }
 </script>
 

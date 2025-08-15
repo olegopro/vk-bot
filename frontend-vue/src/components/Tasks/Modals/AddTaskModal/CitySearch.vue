@@ -6,6 +6,8 @@
   import { useDebounceFn } from '@vueuse/core'
   import type { VkCity } from '@/types/vkontakte'
   import type { Nullable } from '@/types'
+  import type { ApiResponseWrapper } from '@/models/ApiModel'
+  import type { CreateTasksResponse } from '@/models/AccountsModel'
 
   interface CitySearchProps {
     accountId: string
@@ -15,7 +17,7 @@
   const props = defineProps<CitySearchProps>()
 
   const emit = defineEmits<{
-    success: [response: any]
+    success: [response: ApiResponseWrapper<CreateTasksResponse>]
     cancel: []
   }>()
 
@@ -64,7 +66,7 @@
     cities.value = []
   }
 
-  const handleSuccess = (response: any): void => {
+  const handleSuccess = (response: ApiResponseWrapper<CreateTasksResponse>): void => {
     // Сброс состояния формы поиска по городу
     cityName.value = ''
     selectedCity.value = null

@@ -6,6 +6,9 @@
   import { useModal } from '@/composables/useModal'
   import NewsfeedSearch from './AddTaskModal/NewsfeedSearch.vue'
   import CitySearch from './AddTaskModal/CitySearch.vue'
+  import type { ApiResponseWrapper } from '@/models/ApiModel'
+  import type { VkNewsFeedItem } from '@/types/vkontakte'
+  import type { CreateTasksResponse } from '@/models/AccountsModel'
 
   const accountsStore = useAccountsStore()
   const tasksStore = useTasksStore()
@@ -17,9 +20,10 @@
   const taskCount = ref<number>(10)
   const searchType = ref<'newsfeed' | 'city'>('newsfeed')
 
-  const handleTaskSuccess = (response: any): void => {
+  // TODO: Нужно проверить точно
+  const handleTaskSuccess = (response: ApiResponseWrapper<VkNewsFeedItem[]> | ApiResponseWrapper<CreateTasksResponse>): void => {
     modalHide()
-    showSuccessNotification(response)
+    showSuccessNotification(response.message)
     tasksStore.fetchTasks.execute()
   }
 

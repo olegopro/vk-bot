@@ -2,7 +2,7 @@
  * Модель для фильтров и связанных данных
  */
 
-import { VkCity, VkUser as User } from '../types/vkontakte'
+import { VkCity, VkUser } from '../types/vkontakte'
 
 // Response типы
 export interface CitySearchResponse {
@@ -12,7 +12,7 @@ export interface CitySearchResponse {
 
 export interface UsersByCityResponse {
   domains: string[]
-  users?: User[]
+  users?: VkUser[]
   count?: number
 }
 
