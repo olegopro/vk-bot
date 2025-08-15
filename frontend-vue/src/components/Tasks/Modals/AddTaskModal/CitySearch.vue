@@ -4,7 +4,7 @@
   import { useFilterStore } from '@/stores/FilterStore'
   import { showSuccessNotification } from '@/helpers/notyfHelper'
   import { useDebounceFn } from '@vueuse/core'
-  import type { City } from '@/types/vkontakte'
+  import type { VkCity } from '@/types/vkontakte'
   import type { Nullable } from '@/types'
 
   interface CitySearchProps {
@@ -24,8 +24,8 @@
 
   const cityName = ref<string>('')
   const cityId = ref<number>(0)
-  const selectedCity = ref<Nullable<City>>(null)
-  const cities = ref<City[]>([])
+  const selectedCity = ref<Nullable<VkCity>>(null)
+  const cities = ref<VkCity[]>([])
 
   const isCitySelected = computed<boolean>(() => cityId.value > 0)
 
@@ -57,7 +57,7 @@
   }
 
   // Выбор города из списка
-  const handleCitySelection = (city: City): void => {
+  const handleCitySelection = (city: VkCity): void => {
     selectedCity.value = city
     cityName.value = city.title
     cityId.value = city.id

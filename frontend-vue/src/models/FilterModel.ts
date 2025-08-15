@@ -2,11 +2,11 @@
  * Модель для фильтров и связанных данных
  */
 
-import { City, VkUser as User } from '../types/vkontakte'
+import { VkCity, VkUser as User } from '../types/vkontakte'
 
 // Response типы
 export interface CitySearchResponse {
-  items: City[]
+  items: VkCity[]
   count: number
 }
 

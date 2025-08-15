@@ -3,7 +3,7 @@
  */
 
 // Интерфейс для города
-export interface City {
+export interface VkCity {
   id: number
   title: string
   area?: string
@@ -11,7 +11,7 @@ export interface City {
 }
 
 // Интерфейс для элемента новостной ленты
-export interface NewsItem {
+export interface VkNewsFeedItem {
   post_id: number
   owner_id: number
   from_id: number
@@ -36,7 +36,7 @@ export interface VkUser {
   photo_50?: string
   photo_100?: string
   photo_200?: string
-  city?: City
+  city?: VkCity
   last_seen?: {
     time: number
     platform: number

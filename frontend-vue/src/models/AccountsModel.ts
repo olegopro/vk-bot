@@ -1,7 +1,7 @@
-import { VkUser, VkGroup, NewsItem } from '../types/vkontakte'
+import { VkUser, VkGroup, VkNewsFeedItem } from '../types/vkontakte'
 
 export interface NewsFeedResponse {
-  items: NewsItem[]
+  items: VkNewsFeedItem[]
   next_from?: string
 
   [key: string]: any
@@ -23,7 +23,7 @@ export type AccountFollowersResponse = VkUser[]
 
 export type AccountFriendsResponse = VkUser
 
-export type PostsForLikeResponse = NewsItem[]
+export type PostsForLikeResponse = VkNewsFeedItem[]
 
 export interface LikeResponse {
   success: boolean
