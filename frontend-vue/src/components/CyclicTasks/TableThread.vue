@@ -7,7 +7,7 @@
   import EditCyclicTaskModal from './Modals/EditCyclicTaskModal.vue'
   import DeleteCyclicTaskModalModal from './Modals/DeleteCyclicTaskModal.vue'
   import router from '../../router'
-  import { CyclicTask } from '@/models/CyclicTaskModel'
+  import type { CyclicTask } from '@/types/tasks'
 
   const { cyclicTask } = defineProps<{ cyclicTask: CyclicTask }>()
 

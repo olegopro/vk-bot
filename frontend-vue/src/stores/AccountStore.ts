@@ -3,17 +3,18 @@ import axios from '@/helpers/axiosConfig'
 import useApi from '@/composables/useApi'
 import type { Nullable } from '@/types'
 import type {
-  VkUser,
-  VkGroup,
-  OwnerDataApiResponse,
+  NewsFeedResponse,
   FriendsCountApiResponse,
-  NewsFeedApiResponse,
-  LikeRequest,
-  LikeResponse,
-  PostsForLikeRequest,
+  OwnerDataResponse,
+  GroupDataResponse,
+  AccountFollowersResponse,
+  AccountFriendsResponse,
   PostsForLikeResponse,
-  CreateTasksRequest,
-  CreateTasksResponse
+  LikeResponse,
+  CreateTasksResponse,
+  LikeRequest,
+  PostsForLikeRequest,
+  CreateTasksRequest
 } from '@/models/AccountsModel'
 import type { ApiResponseWrapper } from '@/models/ApiModel'
 
@@ -23,7 +24,7 @@ export const useAccountStore = defineStore('account', () => {
    */
   const fetchOwnerData = useApi(async (parameters?: { ownerId: number }) => {
     if (!parameters) throw new Error('Не указаны параметры')
-    return (await (axios.get<ApiResponseWrapper<OwnerDataApiResponse>>(`account/data/${parameters.ownerId}`))).data
+    return (await (axios.get<ApiResponseWrapper<OwnerDataResponse>>(`account/data/${parameters.ownerId}`))).data
   })
 
   /**
@@ -31,7 +32,7 @@ export const useAccountStore = defineStore('account', () => {
    */
   const fetchGroupData = useApi(async (parameters?: { groupId: number | string }) => {
     if (!parameters) throw new Error('Не указан ID группы')
-    return (await axios.get<ApiResponseWrapper<VkGroup>>(`group/data/${Math.abs(Number(parameters.groupId))}`)).data
+    return (await axios.get<ApiResponseWrapper<GroupDataResponse>>(`group/data/${Math.abs(Number(parameters.groupId))}`)).data
   })
 
   /**
@@ -39,7 +40,7 @@ export const useAccountStore = defineStore('account', () => {
    */
   const fetchAccountFollowers = useApi(async (parameters?: { accountId: number }) => {
     if (!parameters) throw new Error('Не указан ID аккаунта')
-    return (await axios.get<ApiResponseWrapper<VkUser[]>>(`account/followers/${parameters.accountId}`)).data
+    return (await axios.get<ApiResponseWrapper<AccountFollowersResponse>>(`account/followers/${parameters.accountId}`)).data
   })
 
   /**
@@ -47,7 +48,7 @@ export const useAccountStore = defineStore('account', () => {
    */
   const fetchAccountFriends = useApi(async (parameters?: { accountId: number }) => {
     if (!parameters) throw new Error('Не указан ID аккаунта')
-    return (await axios.get<ApiResponseWrapper<VkUser>>(`account/friends/${parameters.accountId}`)).data
+    return (await axios.get<ApiResponseWrapper<AccountFriendsResponse>>(`account/friends/${parameters.accountId}`)).data
   })
 
   /**
@@ -63,7 +64,7 @@ export const useAccountStore = defineStore('account', () => {
    */
   const fetchAccountNewsFeed = useApi(async (parameters?: { accountId: string; startFrom: Nullable<string> }) => {
     if (!parameters) throw new Error('Не указаны параметры')
-    return (await axios.post<NewsFeedApiResponse>('account/newsfeed', {
+    return (await axios.post<ApiResponseWrapper<NewsFeedResponse>>('account/newsfeed', {
       account_id: parameters.accountId,
       start_from: parameters.startFrom
     })).data
@@ -74,7 +75,7 @@ export const useAccountStore = defineStore('account', () => {
    */
   const addLike = useApi(async (parameters?: { likeData: LikeRequest }) => {
     if (!parameters) throw new Error('Не указаны параметры для добавления лайка')
-    return (await axios.post<LikeResponse>('account/like', parameters.likeData)).data
+    return (await axios.post<ApiResponseWrapper<LikeResponse>>('account/like', parameters.likeData)).data
   })
 
   /**
@@ -82,7 +83,7 @@ export const useAccountStore = defineStore('account', () => {
    */
   const addPostsToLike = useApi(async (parameters?: { postsData: PostsForLikeRequest }) => {
     if (!parameters) throw new Error('Не указаны параметры для добавления постов')
-    return (await axios.post<PostsForLikeResponse>('tasks/get-posts-for-like', parameters.postsData)).data
+    return (await axios.post<ApiResponseWrapper<PostsForLikeResponse>>('tasks/get-posts-for-like', parameters.postsData)).data
   })
 
   /**
@@ -90,7 +91,7 @@ export const useAccountStore = defineStore('account', () => {
    */
   const createTasksForUsers = useApi(async (parameters?: { tasksData: CreateTasksRequest }) => {
     if (!parameters) throw new Error('Не указаны параметры для создания задач')
-    return (await axios.post<CreateTasksResponse>('tasks/create-for-users', parameters.tasksData)).data
+    return (await axios.post<ApiResponseWrapper<CreateTasksResponse>>('tasks/create-for-users', parameters.tasksData)).data
   })
 
   /**
@@ -98,7 +99,7 @@ export const useAccountStore = defineStore('account', () => {
    */
   const createTasksForCity = useApi(async (parameters?: { cityData: { account_id: number; city_id: number; count?: number } }) => {
     if (!parameters) throw new Error('Не указаны параметры для создания задач по городу')
-    return (await axios.post<CreateTasksResponse>('tasks/create-for-city', parameters.cityData)).data
+    return (await axios.post<ApiResponseWrapper<CreateTasksResponse>>('tasks/create-for-city', parameters.cityData)).data
   })
 
   return {

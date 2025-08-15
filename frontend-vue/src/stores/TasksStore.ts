@@ -1,7 +1,14 @@
 import { defineStore } from 'pinia'
 import axios from '@/helpers/axiosConfig'
 import useApi from '@/composables/useApi'
-import { TaskDetails, TasksListData, TaskStatus } from '@/models/TaskModel'
+import type { 
+  TaskStatus,
+  TasksListResponse,
+  TaskDetailsResponse,
+  DeleteLikeResponse,
+  DeleteTaskResponse,
+  DeleteAllTasksResponse
+} from '@/models/TaskModel'
 import { ApiResponseWrapper } from '@/models/ApiModel'
 
 export const useTasksStore = defineStore('tasks', () => {
@@ -10,7 +17,7 @@ export const useTasksStore = defineStore('tasks', () => {
    */
   const fetchTasks = useApi(async (parameters?: { status?: TaskStatus, accountId?: string }) => {
     const urlParts = ['tasks', parameters?.status, parameters?.accountId].filter(Boolean)
-    return (await axios.get<ApiResponseWrapper<TasksListData>>(urlParts.join('/'))).data
+    return (await axios.get<ApiResponseWrapper<TasksListResponse>>(urlParts.join('/'))).data
   })
 
   /**
@@ -18,7 +25,7 @@ export const useTasksStore = defineStore('tasks', () => {
    */
   const fetchTaskDetails = useApi(async (parameters?: { taskId: number }) => {
     if (!parameters) throw new Error('Не указан ID задачи')
-    return (await axios.get<ApiResponseWrapper<TaskDetails>>(`tasks/task-info/${parameters.taskId}`)).data
+    return (await axios.get<ApiResponseWrapper<TaskDetailsResponse>>(`tasks/task-info/${parameters.taskId}`)).data
   })
 
   /**
@@ -26,7 +33,7 @@ export const useTasksStore = defineStore('tasks', () => {
    */
   const deleteLike = useApi(async (parameters?: { taskId: number }) => {
     if (!parameters) throw new Error('Не указан ID задачи')
-    return (await axios.delete<ApiResponseWrapper<null>>(`tasks/delete-like/${parameters.taskId}`)).data
+    return (await axios.delete<ApiResponseWrapper<DeleteLikeResponse>>(`tasks/delete-like/${parameters.taskId}`)).data
   })
 
   /**
@@ -34,7 +41,7 @@ export const useTasksStore = defineStore('tasks', () => {
    */
   const deleteTask = useApi(async (parameters?: { taskId: number }) => {
     if (!parameters) throw new Error('Не указан ID задачи')
-    return (await (axios.delete<ApiResponseWrapper<null>>(`tasks/delete-task-by-id/${parameters.taskId}`))).data
+    return (await (axios.delete<ApiResponseWrapper<DeleteTaskResponse>>(`tasks/delete-task-by-id/${parameters.taskId}`))).data
   })
 
   /**
@@ -42,7 +49,7 @@ export const useTasksStore = defineStore('tasks', () => {
    */
   const deleteAllTasks = useApi(async (parameters?: { status?: TaskStatus, accountId?: string | number }) => {
     const urlParts = ['tasks/delete-all-tasks', parameters?.status, parameters?.accountId].filter(Boolean)
-    return (await axios.delete<ApiResponseWrapper<null>>(urlParts.join('/'))).data
+    return (await axios.delete<ApiResponseWrapper<DeleteAllTasksResponse>>(urlParts.join('/'))).data
   })
 
   return {

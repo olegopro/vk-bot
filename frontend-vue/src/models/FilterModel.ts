@@ -2,46 +2,21 @@
  * Модель для фильтров и связанных данных
  */
 
-// Интерфейс для города
-export interface City {
-  id: number
-  title: string
-  area?: string
-  region?: string
-}
+import { City, VkUser as User } from '../types/vkontakte'
 
-// Интерфейс для пользователя
-export interface User {
-  id: number
-  first_name: string
-  last_name: string
-  screen_name?: string
-  domain?: string
-  photo_50?: string
-  photo_100?: string
-  city?: City
-  last_seen?: {
-    time: number
-    platform: number
-  }
-  friends_count?: number
-  followers_count?: number
-}
-
-// Интерфейс для данных поиска городов
-export interface CitySearchData {
+// Response типы
+export interface CitySearchResponse {
   items: City[]
   count: number
 }
 
-// Интерфейс для данных пользователей по городу
-export interface UsersByCityData {
+export interface UsersByCityResponse {
   domains: string[]
   users?: User[]
   count?: number
 }
 
-// Типы для запросов
+// Request типы
 export interface CitySearchRequest {
   q: string
   country_id?: number

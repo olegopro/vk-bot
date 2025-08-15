@@ -4,8 +4,8 @@ import useApi from '@/composables/useApi'
 import type {
   CitySearchRequest,
   UsersByCityRequest,
-  CitySearchData,
-  UsersByCityData
+  CitySearchResponse,
+  UsersByCityResponse
 } from '@/models/FilterModel'
 import type { ApiResponseWrapper } from '@/models/ApiModel'
 
@@ -15,7 +15,7 @@ export const useFilterStore = defineStore('filter', () => {
    */
   const searchCities = useApi(async (parameters?: { citiesData: CitySearchRequest }) => {
     if (!parameters) throw new Error('Не указаны параметры для поиска городов')
-    return (await axios.post<ApiResponseWrapper<CitySearchData>>('filters/cities', parameters.citiesData)).data
+    return (await axios.post<ApiResponseWrapper<CitySearchResponse>>('filters/cities', parameters.citiesData)).data
   })
 
   /**
@@ -23,7 +23,7 @@ export const useFilterStore = defineStore('filter', () => {
    */
   const getUsersByCity = useApi(async (parameters?: { usersData: UsersByCityRequest }) => {
     if (!parameters) throw new Error('Не указаны параметры для поиска пользователей')
-    return (await axios.post<ApiResponseWrapper<UsersByCityData>>('filters/users-by-city', parameters.usersData)).data
+    return (await axios.post<ApiResponseWrapper<UsersByCityResponse>>('filters/users-by-city', parameters.usersData)).data
   })
 
   return {

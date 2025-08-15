@@ -1,18 +1,4 @@
-export interface CyclicTask {
-  id: number
-  account_id: number
-  total_task_count: number
-  remaining_tasks_count: number
-  tasks_per_hour: number
-  likes_distribution?: string
-  selected_times?: Record<string, boolean[]>
-  status: 'active' | 'done' | 'pause'
-  started_at: string
-  created_at: string
-  updated_at: string
-  first_name?: string
-  last_name?: string
-}
+import { CyclicTask } from '../types/tasks'
 
 export interface CyclicTasksPaginatedData {
   data: CyclicTask[]
@@ -32,6 +18,15 @@ export interface CyclicTasksListData {
   }
 }
 
+// Response типы
+export type CyclicTasksListResponse = CyclicTask[]
+export type CyclicTaskResponse = CyclicTask
+export type CreateCyclicTaskResponse = null
+export type EditCyclicTaskResponse = CyclicTask
+export type DeleteCyclicTaskResponse = null
+export type PauseCyclicTaskResponse = null
+
+// Request типы
 export interface CreateCyclicTaskRequest {
   account_id: number
   tasks_per_hour: number

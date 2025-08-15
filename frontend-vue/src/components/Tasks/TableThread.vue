@@ -7,7 +7,7 @@
   import DeleteTaskModal from './Modals/DeleteTaskModal.vue'
   import TaskDetailsModal from './Modals/TaskDetailsModal.vue'
   import AccountDetailsModal from './Modals/AccountDetailsModal.vue'
-  import { Task } from '@/models/TaskModel'
+  import type { Task } from '@/types/tasks'
   import { useModal } from '@/composables/useModal'
 
   const { task } = defineProps<{ task: Task }>()

@@ -4,7 +4,7 @@
   import { useFilterStore } from '@/stores/FilterStore'
   import { showSuccessNotification } from '@/helpers/notyfHelper'
   import { useDebounceFn } from '@vueuse/core'
-  import type { City } from '@/models/FilterModel'
+  import type { City } from '@/types/vkontakte'
   import type { Nullable } from '@/types'
 
   interface CitySearchProps {
