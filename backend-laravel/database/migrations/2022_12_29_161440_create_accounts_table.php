@@ -19,7 +19,7 @@ class CreateAccountsTable extends Migration
             $table->string('screen_name');
             $table->string('first_name');
             $table->string('last_name');
-            $table->string('bdate');
+            $table->string('birthday_date');
         });
     }
 

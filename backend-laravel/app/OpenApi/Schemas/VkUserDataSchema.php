@@ -88,7 +88,7 @@ use OpenApi\Attributes as OA;
             nullable: true
         ),
         new OA\Property(
-            property: "bdate",
+            property: "birthday_date",
             description: "Дата рождения",
             type: "string",
             example: "15.10.1990",
@@ -126,8 +126,8 @@ use OpenApi\Attributes as OA;
                 ),
                 new OA\Property(
                     property: "data",
-                    description: "Данные пользователя ВКонтакте",
-                    ref: '#/components/schemas/VkUserData'
+                    ref: '#/components/schemas/VkUserData',
+                    description: "Данные пользователя ВКонтакте"
                 )
             ],
             type: "object"

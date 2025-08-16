@@ -44,7 +44,7 @@ use OpenApi\Attributes as OA;
             nullable: true
         ),
         new OA\Property(
-            property: "bdate",
+            property: "birthday_date",
             description: "Дата рождения",
             type: "string",
             format: "date",
@@ -59,7 +59,7 @@ class Account extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['account_id', 'access_token', 'screen_name', 'first_name', 'last_name', 'bdate'];
+    protected $fillable = ['account_id', 'access_token', 'screen_name', 'first_name', 'last_name', 'birthday_date'];
     protected $primaryKey = 'account_id';
     public $timestamps = false;
     public $incrementing = false;

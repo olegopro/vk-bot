@@ -76,7 +76,7 @@
                 </button>
               </td>
 
-              <td>{{ account.bdate }}</td>
+              <td>{{ account.birthday_date }}</td>
             </tr>
 
             <tr v-if="accountsStore.fetchAccounts.loading" style="height: 55px;">

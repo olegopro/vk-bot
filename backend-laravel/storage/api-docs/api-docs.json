@@ -2248,7 +2248,7 @@
                         "example": "Иванов",
                         "nullable": true
                     },
-                    "bdate": {
+                    "birthday_date": {
                         "description": "Дата рождения",
                         "type": "string",
                         "format": "date",
@@ -3005,7 +3005,7 @@
                         "example": 1,
                         "nullable": true
                     },
-                    "bdate": {
+                    "birthday_date": {
                         "description": "Дата рождения",
                         "type": "string",
                         "example": "15.10.1990",
@@ -3095,20 +3095,20 @@
             "description": "Операции для управления циклическими задачами"
         },
         {
+            "name": "Filters",
+            "description": "API для фильтрации и поиска пользователей ВКонтакте"
+        },
+        {
+            "name": "Statistics",
+            "description": "API для работы со статистикой задач"
+        },
+        {
             "name": "Account",
             "description": "Account"
         },
         {
-            "name": "Filters",
-            "description": "Filters"
-        },
-        {
             "name": "Settings",
             "description": "Settings"
-        },
-        {
-            "name": "Statistics",
-            "description": "Statistics"
         }
     ]
 }

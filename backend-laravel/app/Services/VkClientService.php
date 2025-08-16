@@ -82,9 +82,9 @@ class VkClientService
         $data = $this->accountRepository->getAllAccounts();
 
         return [
-            'success'    => true,
-            'message'    => 'Список аккаунтов получен',
-            'data'       => $data->items() // Извлекаем только массив данных
+            'success' => true,
+            'message' => 'Список аккаунтов получен',
+            'data'    => $data->items() // Извлекаем только массив данных
         ];
     }
 
@@ -434,12 +434,14 @@ class VkClientService
 
         if ($accountInfoResponse['success'] && isset($accountInfoResponse['data']['response'])) {
             $accountData = [
-                'access_token' => $token,
-                'account_id'   => $accountInfoResponse['data']['response']['id'],
-                'screen_name'  => $accountInfoResponse['data']['response']['screen_name'],
-                'first_name'   => $accountInfoResponse['data']['response']['first_name'],
-                'last_name'    => $accountInfoResponse['data']['response']['last_name'],
-                'bdate'        => $accountInfoResponse['data']['response']['bdate']
+                'access_token'  => $token,
+
+
+                'account_id'    => $accountInfoResponse['data']['response']['id'],
+                'screen_name'   => $accountInfoResponse['data']['response']['screen_name'],
+                'first_name'    => $accountInfoResponse['data']['response']['first_name'],
+                'last_name'     => $accountInfoResponse['data']['response']['last_name'],
+                'birthday_date' => $accountInfoResponse['data']['response']['bdate']
             ];
 
             $response = $accountRepository->createAccount($accountData);

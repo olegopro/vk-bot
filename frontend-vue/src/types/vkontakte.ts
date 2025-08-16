@@ -48,7 +48,7 @@ export interface VkUser {
   country?: {
     title?: string
   }
-  bdate?: string
+  birthday_date?: string
 }
 
 // Интерфейс для информации о последнем визите пользователя VK

@@ -4,7 +4,7 @@ export interface AddAccountResponse {
   screen_name: string
   first_name: string
   last_name: string
-  bdate?: string
+  birthday_date: string
 }
 
 export interface AddAccountRequest {

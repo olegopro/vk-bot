@@ -24,7 +24,7 @@ class AccountsTableSeeder extends Seeder
                 'screen_name'  => $faker->userName,
                 'first_name'   => $faker->firstName,
                 'last_name'    => $faker->lastName,
-                'bdate'        => $faker->date($format = 'Y-m-d', $max = 'now'),
+                'birthday_date'        => $faker->date($format = 'Y-m-d', $max = 'now'),
             ]);
         }
     }

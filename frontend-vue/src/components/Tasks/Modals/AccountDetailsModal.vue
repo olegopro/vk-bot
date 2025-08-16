@@ -47,7 +47,7 @@
               <p class="mb-1"><b>Друзья:</b> {{ accountStore.fetchOwnerData.data.friends_count }}</p>
               <p class="mb-1"><b>Подписчики:</b> {{ accountStore.fetchOwnerData.data.followers_count }}</p>
               <p class="mb-1"><b>Пол:</b> {{ formattedSex }}</p>
-              <p class="mb-1"><b>День рождения:</b> {{ accountStore.fetchOwnerData.data.bdate }}</p>
+              <p class="mb-1"><b>День рождения:</b> {{ accountStore.fetchOwnerData.data.birthday_date }}</p>
               <p class="mb-0">
                 <b>{{ formattedSex === 'Мужской' ? 'Был' : 'Была' }} в сети: </b>
                 {{
