@@ -25,8 +25,8 @@ use OpenApi\Attributes as OA;
 )]
 
 #[OA\Schema(
-    schema: 'BaseErrorResponse',
-    description: "Базовая схема ответа с ошибкой",
+    schema: 'ErrorResponse',
+    description: "Схема ответа с ошибкой",
     properties: [
         new OA\Property(
             property: "success",
@@ -44,4 +44,75 @@ use OpenApi\Attributes as OA;
     type: "object"
 )]
 
+#[OA\Schema(
+    schema: 'ServerErrorResponse',
+    description: "Схема ответа при внутренней ошибке сервера (500)",
+    properties: [
+        new OA\Property(
+            property: "message",
+            description: "Сообщение об ошибке",
+            type: "string",
+            example: "Внутренняя ошибка сервера при обработке запроса"
+        ),
+        new OA\Property(
+            property: "exception",
+            description: "Класс исключения",
+            type: "string",
+            example: "App\\Exceptions\\ServiceException"
+        ),
+        new OA\Property(
+            property: "file",
+            description: "Файл, в котором произошла ошибка",
+            type: "string",
+            example: "/var/www/html/vendor/package/src/Client.php"
+        ),
+        new OA\Property(
+            property: "line",
+            description: "Строка, на которой произошла ошибка",
+            type: "integer",
+            example: 217
+        ),
+        new OA\Property(
+            property: "trace",
+            description: "Трассировка стека вызовов",
+            type: "array",
+            items: new OA\Items(
+                type: "object",
+                properties: [
+                    new OA\Property(
+                        property: "file",
+                        description: "Файл в трассировке",
+                        type: "string",
+                        example: "/var/www/html/vendor/package/src/Client.php"
+                    ),
+                    new OA\Property(
+                        property: "line",
+                        description: "Строка в трассировке",
+                        type: "integer",
+                        example: 185
+                    ),
+                    new OA\Property(
+                        property: "function",
+                        description: "Функция в трассировке",
+                        type: "string",
+                        example: "toException"
+                    ),
+                    new OA\Property(
+                        property: "class",
+                        description: "Класс в трассировке",
+                        type: "string",
+                        example: "ATehnix\\VkClient\\Client"
+                    ),
+                    new OA\Property(
+                        property: "type",
+                        description: "Тип вызова",
+                        type: "string",
+                        example: "::"
+                    )
+                ]
+            )
+        )
+    ],
+    type: "object"
+)]
 final class BaseResponseSchema {}

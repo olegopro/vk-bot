@@ -3,17 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Facades\VkClient;
-use App\Jobs\addLikeToPost;
-use App\Models\Account;
-use App\Models\Task;
-use App\OpenApi\Schemas\AccountResponseSchema;
 use App\Repositories\AccountRepositoryInterface;
-use App\Services\LoggingServiceInterface;
-use App\Services\VkClientService;
 use ATehnix\VkClient\Exceptions\VkException;
-use DB;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 use OpenApi\Attributes as OA;
 
 /**
@@ -47,7 +39,7 @@ final class AccountsController extends Controller
     #[OA\Response(
         response: 500,
         description: 'Внутренняя ошибка сервера',
-        content: new OA\JsonContent(ref: '#/components/schemas/BaseErrorResponse')
+        content: new OA\JsonContent(ref: '#/components/schemas/ServerErrorResponse')
     )]
     public function fetchAllAccounts()
     {
@@ -62,7 +54,7 @@ final class AccountsController extends Controller
      * @throws VkException
      */
     #[OA\Post(
-        path: '/accounts/add',
+        path: '/accounts/add-account',
         description: 'Устанавливает и сохраняет данные аккаунта ВКонтакте по токену доступа',
         summary: 'Добавить аккаунт ВКонтакте',
         tags: ['Accounts']
@@ -111,7 +103,7 @@ final class AccountsController extends Controller
     #[OA\Response(
         response: 500,
         description: 'Внутренняя ошибка сервера',
-        content: new OA\JsonContent(ref: '#/components/schemas/BaseErrorResponse')
+        content: new OA\JsonContent(ref: '#/components/schemas/ServerErrorResponse')
     )]
     public function setAccountData(Request $request)
     {
@@ -160,6 +152,11 @@ final class AccountsController extends Controller
             ],
             type: 'object'
         )
+    )]
+    #[OA\Response(
+        response: 500,
+        description: 'Внутренняя ошибка сервера',
+        content: new OA\JsonContent(ref: '#/components/schemas/ServerErrorResponse')
     )]
     public function deleteAccount($id)
     {

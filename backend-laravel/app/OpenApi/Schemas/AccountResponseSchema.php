@@ -2,7 +2,6 @@
 
 namespace App\OpenApi\Schemas;
 
-use App\Models\Account;
 use OpenApi\Attributes as OA;
 
 #[OA\Schema(
@@ -29,5 +28,4 @@ use OpenApi\Attributes as OA;
         )
     ]
 )]
-
 final class AccountResponseSchema {}

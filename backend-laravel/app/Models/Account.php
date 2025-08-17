@@ -54,7 +54,6 @@ use OpenApi\Attributes as OA;
     ],
     type: "object"
 )]
-
 class Account extends Model
 {
     use HasFactory;

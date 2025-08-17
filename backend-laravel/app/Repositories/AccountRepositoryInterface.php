@@ -2,6 +2,8 @@
 
 namespace App\Repositories;
 
+use Illuminate\Database\Eloquent\Collection;
+
 /**
  * Interface AccountRepositoryInterface
  *
@@ -13,8 +15,8 @@ interface AccountRepositoryInterface
     /**
      * Получить все аккаунты.
      *
-     * @return \Illuminate\Database\Eloquent\Collection
-     * Возвращает коллекцию всех аккаунтов.
+     * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
+     * Возвращает пагинатор со всеми аккаунтами.
      */
 	public function getAllAccounts();
 

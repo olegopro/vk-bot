@@ -48,7 +48,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/BaseErrorResponse"
+                                    "$ref": "#/components/schemas/ErrorResponse"
                                 }
                             }
                         }
@@ -58,7 +58,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/BaseErrorResponse"
+                                    "$ref": "#/components/schemas/ServerErrorResponse"
                                 }
                             }
                         }
@@ -117,7 +117,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/BaseErrorResponse"
+                                    "$ref": "#/components/schemas/ErrorResponse"
                                 }
                             }
                         }
@@ -127,7 +127,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/BaseErrorResponse"
+                                    "$ref": "#/components/schemas/ServerErrorResponse"
                                 }
                             }
                         }
@@ -159,7 +159,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/BaseErrorResponse"
+                                    "$ref": "#/components/schemas/ServerErrorResponse"
                                 }
                             }
                         }
@@ -167,14 +167,14 @@
                 }
             }
         },
-        "/accounts/add": {
+        "/accounts/add-account": {
             "post": {
                 "tags": [
                     "Accounts"
                 ],
                 "summary": "Добавить аккаунт ВКонтакте",
                 "description": "Устанавливает и сохраняет данные аккаунта ВКонтакте по токену доступа",
-                "operationId": "ea80e9e0d91235badfeb4a8d7283d6b4",
+                "operationId": "f3da98273182be4dd886528196153af6",
                 "requestBody": {
                     "description": "Данные для добавления аккаунта",
                     "required": true,
@@ -224,7 +224,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/BaseErrorResponse"
+                                    "$ref": "#/components/schemas/ServerErrorResponse"
                                 }
                             }
                         }
@@ -271,6 +271,16 @@
                                         }
                                     },
                                     "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка сервера",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ServerErrorResponse"
                                 }
                             }
                         }
@@ -2299,8 +2309,8 @@
                 },
                 "type": "object"
             },
-            "BaseErrorResponse": {
-                "description": "Базовая схема ответа с ошибкой",
+            "ErrorResponse": {
+                "description": "Схема ответа с ошибкой",
                 "properties": {
                     "success": {
                         "description": "Статус успешности запроса",
@@ -2311,6 +2321,66 @@
                         "description": "Сообщение об ошибке",
                         "type": "string",
                         "example": "Произошла ошибка при выполнении операции"
+                    }
+                },
+                "type": "object"
+            },
+            "ServerErrorResponse": {
+                "description": "Схема ответа при внутренней ошибке сервера (500)",
+                "properties": {
+                    "message": {
+                        "description": "Сообщение об ошибке",
+                        "type": "string",
+                        "example": "Внутренняя ошибка сервера при обработке запроса"
+                    },
+                    "exception": {
+                        "description": "Класс исключения",
+                        "type": "string",
+                        "example": "App\\Exceptions\\ServiceException"
+                    },
+                    "file": {
+                        "description": "Файл, в котором произошла ошибка",
+                        "type": "string",
+                        "example": "/var/www/html/vendor/package/src/Client.php"
+                    },
+                    "line": {
+                        "description": "Строка, на которой произошла ошибка",
+                        "type": "integer",
+                        "example": 217
+                    },
+                    "trace": {
+                        "description": "Трассировка стека вызовов",
+                        "type": "array",
+                        "items": {
+                            "properties": {
+                                "file": {
+                                    "description": "Файл в трассировке",
+                                    "type": "string",
+                                    "example": "/var/www/html/vendor/package/src/Client.php"
+                                },
+                                "line": {
+                                    "description": "Строка в трассировке",
+                                    "type": "integer",
+                                    "example": 185
+                                },
+                                "function": {
+                                    "description": "Функция в трассировке",
+                                    "type": "string",
+                                    "example": "toException"
+                                },
+                                "class": {
+                                    "description": "Класс в трассировке",
+                                    "type": "string",
+                                    "example": "ATehnix\\VkClient\\Client"
+                                },
+                                "type": {
+                                    "description": "Тип вызова",
+                                    "type": "string",
+                                    "example": "::"
+                                }
+                            },
+                            "type": "object"
+                        }
                     }
                 },
                 "type": "object"
@@ -3099,16 +3169,16 @@
             "description": "API для фильтрации и поиска пользователей ВКонтакте"
         },
         {
+            "name": "Settings",
+            "description": "API для управления настройками приложения"
+        },
+        {
             "name": "Statistics",
             "description": "API для работы со статистикой задач"
         },
         {
             "name": "Account",
             "description": "Account"
-        },
-        {
-            "name": "Settings",
-            "description": "Settings"
         }
     ]
 }

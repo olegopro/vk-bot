@@ -63,12 +63,12 @@ final class AccountController extends Controller
             new OA\Response(
                 response: 400,
                 description: 'Некорректный запрос',
-                content: new OA\JsonContent(ref: '#/components/schemas/BaseErrorResponse')
+                content: new OA\JsonContent(ref: '#/components/schemas/ErrorResponse')
             ),
             new OA\Response(
                 response: 500,
                 description: 'Внутренняя ошибка сервера',
-                content: new OA\JsonContent(ref: '#/components/schemas/BaseErrorResponse')
+                content: new OA\JsonContent(ref: '#/components/schemas/ServerErrorResponse')
             )
         ]
     )]
@@ -203,12 +203,12 @@ final class AccountController extends Controller
             new OA\Response(
                 response: 400,
                 description: 'Некорректный запрос',
-                content: new OA\JsonContent(ref: '#/components/schemas/BaseErrorResponse')
+                content: new OA\JsonContent(ref: '#/components/schemas/ErrorResponse')
             ),
             new OA\Response(
                 response: 500,
                 description: 'Внутренняя ошибка сервера',
-                content: new OA\JsonContent(ref: '#/components/schemas/BaseErrorResponse')
+                content: new OA\JsonContent(ref: '#/components/schemas/ServerErrorResponse')
             )
         ]
     )]

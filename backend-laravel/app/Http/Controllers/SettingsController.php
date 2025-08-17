@@ -6,13 +6,7 @@ use App\Models\Settings;
 use Illuminate\Http\Request;
 use OpenApi\Attributes as OA;
 
-/**
- * @OA\Tag(
- *     name="Settings",
- *     description="API для управления настройками приложения"
- * )
- */
-
+#[OA\Tag(name: "Settings", description: "API для управления настройками приложения")]
 /**
  * Контроллер для управления настройками приложения.
  *
@@ -90,7 +84,7 @@ final class SettingsController extends Controller
 
         return response()->json([
             'success' => true,
-            'data' => $settings,
+            'data'    => $settings,
             'message' => 'Настройки успешно получены'
         ]);
     }
@@ -219,9 +213,8 @@ final class SettingsController extends Controller
 
         return response()->json([
             'success' => true,
-            'data' => $settings->fresh(),
+            'data'    => $settings->fresh(),
             'message' => 'Настройки успешно сохранены'
         ]);
     }
 }
- 
