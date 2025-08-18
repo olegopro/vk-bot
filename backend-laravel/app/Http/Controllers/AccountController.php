@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
@@ -24,7 +25,6 @@ final class AccountController extends Controller
         private readonly AccountRepositoryInterface $accountRepository
     ) {}
 
-
     /**
      * Получить данные аккаунта по ID.
      *
@@ -33,7 +33,7 @@ final class AccountController extends Controller
      * @throws VkException
      */
     #[OA\Get(
-        path: '/api/account/data/{id}',
+        path: '/account/data/{id}',
         description: 'Получает расширенные данные пользователя ВКонтакте по его ID',
         summary: 'Получить данные аккаунта',
         tags: ['Account'],
@@ -108,7 +108,7 @@ final class AccountController extends Controller
      * @return \Illuminate\Http\JsonResponse
      * @throws VkException
      */
-    public function fetchAccountFriends($id, $limit = 6)
+    public function fetchAccountFriends(string $id, int $limit = 6)
     {
         $response = VkClient::fetchAccountFriends($id, $limit);
 
@@ -212,7 +212,6 @@ final class AccountController extends Controller
             $this->loggingService
         ));
     }
-
 
     /**
      * Добавить лайк к посту.

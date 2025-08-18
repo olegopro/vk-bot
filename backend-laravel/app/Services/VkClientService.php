@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Services;
 
@@ -200,7 +201,7 @@ class VkClientService
      * Получает количество друзей аккаунта.
      *
      * @param int $accountId ID аккаунта.
-     * @param int $ownerId ID владельца аккаунта.
+     * @param int|string $ownerId ID владельца аккаунта.
      * @param string $token Токен доступа.
      * @return array[] Количество друзей.
      * @throws VkException

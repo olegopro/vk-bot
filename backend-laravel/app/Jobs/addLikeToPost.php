@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Jobs;
 
@@ -47,14 +48,14 @@ class addLikeToPost implements ShouldQueue
 
         // Получение screen name аккаунта по токену доступа
         $this->screenName = DB::table('accounts')
-                              ->where('access_token', $token)
-                              ->value('screen_name');
+            ->where('access_token', $token)
+            ->value('screen_name');
     }
 
     /**
      * Выполняет задание.
      *
-     * @throws Exception Если задача просрочена или возникают другие ошибки в процессе выполнения.
+     * @throws Exception Если задача просрочена, или возникают другие ошибки в процессе выполнения.
      */
     public function handle()
     {
@@ -148,7 +149,8 @@ class addLikeToPost implements ShouldQueue
      *
      * @return int Идентификатор аккаунта.
      */
-    public function getAccountId() {
+    public function getAccountId()
+    {
         return $this->task->account_id;
     }
 

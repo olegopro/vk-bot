@@ -12,14 +12,14 @@
         }
     ],
     "paths": {
-        "/api/account/data/{id}": {
+        "/account/data/{id}": {
             "get": {
                 "tags": [
                     "Account"
                 ],
                 "summary": "Получить данные аккаунта",
                 "description": "Получает расширенные данные пользователя ВКонтакте по его ID",
-                "operationId": "af8eae92de548d818801df43e191b6a2",
+                "operationId": "fc4f3c393519929b642251020c9961fa",
                 "parameters": [
                     {
                         "name": "id",
@@ -268,6 +268,28 @@
                                             "description": "Сообщение о результате операции",
                                             "type": "string",
                                             "example": "Аккаунт успешно удален"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Аккаунт не найден",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "description": "Статус успешности запроса",
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "description": "Сообщение о результате операции",
+                                            "type": "string",
+                                            "example": "Аккаунт не найден"
                                         }
                                     },
                                     "type": "object"
