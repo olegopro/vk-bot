@@ -4,9 +4,11 @@ namespace App\Services;
 
 use App\Filters\VkUserSearchFilter;
 use App\Repositories\AccountRepositoryInterface;
+use App\Services\LoggingServiceInterface;
 use ATehnix\VkClient\Client;
 use ATehnix\VkClient\Exceptions\VkException;
 use GuzzleHttp\Client as HttpClient;
+use Log;
 
 /**
  * Класс VkClientService предоставляет сервисы для взаимодействия с VK API.
@@ -19,12 +21,12 @@ class VkClientService
     /**
      * @var Client Инстанс клиента VK API.
      */
-    private $api;
+    private Client $api;
 
     /**
      * @var AccountRepositoryInterface Репозиторий аккаунтов для работы с данными аккаунтов.
      */
-    private $accountRepository;
+    private AccountRepositoryInterface $accountRepository;
 
     const string API_URI = 'https://api.vk.com/method/';
     const string API_VERSION = '5.62';
@@ -63,7 +65,7 @@ class VkClientService
      * @return array Ответ от VK API.
      * @throws VkException
      */
-    public function request($method, $parameters = [], $token = null)
+    public function request(string $method, array $parameters = [], string|null $token = null)
     {
         if ($token !== null) {
             $this->api->setDefaultToken($token);
@@ -84,18 +86,18 @@ class VkClientService
         return [
             'success' => true,
             'message' => 'Список аккаунтов получен',
-            'data'    => $data->items() // Извлекаем только массив данных
+            'data'    => $data // Возвращаем коллекцию напрямую
         ];
     }
 
-    /** 
+    /**
      * Получает данные аккаунта по указанным ID.
      *
-     * @param mixed $ids ID аккаунтов (массив или строка).
+     * @param array|string $ids ID аккаунтов (массив или строка).
      * @return array Данные аккаунта(ов).
      * @throws VkException
      */
-    public function fetchAccountData($ids)
+    public function fetchAccountData(array|string $ids)
     {
         if (is_array($ids)) {
             $ids = implode(',', $ids);
@@ -131,7 +133,7 @@ class VkClientService
      * @return array Данные группы.
      * @throws VkException
      */
-    public function fetchGroupData($id)
+    public function fetchGroupData(int $id)
     {
         $response = $this->request('groups.getById', [
             'group_id' => $id,
@@ -162,7 +164,7 @@ class VkClientService
      * @return array Подписчики аккаунта.
      * @throws VkException
      */
-    public function fetchAccountFollowers($id, $limit)
+    public function fetchAccountFollowers(int $id, int $limit)
     {
         return $this->request('users.getFollowers', [
             'user_id' => $id,
@@ -182,7 +184,7 @@ class VkClientService
      * @return array Друзья аккаунта.
      * @throws VkException
      */
-    public function fetchAccountFriends($id, $limit = 6)
+    public function fetchAccountFriends(int $id, int $limit = 6)
     {
         return $this->request('friends.get', [
             'user_id' => $id,
@@ -203,7 +205,7 @@ class VkClientService
      * @return array[] Количество друзей.
      * @throws VkException
      */
-    public function fetchAccountCountFriends($accountId, $ownerId, $token)
+    public function fetchAccountCountFriends(int $accountId, int|string $ownerId, string $token)
     {
         $ownerId = $ownerId === 'undefined' ? $accountId : $ownerId;
 
@@ -227,7 +229,7 @@ class VkClientService
      * @return array Информация об аккаунте.
      * @throws VkException
      */
-    public function fetchAccountInfo($token)
+    public function fetchAccountInfo(string $token)
     {
         $response = $this->request('account.getProfileInfo', [], $token);
 
@@ -243,11 +245,11 @@ class VkClientService
      *
      * @param int $accountId ID аккаунта.
      * @param string $startFrom Стартовая точка для пагинации.
-     * @param mixed $loggingService Сервис логирования.
+     * @param LoggingServiceInterface $loggingService Сервис логирования.
      * @return array Новостная лента.
      * @throws VkException
      */
-    public function fetchAccountNewsfeed($accountId, $startFrom, $loggingService)
+    public function fetchAccountNewsfeed(int $accountId, string $startFrom, LoggingServiceInterface $loggingService)
     {
         $access_token = $this->getAccessTokenByAccountID($accountId);
         $screen_name = $this->getScreenNameByToken($access_token);
@@ -281,7 +283,7 @@ class VkClientService
         ];
     }
 
-    public function fetchWallPostsByDomain($accountId, $domain, $startFrom, $loggingService)
+    public function fetchWallPostsByDomain($accountId, $domain, $startFrom, LoggingServiceInterface $loggingService)
     {
         $access_token = $this->getAccessTokenByAccountID($accountId);
         $screen_name = $this->getScreenNameByToken($access_token);
@@ -434,8 +436,7 @@ class VkClientService
 
         if ($accountInfoResponse['success'] && isset($accountInfoResponse['data']['response'])) {
             $accountData = [
-                'access_token'  => $token,
-
+                'access_token' => $token,
 
                 'account_id'    => $accountInfoResponse['data']['response']['id'],
                 'screen_name'   => $accountInfoResponse['data']['response']['screen_name'],
@@ -465,11 +466,11 @@ class VkClientService
      * @param int $ownerId ID владельца объекта.
      * @param int $itemId ID объекта.
      * @param string $accessToken Токен доступа для выполнения операции.
-     * @param mixed $loggingService Сервис логирования.
+     * @param LoggingServiceInterface $loggingService Сервис логирования.
      * @return array Результат добавления лайка.
      * @throws VkException
      */
-    public function addLike($ownerId, $itemId, $accessToken, $loggingService)
+    public function addLike($ownerId, $itemId, $accessToken, LoggingServiceInterface $loggingService)
     {
         $screenName = $this->getScreenNameByToken($accessToken);
 
@@ -516,13 +517,20 @@ class VkClientService
      * @param int $id ID аккаунта.
      * @return array Результат удаления аккаунта.
      */
-    public function deleteAccount($id)
+    public function deleteAccount(int $id)
     {
-        $this->accountRepository->deleteAccount($id);
+        $isDeleted = $this->accountRepository->deleteAccount($id);
+
+        if ($isDeleted) {
+            return [
+                'success' => true,
+                'message' => 'Аккаунт удален'
+            ];
+        }
 
         return [
-            'success' => true,
-            'message' => 'Аккаунт удален'
+            'success' => false,
+            'message' => 'Аккаунт не найден'
         ];
     }
 

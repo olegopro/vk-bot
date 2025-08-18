@@ -77,7 +77,6 @@ use OpenApi\Attributes as OA;
             description: "Трассировка стека вызовов",
             type: "array",
             items: new OA\Items(
-                type: "object",
                 properties: [
                     new OA\Property(
                         property: "file",
@@ -109,7 +108,8 @@ use OpenApi\Attributes as OA;
                         type: "string",
                         example: "::"
                     )
-                ]
+                ],
+                type: "object"
             )
         )
     ],

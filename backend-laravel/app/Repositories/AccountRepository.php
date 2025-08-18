@@ -16,10 +16,10 @@ class AccountRepository implements AccountRepositoryInterface
      *
      * @return \Illuminate\Database\Eloquent\Collection Возвращает коллекцию всех учетных записей.
      */
-	public function getAllAccounts($perPage = 30)
-	{
-        return Account::paginate($perPage);
-	}
+    public function getAllAccounts()
+    {
+        return Account::all();
+    }
 
     /**
      * Создает новую учетную запись с указанными данными.
@@ -27,21 +27,22 @@ class AccountRepository implements AccountRepositoryInterface
      * @param array $data Данные для создания учетной записи.
      * @return \App\Models\Account Возвращает созданную учетную запись.
      */
-	public function createAccount(array $data)
-	{
-		return Account::create($data);
-	}
+    public function createAccount(array $data)
+    {
+        return Account::create($data);
+    }
 
     /**
      * Удаляет учетную запись по идентификатору.
      *
      * @param int $id Идентификатор учетной записи для удаления.
-     * @return int Количество удаленных записей.
+     * @return bool Успешность удаления.
      */
-	public function deleteAccount($id)
-	{
-		return Account::destroy($id);
-	}
+    public function deleteAccount(int $id): bool
+    {
+        $deletedCount = Account::destroy($id);
+        return $deletedCount > 0;
+    }
 
     /**
      * Получает токен доступа по идентификатору учетной записи.
@@ -49,12 +50,12 @@ class AccountRepository implements AccountRepositoryInterface
      * @param int $account_id Идентификатор учетной записи.
      * @return string|null Токен доступа или null, если учетная запись не найдена.
      */
-	public function getAccessTokenByAccountID($account_id)
-	{
-		return DB::table('accounts')
-		         ->where('account_id', $account_id)
-		         ->value('access_token');
-	}
+    public function getAccessTokenByAccountID($account_id)
+    {
+        return DB::table('accounts')
+            ->where('account_id', $account_id)
+            ->value('access_token');
+    }
 
     /**
      * Получает отображаемое имя (screen name) по токену доступа.
@@ -62,10 +63,10 @@ class AccountRepository implements AccountRepositoryInterface
      * @param string $access_token Токен доступа.
      * @return string|null Имя экрана или null, если токен не найден.
      */
-	public function getScreenNameByToken($access_token)
-	{
-		return DB::table('accounts')
-		         ->where('access_token', $access_token)
-		         ->value('screen_name');
-	}
+    public function getScreenNameByToken($access_token)
+    {
+        return DB::table('accounts')
+            ->where('access_token', $access_token)
+            ->value('screen_name');
+    }
 }

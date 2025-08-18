@@ -3,19 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Facades\VkClient;
-use App\Jobs\addLikeToPost;
-use App\Models\Account;
-use App\Models\Task;
-use App\OpenApi\Schemas\AccountResponseSchema;
-use App\OpenApi\Schemas\NewsfeedResponseSchema;
-use App\OpenApi\Schemas\VkUserDataSchema;
 use App\Repositories\AccountRepositoryInterface;
 use App\Services\LoggingServiceInterface;
 use App\Services\VkClientService;
 use ATehnix\VkClient\Exceptions\VkException;
-use DB;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 use OpenApi\Attributes as OA;
 
 /**
@@ -36,7 +28,7 @@ final class AccountController extends Controller
     /**
      * Получить данные аккаунта по ID.
      *
-     * @param string|array $ids Идентификатор(ы) аккаунта(ов).
+     * @param array|string $ids Идентификатор(ы) аккаунта(ов).
      * @return \Illuminate\Http\JsonResponse
      * @throws VkException
      */
@@ -72,7 +64,7 @@ final class AccountController extends Controller
             )
         ]
     )]
-    public function fetchAccountData($ids)
+    public function fetchAccountData(array|string $ids)
     {
         return response()->json(VkClient::fetchAccountData($ids));
     }
@@ -84,7 +76,7 @@ final class AccountController extends Controller
      * @return \Illuminate\Http\JsonResponse
      * @throws VkException
      */
-    public function fetchGroupData($id)
+    public function fetchGroupData(string $id)
     {
         return response()->json(VkClient::fetchGroupData($id));
     }
@@ -97,14 +89,14 @@ final class AccountController extends Controller
      * @return \Illuminate\Http\JsonResponse
      * @throws VkException
      */
-    public function fetchAccountFollowers($id, $limit = 6)
+    public function fetchAccountFollowers(string $id, int $limit = 6)
     {
         $response = VkClient::fetchAccountFollowers($id, $limit);
 
         return response()->json([
             'success' => true,
             'message' => 'Список подписчиков получен',
-            'data' => $response['response']['items'] ?? []
+            'data'    => $response['response']['items'] ?? []
         ]);
     }
 
@@ -123,7 +115,7 @@ final class AccountController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Список друзей получен',
-            'data' => $response['response']['items'] ?? []
+            'data'    => $response['response']['items'] ?? []
         ]);
     }
 
@@ -154,7 +146,7 @@ final class AccountController extends Controller
      * @return \Illuminate\Http\JsonResponse
      * @throws VkException
      */
-    public function fetchAccountInfo($access_token)
+    public function fetchAccountInfo(string $access_token)
     {
         return response()->json(VkClient::fetchAccountInfo($access_token));
     }

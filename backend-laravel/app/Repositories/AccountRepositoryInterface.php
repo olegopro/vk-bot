@@ -32,11 +32,11 @@ interface AccountRepositoryInterface
     /**
      * Удалить аккаунт по идентификатору.
      *
-     * @param mixed $id Идентификатор аккаунта для удаления.
+     * @param int $id Идентификатор аккаунта для удаления.
      * @return bool
      * Возвращает true, если аккаунт успешно удален, иначе false.
      */
-	public function deleteAccount($id);
+	public function deleteAccount(int $id);
 
     /**
      * Получить токен доступа по идентификатору аккаунта.

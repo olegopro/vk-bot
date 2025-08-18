@@ -154,12 +154,39 @@ final class AccountsController extends Controller
         )
     )]
     #[OA\Response(
+        response: 404,
+        description: 'Аккаунт не найден',
+        content: new OA\JsonContent(
+            properties: [
+                new OA\Property(
+                    property: 'success',
+                    description: 'Статус успешности запроса',
+                    type: 'boolean',
+                    example: false
+                ),
+                new OA\Property(
+                    property: 'message',
+                    description: 'Сообщение о результате операции',
+                    type: 'string',
+                    example: 'Аккаунт не найден'
+                )
+            ],
+            type: 'object'
+        )
+    )]
+    #[OA\Response(
         response: 500,
         description: 'Внутренняя ошибка сервера',
         content: new OA\JsonContent(ref: '#/components/schemas/ServerErrorResponse')
     )]
-    public function deleteAccount($id)
+    public function deleteAccount(int $id)
     {
-        return response()->json(VkClient::deleteAccount($id));
+        $result = VkClient::deleteAccount($id);
+        
+        if ($result['success']) {
+            return response()->json($result);
+        }
+        
+        return response()->json($result, 404);
     }
 }
