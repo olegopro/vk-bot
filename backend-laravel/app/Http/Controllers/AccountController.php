@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Http\Controllers;
@@ -8,6 +9,7 @@ use App\Repositories\AccountRepositoryInterface;
 use App\Services\LoggingServiceInterface;
 use App\Services\VkClientService;
 use ATehnix\VkClient\Exceptions\VkException;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use OpenApi\Attributes as OA;
 
@@ -43,7 +45,7 @@ final class AccountController extends Controller
                 description: 'ID пользователя ВКонтакте',
                 in: 'path',
                 required: true,
-                schema: new OA\Schema(type: 'string', example: '123456789')
+                schema: new OA\Schema(type: 'string', example: '9121607')
             )
         ],
         responses: [
@@ -64,7 +66,7 @@ final class AccountController extends Controller
             )
         ]
     )]
-    public function fetchAccountData(array|string $ids)
+    public function fetchAccountData(array|string $ids): JsonResponse
     {
         return response()->json(VkClient::fetchAccountData($ids));
     }
@@ -72,11 +74,11 @@ final class AccountController extends Controller
     /**
      * Получить данные группы по ID.
      *
-     * @param string $id Идентификатор группы.
-     * @return \Illuminate\Http\JsonResponse
+     * @param int $id Идентификатор группы.
+     * @return JsonResponse
      * @throws VkException
      */
-    public function fetchGroupData(string $id)
+    public function fetchGroupData(int $id): JsonResponse
     {
         return response()->json(VkClient::fetchGroupData($id));
     }
@@ -84,12 +86,12 @@ final class AccountController extends Controller
     /**
      * Получить подписчиков аккаунта.
      *
-     * @param string $id Идентификатор аккаунта.
+     * @param int $id Идентификатор аккаунта.
      * @param int $limit Лимит количества подписчиков для возврата.
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      * @throws VkException
      */
-    public function fetchAccountFollowers(string $id, int $limit = 6)
+    public function fetchAccountFollowers(int $id, int $limit = 6): JsonResponse
     {
         $response = VkClient::fetchAccountFollowers($id, $limit);
 
@@ -103,12 +105,12 @@ final class AccountController extends Controller
     /**
      * Получить друзей аккаунта.
      *
-     * @param string $id Идентификатор аккаунта.
+     * @param int $id Идентификатор аккаунта.
      * @param int $limit Лимит количества друзей для возврата.
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      * @throws VkException
      */
-    public function fetchAccountFriends(string $id, int $limit = 6)
+    public function fetchAccountFriends(int $id, int $limit = 6): JsonResponse
     {
         $response = VkClient::fetchAccountFriends($id, $limit);
 
@@ -122,12 +124,12 @@ final class AccountController extends Controller
     /**
      * Получить количество друзей аккаунта.
      *
-     * @param string $accountId Идентификатор аккаунта для запроса.
+     * @param int $accountId Идентификатор аккаунта для запроса.
      * @param string $ownerId Идентификатор владельца аккаунта.
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      * @throws VkException
      */
-    public function fetchAccountCountFriends($accountId, $ownerId)
+    public function fetchAccountCountFriends(int $accountId, string $ownerId): JsonResponse
     {
         $accessToken = $this->accountRepository->getAccessTokenByAccountID($accountId);
         $response = VkClient::fetchAccountCountFriends($accountId, $ownerId, $accessToken);
@@ -140,18 +142,6 @@ final class AccountController extends Controller
     }
 
     /**
-     * Получить информацию об аккаунте.
-     *
-     * @param string $access_token Токен доступа аккаунта.
-     * @return \Illuminate\Http\JsonResponse
-     * @throws VkException
-     */
-    public function fetchAccountInfo(string $access_token)
-    {
-        return response()->json(VkClient::fetchAccountInfo($access_token));
-    }
-
-    /**
      * Получить новостную ленту аккаунта.
      *
      * @param \Illuminate\Http\Request $request Запрос, содержащий параметры для получения новостной ленты.
@@ -159,7 +149,7 @@ final class AccountController extends Controller
      * @throws VkException
      */
     #[OA\Post(
-        path: '/api/account/newsfeed',
+        path: '/account/newsfeed',
         description: 'Получает новостную ленту аккаунта ВКонтакте',
         summary: 'Получить новостную ленту аккаунта',
         requestBody: new OA\RequestBody(
@@ -172,7 +162,7 @@ final class AccountController extends Controller
                         property: 'account_id',
                         description: 'ID аккаунта',
                         type: 'integer',
-                        example: 123456789
+                        example: 9121607
                     ),
                     new OA\Property(
                         property: 'start_from',
@@ -220,7 +210,7 @@ final class AccountController extends Controller
      * @return \Illuminate\Http\JsonResponse
      * @throws VkException
      */
-    public function addLike(Request $request)
+    public function addLike(Request $request): JsonResponse
     {
         $ownerId = $request->input('owner_id');
         $itemId = $request->input('item_id');

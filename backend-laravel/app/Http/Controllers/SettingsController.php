@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Http\Controllers;
@@ -6,13 +7,13 @@ namespace App\Http\Controllers;
 use App\Models\Settings;
 use Illuminate\Http\Request;
 use OpenApi\Attributes as OA;
+use Illuminate\Http\JsonResponse;
 
-#[OA\Tag(name: "Settings", description: "API для управления настройками приложения")]
 /**
  * Контроллер для управления настройками приложения.
  *
  * Предоставляет методы для получения и сохранения глобальных настроек
- * системы, таких как отображение подписчиков, друзей и таймаут задач.
+ * системы, таких как отображение подписчиков, друзей и тайм-аут задач.
  */
 final class SettingsController extends Controller
 {
@@ -79,7 +80,7 @@ final class SettingsController extends Controller
             )
         ]
     )]
-    public function getSettings()
+    public function getSettings(): JsonResponse
     {
         $settings = Settings::first();
 
@@ -203,7 +204,7 @@ final class SettingsController extends Controller
             )
         ]
     )]
-    public function saveSettings(Request $request)
+    public function saveSettings(Request $request): JsonResponse
     {
         $settings = Settings::find(1);
         $settings->update([

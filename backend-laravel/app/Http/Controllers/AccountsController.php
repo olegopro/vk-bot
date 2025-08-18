@@ -6,6 +6,7 @@ namespace App\Http\Controllers;
 use App\Facades\VkClient;
 use App\Repositories\AccountRepositoryInterface;
 use ATehnix\VkClient\Exceptions\VkException;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use OpenApi\Attributes as OA;
 
@@ -42,7 +43,7 @@ final class AccountsController extends Controller
         description: 'Внутренняя ошибка сервера',
         content: new OA\JsonContent(ref: '#/components/schemas/ServerErrorResponse')
     )]
-    public function fetchAllAccounts()
+    public function fetchAllAccounts(): JsonResponse
     {
         return response()->json(VkClient::fetchAllAccounts());
     }
@@ -106,7 +107,7 @@ final class AccountsController extends Controller
         description: 'Внутренняя ошибка сервера',
         content: new OA\JsonContent(ref: '#/components/schemas/ServerErrorResponse')
     )]
-    public function setAccountData(Request $request)
+    public function setAccountData(Request $request): JsonResponse
     {
         return response()->json(VkClient::setAccountData($request['access_token'], $this->accountRepository));
     }
@@ -114,8 +115,8 @@ final class AccountsController extends Controller
     /**
      * Удалить аккаунт.
      *
-     * @param string $id Идентификатор аккаунта для удаления.
-     * @return \Illuminate\Http\JsonResponse
+     * @param int $id Идентификатор аккаунта для удаления.
+     * @return JsonResponse
      */
     #[OA\Delete(
         path: '/accounts/delete-account/{id}',
@@ -180,14 +181,14 @@ final class AccountsController extends Controller
         description: 'Внутренняя ошибка сервера',
         content: new OA\JsonContent(ref: '#/components/schemas/ServerErrorResponse')
     )]
-    public function deleteAccount(int $id)
+    public function deleteAccount(int $id): JsonResponse
     {
         $result = VkClient::deleteAccount($id);
-        
+
         if ($result['success']) {
             return response()->json($result);
         }
-        
+
         return response()->json($result, 404);
     }
 }

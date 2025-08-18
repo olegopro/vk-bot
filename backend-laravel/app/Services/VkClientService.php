@@ -5,11 +5,9 @@ namespace App\Services;
 
 use App\Filters\VkUserSearchFilter;
 use App\Repositories\AccountRepositoryInterface;
-use App\Services\LoggingServiceInterface;
 use ATehnix\VkClient\Client;
 use ATehnix\VkClient\Exceptions\VkException;
 use GuzzleHttp\Client as HttpClient;
-use Log;
 
 /**
  * Класс VkClientService предоставляет сервисы для взаимодействия с VK API.
@@ -20,7 +18,7 @@ use Log;
 class VkClientService
 {
     /**
-     * @var Client Инстанс клиента VK API.
+     * @var Client Экземпляр клиента VK API.
      */
     private Client $api;
 
@@ -29,9 +27,9 @@ class VkClientService
      */
     private AccountRepositoryInterface $accountRepository;
 
-    const string API_URI = 'https://api.vk.com/method/';
-    const string API_VERSION = '5.62';
-    const float API_TIMEOUT = 30.0;
+    private const string API_URI = 'https://api.vk.com/method/';
+    private const string API_VERSION = '5.62';
+    private const float API_TIMEOUT = 30.0;
 
     /**
      * Конструктор класса VkClientService.
@@ -245,15 +243,26 @@ class VkClientService
      * Получает новостную ленту аккаунта.
      *
      * @param int $accountId ID аккаунта.
-     * @param string $startFrom Стартовая точка для пагинации.
+     * @param string|null $startFrom Стартовая точка для пагинации (не обязательный).
      * @param LoggingServiceInterface $loggingService Сервис логирования.
      * @return array Новостная лента.
      * @throws VkException
      */
-    public function fetchAccountNewsfeed(int $accountId, string $startFrom, LoggingServiceInterface $loggingService)
+    public function fetchAccountNewsfeed(int $accountId, ?string $startFrom, LoggingServiceInterface $loggingService)
     {
         $access_token = $this->getAccessTokenByAccountID($accountId);
         $screen_name = $this->getScreenNameByToken($access_token);
+
+        // Подготовка параметров запроса
+        $parameters = [
+            'filters' => 'post',
+            'count'   => 40,
+        ];
+
+        // Добавляем start_from только если он не null
+        if ($startFrom !== null) {
+            $parameters['start_from'] = $startFrom;
+        }
 
         // Логирование запроса
         $loggingService->log(
@@ -263,11 +272,7 @@ class VkClientService
             ['request' => ['account_id' => $accountId, 'start_from' => $startFrom]]
         );
 
-        $response = $this->request('newsfeed.get', [
-            'filters'    => 'post',
-            'count'      => 40,
-            'start_from' => $startFrom
-        ], $access_token);
+        $response = $this->request('newsfeed.get', $parameters, $access_token);
 
         // Логирование ответа
         $loggingService->log(
@@ -284,10 +289,21 @@ class VkClientService
         ];
     }
 
-    public function fetchWallPostsByDomain($accountId, $domain, $startFrom, LoggingServiceInterface $loggingService)
+    public function fetchWallPostsByDomain($accountId, $domain, ?string $startFrom, LoggingServiceInterface $loggingService)
     {
         $access_token = $this->getAccessTokenByAccountID($accountId);
         $screen_name = $this->getScreenNameByToken($access_token);
+
+        // Подготовка параметров запроса
+        $parameters = [
+            'domain' => $domain,
+            'count'  => 10,
+        ];
+
+        // Добавляем offset только если startFrom не null
+        if ($startFrom !== null) {
+            $parameters['offset'] = $startFrom;
+        }
 
         // Логирование запроса
         $loggingService->log(
@@ -297,11 +313,7 @@ class VkClientService
             ['request' => ['domain' => $domain, 'start_from' => $startFrom]]
         );
 
-        $response = $this->request('wall.get', [
-            'domain' => $domain,
-            'count'  => 10,
-            'offset' => $startFrom
-        ], $access_token);
+        $response = $this->request('wall.get', $parameters, $access_token);
 
         // Логирование ответа
         $loggingService->log(
@@ -328,7 +340,7 @@ class VkClientService
      * @return array Информация о лайках.
      * @throws VkException
      */
-    public function fetchLikes($access_token, $type, $owner_id, $item_id)
+    public function fetchLikes(string $access_token, string $type, int $owner_id, int $item_id)
     {
         return $this->request('likes.getList', [
             'type'     => $type,
@@ -344,7 +356,7 @@ class VkClientService
      * @return array Данные пользователей.
      * @throws VkException
      */
-    public function fetchUsers($users_ids)
+    public function fetchUsers(string $users_ids)
     {
         $response = $this->request('users.get', [
             'user_ids' => $users_ids,
@@ -407,7 +419,7 @@ class VkClientService
      * @param int $account_id ID аккаунта.
      * @return string Токен доступа.
      */
-    public function getAccessTokenByAccountID($account_id)
+    public function getAccessTokenByAccountID(int $account_id)
     {
         return $this->accountRepository->getAccessTokenByAccountID($account_id);
     }
@@ -418,7 +430,7 @@ class VkClientService
      * @param string $access_token Токен доступа.
      * @return string Имя пользователя.
      */
-    public function getScreenNameByToken($access_token)
+    public function getScreenNameByToken(string $access_token)
     {
         return $this->accountRepository->getScreenNameByToken($access_token);
     }
@@ -431,7 +443,7 @@ class VkClientService
      * @return array
      * @throws VkException
      */
-    public function setAccountData($token, $accountRepository)
+    public function setAccountData(string $token, AccountRepositoryInterface $accountRepository)
     {
         $accountInfoResponse = $this->fetchAccountInfo($token);
 
@@ -471,7 +483,7 @@ class VkClientService
      * @return array Результат добавления лайка.
      * @throws VkException
      */
-    public function addLike($ownerId, $itemId, $accessToken, LoggingServiceInterface $loggingService)
+    public function addLike(int $ownerId, int $itemId, string $accessToken, LoggingServiceInterface $loggingService)
     {
         $screenName = $this->getScreenNameByToken($accessToken);
 
@@ -545,7 +557,7 @@ class VkClientService
      * @return array Результат отмены лайка.
      * @throws VkException
      */
-    public function deleteLike($accessToken, $type, $owner_id, $item_id)
+    public function deleteLike(string $accessToken, string $type, int $owner_id, int $item_id)
     {
         $response = $this->request('likes.delete', [
             'type'     => $type,

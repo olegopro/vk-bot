@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Http\Controllers;
@@ -6,19 +7,17 @@ namespace App\Http\Controllers;
 use App\Facades\VkClient;
 use App\Filters\VkUserSearchFilter;
 use App\Jobs\addLikeToPost;
-use App\Models\CyclicTask;
 use App\Models\Task;
-use App\OpenApi\Schemas\TaskResponseSchema;
 use App\Repositories\AccountRepositoryInterface;
 use App\Repositories\TaskRepositoryInterface;
 use App\Services\LoggingServiceInterface;
 use App\Services\VkClientService;
 use ATehnix\VkClient\Exceptions\VkException;
-use Exception;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Str;
 use Log;
 use OpenApi\Attributes as OA;
 
@@ -112,7 +111,7 @@ final class TaskController extends Controller
                                             new OA\Property(property: 'first_name', type: 'string', example: 'Марина'),
                                             new OA\Property(property: 'last_name', type: 'string', example: 'Цепелина'),
                                             new OA\Property(property: 'item_id', type: 'integer', example: 7366),
-                                            new OA\Property(property: 'error_message', type: 'string', nullable: true, example: null),
+                                            new OA\Property(property: 'error_message', type: 'string', example: null, nullable: true),
                                             new OA\Property(property: 'status', type: 'string', example: 'done'),
                                             new OA\Property(property: 'is_cyclic', type: 'integer', example: 0),
                                             new OA\Property(property: 'run_at', type: 'string', example: '2025-07-28 15:45:14'),
@@ -146,7 +145,7 @@ final class TaskController extends Controller
             ref: '#/components/schemas/TaskErrorResponse'
         )
     )]
-    public function getTasksByStatus(Request $request, $status = null, $accountId = null)
+    public function getTasksByStatus(string|null $status = null, int|null $accountId = null): JsonResponse
     {
         // Проверяем, является ли первый параметр числом (accountId)
         if (is_numeric($status)) {
@@ -201,7 +200,7 @@ final class TaskController extends Controller
         description: 'Внутренняя ошибка сервера',
         content: new OA\JsonContent(ref: '#/components/schemas/TaskErrorResponse')
     )]
-    public function getTaskInfo($taskId)
+    public function getTaskInfo(int $taskId): JsonResponse
     {
         $taskData = $this->taskRepository->findTask($taskId);
 
@@ -212,7 +211,7 @@ final class TaskController extends Controller
         $access_token = $this->accountRepository->getAccessTokenByAccountID($accountId);
 
         $postResponse = $this->vkClient->request('wall.getById', [
-            'posts' => "{$ownerId}_{$postId}",
+            'posts' => $ownerId . "_" . $postId,
         ], $access_token);
 
         $likesResponse = VkClient::fetchLikes($access_token, 'post', $ownerId, $postId);
@@ -227,9 +226,9 @@ final class TaskController extends Controller
 
         $response = [
             'attachments' => $postData['attachments'] ?? [],
-            'likes' => $postData['likes'] ?? [],
+            'likes'       => $postData['likes'] ?? [],
             'liked_users' => $usersResponse['data']['response'], // Информация о пользователях
-            'account_id' => $accountId
+            'account_id'  => $accountId
         ];
 
         return response()->json([
@@ -289,7 +288,7 @@ final class TaskController extends Controller
         description: 'Внутренняя ошибка сервера',
         content: new OA\JsonContent(ref: '#/components/schemas/TaskErrorResponse')
     )]
-    public function createAndQueueLikeTasksFromNewsfeed(Request $request, $isCyclic = false)
+    public function createAndQueueLikeTasksFromNewsfeed(Request $request, bool $isCyclic = false): JsonResponse
     {
         $account_id = $request->input('account_id');
         $task_count = $request->input('task_count');
@@ -322,7 +321,7 @@ final class TaskController extends Controller
      * @return int Количество созданных задач.
      * @throws VkException
      */
-    protected function fetchPostsAndCreateLikeTasks($request, $account_id, $maxCreatedCount, $isCyclic)
+    protected function fetchPostsAndCreateLikeTasks(Request $request, int $account_id, int $maxCreatedCount, bool $isCyclic): int
     {
         $createdCount = 0; // Счетчик созданных задач.
         $failedAttempts = 0; // Счетчик неудачных попыток получения подходящих постов.
@@ -386,7 +385,7 @@ final class TaskController extends Controller
      * @param array $post Массив данных поста.
      * @return bool Возвращает true, если пост удовлетворяет всем условиям.
      */
-    protected function isValidPostForTask($post)
+    protected function isValidPostForTask(array $post): bool
     {
         return
             // Пост должен принадлежать пользователю (не группе).
@@ -412,11 +411,11 @@ final class TaskController extends Controller
      * @param int $postId ID поста.
      * @return bool Возвращает true, если задача уже существует.
      */
-    protected function checkExistingTask($ownerId, $postId)
+    protected function checkExistingTask(int $ownerId, int $postId): bool
     {
         return Task::where('owner_id', $ownerId)
-                   ->where('item_id', $postId)
-                   ->first() !== null;
+            ->where('item_id', $postId)
+            ->first() !== null;
     }
 
     /**
@@ -428,10 +427,10 @@ final class TaskController extends Controller
      * @param int $accountId ID аккаунта, от имени которого будет выполняться задача.
      * @param array $post Данные поста, для которого создается задача на лайк.
      * @param bool $isCyclic Флаг, указывающий, является ли задача циклической.
-     * @return Task Созданная задача.
+     * @return Model|Task Созданная задача.
      * @throws VkException
      */
-    protected function createPendingLikeTask($accountId, $post, $isCyclic)
+    protected function createPendingLikeTask(int $accountId, array $post, bool $isCyclic): Model|Task
     {
         $username = $this->vkClient->request('users.get', [
             'fields'  => 'screen_name',
@@ -507,7 +506,7 @@ final class TaskController extends Controller
         description: 'Внутренняя ошибка сервера',
         content: new OA\JsonContent(ref: '#/components/schemas/TaskErrorResponse')
     )]
-    public function createLikeTasksForUserWallPosts(Request $request)
+    public function createLikeTasksForUserWallPosts(Request $request): JsonResponse
     {
         $accountId = $request->input('account_id');
         $domains = $request->input('domains');
@@ -555,7 +554,7 @@ final class TaskController extends Controller
      *
      * Принимает параметры account_id, city_id и опционально count.
      */
-    public function createLikeTasksForCityUsers(Request $request)
+    public function createLikeTasksForCityUsers(Request $request): JsonResponse
     {
         // Валидация входящих данных
         $validator = Validator::make($request->all(), [
@@ -572,8 +571,8 @@ final class TaskController extends Controller
         }
 
         $accountId = (int) $request->input('account_id');
-        $cityId    = (int) $request->input('city_id');
-        $count     = (int) $request->input('count', 10);
+        $cityId = (int) $request->input('city_id');
+        $count = (int) $request->input('count', 10);
 
         try {
             // 1) Ищем пользователей по городу
@@ -607,7 +606,7 @@ final class TaskController extends Controller
                 $wallPosts = $this->vkClient->fetchWallPostsByDomain($accountId, $domain, null, $this->loggingService);
 
                 if (!empty($wallPosts['data']['response']['items'])) {
-                    $post  = $wallPosts['data']['response']['items'][0];
+                    $post = $wallPosts['data']['response']['items'][0];
                     $tasks[] = $this->createPendingLikeTask($accountId, $post, false);
                 }
             }
@@ -686,17 +685,17 @@ final class TaskController extends Controller
         description: 'Внутренняя ошибка сервера',
         content: new OA\JsonContent(ref: '#/components/schemas/TaskErrorResponse')
     )]
-    public function processAndQueuePendingLikeTasks($token)
+    public function processAndQueuePendingLikeTasks(string $token): JsonResponse
     {
         // Базовое значение задержки из настроек
         $basePause = DB::table('settings')
-                       ->where('id', '=', '1')
-                       ->value('task_timeout');
+            ->where('id', '=', '1')
+            ->value('task_timeout');
 
         // Получаем все задачи со статусом 'pending'
         $tasks = DB::table('tasks')
-                   ->where('status', '=', 'pending')
-                   ->get();
+            ->where('status', '=', 'pending')
+            ->get();
 
         // Инициализируем переменную для хранения текущей задержки
         $pause = 0;
@@ -716,21 +715,21 @@ final class TaskController extends Controller
 
             // Обновляем время запуска и статус задачи
             DB::table('tasks')
-              ->where('id', $task->id)
-              ->update([
-                  'run_at' => $run_at,
-                  'status' => 'queued'
-              ]);
+                ->where('id', $task->id)
+                ->update([
+                    'run_at' => $run_at,
+                    'status' => 'queued'
+                ]);
 
             // Отправляем задачу в очередь с учетом задержки
             addLikeToPost::dispatch($task, $token, $this->loggingService)
-                         ->delay($specificPause);
+                ->delay($specificPause);
         }
 
         // Возвращаем список оставшихся задач для информации
         $tasks = DB::table('tasks')
-                   ->where('status', '=', 'pending')
-                   ->get();
+            ->where('status', '=', 'pending')
+            ->get();
 
         return response()->json([
             'success' => true,
@@ -788,7 +787,7 @@ final class TaskController extends Controller
         description: 'Внутренняя ошибка сервера',
         content: new OA\JsonContent(ref: '#/components/schemas/TaskErrorResponse')
     )]
-    public function deleteAllTasks($status = null, $accountId = null)
+    public function deleteAllTasks(string|null $status = null, int|null $accountId = null): JsonResponse
     {
         $this->taskRepository->clearQueueBasedOnStatus($status, $accountId);
 
@@ -840,7 +839,7 @@ final class TaskController extends Controller
         description: 'Внутренняя ошибка сервера',
         content: new OA\JsonContent(ref: '#/components/schemas/TaskErrorResponse')
     )]
-    public function deleteTaskById($id)
+    public function deleteTaskById(int $id): JsonResponse
     {
         $taskStatus = $this->taskRepository->getTaskStatusById($id);
 
@@ -907,7 +906,7 @@ final class TaskController extends Controller
         description: 'Внутренняя ошибка сервера',
         content: new OA\JsonContent(ref: '#/components/schemas/TaskErrorResponse')
     )]
-    public function deleteLike($taskId)
+    public function deleteLike(int $taskId): JsonResponse
     {
         $taskData = $this->taskRepository->findTask($taskId);
 

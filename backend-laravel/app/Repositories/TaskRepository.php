@@ -6,6 +6,7 @@ namespace App\Repositories;
 use App\Models\Task;
 use DB;
 use Exception;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Str;
 
 /**
@@ -18,10 +19,10 @@ class TaskRepository implements TaskRepositoryInterface
      * Находит задачу по идентификатору.
      *
      * @param int $taskId Идентификатор задачи.
-     * @return Task Возвращает экземпляр задачи, если она найдена.
+     * @return Builder|Task Возвращает экземпляр задачи, если она найдена.
      * @throws Exception Если задача не найдена, выбрасывается исключение.
      */
-    public function findTask($taskId)
+    public function findTask(int $taskId): Builder|Task
     {
         $task = Task::find($taskId);
 
@@ -32,7 +33,7 @@ class TaskRepository implements TaskRepositoryInterface
         return $task;
     }
 
-    public function getTasksByStatus($status = null, $accountId = null, $perPage)
+    public function getTasksByStatus(string|null $status = null, $accountId, $perPage): array
     {
         $result = [
             'total' => Task::when($accountId, function ($query) use ($accountId) {
@@ -78,12 +79,12 @@ class TaskRepository implements TaskRepositoryInterface
      * @param int $taskId Идентификатор задачи.
      * @return string|null Статус задачи или null, если задача не найдена.
      */
-    public function getTaskStatusById($taskId)
+    public function getTaskStatusById(int $taskId): string|null
     {
         return Task::where('id', $taskId)->value('status');
     }
 
-    public function countTasksByAccountAndStatus($status = null, $accountId = null)
+    public function countTasksByAccountAndStatus($status = null, $accountId = null): int
     {
         $query = Task::query();
 
@@ -109,7 +110,7 @@ class TaskRepository implements TaskRepositoryInterface
      * @param string|null $status Статус задач для очистки. Если null, очищаются задачи всех статусов.
      * @param int|null $accountId Идентификатор аккаунта для дополнительной фильтрации. Если null, фильтрация не применяется.
      */
-    public function clearQueueBasedOnStatus($status = null, $accountId = null)
+    public function clearQueueBasedOnStatus(string $status = null, int $accountId = null): void
     {
         switch ($status) {
             case 'done':
@@ -179,7 +180,7 @@ class TaskRepository implements TaskRepositoryInterface
      * @param int $taskId Идентификатор задачи для удаления.
      * @return bool|null Количество удаленных записей.
      */
-    public function deleteCompletedTask($taskId)
+    public function deleteCompletedTask(int $taskId): bool|null
     {
         // Удаление завершенной задачи
         return Task::where('id', $taskId)
@@ -194,7 +195,7 @@ class TaskRepository implements TaskRepositoryInterface
      * @return bool|null Возвращает true, если задача успешно удалена, иначе null.
      * @throws Exception Если задача не найдена, выбрасывается исключение.
      */
-    public function deleteQueuedTask($taskId)
+    public function deleteQueuedTask(int $taskId): bool|null
     {
         // Находим задачу в таблице tasks
         $task = Task::find($taskId);
@@ -218,7 +219,7 @@ class TaskRepository implements TaskRepositoryInterface
      * @param int $taskId Идентификатор задачи для удаления.
      * @return bool|null Количество удаленных записей.
      */
-    public function deleteFailedTask($taskId)
+    public function deleteFailedTask(int $taskId): bool|null
     {
         // Удаление неуспешной задачи
         return Task::where('id', $taskId)
@@ -230,9 +231,8 @@ class TaskRepository implements TaskRepositoryInterface
      * Удаляет задачи из таблицы jobs на основе статуса и идентификатора аккаунта.
      *
      * @param string|null $status Статус задач для удаления. Если null, удаляются задачи всех статусов.
-     * @param int|null $accountId Идентификатор аккаунта для дополнительной фильтрации. Если null, фильтрация не применяется.
      */
-    public function deleteJobsByStatus($status, $accountId = null)
+    public function deleteJobsByStatus(string|null $status, $accountId = null)
     {
         // Получаем список job_id из таблицы tasks, соответствующих условиям
         $tasks = Task::query()

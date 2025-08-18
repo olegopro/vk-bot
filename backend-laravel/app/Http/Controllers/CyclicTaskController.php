@@ -18,7 +18,6 @@ final class CyclicTaskController extends Controller
     /**
      * Получить список циклических задач с пагинацией
      *
-     * @param Request $request HTTP запрос с параметрами пагинации
      * @return JsonResponse
      */
     #[OA\Get(
@@ -66,7 +65,7 @@ final class CyclicTaskController extends Controller
             )
         ]
     )]
-    public function getCyclicTasks(Request $request): JsonResponse
+    public function getCyclicTasks(): JsonResponse
     {
         // Получаем все циклические задачи без пагинации
         $cyclicTasks = $this->cyclicTaskRepository->getAllCyclicTasks();
@@ -77,7 +76,6 @@ final class CyclicTaskController extends Controller
             'message' => 'Список циклических задач получен'
         ]);
     }
-
 
     /**
      * Создает циклическую задачу на лайки в социальной сети, используя предоставленные данные.
@@ -175,7 +173,7 @@ final class CyclicTaskController extends Controller
         description: 'Внутренняя ошибка сервера',
         content: new OA\JsonContent(ref: '#/components/schemas/TaskErrorResponse')
     )]
-    public function createCyclicTask(Request $request)
+    public function createCyclicTask(Request $request): JsonResponse
     {
         // Генерация массива уникальных случайных минут
         $tasksPerHour = $request->input('tasks_per_hour');
@@ -199,7 +197,6 @@ final class CyclicTaskController extends Controller
             'message' => 'Задача на постановку лайков запланирована.'
         ]);
     }
-
 
     /**
      * Редактировать циклическую задачу
@@ -282,7 +279,7 @@ final class CyclicTaskController extends Controller
             )
         ]
     )]
-    public function editCyclicTask(Request $request, $taskId): JsonResponse
+    public function editCyclicTask(Request $request, int $taskId): JsonResponse
     {
         $data = $request->only(['account_id', 'total_task_count', 'tasks_per_hour', 'status', 'selected_times']);
         $cyclicTasks = $this->cyclicTaskRepository->editCyclicTask($taskId, $data);
@@ -355,7 +352,7 @@ final class CyclicTaskController extends Controller
             )
         ]
     )]
-    public function deleteCyclicTask($taskId): JsonResponse
+    public function deleteCyclicTask(int $taskId): JsonResponse
     {
         $cyclicTask = $this->cyclicTaskRepository->deleteCyclicTask($taskId);
 
@@ -468,7 +465,7 @@ final class CyclicTaskController extends Controller
             )
         ]
     )]
-    public function pauseCyclicTask($taskId): JsonResponse
+    public function pauseCyclicTask(int $taskId): JsonResponse
     {
         $result = $this->cyclicTaskRepository->pauseCyclicTask($taskId);
 

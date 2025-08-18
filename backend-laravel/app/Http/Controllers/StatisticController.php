@@ -1,16 +1,14 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
 use App\Models\Task;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Carbon;
 use OpenApi\Attributes as OA;
 
-#[OA\Tag(
-    name: "Statistics",
-    description: "API для работы со статистикой задач"
-)]
 /**
  * Контроллер для работы со статистикой задач.
  *
@@ -19,22 +17,6 @@ use OpenApi\Attributes as OA;
  */
 class StatisticController extends Controller
 {
-    // TODO: Этот метод не используется
-    public function getStatistic()
-    {
-        $statistic = Task::where('status', 'done')
-            ->whereDate('created_at', '>', Carbon::now()->subDays(7))
-            ->get();
-
-        // Тут может быть логика подготовки данных для Vue компонента
-
-        return response()->json([
-            'success' => true,
-            'data'    => $statistic,
-            'message' => 'Статистика за последние 7 дней получена'
-        ]);
-    }
-
     #[OA\Get(
         path: '/api/statistics',
         description: 'Возвращает количество выполненных задач, сгруппированных по дням недели за последние 7 дней',
@@ -76,7 +58,7 @@ class StatisticController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse Ответ, содержащий статистику задач, сгруппированную по дням недели
      */
-    public function getWeeklyTaskStats()
+    public function getWeeklyTaskStats(): JsonResponse
     {
         Carbon::setLocale('ru'); // Устанавливаем русскую локаль для Carbon
 

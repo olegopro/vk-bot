@@ -32,7 +32,7 @@ Route::prefix('tasks')->group(function() {
     Route::delete('/delete-all-tasks/{status?}/{accountId?}', [TaskController::class, 'deleteAllTasks']);
     Route::delete('/delete-task-by-id/{id}', [TaskController::class, 'deleteTaskById']);
 
-    // Общий роут ОБЯЗАТЕЛЬНО должен быть в самом конце
+    // Общий маршрут ОБЯЗАТЕЛЬНО должен быть в самом конце
     Route::get('/{status?}/{accountId?}', [TaskController::class, 'getTasksByStatus']);
 });
 

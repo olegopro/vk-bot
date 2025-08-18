@@ -4,6 +4,8 @@ declare(strict_types=1);
 namespace App\Repositories;
 
 use App\Models\Account;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -17,7 +19,7 @@ class AccountRepository implements AccountRepositoryInterface
      *
      * @return \Illuminate\Database\Eloquent\Collection Возвращает коллекцию всех учетных записей.
      */
-    public function getAllAccounts()
+    public function getAllAccounts(): Collection
     {
         return Account::all();
     }
@@ -28,7 +30,7 @@ class AccountRepository implements AccountRepositoryInterface
      * @param array $data Данные для создания учетной записи.
      * @return \App\Models\Account Возвращает созданную учетную запись.
      */
-    public function createAccount(array $data)
+    public function createAccount(array $data): Account|Model
     {
         return Account::create($data);
     }
@@ -51,7 +53,7 @@ class AccountRepository implements AccountRepositoryInterface
      * @param int $account_id Идентификатор учетной записи.
      * @return string|null Токен доступа или null, если учетная запись не найдена.
      */
-    public function getAccessTokenByAccountID($account_id)
+    public function getAccessTokenByAccountID($account_id): string|null
     {
         return DB::table('accounts')
             ->where('account_id', $account_id)
@@ -64,7 +66,7 @@ class AccountRepository implements AccountRepositoryInterface
      * @param string $access_token Токен доступа.
      * @return string|null Имя экрана или null, если токен не найден.
      */
-    public function getScreenNameByToken($access_token)
+    public function getScreenNameByToken($access_token): string|null
     {
         return DB::table('accounts')
             ->where('access_token', $access_token)

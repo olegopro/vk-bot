@@ -4,13 +4,15 @@ declare(strict_types=1);
 namespace App\Repositories;
 
 use App\Models\CyclicTask;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Collection;
 
 /**
  * Репозиторий для управления циклическими задачами.
  *
  * Этот класс предоставляет методы для работы с циклическими задачами в системе,
  * включая получение, удаление, приостановку и редактирование задач.
- * Репозиторий реализует интерфейс CyclicTaskRepositoryInterface и инкапсулирует
+ * Репозиторий реализует интерфейс CyclicTaskRepositoryInterface и содержит
  * всю логику взаимодействия с базой данных для циклических задач.
  */
 class CyclicTaskRepository implements CyclicTaskRepositoryInterface
@@ -24,7 +26,7 @@ class CyclicTaskRepository implements CyclicTaskRepositoryInterface
      *
      * @return \Illuminate\Database\Eloquent\Collection Коллекция всех циклических задач
      */
-    public function getAllCyclicTasks()
+    public function getAllCyclicTasks(): Collection
     {
         return CyclicTask::all();
     }
@@ -38,7 +40,7 @@ class CyclicTaskRepository implements CyclicTaskRepositoryInterface
      * @param int $taskId Идентификатор циклической задачи для удаления
      * @return int Количество удаленных записей (обычно 0 или 1)
      */
-    public function deleteCyclicTask($taskId) {
+    public function deleteCyclicTask($taskId): int {
         return CyclicTask::destroy($taskId);
     }
 
@@ -48,11 +50,11 @@ class CyclicTaskRepository implements CyclicTaskRepositoryInterface
      * Метод полностью очищает таблицу циклических задач, удаляя все записи.
      * Используется метод truncate() для более эффективного удаления всех записей.
      *
-     * @return CyclicTask Результат операции удаления всех записей
+     * @return void
      */
-    public function deleteAllCyclicTasks()
+    public function deleteAllCyclicTasks(): void
     {
-        return CyclicTask::truncate();
+        CyclicTask::truncate();
     }
 
     /**
@@ -63,9 +65,9 @@ class CyclicTaskRepository implements CyclicTaskRepositoryInterface
      * - Если задача была приостановлена ('pause'), устанавливает статус 'active'
      *
      * @param int $taskId Идентификатор циклической задачи
-     * @return array|null Массив с обновленной задачей и новым статусом, или null если задача не найдена
+     * @return array|Builder|CyclicTask Массив с обновленной задачей и новым статусом, или null если задача не найдена
      */
-    public function pauseCyclicTask($taskId)
+    public function pauseCyclicTask($taskId): array|Builder|CyclicTask
     {
         $task = CyclicTask::find($taskId);
 
@@ -93,7 +95,7 @@ class CyclicTaskRepository implements CyclicTaskRepositoryInterface
      * @param array $data Ассоциативный массив с новыми значениями полей задачи
      * @return \App\Models\CyclicTask|null Обновленный объект задачи или null, если задача не найдена
      */
-    public function editCyclicTask($taskId, $data)
+    public function editCyclicTask($taskId, $data): Builder|CyclicTask
     {
         $task = CyclicTask::find($taskId);
 

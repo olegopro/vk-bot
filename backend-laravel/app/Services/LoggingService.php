@@ -42,7 +42,7 @@ class LoggingService implements LoggingServiceInterface
      * $loggingService->log('account_task_likes', 'user123', 'Ошибка при выполнении задачи',
      *                      ['exception' => $e->getMessage(), 'task_id' => 42]);
      */
-    public function log($channel, $account_name, $message, $context = [])
+    public function log(string $channel, string $account_name, string $message, array $context = [])
     {
         $logPath = storage_path('logs') . '/' . $account_name;
 

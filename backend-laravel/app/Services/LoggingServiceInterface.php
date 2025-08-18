@@ -12,5 +12,5 @@ interface LoggingServiceInterface
      *
      * @return void
      */
-    public function log($channel, $account_name, $message, $context = []);
+    public function log(string $channel, string $account_name, string $message, array $context = []);
 }
