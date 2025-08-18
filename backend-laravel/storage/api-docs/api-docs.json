@@ -28,7 +28,7 @@
                         "required": true,
                         "schema": {
                             "type": "string",
-                            "example": "123456789"
+                            "example": "9121607"
                         }
                     }
                 ],
@@ -66,14 +66,14 @@
                 }
             }
         },
-        "/api/account/newsfeed": {
+        "/account/newsfeed": {
             "post": {
                 "tags": [
                     "Account"
                 ],
                 "summary": "Получить новостную ленту аккаунта",
                 "description": "Получает новостную ленту аккаунта ВКонтакте",
-                "operationId": "65fbab6bfc9ef8035a3051f627d45e9e",
+                "operationId": "e2e480e573b6e22ef904a556885cdcf5",
                 "requestBody": {
                     "description": "Параметры для получения новостной ленты",
                     "required": true,
@@ -87,7 +87,7 @@
                                     "account_id": {
                                         "description": "ID аккаунта",
                                         "type": "integer",
-                                        "example": 123456789
+                                        "example": 9121607
                                     },
                                     "start_from": {
                                         "description": "Маркер для пагинации (не обязательный)",
@@ -3175,8 +3175,12 @@
     },
     "tags": [
         {
-            "name": "Accounts",
+            "name": "Account",
             "description": "Операции для управления аккаунтами ВКонтакте"
+        },
+        {
+            "name": "Accounts",
+            "description": "Операции для управления аккаунтами системы"
         },
         {
             "name": "Tasks",
@@ -3191,16 +3195,12 @@
             "description": "API для фильтрации и поиска пользователей ВКонтакте"
         },
         {
-            "name": "Settings",
-            "description": "API для управления настройками приложения"
-        },
-        {
             "name": "Statistics",
             "description": "API для работы со статистикой задач"
         },
         {
-            "name": "Account",
-            "description": "Account"
+            "name": "Settings",
+            "description": "API для управления настройками приложения"
         }
     ]
 }
