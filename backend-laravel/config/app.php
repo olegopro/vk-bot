@@ -125,6 +125,18 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Access Token Salt
+    |--------------------------------------------------------------------------
+    |
+    | This salt is used for encrypting access tokens in the database.
+    | It should be a random string that is kept secret.
+    |
+    */
+
+    'access_token_salt' => env('ACCESS_TOKEN_SALT', ''),
+
+    /*
+    |--------------------------------------------------------------------------
     | Autoloaded Service Providers
     |--------------------------------------------------------------------------
     |

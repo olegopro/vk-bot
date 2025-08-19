@@ -5,6 +5,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Crypt;
 use OpenApi\Attributes as OA;
 
 #[OA\Schema(
@@ -63,4 +64,49 @@ class Account extends Model
     protected $primaryKey = 'account_id';
     public $timestamps = false;
     public $incrementing = false;
+
+    /**
+     * Шифрует access_token с использованием соли из конфига
+     */
+    private function encryptAccessToken(string $token): string
+    {
+        $salt = config('app.access_token_salt', '');
+        return Crypt::encryptString($token . $salt);
+    }
+
+    /**
+     * Дешифрует access_token
+     */
+    private function decryptAccessToken(string $encryptedToken): string
+    {
+        $salt = config('app.access_token_salt', '');
+        $decrypted = Crypt::decryptString($encryptedToken);
+        return str_replace($salt, '', $decrypted);
+    }
+
+    /**
+     * Автоматически шифрует access_token при сохранении
+     */
+    public function setAccessTokenAttribute($value)
+    {
+        if ($value) {
+            $this->attributes['access_token'] = $this->encryptAccessToken($value);
+        }
+    }
+
+    /**
+     * Автоматически дешифрует access_token при получении
+     */
+    public function getAccessTokenAttribute($value)
+    {
+        if ($value) {
+            try {
+                return $this->decryptAccessToken($value);
+            } catch (\Exception $e) {
+                // Если не удалось дешифровать, возвращаем как есть (для обратной совместимости)
+                return $value;
+            }
+        }
+        return $value;
+    }
 }

@@ -28,7 +28,7 @@ class AccountRepository implements AccountRepositoryInterface
      * Создает новую учетную запись с указанными данными.
      *
      * @param array $data Данные для создания учетной записи.
-     * @return \App\Models\Account Возвращает созданную учетную запись.
+     * @return Account|Model Возвращает созданную учетную запись.
      */
     public function createAccount(array $data): Account|Model
     {
@@ -55,9 +55,8 @@ class AccountRepository implements AccountRepositoryInterface
      */
     public function getAccessTokenByAccountID($account_id): string|null
     {
-        return DB::table('accounts')
-            ->where('account_id', $account_id)
-            ->value('access_token');
+        $account = Account::where('account_id', $account_id)->first();
+        return $account?->access_token;
     }
 
     /**
@@ -68,8 +67,7 @@ class AccountRepository implements AccountRepositoryInterface
      */
     public function getScreenNameByToken($access_token): string|null
     {
-        return DB::table('accounts')
-            ->where('access_token', $access_token)
-            ->value('screen_name');
+        $account = Account::where('access_token', $access_token)->first();
+        return $account?->screen_name;
     }
 }

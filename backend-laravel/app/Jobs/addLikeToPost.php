@@ -1,14 +1,14 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Jobs;
 
 use App\Facades\VkClient;
+use App\Models\Account;
 use App\Models\Task;
 use App\Services\LoggingService;
-use App\Services\VkClientService;
 use Carbon\Carbon;
-use DB;
 use Exception;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -27,11 +27,10 @@ class addLikeToPost implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    private $task;
-    private $token;
-    private $loggingService;
-    private $screenName;
-    private $vkClient;
+    private Task $task;
+    private string $token;
+    private LoggingService $loggingService;
+    private string $screenName;
 
     /**
      * Создает новый экземпляр задания.
@@ -40,16 +39,15 @@ class addLikeToPost implements ShouldQueue
      * @param string $token Токен доступа для авторизации в VK API.
      * @param LoggingService $loggingService Сервис для логирования операций.
      */
-    public function __construct($task, $token, LoggingService $loggingService)
+    public function __construct(Task $task, string $token, LoggingService $loggingService)
     {
         $this->task = $task;
         $this->token = $token;
         $this->loggingService = $loggingService;
 
         // Получение screen name аккаунта по токену доступа
-        $this->screenName = DB::table('accounts')
-            ->where('access_token', $token)
-            ->value('screen_name');
+        $account = Account::where('access_token', $token)->first();
+        $this->screenName = $account?->screen_name;
     }
 
     /**

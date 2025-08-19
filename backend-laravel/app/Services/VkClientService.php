@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Services;
@@ -27,10 +28,6 @@ class VkClientService
      */
     private AccountRepositoryInterface $accountRepository;
 
-    private const string API_URI = 'https://api.vk.com/method/';
-    private const string API_VERSION = '5.62';
-    private const float API_TIMEOUT = 30.0;
-
     /**
      * Конструктор класса VkClientService.
      *
@@ -38,11 +35,9 @@ class VkClientService
      */
     public function __construct(AccountRepositoryInterface $accountRepository)
     {
-        // $this->api = new Client(config('services.vk.version'));
-
         $this->api = new Client(config('services.vk.version'), new HttpClient([
-            'base_uri'    => static::API_URI,
-            'timeout'     => static::API_TIMEOUT,
+            'base_uri'    => config('services.vk.url'),
+            'timeout'     => 30,
             'http_errors' => false,
             'headers'     => [
                 'User-Agent'      => 'github.com/atehnix/vk-client',
