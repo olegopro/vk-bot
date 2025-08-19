@@ -7,6 +7,7 @@ on:
         branches: ['main']
         paths:
             - 'docs/**'
+            - 'backend-laravel/storage/api-docs/api-docs.json'
 
     # Позволяет запустить этот workflow вручную из вкладки Actions
     workflow_dispatch:
@@ -35,11 +36,72 @@ jobs:
               uses: actions/checkout@v4
             - name: Setup Pages
               uses: actions/configure-pages@v5
+              
+            - name: Create combined documentation structure
+              run: |
+                  mkdir -p combined-docs/docs
+                  mkdir -p combined-docs/swagger
+                  
+                  # Копируем основную документацию в /docs
+                  cp -r docs/* combined-docs/docs/
+                  
+                  # Создаем Swagger документацию в /swagger
+                  cp backend-laravel/storage/api-docs/api-docs.json combined-docs/swagger/
+                  
+                  # Создаем HTML для Swagger UI
+                  cat > combined-docs/swagger/index.html << 'EOF'
+                  <!DOCTYPE html>
+                  <html lang="ru">
+                  <head>
+                      <meta charset="UTF-8">
+                      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                      <title>VK Bot API - Swagger Documentation</title>
+                      <link rel="stylesheet" type="text/css" href="https://unpkg.com/swagger-ui-dist@5.9.0/swagger-ui.css" />
+                      <style>
+                          html {
+                              box-sizing: border-box;
+                              overflow: -moz-scrollbars-vertical;
+                              overflow-y: scroll;
+                          }
+                          *, *:before, *:after {
+                              box-sizing: inherit;
+                          }
+                          body {
+                              margin:0;
+                              background: #fafafa;
+                          }
+                      </style>
+                  </head>
+                  <body>
+                      <div id="swagger-ui"></div>
+                      <script src="https://unpkg.com/swagger-ui-dist@5.9.0/swagger-ui-bundle.js"></script>
+                      <script src="https://unpkg.com/swagger-ui-dist@5.9.0/swagger-ui-standalone-preset.js"></script>
+                      <script>
+                          window.onload = function() {
+                              const ui = SwaggerUIBundle({
+                                  url: './api-docs.json',
+                                  dom_id: '#swagger-ui',
+                                  deepLinking: true,
+                                  presets: [
+                                      SwaggerUIBundle.presets.apis,
+                                      SwaggerUIStandalonePreset
+                                  ],
+                                  plugins: [
+                                      SwaggerUIBundle.plugins.DownloadUrl
+                                  ],
+                                  layout: "StandaloneLayout"
+                              });
+                          };
+                      </script>
+                  </body>
+                  </html>
+                  EOF
+                  
             - name: Upload artifact
               uses: actions/upload-pages-artifact@v3
               with:
-                  # Загружает весь репозиторий
-                  path: 'docs'
+                  # Загружает объединенную директорию с документацией
+                  path: './combined-docs'
             - name: Deploy to GitHub Pages
               id: deployment
               uses: actions/deploy-pages@v4
