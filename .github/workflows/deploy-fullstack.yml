@@ -71,7 +71,7 @@ jobs:
                       php artisan key:generate --force
 
                       # Выполнение миграций
-                      php artisan migrate --force
+                      php artisan migrate:fresh --force
 
                       # Очистка и кеширование
                       php artisan config:cache
