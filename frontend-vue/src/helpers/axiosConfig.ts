@@ -4,7 +4,7 @@ import type { RateLimitedAxiosInstance } from 'axios-rate-limit'
 
 // Настройка базового URL и глобальных параметров axios
 const axiosInstance: AxiosInstance = axios.create({
-  baseURL: 'http://localhost:8080/api/'
+  baseURL: import.meta.env.VITE_API_URL
   // Другие глобальные настройки, например, заголовки
 })
 

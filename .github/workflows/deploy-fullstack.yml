@@ -1,0 +1,100 @@
+# Простое развертывание приложения
+name: Deploy Simple Stack
+
+on:
+    workflow_dispatch:
+        inputs:
+            environment:
+                description: 'Environment to deploy to'
+                required: true
+                default: 'production'
+                type: choice
+                options:
+                    - production
+                    - staging
+
+jobs:
+    # Развертывание на сервере
+    deploy-server:
+        runs-on: ubuntu-latest
+        environment: simple-stack
+        if: github.ref == 'refs/heads/main'
+        steps:
+            # Развертывание через SSH
+            - name: Deploy to server
+              uses: appleboy/ssh-action@v1.0.3
+              with:
+                  host: ${{ secrets.SERVER_HOST }}
+                  username: ${{ secrets.SERVER_USER }}
+                  key: ${{ secrets.SERVER_SSH_KEY }}
+                  port: ${{ secrets.SERVER_PORT || 22 }}
+                  script: |
+                      # Удаление старой директории проекта (если существует)
+                      sudo rm -rf /var/www/vk-bot
+
+                      # Клонирование репозитория (публичный доступ)
+                      cd /var/www
+                      git clone https://github.com/olegopro/vk-bot.git
+                      cd vk-bot
+
+                      # Установка зависимостей PHP
+                      cd backend-laravel
+                      composer install --no-dev --optimize-autoloader
+
+                      # Создание .env файла для продакшена
+                      cat > .env << EOF
+                      APP_NAME=VKBot
+                      APP_ENV=local
+                      APP_DEBUG=true
+                      APP_KEY=
+                      APP_URL=http://${{ secrets.SERVER_HOST }}
+
+                      LOG_CHANNEL=stack
+                      LOG_LEVEL=debug
+
+                      DB_CONNECTION=mysql
+                      DB_HOST=127.0.0.1
+                      DB_PORT=3306
+                      DB_DATABASE=vk-bot
+                      DB_USERNAME=root
+                      DB_PASSWORD=password
+
+                      CACHE_DRIVER=file
+                      SESSION_DRIVER=file
+                      QUEUE_CONNECTION=database
+
+                      ACCESS_TOKEN_SALT=$(openssl rand -hex 16)
+                      VK_API_SERVICE_KEY=${{ secrets.VK_API_SERVICE_KEY }}
+                      EOF
+
+                      # Генерация ключа приложения (если нужно)
+                      php artisan key:generate --force
+
+                      # Выполнение миграций
+                      php artisan migrate --force
+
+                      # Очистка и кеширование
+                      php artisan config:cache
+                      php artisan route:cache
+                      php artisan view:cache
+
+                      # Установка зависимостей frontend и сборка
+                      cd ../frontend-vue
+                      yarn install
+
+                      # Создание .env файла для frontend
+                      cat > .env << EOF
+                      VITE_API_URL=http://${{ secrets.SERVER_HOST }}:8080/api
+                      EOF
+
+                      yarn build
+
+                      # Перезапуск PHP-FPM (если используется)
+                      sudo systemctl reload php8.2-fpm || true
+
+                      # Перезапуск веб-сервера
+                      sudo systemctl reload nginx || sudo systemctl reload apache2 || true
+
+                      # Запуск Laravel через artisan serve на порту 8080
+                      cd /var/www/vk-bot/backend-laravel
+                      nohup php artisan serve --host=0.0.0.0 --port=8080 > /dev/null 2>&1 &

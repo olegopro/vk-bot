@@ -36,18 +36,18 @@ jobs:
               uses: actions/checkout@v4
             - name: Setup Pages
               uses: actions/configure-pages@v5
-              
+
             - name: Create combined documentation structure
               run: |
                   mkdir -p combined-docs/docs
                   mkdir -p combined-docs/swagger
-                  
+
                   # Копируем основную документацию в /docs
                   cp -r docs/* combined-docs/docs/
-                  
+
                   # Создаем Swagger документацию в /swagger
                   cp backend-laravel/storage/api-docs/api-docs.json combined-docs/swagger/
-                  
+
                   # Создаем HTML для Swagger UI
                   cat > combined-docs/swagger/index.html << 'EOF'
                   <!DOCTYPE html>
@@ -96,7 +96,7 @@ jobs:
                   </body>
                   </html>
                   EOF
-                  
+
             - name: Upload artifact
               uses: actions/upload-pages-artifact@v3
               with:
