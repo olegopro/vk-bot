@@ -105,10 +105,10 @@
             <div class="container-fluid underlined">
                     <div class="row">
                 <div class="col-md-2 type">
-                    <abbr title="Illuminate\Database\Eloquent\Collection">Collection</abbr>
+                    <abbr title="Illuminate\Contracts\Pagination\LengthAwarePaginator">LengthAwarePaginator</abbr>
                 </div>
                 <div class="col-md-8">
-                    <a href="#method_getAllAccounts">getAllAccounts</a>($perPage = 30)
+                    <a href="#method_getAllAccounts">getAllAccounts</a>()
         
                                             <p><p>Получает все учетные записи.</p></p>                </div>
                 <div class="col-md-2"></div>
@@ -128,7 +128,7 @@
                     bool
                 </div>
                 <div class="col-md-8">
-                    <a href="#method_deleteAccount">deleteAccount</a>(mixed $id)
+                    <a href="#method_deleteAccount">deleteAccount</a>(int $id)
         
                                             <p><p>Удаляет учетную запись по идентификатору.</p></p>                </div>
                 <div class="col-md-2"></div>
@@ -161,9 +161,9 @@
             <div id="method-details">
                     <div class="method-item">
                     <h3 id="method_getAllAccounts">
-        <div class="location">at line 19</div>
-        <code>                    <abbr title="Illuminate\Database\Eloquent\Collection">Collection</abbr>
-    <strong>getAllAccounts</strong>($perPage = 30)
+        <div class="location">at line 22</div>
+        <code>                    <abbr title="Illuminate\Contracts\Pagination\LengthAwarePaginator">LengthAwarePaginator</abbr>
+    <strong>getAllAccounts</strong>()
         </code>
     </h3>
     <div class="details">    
@@ -175,23 +175,13 @@
                             <p><p>Получает все учетные записи.</p></p>                        
         </div>
         <div class="tags">
-                            <h4>Parameters</h4>
-
-                    <table class="table table-condensed">
-                    <tr>
-                <td></td>
-                <td>$perPage</td>
-                <td></td>
-            </tr>
-            </table>
-
             
                             <h4>Return Value</h4>
 
                     <table class="table table-condensed">
         <tr>
-            <td><abbr title="Illuminate\Database\Eloquent\Collection">Collection</abbr></td>
-            <td><p>Возвращает коллекцию всех аккаунтов.</p></td>
+            <td><abbr title="Illuminate\Contracts\Pagination\LengthAwarePaginator">LengthAwarePaginator</abbr></td>
+            <td><p>Возвращает пагинатор со всеми аккаунтами.</p></td>
         </tr>
     </table>
 
@@ -204,7 +194,7 @@
             </div>
                     <div class="method-item">
                     <h3 id="method_createAccount">
-        <div class="location">at line 30</div>
+        <div class="location">at line 33</div>
         <code>                    <a href="../../App/Models/Account.html"><abbr title="App\Models\Account">Account</abbr></a>
     <strong>createAccount</strong>(array $data)
         </code>
@@ -247,9 +237,9 @@
             </div>
                     <div class="method-item">
                     <h3 id="method_deleteAccount">
-        <div class="location">at line 41</div>
+        <div class="location">at line 44</div>
         <code>                    bool
-    <strong>deleteAccount</strong>(mixed $id)
+    <strong>deleteAccount</strong>(int $id)
         </code>
     </h3>
     <div class="details">    
@@ -265,7 +255,7 @@
 
                     <table class="table table-condensed">
                     <tr>
-                <td>mixed</td>
+                <td>int</td>
                 <td>$id</td>
                 <td><p>Идентификатор аккаунта для удаления.</p></td>
             </tr>
@@ -290,7 +280,7 @@
             </div>
                     <div class="method-item">
                     <h3 id="method_getAccessTokenByAccountID">
-        <div class="location">at line 52</div>
+        <div class="location">at line 56</div>
         <code>                    string|null
     <strong>getAccessTokenByAccountID</strong>(mixed $account_id)
         </code>
@@ -333,7 +323,7 @@
             </div>
                     <div class="method-item">
                     <h3 id="method_getScreenNameByToken">
-        <div class="location">at line 65</div>
+        <div class="location">at line 69</div>
         <code>                    string|null
     <strong>getScreenNameByToken</strong>(string $access_token)
         </code>

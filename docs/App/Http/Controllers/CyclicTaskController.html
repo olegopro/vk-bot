@@ -134,57 +134,72 @@
             </div>
                     <div class="row">
                 <div class="col-md-2 type">
-                    
+                    <abbr title="Illuminate\Http\JsonResponse">JsonResponse</abbr>
                 </div>
                 <div class="col-md-8">
-                    <a href="#method_getCyclicTasks">getCyclicTasks</a>(<abbr title="Illuminate\Http\Request">Request</abbr> $request)
+                    <a href="#method_getCyclicTasks">getCyclicTasks</a>()
         
-                                            <p class="no-description">No description</p>
-                                    </div>
+                                            <p><p>Получить список циклических задач с пагинацией</p></p>                </div>
                 <div class="col-md-2"></div>
             </div>
                     <div class="row">
                 <div class="col-md-2 type">
-                    
+                    <abbr title="Illuminate\Http\JsonResponse">JsonResponse</abbr>
                 </div>
                 <div class="col-md-8">
-                    <a href="#method_editCyclicTask">editCyclicTask</a>(<abbr title="Illuminate\Http\Request">Request</abbr> $request, $taskId)
+                    <a href="#method_createCyclicTask">createCyclicTask</a>(<abbr title="Illuminate\Http\Request">Request</abbr> $request)
         
-                                            <p class="no-description">No description</p>
-                                    </div>
+                                            <p><p>Создает циклическую задачу на лайки в социальной сети, используя предоставленные данные.</p></p>                </div>
                 <div class="col-md-2"></div>
             </div>
                     <div class="row">
                 <div class="col-md-2 type">
-                    
+                    <abbr title="Illuminate\Http\JsonResponse">JsonResponse</abbr>
                 </div>
                 <div class="col-md-8">
-                    <a href="#method_deleteCyclicTask">deleteCyclicTask</a>($taskId)
+                    <a href="#method_editCyclicTask">editCyclicTask</a>(<abbr title="Illuminate\Http\Request">Request</abbr> $request, int $taskId)
         
-                                            <p class="no-description">No description</p>
-                                    </div>
+                                            <p><p>Редактировать циклическую задачу</p></p>                </div>
                 <div class="col-md-2"></div>
             </div>
                     <div class="row">
                 <div class="col-md-2 type">
-                    
+                    <abbr title="Illuminate\Http\JsonResponse">JsonResponse</abbr>
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_deleteCyclicTask">deleteCyclicTask</a>(int $taskId)
+        
+                                            <p><p>Удалить циклическую задачу</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    <abbr title="Illuminate\Http\JsonResponse">JsonResponse</abbr>
                 </div>
                 <div class="col-md-8">
                     <a href="#method_deleteAllCyclicTasks">deleteAllCyclicTasks</a>()
         
-                                            <p class="no-description">No description</p>
-                                    </div>
+                                            <p><p>Удалить все циклические задачи</p></p>                </div>
                 <div class="col-md-2"></div>
             </div>
                     <div class="row">
                 <div class="col-md-2 type">
-                    
+                    <abbr title="Illuminate\Http\JsonResponse">JsonResponse</abbr>
                 </div>
                 <div class="col-md-8">
-                    <a href="#method_pauseCyclicTask">pauseCyclicTask</a>($taskId)
+                    <a href="#method_pauseCyclicTask">pauseCyclicTask</a>(int $taskId)
         
-                                            <p class="no-description">No description</p>
-                                    </div>
+                                            <p><p>Приостановить/возобновить циклическую задачу</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    array
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_generateUniqueRandomMinutes">generateUniqueRandomMinutes</a>(int $count)
+        
+                                            <p><p>Генерирует массив уникальных случайных минут для выполнения задач в течение одного часа.</p></p>                </div>
                 <div class="col-md-2"></div>
             </div>
             </div>
@@ -195,7 +210,7 @@
             <div id="method-details">
                     <div class="method-item">
                     <h3 id="method___construct">
-        <div class="location">at line 10</div>
+        <div class="location">at line 14</div>
         <code>                    
     <strong>__construct</strong>(<a href="../../../App/Repositories/CyclicTaskRepositoryInterface.html"><abbr title="App\Repositories\CyclicTaskRepositoryInterface">CyclicTaskRepositoryInterface</abbr></a> $cyclicTaskRepository)
         </code>
@@ -230,9 +245,9 @@
             </div>
                     <div class="method-item">
                     <h3 id="method_getCyclicTasks">
-        <div class="location">at line 14</div>
-        <code>                    
-    <strong>getCyclicTasks</strong>(<abbr title="Illuminate\Http\Request">Request</abbr> $request)
+        <div class="location">at line 23</div>
+        <code>                    <abbr title="Illuminate\Http\JsonResponse">JsonResponse</abbr>
+    <strong>getCyclicTasks</strong>()
         </code>
     </h3>
     <div class="details">    
@@ -241,8 +256,43 @@
             
 
         <div class="method-description">
-                            <p class="no-description">No description</p>
-                    
+                            <p><p>Получить список циклических задач с пагинацией</p></p>                        
+        </div>
+        <div class="tags">
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td><abbr title="Illuminate\Http\JsonResponse">JsonResponse</abbr></td>
+            <td></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_createCyclicTask">
+        <div class="location">at line 97</div>
+        <code>                    <abbr title="Illuminate\Http\JsonResponse">JsonResponse</abbr>
+    <strong>createCyclicTask</strong>(<abbr title="Illuminate\Http\Request">Request</abbr> $request)
+        </code>
+    </h3>
+    <div class="details">    
+            
+    
+            
+
+        <div class="method-description">
+                            <p><p>Создает циклическую задачу на лайки в социальной сети, используя предоставленные данные.</p></p>                <p><p>Этот метод обрабатывает HTTP-запрос, содержащий необходимые данные для создания циклической задачи,
+включая идентификатор аккаунта, количество задач в час, общее количество задач и статус задачи.
+Он также генерирует уникальное расписание (массив уникальных случайных минут в течение часа),
+в которое будут выполняться задачи, и сохраняет это расписание в базе данных.</p></p>        
         </div>
         <div class="tags">
                             <h4>Parameters</h4>
@@ -251,11 +301,27 @@
                     <tr>
                 <td><abbr title="Illuminate\Http\Request">Request</abbr></td>
                 <td>$request</td>
-                <td></td>
+                <td><p>HTTP-запрос, содержащий следующие параметры:</p>
+<ul>
+<li>account_id: Идентификатор аккаунта, для которого создается задача.</li>
+<li>tasks_per_hour: Количество задач на лайки, которое должно быть выполнено в час.</li>
+<li>tasks_count: Общее количество задач на лайки, которое нужно выполнить.</li>
+<li>status: Статус задачи (например, 'active').</li>
+</ul></td>
             </tr>
             </table>
 
             
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td><abbr title="Illuminate\Http\JsonResponse">JsonResponse</abbr></td>
+            <td><p>Ответ, содержащий статус выполнения операции,
+данные созданной циклической задачи и сообщение об успешном создании задачи.</p></td>
+        </tr>
+    </table>
+
             
             
             
@@ -265,9 +331,9 @@
             </div>
                     <div class="method-item">
                     <h3 id="method_editCyclicTask">
-        <div class="location">at line 30</div>
-        <code>                    
-    <strong>editCyclicTask</strong>(<abbr title="Illuminate\Http\Request">Request</abbr> $request, $taskId)
+        <div class="location">at line 208</div>
+        <code>                    <abbr title="Illuminate\Http\JsonResponse">JsonResponse</abbr>
+    <strong>editCyclicTask</strong>(<abbr title="Illuminate\Http\Request">Request</abbr> $request, int $taskId)
         </code>
     </h3>
     <div class="details">    
@@ -276,8 +342,7 @@
             
 
         <div class="method-description">
-                            <p class="no-description">No description</p>
-                    
+                            <p><p>Редактировать циклическую задачу</p></p>                        
         </div>
         <div class="tags">
                             <h4>Parameters</h4>
@@ -286,16 +351,25 @@
                     <tr>
                 <td><abbr title="Illuminate\Http\Request">Request</abbr></td>
                 <td>$request</td>
-                <td></td>
+                <td><p>HTTP запрос с данными для обновления</p></td>
             </tr>
                     <tr>
-                <td></td>
+                <td>int</td>
                 <td>$taskId</td>
-                <td></td>
+                <td><p>ID циклической задачи</p></td>
             </tr>
             </table>
 
             
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td><abbr title="Illuminate\Http\JsonResponse">JsonResponse</abbr></td>
+            <td></td>
+        </tr>
+    </table>
+
             
             
             
@@ -305,9 +379,9 @@
             </div>
                     <div class="method-item">
                     <h3 id="method_deleteCyclicTask">
-        <div class="location">at line 50</div>
-        <code>                    
-    <strong>deleteCyclicTask</strong>($taskId)
+        <div class="location">at line 308</div>
+        <code>                    <abbr title="Illuminate\Http\JsonResponse">JsonResponse</abbr>
+    <strong>deleteCyclicTask</strong>(int $taskId)
         </code>
     </h3>
     <div class="details">    
@@ -316,21 +390,29 @@
             
 
         <div class="method-description">
-                            <p class="no-description">No description</p>
-                    
+                            <p><p>Удалить циклическую задачу</p></p>                        
         </div>
         <div class="tags">
                             <h4>Parameters</h4>
 
                     <table class="table table-condensed">
                     <tr>
-                <td></td>
+                <td>int</td>
                 <td>$taskId</td>
-                <td></td>
+                <td><p>ID циклической задачи</p></td>
             </tr>
             </table>
 
             
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td><abbr title="Illuminate\Http\JsonResponse">JsonResponse</abbr></td>
+            <td></td>
+        </tr>
+    </table>
+
             
             
             
@@ -340,8 +422,8 @@
             </div>
                     <div class="method-item">
                     <h3 id="method_deleteAllCyclicTasks">
-        <div class="location">at line 67</div>
-        <code>                    
+        <div class="location">at line 377</div>
+        <code>                    <abbr title="Illuminate\Http\JsonResponse">JsonResponse</abbr>
     <strong>deleteAllCyclicTasks</strong>()
         </code>
     </h3>
@@ -351,11 +433,19 @@
             
 
         <div class="method-description">
-                            <p class="no-description">No description</p>
-                    
+                            <p><p>Удалить все циклические задачи</p></p>                        
         </div>
         <div class="tags">
             
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td><abbr title="Illuminate\Http\JsonResponse">JsonResponse</abbr></td>
+            <td></td>
+        </tr>
+    </table>
+
             
             
             
@@ -365,9 +455,9 @@
             </div>
                     <div class="method-item">
                     <h3 id="method_pauseCyclicTask">
-        <div class="location">at line 77</div>
-        <code>                    
-    <strong>pauseCyclicTask</strong>($taskId)
+        <div class="location">at line 421</div>
+        <code>                    <abbr title="Illuminate\Http\JsonResponse">JsonResponse</abbr>
+    <strong>pauseCyclicTask</strong>(int $taskId)
         </code>
     </h3>
     <div class="details">    
@@ -376,21 +466,76 @@
             
 
         <div class="method-description">
-                            <p class="no-description">No description</p>
-                    
+                            <p><p>Приостановить/возобновить циклическую задачу</p></p>                        
         </div>
         <div class="tags">
                             <h4>Parameters</h4>
 
                     <table class="table table-condensed">
                     <tr>
-                <td></td>
+                <td>int</td>
                 <td>$taskId</td>
-                <td></td>
+                <td><p>ID циклической задачи</p></td>
             </tr>
             </table>
 
             
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td><abbr title="Illuminate\Http\JsonResponse">JsonResponse</abbr></td>
+            <td></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_generateUniqueRandomMinutes">
+        <div class="location">at line 502</div>
+        <code>                    array
+    <strong>generateUniqueRandomMinutes</strong>(int $count)
+        </code>
+    </h3>
+    <div class="details">    
+            
+    
+            
+
+        <div class="method-description">
+                            <p><p>Генерирует массив уникальных случайных минут для выполнения задач в течение одного часа.</p></p>                <p><p>Этот метод используется для создания расписания выполнения задач на лайки в социальной сети,
+гарантируя, что каждая задача будет запланирована на уникальную минуту в пределах одного часа.
+Таким образом обеспечивается равномерное распределение задач во времени.</p></p>        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td>int</td>
+                <td>$count</td>
+                <td><p>Количество уникальных минут (задач), которое необходимо сгенерировать.
+Это значение должно быть меньше или равно 60, так как в часе 60 минут.</p></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td>array</td>
+            <td><p>Массив, содержащий уникальные случайные минуты в диапазоне от 1 до 60.
+Каждое значение в массиве указывает минуту в часе, когда должна быть выполнена задача.</p></td>
+        </tr>
+    </table>
+
             
             
             

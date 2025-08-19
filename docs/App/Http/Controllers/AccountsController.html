@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="robots" content="index, follow, all" />
-    <title>App\Http\Controllers\FilterController | VK Bot API</title>
+    <title>App\Http\Controllers\AccountsController | VK Bot API</title>
 
             <link rel="stylesheet" type="text/css" href="../../../css/bootstrap.min.css">
         <link rel="stylesheet" type="text/css" href="../../../css/bootstrap-theme.min.css">
@@ -19,7 +19,7 @@
 
     </head>
 
-    <body id="class" data-name="class:App_Http_Controllers_FilterController" data-root-path="../../../" data-search-index-url="../../../doctum-search.json">
+    <body id="class" data-name="class:App_Http_Controllers_AccountsController" data-root-path="../../../" data-search-index-url="../../../doctum-search.json">
             <div id="content">
         <div id="left-column">
                 <div id="control-panel">
@@ -75,18 +75,18 @@
                         <div class="namespace-breadcrumbs">
             <ol class="breadcrumb">
                 <li><span class="label label-default">class</span></li>
-                        <li><a href="../../../App.html">App</a></li><li class="backslash">\</li><li><a href="../../../App/Http.html">Http</a></li><li class="backslash">\</li><li><a href="../../../App/Http/Controllers.html">Controllers</a></li><li class="backslash">\</li><li>FilterController</li>
+                        <li><a href="../../../App.html">App</a></li><li class="backslash">\</li><li><a href="../../../App/Http.html">Http</a></li><li class="backslash">\</li><li><a href="../../../App/Http/Controllers.html">Controllers</a></li><li class="backslash">\</li><li>AccountsController</li>
             </ol>
         </div>
                 <div id="page-content">
     <div class="page-header">
-        <h1>FilterController    
+        <h1>AccountsController    
             </h1>
     </div>
 
     
-    <p>        class
-    <strong>FilterController</strong>        extends <a href="../../../App/Http/Controllers/Controller.html"><abbr title="App\Http\Controllers\Controller">Controller</abbr></a>
+    <p>final         class
+    <strong>AccountsController</strong>        extends <a href="../../../App/Http/Controllers/Controller.html"><abbr title="App\Http\Controllers\Controller">Controller</abbr></a>
 </p>
 
         
@@ -94,6 +94,9 @@
     
         
 
+            <div class="description">
+            <p><p>Контроллер для управления аккаунтами.</p></p>            <p><p>Этот класс предоставляет методы для взаимодействия с данными аккаунтов,
+включая получение информации об аккаунтах, друзьях, подписчиках и группах.</p></p>        </div>
             
                 <h2>Traits</h2>
 
@@ -126,17 +129,7 @@
                     
                 </div>
                 <div class="col-md-8">
-                    <a href="#method___construct">__construct</a>(<a href="../../../App/Services/VkClientService.html"><abbr title="App\Services\VkClientService">VkClientService</abbr></a> $vkClient)
-        
-                                            <p><p>Создает новый экземпляр контроллера.</p></p>                </div>
-                <div class="col-md-2"></div>
-            </div>
-                    <div class="row">
-                <div class="col-md-2 type">
-                    <abbr title="Illuminate\Http\JsonResponse">JsonResponse</abbr>
-                </div>
-                <div class="col-md-8">
-                    <a href="#method_searchUsers">searchUsers</a>(<abbr title="Illuminate\Http\Request">Request</abbr> $request)
+                    <a href="#method___construct">__construct</a>(<a href="../../../App/Repositories/AccountRepositoryInterface.html"><abbr title="App\Repositories\AccountRepositoryInterface">AccountRepositoryInterface</abbr></a> $accountRepository)
         
                                             <p class="no-description">No description</p>
                                     </div>
@@ -147,10 +140,9 @@
                     <abbr title="Illuminate\Http\JsonResponse">JsonResponse</abbr>
                 </div>
                 <div class="col-md-8">
-                    <a href="#method_getUsersByCity">getUsersByCity</a>(<abbr title="Illuminate\Http\Request">Request</abbr> $request)
+                    <a href="#method_fetchAllAccounts">fetchAllAccounts</a>()
         
-                                            <p class="no-description">No description</p>
-                                    </div>
+                                            <p><p>Получить список всех аккаунтов.</p></p>                </div>
                 <div class="col-md-2"></div>
             </div>
                     <div class="row">
@@ -158,10 +150,19 @@
                     <abbr title="Illuminate\Http\JsonResponse">JsonResponse</abbr>
                 </div>
                 <div class="col-md-8">
-                    <a href="#method_getCities">getCities</a>(<abbr title="Illuminate\Http\Request">Request</abbr> $request)
+                    <a href="#method_setAccountData">setAccountData</a>(<abbr title="Illuminate\Http\Request">Request</abbr> $request)
         
-                                            <p class="no-description">No description</p>
-                                    </div>
+                                            <p><p>Установить данные аккаунта.</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    <abbr title="Illuminate\Http\JsonResponse">JsonResponse</abbr>
+                </div>
+                <div class="col-md-8">
+                    <a href="#method_deleteAccount">deleteAccount</a>(int $id)
+        
+                                            <p><p>Удалить аккаунт.</p></p>                </div>
                 <div class="col-md-2"></div>
             </div>
             </div>
@@ -172,43 +173,9 @@
             <div id="method-details">
                     <div class="method-item">
                     <h3 id="method___construct">
-        <div class="location">at line 22</div>
+        <div class="location">at line 21</div>
         <code>                    
-    <strong>__construct</strong>(<a href="../../../App/Services/VkClientService.html"><abbr title="App\Services\VkClientService">VkClientService</abbr></a> $vkClient)
-        </code>
-    </h3>
-    <div class="details">    
-            
-    
-            
-
-        <div class="method-description">
-                            <p><p>Создает новый экземпляр контроллера.</p></p>                        
-        </div>
-        <div class="tags">
-                            <h4>Parameters</h4>
-
-                    <table class="table table-condensed">
-                    <tr>
-                <td><a href="../../../App/Services/VkClientService.html"><abbr title="App\Services\VkClientService">VkClientService</abbr></a></td>
-                <td>$vkClient</td>
-                <td><p>Сервис для работы с API ВКонтакте</p></td>
-            </tr>
-            </table>
-
-            
-            
-            
-            
-                    </div>
-    </div>
-
-            </div>
-                    <div class="method-item">
-                    <h3 id="method_searchUsers">
-        <div class="location">at line 26</div>
-        <code>                    <abbr title="Illuminate\Http\JsonResponse">JsonResponse</abbr>
-    <strong>searchUsers</strong>(<abbr title="Illuminate\Http\Request">Request</abbr> $request)
+    <strong>__construct</strong>(<a href="../../../App/Repositories/AccountRepositoryInterface.html"><abbr title="App\Repositories\AccountRepositoryInterface">AccountRepositoryInterface</abbr></a> $accountRepository)
         </code>
     </h3>
     <div class="details">    
@@ -225,12 +192,36 @@
 
                     <table class="table table-condensed">
                     <tr>
-                <td><abbr title="Illuminate\Http\Request">Request</abbr></td>
-                <td>$request</td>
+                <td><a href="../../../App/Repositories/AccountRepositoryInterface.html"><abbr title="App\Repositories\AccountRepositoryInterface">AccountRepositoryInterface</abbr></a></td>
+                <td>$accountRepository</td>
                 <td></td>
             </tr>
             </table>
 
+            
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
+                    <h3 id="method_fetchAllAccounts">
+        <div class="location">at line 30</div>
+        <code>                    <abbr title="Illuminate\Http\JsonResponse">JsonResponse</abbr>
+    <strong>fetchAllAccounts</strong>()
+        </code>
+    </h3>
+    <div class="details">    
+            
+    
+            
+
+        <div class="method-description">
+                            <p><p>Получить список всех аккаунтов.</p></p>                        
+        </div>
+        <div class="tags">
             
                             <h4>Return Value</h4>
 
@@ -249,10 +240,10 @@
 
             </div>
                     <div class="method-item">
-                    <h3 id="method_getUsersByCity">
-        <div class="location">at line 145</div>
+                    <h3 id="method_setAccountData">
+        <div class="location">at line 58</div>
         <code>                    <abbr title="Illuminate\Http\JsonResponse">JsonResponse</abbr>
-    <strong>getUsersByCity</strong>(<abbr title="Illuminate\Http\Request">Request</abbr> $request)
+    <strong>setAccountData</strong>(<abbr title="Illuminate\Http\Request">Request</abbr> $request)
         </code>
     </h3>
     <div class="details">    
@@ -261,8 +252,7 @@
             
 
         <div class="method-description">
-                            <p class="no-description">No description</p>
-                    
+                            <p><p>Установить данные аккаунта.</p></p>                        
         </div>
         <div class="tags">
                             <h4>Parameters</h4>
@@ -271,7 +261,7 @@
                     <tr>
                 <td><abbr title="Illuminate\Http\Request">Request</abbr></td>
                 <td>$request</td>
-                <td></td>
+                <td><p>Запрос, содержащий данные аккаунта для обновления.</p></td>
             </tr>
             </table>
 
@@ -286,6 +276,15 @@
     </table>
 
             
+                            <h4>Exceptions</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td><abbr title="ATehnix\VkClient\Exceptions\VkException">VkException</abbr></td>
+                <td></td>
+            </tr>
+            </table>
+
             
             
                     </div>
@@ -293,10 +292,10 @@
 
             </div>
                     <div class="method-item">
-                    <h3 id="method_getCities">
-        <div class="location">at line 251</div>
+                    <h3 id="method_deleteAccount">
+        <div class="location">at line 121</div>
         <code>                    <abbr title="Illuminate\Http\JsonResponse">JsonResponse</abbr>
-    <strong>getCities</strong>(<abbr title="Illuminate\Http\Request">Request</abbr> $request)
+    <strong>deleteAccount</strong>(int $id)
         </code>
     </h3>
     <div class="details">    
@@ -305,17 +304,16 @@
             
 
         <div class="method-description">
-                            <p class="no-description">No description</p>
-                    
+                            <p><p>Удалить аккаунт.</p></p>                        
         </div>
         <div class="tags">
                             <h4>Parameters</h4>
 
                     <table class="table table-condensed">
                     <tr>
-                <td><abbr title="Illuminate\Http\Request">Request</abbr></td>
-                <td>$request</td>
-                <td></td>
+                <td>int</td>
+                <td>$id</td>
+                <td><p>Идентификатор аккаунта для удаления.</p></td>
             </tr>
             </table>
 

@@ -96,7 +96,7 @@
 
             <div class="description">
             <p><p>Контроллер для управления настройками приложения.</p></p>            <p><p>Предоставляет методы для получения и сохранения глобальных настроек
-системы, таких как отображение подписчиков, друзей и таймаут задач.</p></p>        </div>
+системы, таких как отображение подписчиков, друзей и тайм-аут задач.</p></p>        </div>
             
                 <h2>Traits</h2>
 
@@ -126,22 +126,24 @@
             <div class="container-fluid underlined">
                     <div class="row">
                 <div class="col-md-2 type">
-                    <abbr title="Illuminate\Http\Response">Response</abbr>
+                    <abbr title="Illuminate\Http\JsonResponse">JsonResponse</abbr>
                 </div>
                 <div class="col-md-8">
                     <a href="#method_getSettings">getSettings</a>()
         
-                                            <p><p>Получает все настройки приложения.</p></p>                </div>
+                                            <p class="no-description">No description</p>
+                                    </div>
                 <div class="col-md-2"></div>
             </div>
                     <div class="row">
                 <div class="col-md-2 type">
-                    void
+                    <abbr title="Illuminate\Http\JsonResponse">JsonResponse</abbr>
                 </div>
                 <div class="col-md-8">
                     <a href="#method_saveSettings">saveSettings</a>(<abbr title="Illuminate\Http\Request">Request</abbr> $request)
         
-                                            <p><p>Сохраняет настройки приложения.</p></p>                </div>
+                                            <p class="no-description">No description</p>
+                                    </div>
                 <div class="col-md-2"></div>
             </div>
             </div>
@@ -152,8 +154,8 @@
             <div id="method-details">
                     <div class="method-item">
                     <h3 id="method_getSettings">
-        <div class="location">at line 24</div>
-        <code>                    <abbr title="Illuminate\Http\Response">Response</abbr>
+        <div class="location">at line 20</div>
+        <code>                    <abbr title="Illuminate\Http\JsonResponse">JsonResponse</abbr>
     <strong>getSettings</strong>()
         </code>
     </h3>
@@ -163,8 +165,8 @@
             
 
         <div class="method-description">
-                            <p><p>Получает все настройки приложения.</p></p>                <p><p>Этот метод извлекает все записи из таблицы settings
-и возвращает их в ответе HTTP запроса.</p></p>        
+                            <p class="no-description">No description</p>
+                    
         </div>
         <div class="tags">
             
@@ -172,8 +174,8 @@
 
                     <table class="table table-condensed">
         <tr>
-            <td><abbr title="Illuminate\Http\Response">Response</abbr></td>
-            <td><p>Ответ, содержащий все настройки приложения</p></td>
+            <td><abbr title="Illuminate\Http\JsonResponse">JsonResponse</abbr></td>
+            <td></td>
         </tr>
     </table>
 
@@ -186,8 +188,8 @@
             </div>
                     <div class="method-item">
                     <h3 id="method_saveSettings">
-        <div class="location">at line 43</div>
-        <code>                    void
+        <div class="location">at line 94</div>
+        <code>                    <abbr title="Illuminate\Http\JsonResponse">JsonResponse</abbr>
     <strong>saveSettings</strong>(<abbr title="Illuminate\Http\Request">Request</abbr> $request)
         </code>
     </h3>
@@ -197,13 +199,8 @@
             
 
         <div class="method-description">
-                            <p><p>Сохраняет настройки приложения.</p></p>                <p><p>Этот метод обновляет значения настроек в базе данных на основе
-данных, полученных в HTTP запросе. Обновляются следующие настройки:</p>
-<ul>
-<li>show_followers: отображение подписчиков</li>
-<li>show_friends: отображение друзей</li>
-<li>task_timeout: таймаут задач</li>
-</ul></p>        
+                            <p class="no-description">No description</p>
+                    
         </div>
         <div class="tags">
                             <h4>Parameters</h4>
@@ -212,7 +209,7 @@
                     <tr>
                 <td><abbr title="Illuminate\Http\Request">Request</abbr></td>
                 <td>$request</td>
-                <td><p>HTTP запрос, содержащий новые значения настроек</p></td>
+                <td></td>
             </tr>
             </table>
 
@@ -221,7 +218,7 @@
 
                     <table class="table table-condensed">
         <tr>
-            <td>void</td>
+            <td><abbr title="Illuminate\Http\JsonResponse">JsonResponse</abbr></td>
             <td></td>
         </tr>
     </table>

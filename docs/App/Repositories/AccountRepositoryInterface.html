@@ -106,7 +106,7 @@
             <div class="container-fluid underlined">
                     <div class="row">
                 <div class="col-md-2 type">
-                    <abbr title="Illuminate\Database\Eloquent\Collection">Collection</abbr>
+                    <abbr title="Illuminate\Contracts\Pagination\LengthAwarePaginator">LengthAwarePaginator</abbr>
                 </div>
                 <div class="col-md-8">
                     <a href="#method_getAllAccounts">getAllAccounts</a>()
@@ -129,7 +129,7 @@
                     bool
                 </div>
                 <div class="col-md-8">
-                    <a href="#method_deleteAccount">deleteAccount</a>(mixed $id)
+                    <a href="#method_deleteAccount">deleteAccount</a>(int $id)
         
                                             <p><p>Удалить аккаунт по идентификатору.</p></p>                </div>
                 <div class="col-md-2"></div>
@@ -162,8 +162,8 @@
             <div id="method-details">
                     <div class="method-item">
                     <h3 id="method_getAllAccounts">
-        <div class="location">at line 19</div>
-        <code>                    <abbr title="Illuminate\Database\Eloquent\Collection">Collection</abbr>
+        <div class="location">at line 21</div>
+        <code>                    <abbr title="Illuminate\Contracts\Pagination\LengthAwarePaginator">LengthAwarePaginator</abbr>
     <strong>getAllAccounts</strong>()
         </code>
     </h3>
@@ -181,8 +181,8 @@
 
                     <table class="table table-condensed">
         <tr>
-            <td><abbr title="Illuminate\Database\Eloquent\Collection">Collection</abbr></td>
-            <td><p>Возвращает коллекцию всех аккаунтов.</p></td>
+            <td><abbr title="Illuminate\Contracts\Pagination\LengthAwarePaginator">LengthAwarePaginator</abbr></td>
+            <td><p>Возвращает пагинатор со всеми аккаунтами.</p></td>
         </tr>
     </table>
 
@@ -195,7 +195,7 @@
             </div>
                     <div class="method-item">
                     <h3 id="method_createAccount">
-        <div class="location">at line 28</div>
+        <div class="location">at line 30</div>
         <code>                    <a href="../../App/Models/Account.html"><abbr title="App\Models\Account">Account</abbr></a>
     <strong>createAccount</strong>(array $data)
         </code>
@@ -238,9 +238,9 @@
             </div>
                     <div class="method-item">
                     <h3 id="method_deleteAccount">
-        <div class="location">at line 37</div>
+        <div class="location">at line 39</div>
         <code>                    bool
-    <strong>deleteAccount</strong>(mixed $id)
+    <strong>deleteAccount</strong>(int $id)
         </code>
     </h3>
     <div class="details">    
@@ -256,7 +256,7 @@
 
                     <table class="table table-condensed">
                     <tr>
-                <td>mixed</td>
+                <td>int</td>
                 <td>$id</td>
                 <td><p>Идентификатор аккаунта для удаления.</p></td>
             </tr>
@@ -281,7 +281,7 @@
             </div>
                     <div class="method-item">
                     <h3 id="method_getAccessTokenByAccountID">
-        <div class="location">at line 46</div>
+        <div class="location">at line 48</div>
         <code>                    string|null
     <strong>getAccessTokenByAccountID</strong>(mixed $account_id)
         </code>
@@ -324,7 +324,7 @@
             </div>
                     <div class="method-item">
                     <h3 id="method_getScreenNameByToken">
-        <div class="location">at line 55</div>
+        <div class="location">at line 57</div>
         <code>                    string|null
     <strong>getScreenNameByToken</strong>(string $access_token)
         </code>

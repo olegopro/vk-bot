@@ -95,7 +95,7 @@
         
 
             <div class="description">
-            <p><p>Контроллер для управления задачами связанными с лайками в социальной сети ВКонтакте.</p></p>                    </div>
+            <p><p>Контроллер для управления задачами, связанными с лайками в социальной сети ВКонтакте.</p></p>                    </div>
             
                 <h2>Traits</h2>
 
@@ -138,7 +138,7 @@
                     <abbr title="Illuminate\Http\JsonResponse">JsonResponse</abbr>
                 </div>
                 <div class="col-md-8">
-                    <a href="#method_getTasksByStatus">getTasksByStatus</a>(<abbr title="Illuminate\Http\Request">Request</abbr> $request, string|null $status = null, int|null $accountId = null)
+                    <a href="#method_getTasksByStatus">getTasksByStatus</a>(<abbr title="App\Http\Controllers\string|null">string|null</abbr> $status = null, <abbr title="App\Http\Controllers\int|null">int|null</abbr> $accountId = null)
         
                                             <p><p>Возвращает задачи или задачу по указанному статусу и/или ID аккаунта.</p></p>                </div>
                 <div class="col-md-2"></div>
@@ -195,7 +195,7 @@
             </div>
                     <div class="row">
                 <div class="col-md-2 type">
-                    <a href="../../../App/Models/Task.html"><abbr title="App\Models\Task">Task</abbr></a>
+                    <abbr title="Illuminate\Database\Eloquent\Model|App\Models\Task">Task</abbr>
                 </div>
                 <div class="col-md-8">
                     <a href="#method_createPendingLikeTask">createPendingLikeTask</a>(int $accountId, array $post, bool $isCyclic)
@@ -218,6 +218,16 @@
                     <abbr title="Illuminate\Http\JsonResponse">JsonResponse</abbr>
                 </div>
                 <div class="col-md-8">
+                    <a href="#method_createLikeTasksForCityUsers">createLikeTasksForCityUsers</a>(<abbr title="Illuminate\Http\Request">Request</abbr> $request)
+        
+                                            <p><p>Объединенный метод: ищет пользователей по городу и создает задачи на лайки для их последних постов.</p></p>                </div>
+                <div class="col-md-2"></div>
+            </div>
+                    <div class="row">
+                <div class="col-md-2 type">
+                    <abbr title="Illuminate\Http\JsonResponse">JsonResponse</abbr>
+                </div>
+                <div class="col-md-8">
                     <a href="#method_processAndQueuePendingLikeTasks">processAndQueuePendingLikeTasks</a>(string $token)
         
                                             <p><p>Обрабатывает задачи на лайки в статусе &quot;pending&quot; и добавляет их в очередь на выполнение.</p></p>                </div>
@@ -228,37 +238,7 @@
                     <abbr title="Illuminate\Http\JsonResponse">JsonResponse</abbr>
                 </div>
                 <div class="col-md-8">
-                    <a href="#method_createCyclicTask">createCyclicTask</a>(<abbr title="Illuminate\Http\Request">Request</abbr> $request)
-        
-                                            <p><p>Создает циклическую задачу на лайки в социальной сети, используя предоставленные данные.</p></p>                </div>
-                <div class="col-md-2"></div>
-            </div>
-                    <div class="row">
-                <div class="col-md-2 type">
-                    <abbr title="Illuminate\Http\JsonResponse">JsonResponse</abbr>
-                </div>
-                <div class="col-md-8">
-                    <a href="#method_countTasksByAccountAndStatus">countTasksByAccountAndStatus</a>(string|null $status = null, int|null $accountId = null)
-        
-                                            <p><p>Подсчитывает количество задач по указанному статусу и/или ID аккаунта.</p></p>                </div>
-                <div class="col-md-2"></div>
-            </div>
-                    <div class="row">
-                <div class="col-md-2 type">
-                    array
-                </div>
-                <div class="col-md-8">
-                    <a href="#method_generateUniqueRandomMinutes">generateUniqueRandomMinutes</a>(int $count)
-        
-                                            <p><p>Генерирует массив уникальных случайных минут для выполнения задач в течение одного часа.</p></p>                </div>
-                <div class="col-md-2"></div>
-            </div>
-                    <div class="row">
-                <div class="col-md-2 type">
-                    <abbr title="Illuminate\Http\JsonResponse">JsonResponse</abbr>
-                </div>
-                <div class="col-md-8">
-                    <a href="#method_deleteAllTasks">deleteAllTasks</a>(string|null $status = null, int|null $accountId = null)
+                    <a href="#method_deleteAllTasks">deleteAllTasks</a>(<abbr title="App\Http\Controllers\string|null">string|null</abbr> $status = null, <abbr title="App\Http\Controllers\int|null">int|null</abbr> $accountId = null)
         
                                             <p><p>Удаляет все задачи на основе указанного статуса и/или ID аккаунта.</p></p>                </div>
                 <div class="col-md-2"></div>
@@ -291,7 +271,7 @@
             <div id="method-details">
                     <div class="method-item">
                     <h3 id="method___construct">
-        <div class="location">at line 34</div>
+        <div class="location">at line 38</div>
         <code>                    
     <strong>__construct</strong>(<a href="../../../App/Services/LoggingServiceInterface.html"><abbr title="App\Services\LoggingServiceInterface">LoggingServiceInterface</abbr></a> $loggingService, <a href="../../../App/Services/VkClientService.html"><abbr title="App\Services\VkClientService">VkClientService</abbr></a> $vkClient, <a href="../../../App/Repositories/TaskRepositoryInterface.html"><abbr title="App\Repositories\TaskRepositoryInterface">TaskRepositoryInterface</abbr></a> $taskRepository, <a href="../../../App/Repositories/AccountRepositoryInterface.html"><abbr title="App\Repositories\AccountRepositoryInterface">AccountRepositoryInterface</abbr></a> $accountRepository, <a href="../../../App/Http/Controllers/AccountController.html"><abbr title="App\Http\Controllers\AccountController">AccountController</abbr></a> $accountController)
         </code>
@@ -345,9 +325,9 @@
             </div>
                     <div class="method-item">
                     <h3 id="method_getTasksByStatus">
-        <div class="location">at line 49</div>
+        <div class="location">at line 53</div>
         <code>                    <abbr title="Illuminate\Http\JsonResponse">JsonResponse</abbr>
-    <strong>getTasksByStatus</strong>(<abbr title="Illuminate\Http\Request">Request</abbr> $request, string|null $status = null, int|null $accountId = null)
+    <strong>getTasksByStatus</strong>(<abbr title="App\Http\Controllers\string|null">string|null</abbr> $status = null, <abbr title="App\Http\Controllers\int|null">int|null</abbr> $accountId = null)
         </code>
     </h3>
     <div class="details">    
@@ -363,17 +343,12 @@
 
                     <table class="table table-condensed">
                     <tr>
-                <td><abbr title="Illuminate\Http\Request">Request</abbr></td>
-                <td>$request</td>
-                <td></td>
-            </tr>
-                    <tr>
-                <td>string|null</td>
+                <td><abbr title="App\Http\Controllers\string|null">string|null</abbr></td>
                 <td>$status</td>
                 <td><p>Статус задачи для фильтрации.</p></td>
             </tr>
                     <tr>
-                <td>int|null</td>
+                <td><abbr title="App\Http\Controllers\int|null">int|null</abbr></td>
                 <td>$accountId</td>
                 <td><p>ID аккаунта для фильтрации.</p></td>
             </tr>
@@ -398,7 +373,7 @@
             </div>
                     <div class="method-item">
                     <h3 id="method_getTaskInfo">
-        <div class="location">at line 75</div>
+        <div class="location">at line 172</div>
         <code>                    <abbr title="Illuminate\Http\JsonResponse">JsonResponse</abbr>
     <strong>getTaskInfo</strong>(int $taskId)
         </code>
@@ -450,7 +425,7 @@
             </div>
                     <div class="method-item">
                     <h3 id="method_createAndQueueLikeTasksFromNewsfeed">
-        <div class="location">at line 118</div>
+        <div class="location">at line 250</div>
         <code>                    <abbr title="Illuminate\Http\JsonResponse">JsonResponse</abbr>
     <strong>createAndQueueLikeTasksFromNewsfeed</strong>(<abbr title="Illuminate\Http\Request">Request</abbr> $request, bool $isCyclic = false)
         </code>
@@ -507,7 +482,7 @@
             </div>
                     <div class="method-item">
                     <h3 id="method_fetchPostsAndCreateLikeTasks">
-        <div class="location">at line 151</div>
+        <div class="location">at line 324</div>
         <code>            protected        int
     <strong>fetchPostsAndCreateLikeTasks</strong>(<abbr title="Illuminate\Http\Request">Request</abbr> $request, int $account_id, int $maxCreatedCount, bool $isCyclic)
         </code>
@@ -582,7 +557,7 @@
             </div>
                     <div class="method-item">
                     <h3 id="method_isValidPostForTask">
-        <div class="location">at line 215</div>
+        <div class="location">at line 388</div>
         <code>            protected        bool
     <strong>isValidPostForTask</strong>(array $post)
         </code>
@@ -625,7 +600,7 @@
             </div>
                     <div class="method-item">
                     <h3 id="method_checkExistingTask">
-        <div class="location">at line 241</div>
+        <div class="location">at line 414</div>
         <code>            protected        bool
     <strong>checkExistingTask</strong>(int $ownerId, int $postId)
         </code>
@@ -673,8 +648,8 @@
             </div>
                     <div class="method-item">
                     <h3 id="method_createPendingLikeTask">
-        <div class="location">at line 260</div>
-        <code>            protected        <a href="../../../App/Models/Task.html"><abbr title="App\Models\Task">Task</abbr></a>
+        <div class="location">at line 433</div>
+        <code>            protected        <abbr title="Illuminate\Database\Eloquent\Model|App\Models\Task">Task</abbr>
     <strong>createPendingLikeTask</strong>(int $accountId, array $post, bool $isCyclic)
         </code>
     </h3>
@@ -713,7 +688,7 @@
 
                     <table class="table table-condensed">
         <tr>
-            <td><a href="../../../App/Models/Task.html"><abbr title="App\Models\Task">Task</abbr></a></td>
+            <td><abbr title="Illuminate\Database\Eloquent\Model|App\Models\Task">Task</abbr></td>
             <td><p>Созданная задача.</p></td>
         </tr>
     </table>
@@ -736,7 +711,7 @@
             </div>
                     <div class="method-item">
                     <h3 id="method_createLikeTasksForUserWallPosts">
-        <div class="location">at line 294</div>
+        <div class="location">at line 467</div>
         <code>                    <abbr title="Illuminate\Http\JsonResponse">JsonResponse</abbr>
     <strong>createLikeTasksForUserWallPosts</strong>(<abbr title="Illuminate\Http\Request">Request</abbr> $request)
         </code>
@@ -788,8 +763,51 @@
 
             </div>
                     <div class="method-item">
+                    <h3 id="method_createLikeTasksForCityUsers">
+        <div class="location">at line 557</div>
+        <code>                    <abbr title="Illuminate\Http\JsonResponse">JsonResponse</abbr>
+    <strong>createLikeTasksForCityUsers</strong>(<abbr title="Illuminate\Http\Request">Request</abbr> $request)
+        </code>
+    </h3>
+    <div class="details">    
+            
+    
+            
+
+        <div class="method-description">
+                            <p><p>Объединенный метод: ищет пользователей по городу и создает задачи на лайки для их последних постов.</p></p>                <p><p>Принимает параметры account_id, city_id и опционально count.</p></p>        
+        </div>
+        <div class="tags">
+                            <h4>Parameters</h4>
+
+                    <table class="table table-condensed">
+                    <tr>
+                <td><abbr title="Illuminate\Http\Request">Request</abbr></td>
+                <td>$request</td>
+                <td></td>
+            </tr>
+            </table>
+
+            
+                            <h4>Return Value</h4>
+
+                    <table class="table table-condensed">
+        <tr>
+            <td><abbr title="Illuminate\Http\JsonResponse">JsonResponse</abbr></td>
+            <td></td>
+        </tr>
+    </table>
+
+            
+            
+            
+                    </div>
+    </div>
+
+            </div>
+                    <div class="method-item">
                     <h3 id="method_processAndQueuePendingLikeTasks">
-        <div class="location">at line 344</div>
+        <div class="location">at line 637</div>
         <code>                    <abbr title="Illuminate\Http\JsonResponse">JsonResponse</abbr>
     <strong>processAndQueuePendingLikeTasks</strong>(string $token)
         </code>
@@ -831,158 +849,10 @@
 
             </div>
                     <div class="method-item">
-                    <h3 id="method_createCyclicTask">
-        <div class="location">at line 414</div>
-        <code>                    <abbr title="Illuminate\Http\JsonResponse">JsonResponse</abbr>
-    <strong>createCyclicTask</strong>(<abbr title="Illuminate\Http\Request">Request</abbr> $request)
-        </code>
-    </h3>
-    <div class="details">    
-            
-    
-            
-
-        <div class="method-description">
-                            <p><p>Создает циклическую задачу на лайки в социальной сети, используя предоставленные данные.</p></p>                <p><p>Этот метод обрабатывает HTTP-запрос, содержащий необходимые данные для создания циклической задачи,
-включая идентификатор аккаунта, количество задач в час, общее количество задач и статус задачи.
-Он также генерирует уникальное расписание (массив уникальных случайных минут в течение часа),
-в которое будут выполняться задачи, и сохраняет это расписание в базе данных.</p></p>        
-        </div>
-        <div class="tags">
-                            <h4>Parameters</h4>
-
-                    <table class="table table-condensed">
-                    <tr>
-                <td><abbr title="Illuminate\Http\Request">Request</abbr></td>
-                <td>$request</td>
-                <td><p>HTTP-запрос, содержащий следующие параметры:</p>
-<ul>
-<li>account_id: Идентификатор аккаунта, для которого создается задача.</li>
-<li>tasks_per_hour: Количество задач на лайки, которое должно быть выполнено в час.</li>
-<li>tasks_count: Общее количество задач на лайки, которое нужно выполнить.</li>
-<li>status: Статус задачи (например, 'active').</li>
-</ul></td>
-            </tr>
-            </table>
-
-            
-                            <h4>Return Value</h4>
-
-                    <table class="table table-condensed">
-        <tr>
-            <td><abbr title="Illuminate\Http\JsonResponse">JsonResponse</abbr></td>
-            <td><p>Ответ, содержащий статус выполнения операции,
-данные созданной циклической задачи и сообщение об успешном создании задачи.</p></td>
-        </tr>
-    </table>
-
-            
-            
-            
-                    </div>
-    </div>
-
-            </div>
-                    <div class="method-item">
-                    <h3 id="method_countTasksByAccountAndStatus">
-        <div class="location">at line 446</div>
-        <code>                    <abbr title="Illuminate\Http\JsonResponse">JsonResponse</abbr>
-    <strong>countTasksByAccountAndStatus</strong>(string|null $status = null, int|null $accountId = null)
-        </code>
-    </h3>
-    <div class="details">    
-            
-    
-            
-
-        <div class="method-description">
-                            <p><p>Подсчитывает количество задач по указанному статусу и/или ID аккаунта.</p></p>                        
-        </div>
-        <div class="tags">
-                            <h4>Parameters</h4>
-
-                    <table class="table table-condensed">
-                    <tr>
-                <td>string|null</td>
-                <td>$status</td>
-                <td><p>Статус задачи для фильтрации.</p></td>
-            </tr>
-                    <tr>
-                <td>int|null</td>
-                <td>$accountId</td>
-                <td><p>ID аккаунта для фильтрации.</p></td>
-            </tr>
-            </table>
-
-            
-                            <h4>Return Value</h4>
-
-                    <table class="table table-condensed">
-        <tr>
-            <td><abbr title="Illuminate\Http\JsonResponse">JsonResponse</abbr></td>
-            <td><p>Ответ с количеством задач.</p></td>
-        </tr>
-    </table>
-
-            
-            
-            
-                    </div>
-    </div>
-
-            </div>
-                    <div class="method-item">
-                    <h3 id="method_generateUniqueRandomMinutes">
-        <div class="location">at line 470</div>
-        <code>                    array
-    <strong>generateUniqueRandomMinutes</strong>(int $count)
-        </code>
-    </h3>
-    <div class="details">    
-            
-    
-            
-
-        <div class="method-description">
-                            <p><p>Генерирует массив уникальных случайных минут для выполнения задач в течение одного часа.</p></p>                <p><p>Этот метод используется для создания расписания выполнения задач на лайки в социальной сети,
-гарантируя, что каждая задача будет запланирована на уникальную минуту в пределах одного часа.
-Таким образом обеспечивается равномерное распределение задач во времени.</p></p>        
-        </div>
-        <div class="tags">
-                            <h4>Parameters</h4>
-
-                    <table class="table table-condensed">
-                    <tr>
-                <td>int</td>
-                <td>$count</td>
-                <td><p>Количество уникальных минут (задач), которое необходимо сгенерировать.
-Это значение должно быть меньше или равно 60, так как в часе 60 минут.</p></td>
-            </tr>
-            </table>
-
-            
-                            <h4>Return Value</h4>
-
-                    <table class="table table-condensed">
-        <tr>
-            <td>array</td>
-            <td><p>Массив, содержащий уникальные случайные минуты в диапазоне от 1 до 60.
-Каждое значение в массиве указывает минуту в часе, когда должна быть выполнена задача.</p></td>
-        </tr>
-    </table>
-
-            
-            
-            
-                    </div>
-    </div>
-
-            </div>
-                    <div class="method-item">
                     <h3 id="method_deleteAllTasks">
-        <div class="location">at line 494</div>
+        <div class="location">at line 748</div>
         <code>                    <abbr title="Illuminate\Http\JsonResponse">JsonResponse</abbr>
-    <strong>deleteAllTasks</strong>(string|null $status = null, int|null $accountId = null)
+    <strong>deleteAllTasks</strong>(<abbr title="App\Http\Controllers\string|null">string|null</abbr> $status = null, <abbr title="App\Http\Controllers\int|null">int|null</abbr> $accountId = null)
         </code>
     </h3>
     <div class="details">    
@@ -998,12 +868,12 @@
 
                     <table class="table table-condensed">
                     <tr>
-                <td>string|null</td>
+                <td><abbr title="App\Http\Controllers\string|null">string|null</abbr></td>
                 <td>$status</td>
                 <td><p>Статус задач для удаления.</p></td>
             </tr>
                     <tr>
-                <td>int|null</td>
+                <td><abbr title="App\Http\Controllers\int|null">int|null</abbr></td>
                 <td>$accountId</td>
                 <td><p>ID аккаунта для удаления задач.</p></td>
             </tr>
@@ -1028,7 +898,7 @@
             </div>
                     <div class="method-item">
                     <h3 id="method_deleteTaskById">
-        <div class="location">at line 510</div>
+        <div class="location">at line 806</div>
         <code>                    <abbr title="Illuminate\Http\JsonResponse">JsonResponse</abbr>
     <strong>deleteTaskById</strong>(int $id)
         </code>
@@ -1071,7 +941,7 @@
             </div>
                     <div class="method-item">
                     <h3 id="method_deleteLike">
-        <div class="location">at line 541</div>
+        <div class="location">at line 873</div>
         <code>                    <abbr title="Illuminate\Http\JsonResponse">JsonResponse</abbr>
     <strong>deleteLike</strong>(int $taskId)
         </code>

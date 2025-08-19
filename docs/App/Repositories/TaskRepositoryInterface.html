@@ -109,7 +109,7 @@
                     
                 </div>
                 <div class="col-md-8">
-                    <a href="#method_getTasksByStatus">getTasksByStatus</a>(string|null $status, $accountId, $perPage)
+                    <a href="#method_getTasksByStatus">getTasksByStatus</a>(<abbr title="App\Repositories\string|null">string|null</abbr> $status, $accountId, $perPage)
         
                                             <p><p>Получает задачи по их статусу.</p></p>                </div>
                 <div class="col-md-2"></div>
@@ -180,7 +180,7 @@
                     
                 </div>
                 <div class="col-md-8">
-                    <a href="#method_clearQueueBasedOnStatus">clearQueueBasedOnStatus</a>(string|null $status = null)
+                    <a href="#method_clearQueueBasedOnStatus">clearQueueBasedOnStatus</a>(<abbr title="App\Repositories\string|null">string|null</abbr> $status = null, <abbr title="App\Repositories\int|null">int|null</abbr> $accountId = null)
         
                                             <p><p>Очищает очередь задач на основе их статуса.</p></p>                </div>
                 <div class="col-md-2"></div>
@@ -190,7 +190,7 @@
                     
                 </div>
                 <div class="col-md-8">
-                    <a href="#method_deleteJobsByStatus">deleteJobsByStatus</a>(string|null $status)
+                    <a href="#method_deleteJobsByStatus">deleteJobsByStatus</a>(<abbr title="App\Repositories\string|null">string|null</abbr> $status)
         
                                             <p><p>Удаляет задачи из очереди на основе их статуса.</p></p>                </div>
                 <div class="col-md-2"></div>
@@ -205,7 +205,7 @@
                     <h3 id="method_getTasksByStatus">
         <div class="location">at line 21</div>
         <code>                    
-    <strong>getTasksByStatus</strong>(string|null $status, $accountId, $perPage)
+    <strong>getTasksByStatus</strong>(<abbr title="App\Repositories\string|null">string|null</abbr> $status, $accountId, $perPage)
         </code>
     </h3>
     <div class="details">    
@@ -221,7 +221,7 @@
 
                     <table class="table table-condensed">
                     <tr>
-                <td>string|null</td>
+                <td><abbr title="App\Repositories\string|null">string|null</abbr></td>
                 <td>$status</td>
                 <td><p>Статус задач для фильтрации.</p></td>
             </tr>
@@ -457,9 +457,9 @@
             </div>
                     <div class="method-item">
                     <h3 id="method_clearQueueBasedOnStatus">
-        <div class="location">at line 65</div>
+        <div class="location">at line 66</div>
         <code>                    
-    <strong>clearQueueBasedOnStatus</strong>(string|null $status = null)
+    <strong>clearQueueBasedOnStatus</strong>(<abbr title="App\Repositories\string|null">string|null</abbr> $status = null, <abbr title="App\Repositories\int|null">int|null</abbr> $accountId = null)
         </code>
     </h3>
     <div class="details">    
@@ -475,9 +475,14 @@
 
                     <table class="table table-condensed">
                     <tr>
-                <td>string|null</td>
+                <td><abbr title="App\Repositories\string|null">string|null</abbr></td>
                 <td>$status</td>
                 <td><p>Статус задач для очистки.</p></td>
+            </tr>
+                    <tr>
+                <td><abbr title="App\Repositories\int|null">int|null</abbr></td>
+                <td>$accountId</td>
+                <td><p>Идентификатор аккаунта для дополнительной фильтрации.</p></td>
             </tr>
             </table>
 
@@ -491,9 +496,9 @@
             </div>
                     <div class="method-item">
                     <h3 id="method_deleteJobsByStatus">
-        <div class="location">at line 72</div>
+        <div class="location">at line 73</div>
         <code>                    
-    <strong>deleteJobsByStatus</strong>(string|null $status)
+    <strong>deleteJobsByStatus</strong>(<abbr title="App\Repositories\string|null">string|null</abbr> $status)
         </code>
     </h3>
     <div class="details">    
@@ -509,7 +514,7 @@
 
                     <table class="table table-condensed">
                     <tr>
-                <td>string|null</td>
+                <td><abbr title="App\Repositories\string|null">string|null</abbr></td>
                 <td>$status</td>
                 <td><p>Статус задач для удаления.</p></td>
             </tr>

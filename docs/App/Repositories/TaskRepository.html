@@ -118,7 +118,7 @@
                     
                 </div>
                 <div class="col-md-8">
-                    <a href="#method_getTasksByStatus">getTasksByStatus</a>(string|null $status = null, $accountId = null, $perPage)
+                    <a href="#method_getTasksByStatus">getTasksByStatus</a>(<abbr title="App\Repositories\string|null">string|null</abbr> $status = null, $accountId, $perPage)
         
                                             <p><p>Получает задачи по их статусу.</p></p>                </div>
                 <div class="col-md-2"></div>
@@ -149,7 +149,7 @@
                     
                 </div>
                 <div class="col-md-8">
-                    <a href="#method_clearQueueBasedOnStatus">clearQueueBasedOnStatus</a>(string|null $status = null, int|null $accountId = null)
+                    <a href="#method_clearQueueBasedOnStatus">clearQueueBasedOnStatus</a>(<abbr title="App\Repositories\string|null">string|null</abbr> $status = null, <abbr title="App\Repositories\int|null">int|null</abbr> $accountId = null)
         
                                             <p><p>Очищает очередь задач на основе статуса и идентификатора аккаунта.</p></p>                </div>
                 <div class="col-md-2"></div>
@@ -189,7 +189,7 @@
                     
                 </div>
                 <div class="col-md-8">
-                    <a href="#method_deleteJobsByStatus">deleteJobsByStatus</a>(string|null $status, int|null $accountId = null)
+                    <a href="#method_deleteJobsByStatus">deleteJobsByStatus</a>(<abbr title="App\Repositories\string|null">string|null</abbr> $status, $accountId = null)
         
                                             <p><p>Удаляет задачи из таблицы jobs на основе статуса и идентификатора аккаунта.</p></p>                </div>
                 <div class="col-md-2"></div>
@@ -202,7 +202,7 @@
             <div id="method-details">
                     <div class="method-item">
                     <h3 id="method_findTask">
-        <div class="location">at line 23</div>
+        <div class="location">at line 25</div>
         <code>                    
     <strong>findTask</strong>(int $taskId)
         </code>
@@ -245,9 +245,9 @@
             </div>
                     <div class="method-item">
                     <h3 id="method_getTasksByStatus">
-        <div class="location">at line 34</div>
+        <div class="location">at line 36</div>
         <code>                    
-    <strong>getTasksByStatus</strong>(string|null $status = null, $accountId = null, $perPage)
+    <strong>getTasksByStatus</strong>(<abbr title="App\Repositories\string|null">string|null</abbr> $status = null, $accountId, $perPage)
         </code>
     </h3>
     <div class="details">    
@@ -263,7 +263,7 @@
 
                     <table class="table table-condensed">
                     <tr>
-                <td>string|null</td>
+                <td><abbr title="App\Repositories\string|null">string|null</abbr></td>
                 <td>$status</td>
                 <td><p>Статус задач для фильтрации.</p></td>
             </tr>
@@ -289,7 +289,7 @@
             </div>
                     <div class="method-item">
                     <h3 id="method_getTaskStatusById">
-        <div class="location">at line 76</div>
+        <div class="location">at line 82</div>
         <code>                    
     <strong>getTaskStatusById</strong>(int $taskId)
         </code>
@@ -323,7 +323,7 @@
             </div>
                     <div class="method-item">
                     <h3 id="method_countTasksByAccountAndStatus">
-        <div class="location">at line 81</div>
+        <div class="location">at line 87</div>
         <code>                    
     <strong>countTasksByAccountAndStatus</strong>($status = null, $accountId = null)
         </code>
@@ -363,9 +363,9 @@
             </div>
                     <div class="method-item">
                     <h3 id="method_clearQueueBasedOnStatus">
-        <div class="location">at line 107</div>
+        <div class="location">at line 113</div>
         <code>                    
-    <strong>clearQueueBasedOnStatus</strong>(string|null $status = null, int|null $accountId = null)
+    <strong>clearQueueBasedOnStatus</strong>(<abbr title="App\Repositories\string|null">string|null</abbr> $status = null, <abbr title="App\Repositories\int|null">int|null</abbr> $accountId = null)
         </code>
     </h3>
     <div class="details">    
@@ -381,14 +381,14 @@
 
                     <table class="table table-condensed">
                     <tr>
-                <td>string|null</td>
+                <td><abbr title="App\Repositories\string|null">string|null</abbr></td>
                 <td>$status</td>
                 <td><p>Статус задач для очистки.</p></td>
             </tr>
                     <tr>
-                <td>int|null</td>
+                <td><abbr title="App\Repositories\int|null">int|null</abbr></td>
                 <td>$accountId</td>
-                <td><p>Идентификатор аккаунта для дополнительной фильтрации. Если null, фильтрация не применяется.</p></td>
+                <td><p>Идентификатор аккаунта для дополнительной фильтрации.</p></td>
             </tr>
             </table>
 
@@ -402,7 +402,7 @@
             </div>
                     <div class="method-item">
                     <h3 id="method_deleteCompletedTask">
-        <div class="location">at line 177</div>
+        <div class="location">at line 183</div>
         <code>                    
     <strong>deleteCompletedTask</strong>(int $taskId)
         </code>
@@ -436,7 +436,7 @@
             </div>
                     <div class="method-item">
                     <h3 id="method_deleteQueuedTask">
-        <div class="location">at line 192</div>
+        <div class="location">at line 198</div>
         <code>                    
     <strong>deleteQueuedTask</strong>(int $taskId)
         </code>
@@ -479,7 +479,7 @@
             </div>
                     <div class="method-item">
                     <h3 id="method_deleteFailedTask">
-        <div class="location">at line 216</div>
+        <div class="location">at line 222</div>
         <code>                    
     <strong>deleteFailedTask</strong>(int $taskId)
         </code>
@@ -513,9 +513,9 @@
             </div>
                     <div class="method-item">
                     <h3 id="method_deleteJobsByStatus">
-        <div class="location">at line 230</div>
+        <div class="location">at line 235</div>
         <code>                    
-    <strong>deleteJobsByStatus</strong>(string|null $status, int|null $accountId = null)
+    <strong>deleteJobsByStatus</strong>(<abbr title="App\Repositories\string|null">string|null</abbr> $status, $accountId = null)
         </code>
     </h3>
     <div class="details">    
@@ -531,14 +531,14 @@
 
                     <table class="table table-condensed">
                     <tr>
-                <td>string|null</td>
+                <td><abbr title="App\Repositories\string|null">string|null</abbr></td>
                 <td>$status</td>
                 <td><p>Статус задач для удаления.</p></td>
             </tr>
                     <tr>
-                <td>int|null</td>
+                <td></td>
                 <td>$accountId</td>
-                <td><p>Идентификатор аккаунта для дополнительной фильтрации. Если null, фильтрация не применяется.</p></td>
+                <td></td>
             </tr>
             </table>
 
