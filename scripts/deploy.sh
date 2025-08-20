@@ -26,13 +26,13 @@ composer install --no-dev --optimize-autoloader
 echo "⚙️ Настройка конфигурации backend..."
 cat > .env << EOF
 APP_NAME=VKBot
-APP_ENV=local
-APP_DEBUG=true
+APP_ENV=production
+APP_DEBUG=false
 APP_KEY=
 APP_URL=http://${SERVER_HOST}
 
-LOG_CHANNEL=stack
-LOG_LEVEL=debug
+LOG_CHANNEL=null
+LOG_LEVEL=emergency
 
 DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
