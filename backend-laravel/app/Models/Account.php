@@ -85,6 +85,14 @@ class Account extends Model
     }
 
     /**
+     * Статический метод для дешифрования токена
+     */
+    public static function decryptToken(string $encryptedToken): string
+    {
+        return (new static())->decryptAccessToken($encryptedToken);
+    }
+
+    /**
      * Автоматически шифрует access_token при сохранении
      */
     public function setAccessTokenAttribute($value)
@@ -94,19 +102,4 @@ class Account extends Model
         }
     }
 
-    /**
-     * Автоматически дешифрует access_token при получении
-     */
-    public function getAccessTokenAttribute($value)
-    {
-        if ($value) {
-            try {
-                return $this->decryptAccessToken($value);
-            } catch (\Exception $e) {
-                // Если не удалось дешифровать, возвращаем как есть (для обратной совместимости)
-                return $value;
-            }
-        }
-        return $value;
-    }
 }

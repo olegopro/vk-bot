@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Repositories;
@@ -6,7 +7,6 @@ namespace App\Repositories;
 use App\Models\Account;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\DB;
 
 /**
  * Класс репозитория для работы с учетными записями.
@@ -44,6 +44,7 @@ class AccountRepository implements AccountRepositoryInterface
     public function deleteAccount(int $id): bool
     {
         $deletedCount = Account::destroy($id);
+    
         return $deletedCount > 0;
     }
 
@@ -56,7 +57,12 @@ class AccountRepository implements AccountRepositoryInterface
     public function getAccessTokenByAccountID($account_id): string|null
     {
         $account = Account::where('account_id', $account_id)->first();
-        return $account?->access_token;
+
+        if ($account) {
+            return Account::decryptToken($account->access_token);
+        }
+
+        return null;
     }
 
     /**
@@ -67,7 +73,9 @@ class AccountRepository implements AccountRepositoryInterface
      */
     public function getScreenNameByToken($access_token): string|null
     {
-        $account = Account::where('access_token', $access_token)->first();
+        $encryptedToken = Account::encryptToken($access_token);
+        $account = Account::where('access_token', $encryptedToken)->first();
+        
         return $account?->screen_name;
     }
 }
