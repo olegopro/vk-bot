@@ -44,7 +44,7 @@ class AccountRepository implements AccountRepositoryInterface
     public function deleteAccount(int $id): bool
     {
         $deletedCount = Account::destroy($id);
-    
+
         return $deletedCount > 0;
     }
 
@@ -54,7 +54,7 @@ class AccountRepository implements AccountRepositoryInterface
      * @param int $account_id Идентификатор учетной записи.
      * @return string|null Токен доступа или null, если учетная запись не найдена.
      */
-    public function getAccessTokenByAccountID($account_id): string|null
+    public function getAccessTokenByAccountID(int $account_id): string|null
     {
         $account = Account::where('account_id', $account_id)->first();
 
@@ -66,16 +66,15 @@ class AccountRepository implements AccountRepositoryInterface
     }
 
     /**
-     * Получает отображаемое имя (screen name) по токену доступа.
+     * Получает отображаемое имя (screen name) по идентификатору учетной записи.
      *
-     * @param string $access_token Токен доступа.
-     * @return string|null Имя экрана или null, если токен не найден.
+     * @param int $account_id Идентификатор учетной записи.
+     * @return string|null Имя экрана или null, если учетная запись не найдена.
      */
-    public function getScreenNameByToken($access_token): string|null
+    public function getScreenNameByAccountID(int $account_id): string|null
     {
-        $encryptedToken = Account::encryptToken($access_token);
-        $account = Account::where('access_token', $encryptedToken)->first();
-        
+        $account = Account::where('account_id', $account_id)->first();
+
         return $account?->screen_name;
     }
 }

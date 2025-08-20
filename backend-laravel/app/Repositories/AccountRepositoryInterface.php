@@ -2,8 +2,6 @@
 
 namespace App\Repositories;
 
-use Illuminate\Database\Eloquent\Collection;
-
 /**
  * Interface AccountRepositoryInterface
  *
@@ -15,10 +13,9 @@ interface AccountRepositoryInterface
     /**
      * Получить все аккаунты.
      *
-     * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
-     * Возвращает пагинатор со всеми аккаунтами.
+     * @return \Illuminate\Database\Eloquent\Collection Возвращает коллекцию всех учетных записей.
      */
-	public function getAllAccounts();
+    public function getAllAccounts();
 
     /**
      * Создать новый аккаунт с предоставленными данными.
@@ -27,7 +24,7 @@ interface AccountRepositoryInterface
      * @return \App\Models\Account
      * Возвращает экземпляр созданного аккаунта.
      */
-	public function createAccount(array $data);
+    public function createAccount(array $data);
 
     /**
      * Удалить аккаунт по идентификатору.
@@ -36,23 +33,23 @@ interface AccountRepositoryInterface
      * @return bool
      * Возвращает true, если аккаунт успешно удален, иначе false.
      */
-	public function deleteAccount(int $id);
+    public function deleteAccount(int $id);
 
     /**
      * Получить токен доступа по идентификатору аккаунта.
      *
-     * @param mixed $account_id Идентификатор аккаунта.
+     * @param int $account_id Идентификатор аккаунта.
      * @return string|null
      * Возвращает токен доступа или null, если аккаунт не найден.
      */
-	public function getAccessTokenByAccountID($account_id);
+    public function getAccessTokenByAccountID(int $account_id);
 
     /**
-     * Получить screen name аккаунта по токену доступа.
+     * Получить screen name аккаунта по идентификатору аккаунта.
      *
-     * @param string $access_token Токен доступа аккаунта.
+     * @param int $account_id Идентификатор аккаунта.
      * @return string|null
      * Возвращает screen name аккаунта или null, если аккаунт не найден.
      */
-	public function getScreenNameByToken($access_token);
+    public function getScreenNameByAccountID(int $account_id);
 }

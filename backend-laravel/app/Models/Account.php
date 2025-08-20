@@ -1,12 +1,14 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Crypt;
+use Illuminate\Encryption\Encrypter;
 use OpenApi\Attributes as OA;
+use RuntimeException;
 
 #[OA\Schema(
     schema: "AccountModel",
@@ -66,12 +68,28 @@ class Account extends Model
     public $incrementing = false;
 
     /**
+     * Создает Encrypter с производным ключом на основе соли
+     */
+    private function getTokenEncrypter(): Encrypter
+    {
+        $salt = config('app.access_token_salt');
+
+        if (empty($salt)) {
+            throw new RuntimeException('ACCESS_TOKEN_SALT must be configured in .env file');
+        }
+
+        // Создаем производный ключ из основного ключа приложения + соль
+        $derivedKey = substr(hash('sha256', config('app.key') . $salt, true), 0, 32);
+
+        return new Encrypter($derivedKey, config('app.cipher'));
+    }
+
+    /**
      * Шифрует access_token с использованием соли из конфига
      */
     private function encryptAccessToken(string $token): string
     {
-        $salt = config('app.access_token_salt', '');
-        return Crypt::encryptString($token . $salt);
+        return $this->getTokenEncrypter()->encrypt($token);
     }
 
     /**
@@ -79,9 +97,7 @@ class Account extends Model
      */
     private function decryptAccessToken(string $encryptedToken): string
     {
-        $salt = config('app.access_token_salt', '');
-        $decrypted = Crypt::decryptString($encryptedToken);
-        return str_replace($salt, '', $decrypted);
+        return $this->getTokenEncrypter()->decrypt($encryptedToken);
     }
 
     /**

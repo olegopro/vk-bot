@@ -246,7 +246,7 @@ class VkClientService
     public function fetchAccountNewsfeed(int $accountId, ?string $startFrom, LoggingServiceInterface $loggingService)
     {
         $access_token = $this->getAccessTokenByAccountID($accountId);
-        $screen_name = $this->getScreenNameByToken($access_token);
+        $screen_name = $this->getScreenNameByAccountID($accountId);
 
         // Подготовка параметров запроса
         $parameters = [
@@ -287,7 +287,7 @@ class VkClientService
     public function fetchWallPostsByDomain($accountId, $domain, ?string $startFrom, LoggingServiceInterface $loggingService)
     {
         $access_token = $this->getAccessTokenByAccountID($accountId);
-        $screen_name = $this->getScreenNameByToken($access_token);
+        $screen_name = $this->getScreenNameByAccountID($accountId) ?? "account_$accountId";
 
         // Подготовка параметров запроса
         $parameters = [
@@ -420,14 +420,14 @@ class VkClientService
     }
 
     /**
-     * Получает имя пользователя (screen name) по токену доступа.
+     * Получает имя пользователя (screen name) по ID аккаунта.
      *
-     * @param string $access_token Токен доступа.
-     * @return string Имя пользователя.
+     * @param int $account_id ID аккаунта.
+     * @return string|null Имя пользователя.
      */
-    public function getScreenNameByToken(string $access_token)
+    public function getScreenNameByAccountID(int $account_id)
     {
-        return $this->accountRepository->getScreenNameByToken($access_token);
+        return $this->accountRepository->getScreenNameByAccountID($account_id);
     }
 
     /**
@@ -471,16 +471,17 @@ class VkClientService
     /**
      * Добавляет лайк к посту или другому объекту.
      *
+     * @param int $accountId ID аккаунта.
      * @param int $ownerId ID владельца объекта.
      * @param int $itemId ID объекта.
-     * @param string $accessToken Токен доступа для выполнения операции.
      * @param LoggingServiceInterface $loggingService Сервис логирования.
      * @return array Результат добавления лайка.
      * @throws VkException
      */
-    public function addLike(int $ownerId, int $itemId, string $accessToken, LoggingServiceInterface $loggingService)
+    public function addLike(int $accountId, int $ownerId, int $itemId, LoggingServiceInterface $loggingService)
     {
-        $screenName = $this->getScreenNameByToken($accessToken);
+        $accessToken = $this->getAccessTokenByAccountID($accountId);
+        $screenName = $this->getScreenNameByAccountID($accountId);
 
         // Логирование запроса
         $loggingService->log(
@@ -489,8 +490,8 @@ class VkClientService
             'VK API Request',
             [
                 'request' => [
-                    'token' => $accessToken,
-                    'task'  => [
+                    'account_id' => $accountId,
+                    'task'       => [
                         'owner_id' => $ownerId,
                         'item_id'  => $itemId,
                     ],

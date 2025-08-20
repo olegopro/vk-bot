@@ -215,13 +215,12 @@ final class AccountController extends Controller
         $ownerId = $request->input('owner_id');
         $itemId = $request->input('item_id');
         $accountId = $request->input('account_id');
-        $accessToken = $this->vkClient->getAccessTokenByAccountID($accountId);
 
         return response()->json(
             VkClient::addLike(
+                $accountId,
                 $ownerId,
                 $itemId,
-                $accessToken,
                 $this->loggingService
             )
         );
