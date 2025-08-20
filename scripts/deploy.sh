@@ -85,6 +85,7 @@ sudo systemctl reload nginx || sudo systemctl reload apache2 || true
 echo "🚀 Запуск Laravel сервера..."
 cd /var/www/vk-bot/backend-laravel
 nohup php artisan serve --host=0.0.0.0 --port=8080 > /dev/null 2>&1 &
+nohup php artisan queue:work > /dev/null 2>&1 &
 
 echo "✅ Развертывание завершено успешно!"
 echo "🌐 Приложение доступно по адресу: http://${SERVER_HOST}:8080"
