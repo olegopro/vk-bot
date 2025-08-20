@@ -2,9 +2,9 @@
 
 ![ID приложения](./frontend-vue/src/assets/github-images/app-preview.gif)
 
-### Документация
-- **Основная документация**: https://olegopro.github.io/vk-bot/docs - полная документация проекта с описанием архитектуры и компонентов
-- **API документация (Swagger)**: https://olegopro.github.io/vk-bot/swagger - интерактивная документация REST API с возможностью тестирования
+## Документация
+- **Основная документация**: https://olegopro.github.io/vk-bot/docs
+- **API документация (Swagger)**: https://olegopro.github.io/vk-bot/swagger
 
 ## Использованные технологии
 

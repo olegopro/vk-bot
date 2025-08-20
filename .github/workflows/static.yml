@@ -1,5 +1,5 @@
 # Простой workflow для развертывания статического контента на GitHub Pages
-name: Deploy static content to Pages
+name: VK-BOT Doctum  Deploy
 
 on:
     # Запускается при push в основную ветку

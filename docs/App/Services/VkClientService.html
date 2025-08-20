@@ -99,39 +99,6 @@
 а также управления ошибками, возникающими в процессе взаимодействия с API.</p></p>        </div>
             
         
-            <h2>Constants</h2>    <table class="table table-condensed">
-                    <tr>
-                <td>
-                                                            private
-                                                                                API_URI
-                                    </td>
-                <td class="last">
-                    <p><em></em></p>
-                    <p></p>
-                </td>
-            </tr>
-                    <tr>
-                <td>
-                                                            private
-                                                                                API_VERSION
-                                    </td>
-                <td class="last">
-                    <p><em></em></p>
-                    <p></p>
-                </td>
-            </tr>
-                    <tr>
-                <td>
-                                                            private
-                                                                                API_TIMEOUT
-                                    </td>
-                <td class="last">
-                    <p><em></em></p>
-                    <p></p>
-                </td>
-            </tr>
-            </table>
-
     
     
             <h2>Methods</h2>
@@ -300,12 +267,12 @@
             </div>
                     <div class="row">
                 <div class="col-md-2 type">
-                    string
+                    string|null
                 </div>
                 <div class="col-md-8">
-                    <a href="#method_getScreenNameByToken">getScreenNameByToken</a>(string $access_token)
+                    <a href="#method_getScreenNameByAccountID">getScreenNameByAccountID</a>(int $account_id)
         
-                                            <p><p>Получает имя пользователя (screen name) по токену доступа.</p></p>                </div>
+                                            <p><p>Получает имя пользователя (screen name) по ID аккаунта.</p></p>                </div>
                 <div class="col-md-2"></div>
             </div>
                     <div class="row">
@@ -323,7 +290,7 @@
                     array
                 </div>
                 <div class="col-md-8">
-                    <a href="#method_addLike">addLike</a>(int $ownerId, int $itemId, string $accessToken, <a href="../../App/Services/LoggingServiceInterface.html"><abbr title="App\Services\LoggingServiceInterface">LoggingServiceInterface</abbr></a> $loggingService)
+                    <a href="#method_addLike">addLike</a>(int $accountId, int $ownerId, int $itemId, <a href="../../App/Services/LoggingServiceInterface.html"><abbr title="App\Services\LoggingServiceInterface">LoggingServiceInterface</abbr></a> $loggingService)
         
                                             <p><p>Добавляет лайк к посту или другому объекту.</p></p>                </div>
                 <div class="col-md-2"></div>
@@ -356,7 +323,7 @@
             <div id="method-details">
                     <div class="method-item">
                     <h3 id="method___construct">
-        <div class="location">at line 39</div>
+        <div class="location">at line 36</div>
         <code>                    
     <strong>__construct</strong>(<a href="../../App/Repositories/AccountRepositoryInterface.html"><abbr title="App\Repositories\AccountRepositoryInterface">AccountRepositoryInterface</abbr></a> $accountRepository)
         </code>
@@ -390,7 +357,7 @@
             </div>
                     <div class="method-item">
                     <h3 id="method_request">
-        <div class="location">at line 67</div>
+        <div class="location">at line 62</div>
         <code>                    array
     <strong>request</strong>(string $method, array $parameters = [], <abbr title="App\Services\string|null">string|null</abbr> $token = null)
         </code>
@@ -452,7 +419,7 @@
             </div>
                     <div class="method-item">
                     <h3 id="method_fetchAllAccounts">
-        <div class="location">at line 81</div>
+        <div class="location">at line 76</div>
         <code>                    array
     <strong>fetchAllAccounts</strong>()
         </code>
@@ -485,7 +452,7 @@
             </div>
                     <div class="method-item">
                     <h3 id="method_fetchAccountData">
-        <div class="location">at line 99</div>
+        <div class="location">at line 94</div>
         <code>                    array
     <strong>fetchAccountData</strong>(<abbr title="App\Services\array|string">array|string</abbr> $ids)
         </code>
@@ -537,7 +504,7 @@
             </div>
                     <div class="method-item">
                     <h3 id="method_fetchGroupData">
-        <div class="location">at line 135</div>
+        <div class="location">at line 130</div>
         <code>                    array
     <strong>fetchGroupData</strong>(int $id)
         </code>
@@ -589,7 +556,7 @@
             </div>
                     <div class="method-item">
                     <h3 id="method_fetchAccountFollowers">
-        <div class="location">at line 166</div>
+        <div class="location">at line 161</div>
         <code>                    array
     <strong>fetchAccountFollowers</strong>(int $id, int $limit)
         </code>
@@ -646,7 +613,7 @@
             </div>
                     <div class="method-item">
                     <h3 id="method_fetchAccountFriends">
-        <div class="location">at line 186</div>
+        <div class="location">at line 181</div>
         <code>                    array
     <strong>fetchAccountFriends</strong>(int $id, int $limit = 6)
         </code>
@@ -703,7 +670,7 @@
             </div>
                     <div class="method-item">
                     <h3 id="method_fetchAccountCountFriends">
-        <div class="location">at line 207</div>
+        <div class="location">at line 202</div>
         <code>                    array[]
     <strong>fetchAccountCountFriends</strong>(int $accountId, <abbr title="App\Services\int|string">int|string</abbr> $ownerId, string $token)
         </code>
@@ -765,7 +732,7 @@
             </div>
                     <div class="method-item">
                     <h3 id="method_fetchAccountInfo">
-        <div class="location">at line 231</div>
+        <div class="location">at line 226</div>
         <code>                    array
     <strong>fetchAccountInfo</strong>(string $token)
         </code>
@@ -817,7 +784,7 @@
             </div>
                     <div class="method-item">
                     <h3 id="method_fetchAccountNewsfeed">
-        <div class="location">at line 251</div>
+        <div class="location">at line 246</div>
         <code>                    array
     <strong>fetchAccountNewsfeed</strong>(int $accountId, string|null $startFrom, <a href="../../App/Services/LoggingServiceInterface.html"><abbr title="App\Services\LoggingServiceInterface">LoggingServiceInterface</abbr></a> $loggingService)
         </code>
@@ -879,7 +846,7 @@
             </div>
                     <div class="method-item">
                     <h3 id="method_fetchWallPostsByDomain">
-        <div class="location">at line 292</div>
+        <div class="location">at line 287</div>
         <code>                    
     <strong>fetchWallPostsByDomain</strong>($accountId, $domain, string|null $startFrom, <a href="../../App/Services/LoggingServiceInterface.html"><abbr title="App\Services\LoggingServiceInterface">LoggingServiceInterface</abbr></a> $loggingService)
         </code>
@@ -929,7 +896,7 @@
             </div>
                     <div class="method-item">
                     <h3 id="method_fetchLikes">
-        <div class="location">at line 343</div>
+        <div class="location">at line 338</div>
         <code>                    array
     <strong>fetchLikes</strong>(string $access_token, string $type, int $owner_id, int $item_id)
         </code>
@@ -996,7 +963,7 @@
             </div>
                     <div class="method-item">
                     <h3 id="method_fetchUsers">
-        <div class="location">at line 359</div>
+        <div class="location">at line 354</div>
         <code>                    array
     <strong>fetchUsers</strong>(string $users_ids)
         </code>
@@ -1048,7 +1015,7 @@
             </div>
                     <div class="method-item">
                     <h3 id="method_searchUsers">
-        <div class="location">at line 383</div>
+        <div class="location">at line 378</div>
         <code>                    array
     <strong>searchUsers</strong>(<a href="../../App/Filters/VkUserSearchFilter.html"><abbr title="App\Filters\VkUserSearchFilter">VkUserSearchFilter</abbr></a> $filter, int $accountId)
         </code>
@@ -1106,7 +1073,7 @@
             </div>
                     <div class="method-item">
                     <h3 id="method_getCities">
-        <div class="location">at line 406</div>
+        <div class="location">at line 401</div>
         <code>                    array
     <strong>getCities</strong>(string $query, int $countryId = 1, int $count = 100)
         </code>
@@ -1169,7 +1136,7 @@
             </div>
                     <div class="method-item">
                     <h3 id="method_getAccessTokenByAccountID">
-        <div class="location">at line 422</div>
+        <div class="location">at line 417</div>
         <code>                    string
     <strong>getAccessTokenByAccountID</strong>(int $account_id)
         </code>
@@ -1211,10 +1178,10 @@
 
             </div>
                     <div class="method-item">
-                    <h3 id="method_getScreenNameByToken">
-        <div class="location">at line 433</div>
-        <code>                    string
-    <strong>getScreenNameByToken</strong>(string $access_token)
+                    <h3 id="method_getScreenNameByAccountID">
+        <div class="location">at line 428</div>
+        <code>                    string|null
+    <strong>getScreenNameByAccountID</strong>(int $account_id)
         </code>
     </h3>
     <div class="details">    
@@ -1223,16 +1190,16 @@
             
 
         <div class="method-description">
-                            <p><p>Получает имя пользователя (screen name) по токену доступа.</p></p>                        
+                            <p><p>Получает имя пользователя (screen name) по ID аккаунта.</p></p>                        
         </div>
         <div class="tags">
                             <h4>Parameters</h4>
 
                     <table class="table table-condensed">
                     <tr>
-                <td>string</td>
-                <td>$access_token</td>
-                <td><p>Токен доступа.</p></td>
+                <td>int</td>
+                <td>$account_id</td>
+                <td><p>ID аккаунта.</p></td>
             </tr>
             </table>
 
@@ -1241,7 +1208,7 @@
 
                     <table class="table table-condensed">
         <tr>
-            <td>string</td>
+            <td>string|null</td>
             <td><p>Имя пользователя.</p></td>
         </tr>
     </table>
@@ -1255,7 +1222,7 @@
             </div>
                     <div class="method-item">
                     <h3 id="method_setAccountData">
-        <div class="location">at line 446</div>
+        <div class="location">at line 441</div>
         <code>                    array
     <strong>setAccountData</strong>(string $token, <a href="../../App/Repositories/AccountRepositoryInterface.html"><abbr title="App\Repositories\AccountRepositoryInterface">AccountRepositoryInterface</abbr></a> $accountRepository)
         </code>
@@ -1312,9 +1279,9 @@
             </div>
                     <div class="method-item">
                     <h3 id="method_addLike">
-        <div class="location">at line 486</div>
+        <div class="location">at line 481</div>
         <code>                    array
-    <strong>addLike</strong>(int $ownerId, int $itemId, string $accessToken, <a href="../../App/Services/LoggingServiceInterface.html"><abbr title="App\Services\LoggingServiceInterface">LoggingServiceInterface</abbr></a> $loggingService)
+    <strong>addLike</strong>(int $accountId, int $ownerId, int $itemId, <a href="../../App/Services/LoggingServiceInterface.html"><abbr title="App\Services\LoggingServiceInterface">LoggingServiceInterface</abbr></a> $loggingService)
         </code>
     </h3>
     <div class="details">    
@@ -1331,6 +1298,11 @@
                     <table class="table table-condensed">
                     <tr>
                 <td>int</td>
+                <td>$accountId</td>
+                <td><p>ID аккаунта.</p></td>
+            </tr>
+                    <tr>
+                <td>int</td>
                 <td>$ownerId</td>
                 <td><p>ID владельца объекта.</p></td>
             </tr>
@@ -1338,11 +1310,6 @@
                 <td>int</td>
                 <td>$itemId</td>
                 <td><p>ID объекта.</p></td>
-            </tr>
-                    <tr>
-                <td>string</td>
-                <td>$accessToken</td>
-                <td><p>Токен доступа для выполнения операции.</p></td>
             </tr>
                     <tr>
                 <td><a href="../../App/Services/LoggingServiceInterface.html"><abbr title="App\Services\LoggingServiceInterface">LoggingServiceInterface</abbr></a></td>
@@ -1379,7 +1346,7 @@
             </div>
                     <div class="method-item">
                     <h3 id="method_deleteAccount">
-        <div class="location">at line 533</div>
+        <div class="location">at line 529</div>
         <code>                    array
     <strong>deleteAccount</strong>(int $id)
         </code>
@@ -1422,7 +1389,7 @@
             </div>
                     <div class="method-item">
                     <h3 id="method_deleteLike">
-        <div class="location">at line 560</div>
+        <div class="location">at line 556</div>
         <code>                    array
     <strong>deleteLike</strong>(string $accessToken, string $type, int $owner_id, int $item_id)
         </code>
