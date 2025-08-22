@@ -291,7 +291,7 @@ final class TaskController extends Controller
     public function createAndQueueLikeTasksFromNewsfeed(Request $request, bool $isCyclic = false): JsonResponse
     {
         $account_id = $request->input('account_id');
-        $task_count = $request->input('task_count');
+        $task_count = (int) $request->input('task_count');
         $access_token = VkClient::getAccessTokenByAccountID($account_id);
 
         $maxCreatedCount = $task_count;
@@ -693,8 +693,7 @@ final class TaskController extends Controller
             ->value('task_timeout');
 
         // Получаем все задачи со статусом 'pending'
-        $tasks = DB::table('tasks')
-            ->where('status', '=', 'pending')
+        $tasks = Task::where('status', '=', 'pending')
             ->get();
 
         // Инициализируем переменную для хранения текущей задержки
@@ -714,12 +713,10 @@ final class TaskController extends Controller
             $run_at = now()->addSeconds($specificPause);
 
             // Обновляем время запуска и статус задачи
-            DB::table('tasks')
-                ->where('id', $task->id)
-                ->update([
-                    'run_at' => $run_at,
-                    'status' => 'queued'
-                ]);
+            $task->update([
+                'run_at' => $run_at,
+                'status' => 'queued'
+            ]);
 
             // Отправляем задачу в очередь с учетом задержки
             addLikeToPost::dispatch($task, $token, $this->loggingService)
@@ -727,8 +724,7 @@ final class TaskController extends Controller
         }
 
         // Возвращаем список оставшихся задач для информации
-        $tasks = DB::table('tasks')
-            ->where('status', '=', 'pending')
+        $tasks = Task::where('status', '=', 'pending')
             ->get();
 
         return response()->json([

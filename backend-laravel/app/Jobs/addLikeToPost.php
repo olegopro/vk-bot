@@ -47,7 +47,7 @@ class addLikeToPost implements ShouldQueue
 
         // Получение screen name аккаунта по токену доступа
         $account = Account::where('access_token', $token)->first();
-        $this->screenName = $account?->screen_name;
+        $this->screenName = $account?->screen_name ?? 'unknown';
     }
 
     /**
@@ -65,7 +65,7 @@ class addLikeToPost implements ShouldQueue
         /*
             $task->run_at проверяет, установлено ли в объекте задачи свойство run_at, которое обычно содержит временную метку, когда задача должна быть выполнена.
             now() получает текущее время и дату в виде экземпляра Carbon, который является расширением класса DateTime в PHP.
-            new Carbon($task->run_at) создает новый экземпляр Carbon на основе времени, когда задача должна была быть запущена.
+            New Carbon($task->run_at) создает новый экземпляр Carbon на основе времени, когда задача должна была быть запущена.
             diffInSeconds(...) сравнивает два объекта Carbon и возвращает разницу в секундах между ними.
             > $deltaSeconds проверяет, превышает ли разница установленное значение deltaSeconds, которое является допустимым временным интервалом для начала выполнения задачи. Если разница больше, значит задача считается просроченной.
 
@@ -92,7 +92,7 @@ class addLikeToPost implements ShouldQueue
         $task->update(['status' => 'active']);
 
         // Выполнение основной логики задачи
-        $response = $response = VkClient::request('likes.add', [
+        $response = VkClient::request('likes.add', [
             'type'     => 'post',
             'owner_id' => $this->task->owner_id,
             'item_id'  => $this->task->item_id
@@ -130,35 +130,5 @@ class addLikeToPost implements ShouldQueue
             'status'        => 'failed',
             'error_message' => $exception->getMessage()
         ]);
-    }
-
-    /**
-     * Получает статус задачи.
-     *
-     * @return string Статус задачи.
-     */
-    public function getTaskStatus()
-    {
-        return $this->task->status;
-    }
-
-    /**
-     * Получает идентификатор аккаунта, связанного с задачей.
-     *
-     * @return int Идентификатор аккаунта.
-     */
-    public function getAccountId()
-    {
-        return $this->task->account_id;
-    }
-
-    /**
-     * Получает идентификатор задачи.
-     *
-     * @return int Идентификатор задачи.
-     */
-    public function getTaskId()
-    {
-        return $this->task->id;
     }
 }

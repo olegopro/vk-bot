@@ -18,7 +18,8 @@ class Task extends Model
         'item_id',
         'error_message',
         'status',
-        'is_cyclic'
+        'is_cyclic',
+        'run_at'
     ];
 
     public function account()
