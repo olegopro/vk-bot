@@ -78,8 +78,8 @@ yarn build
 
 # Перезапуск сервисов
 echo "🔄 Перезапуск сервисов..."
-sudo systemctl reload php8.2-fpm || true
-sudo systemctl reload nginx || sudo systemctl reload apache2 || true
+sudo systemctl reload php8.2-fpm 
+sudo systemctl reload nginx
 
 # Запуск Laravel сервера
 echo "🚀 Запуск Laravel сервера..."

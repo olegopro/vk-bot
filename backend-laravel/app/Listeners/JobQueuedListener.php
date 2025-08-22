@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Listeners;
 
+use App\Jobs\addLikeToPost;
 use App\Models\Task;
 use Illuminate\Queue\Events\JobQueued;
 
@@ -27,7 +28,10 @@ class JobQueuedListener
     public function handle(JobQueued $event)
     {
         $jobId = $event->id;
-        $taskId = $event->job->getTaskId();
+
+        /** @var addLikeToPost $job */
+        $job = $event->job;
+        $taskId = $job->getTaskId();
 
         Task::where('id', '=', $taskId)->update(['job_id' => $jobId]);
     }

@@ -131,4 +131,14 @@ class addLikeToPost implements ShouldQueue
             'error_message' => $exception->getMessage()
         ]);
     }
+
+    /**
+     * Получает идентификатор задачи.
+     *
+     * @return int Идентификатор задачи.
+     */
+    public function getTaskId(): int
+    {
+        return $this->task->id;
+    }
 }
