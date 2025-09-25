@@ -35,7 +35,7 @@ class VkUserSearchFilter
     public function setDefaults(): self
     {
         $this->filters = [
-            'fields' => 'photo_200,city,country,online,screen_name',
+            'fields' => 'photo_200,city,country,online,screen_name,is_closed',
             'count'  => 10
         ];
 

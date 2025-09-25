@@ -585,7 +585,7 @@ final class TaskController extends Controller
             $domains = [];
             if (!empty($response['response']['items'])) {
                 foreach ($response['response']['items'] as $user) {
-                    if (!empty($user['screen_name'])) {
+                    if (!empty($user['screen_name']) && isset($user['is_closed']) && $user['is_closed'] == 0) {
                         $domains[] = $user['screen_name'];
                     }
                 }
@@ -603,6 +603,8 @@ final class TaskController extends Controller
             $tasks = [];
 
             foreach ($domains as $domain) {
+                sleep(1); // 1 секунда между запросами к стенам
+                
                 $wallPosts = $this->vkClient->fetchWallPostsByDomain($accountId, $domain, null, $this->loggingService);
 
                 if (!empty($wallPosts['data']['response']['items'])) {
