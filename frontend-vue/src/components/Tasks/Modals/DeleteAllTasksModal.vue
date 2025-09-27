@@ -14,8 +14,8 @@
   const tasksStore = useTasksStore()
   const { closeModal } = useModal()
 
-  const tasksCountForDeletion = computed(() => 
-    selectedTasksStatus 
+  const tasksCountForDeletion = computed(() =>
+    selectedTasksStatus
       ? tasksStore.fetchTasks.data?.statuses[selectedTasksStatus] ?? 0
       : tasksStore.fetchTasks.data?.total ?? 0
   )

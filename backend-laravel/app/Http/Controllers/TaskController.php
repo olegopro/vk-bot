@@ -414,8 +414,8 @@ final class TaskController extends Controller
     protected function checkExistingTask(int $ownerId, int $postId): bool
     {
         return Task::where('owner_id', $ownerId)
-            ->where('item_id', $postId)
-            ->first() !== null;
+                ->where('item_id', $postId)
+                ->first() !== null;
     }
 
     /**
@@ -604,7 +604,7 @@ final class TaskController extends Controller
 
             foreach ($domains as $domain) {
                 sleep(1); // 1 секунда между запросами к стенам
-                
+
                 $wallPosts = $this->vkClient->fetchWallPostsByDomain($accountId, $domain, null, $this->loggingService);
 
                 if (!empty($wallPosts['data']['response']['items'])) {

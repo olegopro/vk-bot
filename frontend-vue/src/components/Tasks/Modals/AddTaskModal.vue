@@ -34,7 +34,8 @@
 </script>
 
 <template>
-  <div class="modal fade" :id="modalId" tabindex="-1" aria-labelledby="Add task" aria-hidden="true">
+  <div class="modal fade" :id="modalId" tabindex="-1" aria-labelledby="Add task" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false"
+  >
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
         <div class="modal-header">
@@ -88,3 +89,9 @@
     </div>
   </div>
 </template>
+
+<style lang="scss" scoped>
+  :deep(.modal-footer) {
+    padding: 0 !important;
+  }
+</style>
