@@ -150,7 +150,7 @@ final class TaskController extends Controller
         // Проверяем, является ли первый параметр числом (accountId)
         if (is_numeric($status)) {
             $accountId = $status;
-            $status = null;
+            $status    = null;
         }
 
         $tasks = $this->taskRepository->getTasksByStatus($status, $accountId, null);
@@ -204,8 +204,8 @@ final class TaskController extends Controller
     {
         $taskData = $this->taskRepository->findTask($taskId);
 
-        $ownerId = $taskData->owner_id;
-        $postId = $taskData->item_id;
+        $ownerId   = $taskData->owner_id;
+        $postId    = $taskData->item_id;
         $accountId = $taskData->account_id;
 
         $access_token = $this->accountRepository->getAccessTokenByAccountID($accountId);
@@ -290,8 +290,8 @@ final class TaskController extends Controller
     )]
     public function createAndQueueLikeTasksFromNewsfeed(Request $request, bool $isCyclic = false): JsonResponse
     {
-        $account_id = $request->input('account_id');
-        $task_count = (int) $request->input('task_count');
+        $account_id   = $request->input('account_id');
+        $task_count   = (int) $request->input('task_count');
         $access_token = VkClient::getAccessTokenByAccountID($account_id);
 
         $maxCreatedCount = $task_count;
@@ -323,13 +323,13 @@ final class TaskController extends Controller
      */
     protected function fetchPostsAndCreateLikeTasks(Request $request, int $account_id, int $maxCreatedCount, bool $isCyclic): int
     {
-        $createdCount = 0; // Счетчик созданных задач.
+        $createdCount   = 0; // Счетчик созданных задач.
         $failedAttempts = 0; // Счетчик неудачных попыток получения подходящих постов.
 
         do {
             // Получаем посты из ленты новостей аккаунта.
-            $result = $this->accountController->fetchAccountNewsfeed($request)->getData(true);
-            $data = $result['data']['items']; // Посты из ленты новостей.
+            $result    = $this->accountController->fetchAccountNewsfeed($request)->getData(true);
+            $data      = $result['data']['items']; // Посты из ленты новостей.
             $next_from = $result['data']['next_from']; // Курсор для следующего запроса.
 
             $attemptFailed = true; // Предполагаем, что попытка неудачна до обнаружения подходящего поста.
@@ -414,8 +414,8 @@ final class TaskController extends Controller
     protected function checkExistingTask(int $ownerId, int $postId): bool
     {
         return Task::where('owner_id', $ownerId)
-                ->where('item_id', $postId)
-                ->first() !== null;
+            ->where('item_id', $postId)
+            ->first() !== null;
     }
 
     /**
@@ -439,7 +439,7 @@ final class TaskController extends Controller
 
         // Предполагается, что запрос к API возвращает имя пользователя успешно
         $firstName = $username['response'][0]['first_name'] ?? 'Unknown';
-        $lastName = $username['response'][0]['last_name'] ?? 'Unknown';
+        $lastName  = $username['response'][0]['last_name'] ?? 'Unknown';
 
         usleep(300000); // Пауза для имитации задержки между запросами к API
 
@@ -508,8 +508,8 @@ final class TaskController extends Controller
     )]
     public function createLikeTasksForUserWallPosts(Request $request): JsonResponse
     {
-        $accountId = $request->input('account_id');
-        $domains = $request->input('domains');
+        $accountId    = $request->input('account_id');
+        $domains      = $request->input('domains');
         $access_token = VkClient::getAccessTokenByAccountID($accountId);
 
         if (!$accountId || !$domains || !is_array($domains)) {
@@ -535,7 +535,7 @@ final class TaskController extends Controller
                 $post = $wallPosts['data']['response']['items'][0];
 
                 // Создаем задачу на лайк для извлеченной записи
-                $task = $this->createPendingLikeTask($accountId, $post, false);
+                $task    = $this->createPendingLikeTask($accountId, $post, false);
                 $tasks[] = $task;
             }
         }
@@ -550,9 +550,24 @@ final class TaskController extends Controller
     }
 
     /**
-     * Объединенный метод: ищет пользователей по городу и создает задачи на лайки для их последних постов.
+     * Создает задачи на лайки для пользователей из указанного города.
      *
-     * Принимает параметры account_id, city_id и опционально count.
+     * Метод ищет пользователей по городу через VK API, получает их посты и создает задачи на лайки.
+     * Работает с пагинацией и завершается при 10 пустых ответах API подряд.
+     *
+     * ### Основные особенности:
+     * - Ищет пользователей с открытыми профилями и screen_name
+     * - Создает задачи только для постов с фотографиями
+     * - Отправляет все созданные задачи в очередь
+     * - Всегда возвращает success=true с информацией о результате
+     *
+     * ### Параметры:
+     * - city_id: ID города для поиска пользователей
+     * - account_id: ID аккаунта для выполнения задач
+     * - count: желаемое количество задач (по умолчанию 10)
+     *
+     * @param Request $request HTTP-запрос с параметрами
+     * @return \Illuminate\Http\JsonResponse Ответ с результатом
      */
     public function createLikeTasksForCityUsers(Request $request): JsonResponse
     {
@@ -560,7 +575,7 @@ final class TaskController extends Controller
         $validator = Validator::make($request->all(), [
             'city_id'    => 'required|integer',
             'account_id' => 'required|integer',
-            'count'      => 'integer|nullable'
+            'count'      => 'integer|min:1|max:1000|nullable'
         ]);
 
         if ($validator->fails()) {
@@ -571,55 +586,86 @@ final class TaskController extends Controller
         }
 
         $accountId = (int) $request->input('account_id');
-        $cityId = (int) $request->input('city_id');
-        $count = (int) $request->input('count', 10);
+        $cityId    = (int) $request->input('city_id');
+        $count     = (int) $request->input('count', 10);
 
         try {
-            // 1) Ищем пользователей по городу
-            $filter = new VkUserSearchFilter();
-            $filter->setCity($cityId);
-            $filter->setCount($count);
+            $access_token      = VkClient::getAccessTokenByAccountID($accountId);
+            $tasks             = [];
+            $usedDomains       = [];
+            $offset            = 0;
+            $emptyResponses    = 0; // Счетчик пустых ответов от API
+            $maxEmptyResponses = 10; // Максимум 10 пустых ответов подряд
 
-            $response = $this->vkClient->searchUsers($filter, $accountId);
+            // Основной цикл: ищем пользователей и создаем задачи до достижения нужного количества
+            while (count($tasks) < $count && $emptyResponses < $maxEmptyResponses) {
+                $neededUsers = $count - count($tasks);
+                $neededUsers = max($neededUsers, 10); // Минимум 10 пользователей за раз
 
-            $domains = [];
-            if (!empty($response['response']['items'])) {
+                // Ищем пользователей
+                $filter = (new VkUserSearchFilter())
+                    ->setCity($cityId)
+                    ->setCount($neededUsers)
+                    ->addFilter('offset', $offset);
+
+                $response = $this->vkClient->searchUsers($filter, $accountId);
+
+                // Проверяем, пустой ли ответ
+                if (empty($response['response']['items'])) {
+                    $emptyResponses++; // Увеличиваем счетчик пустых ответов
+                    $offset += $neededUsers; // Увеличиваем offset даже при пустом ответе
+                    continue; // Переходим к следующей итерации
+                }
+
+                // Сбрасываем счетчик пустых ответов, так как нашли пользователей
+                $emptyResponses = 0;
+
                 foreach ($response['response']['items'] as $user) {
-                    if (!empty($user['screen_name']) && isset($user['is_closed']) && $user['is_closed'] == 0) {
-                        $domains[] = $user['screen_name'];
+                    // Проверяем лимит задач
+                    if (count($tasks) >= $count) {
+                        break 2;
+                    }
+
+                    // Проверяем, что пользователь подходит и не использован
+                    if (!empty($user['screen_name']) &&
+                        isset($user['is_closed']) &&
+                        $user['is_closed'] == 0 &&
+                        !in_array($user['screen_name'], $usedDomains)) {
+
+                        // Получаем посты пользователя
+                        sleep(1); // Пауза между запросами
+                        $wallPosts = $this->vkClient->fetchWallPostsByDomain($accountId, $user['screen_name'], null, $this->loggingService);
+
+                        if (!empty($wallPosts['data']['response']['items'])) {
+                            $post = $wallPosts['data']['response']['items'][0];
+
+                            // Создаем задачу
+                            $tasks[]       = $this->createPendingLikeTask($accountId, $post, false);
+                            $usedDomains[] = $user['screen_name'];
+                        }
                     }
                 }
+
+                $offset += $neededUsers;
             }
 
-            if (empty($domains)) {
-                return response()->json([
-                    'success' => false,
-                    'error'   => 'Не удалось получить пользователей по указанному городу'
-                ], 400);
-            }
-
-            // 2) Для каждого пользователя получаем первый пост со стены и создаем pending задачи
-            $access_token = VkClient::getAccessTokenByAccountID($accountId);
-            $tasks = [];
-
-            foreach ($domains as $domain) {
-                sleep(1); // 1 секунда между запросами к стенам
-
-                $wallPosts = $this->vkClient->fetchWallPostsByDomain($accountId, $domain, null, $this->loggingService);
-
-                if (!empty($wallPosts['data']['response']['items'])) {
-                    $post = $wallPosts['data']['response']['items'][0];
-                    $tasks[] = $this->createPendingLikeTask($accountId, $post, false);
-                }
-            }
-
-            // 3) Отправляем pending задачи в очередь
+            // Отправляем задачи в очередь (ВСЕГДА, даже если меньше чем запрошено)
             $this->processAndQueuePendingLikeTasks($access_token);
 
+            // Формируем ответ в зависимости от количества созданных задач
+            $actualCount = count($tasks);
+            $message     = $actualCount === $count
+                ? 'Задачи на лайки созданы для пользователей из выбранного города'
+                : "Создано $actualCount задач из $count (некоторые пользователи не имели подходящих постов)";
+
             return response()->json([
-                'success' => true,
-                'data'    => $tasks,
-                'message' => 'Задачи на лайки созданы для пользователей из выбранного города'
+                'success'         => true,
+                'data'            => $tasks,
+                'message'         => $message,
+                'requested_count' => $count,
+                'actual_count'    => $actualCount,
+                'found_users'     => count($usedDomains),
+                'used_users'      => count($usedDomains)
             ]);
         } catch (\Throwable $e) {
             return response()->json([
