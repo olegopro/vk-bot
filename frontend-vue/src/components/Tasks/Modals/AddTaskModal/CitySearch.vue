@@ -4,7 +4,7 @@
   import { useFilterStore } from '@/stores/FilterStore'
   import { showSuccessNotification } from '@/helpers/notyfHelper'
   import { useDebounceFn } from '@vueuse/core'
-  import type { VkCity } from '@/types/vkontakte'
+  import type { VkCity, VkUserFilters } from '@/types/vkontakte'
   import type { Nullable } from '@/types'
   import type { ApiResponseWrapper } from '@/models/ApiModel'
   import type { CreateTasksResponse } from '@/models/AccountsModel'
@@ -12,6 +12,7 @@
   interface CitySearchProps {
     accountId: string
     taskCount: number
+    filters: VkUserFilters
   }
 
   const props = defineProps<CitySearchProps>()
@@ -80,12 +81,28 @@
   }
 
   const addCityTask = (): void => {
+    // Создаем объект с данными для создания задач, включая фильтры
+    const cityData = {
+      account_id: Number(props.accountId),
+      city_id: cityId.value,
+      count: props.taskCount,
+      // Добавляем фильтры только если они не пустые
+      ...(props.filters.sex !== null && { sex: props.filters.sex }),
+      ...(props.filters.age_from !== null && { age_from: props.filters.age_from }),
+      ...(props.filters.age_to !== null && { age_to: props.filters.age_to }),
+      ...(props.filters.online_only && { online_only: props.filters.online_only }),
+      ...(props.filters.has_photo !== null && { has_photo: props.filters.has_photo }),
+      ...(props.filters.sort !== null && { sort: props.filters.sort }),
+      ...(props.filters.min_friends !== null && { min_friends: props.filters.min_friends }),
+      ...(props.filters.max_friends !== null && { max_friends: props.filters.max_friends }),
+      ...(props.filters.min_followers !== null && { min_followers: props.filters.min_followers }),
+      ...(props.filters.max_followers !== null && { max_followers: props.filters.max_followers }),
+      ...(props.filters.last_seen_days !== null && { last_seen_days: props.filters.last_seen_days }),
+      ...(props.filters.is_friend !== null && { is_friend: props.filters.is_friend })
+    }
+
     accountStore.createTasksForCity.execute({
-      cityData: {
-        account_id: Number(props.accountId),
-        city_id: cityId.value,
-        count: props.taskCount
-      }
+      cityData
     }, CREATE_TASKS_KEY).then(handleSuccess)
   }
 </script>

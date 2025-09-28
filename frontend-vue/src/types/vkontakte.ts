@@ -1,6 +1,7 @@
 /**
  * Сущности для работы с VK API
  */
+import { Nullable } from '@/types/index'
 
 // Интерфейс для города
 export interface VkCity {
@@ -98,4 +99,20 @@ export interface VkAttachment {
       width: number
     }
   }
+}
+
+// Интерфейс для фильтров пользователей VK API
+export interface VkUserFilters {
+  sex: Nullable<number>
+  age_from: Nullable<number>
+  age_to: Nullable<number>
+  online_only: boolean
+  has_photo: Nullable<boolean>
+  sort: Nullable<number> // 0 - по популярности, 1 - по регистрации
+  min_friends: Nullable<number>
+  max_friends: Nullable<number>
+  min_followers: Nullable<number>
+  max_followers: Nullable<number>
+  last_seen_days: Nullable<number>
+  is_friend: Nullable<boolean>
 }

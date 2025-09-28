@@ -9,6 +9,7 @@ use App\Repositories\AccountRepositoryInterface;
 use ATehnix\VkClient\Client;
 use ATehnix\VkClient\Exceptions\VkException;
 use GuzzleHttp\Client as HttpClient;
+use Log;
 
 /**
  * Класс VkClientService предоставляет сервисы для взаимодействия с VK API.
@@ -246,7 +247,7 @@ class VkClientService
     public function fetchAccountNewsfeed(int $accountId, ?string $startFrom, LoggingServiceInterface $loggingService)
     {
         $access_token = $this->getAccessTokenByAccountID($accountId);
-        $screen_name = $this->getScreenNameByAccountID($accountId);
+        $screen_name  = $this->getScreenNameByAccountID($accountId);
 
         // Подготовка параметров запроса
         $parameters = [
@@ -287,7 +288,7 @@ class VkClientService
     public function fetchWallPostsByDomain($accountId, $domain, ?string $startFrom, LoggingServiceInterface $loggingService)
     {
         $access_token = $this->getAccessTokenByAccountID($accountId);
-        $screen_name = $this->getScreenNameByAccountID($accountId) ?? "account_$accountId";
+        $screen_name  = $this->getScreenNameByAccountID($accountId) ?? "account_$accountId";
 
         // Подготовка параметров запроса
         $parameters = [
@@ -368,7 +369,6 @@ class VkClientService
      * Выполняет поиск пользователей ВКонтакте с применением фильтров.
      *
      * Метод использует API ВКонтакте users.search для поиска пользователей
-     * с учетом заданных параметров фильтрации.
      *
      * @param VkUserSearchFilter $filter Фильтр с параметрами поиска
      * @param int $accountId ID аккаунта, от имени которого выполняется поиск
@@ -379,11 +379,151 @@ class VkClientService
     {
         $access_token = $this->getAccessTokenByAccountID($accountId);
 
-        // Получаем параметры поиска из фильтра
+        // Получаем параметры для основного API запроса (без расширенных фильтров)
         $parameters = $filter->getFilters();
 
+        // Удаляем расширенные фильтры из параметров для users.search
+        unset($parameters['extended_filters']);
+
         // Выполняем запрос к API
-        return $this->request('users.search', $parameters, $access_token);
+        $response = $this->request('users.search', $parameters, $access_token);
+
+            // Если есть расширенные фильтры, получаем детальную информацию о пользователях
+        $extendedFilters = $filter->getExtendedFilters();
+        if (isset($response['response']['items'])) {
+            $response = $this->applyExtendedFiltersWithUserDetails($response, $extendedFilters, $access_token);
+        }
+
+        return $response;
+    }
+
+    /**
+     * Применяет расширенные фильтры, получая детальную информацию о пользователях через users.get.
+     * Делает отдельные запросы для каждого пользователя, так как counters доступен только для одного user_id.
+     *
+     * @param array $searchResponse Ответ от users.search
+     * @param array $extendedFilters Расширенные фильтры для применения
+     * @param string $accessToken Токен доступа
+     * @return array Отфильтрованный ответ с детальной информацией о пользователях
+     */
+    private function applyExtendedFiltersWithUserDetails(array $searchResponse, array $extendedFilters, string $accessToken): array
+    {
+        Log::info('Starting extended filters application', [
+            'total_users'      => count($searchResponse['response']['items'] ?? []),
+            'extended_filters' => $extendedFilters
+        ]);
+
+        $filteredUsers  = [];
+        $processedCount = 0;
+        $skippedCount   = 0;
+        $errorCount     = 0;
+
+        // Обрабатываем каждого пользователя отдельно
+        foreach ($searchResponse['response']['items'] as $user) {
+            $userId = $user['id'];
+            $processedCount++;
+
+            Log::info("Processing user ID: $userId", [
+                'processed_count' => $processedCount,
+                'user_data'       => $user
+            ]);
+
+            sleep(1);
+
+            try {
+                // Получаем детальную информацию о пользователе через users.get (только один ID)
+                Log::info("Making users.get request for user ID: $userId");
+
+                $userDetailsResponse = $this->request('users.get', [
+                    'user_ids' => $userId,
+                    'fields'   => 'counters'
+                ], $accessToken);
+
+                Log::info("Received users.get response for user ID: $userId", [
+                    'response' => $userDetailsResponse
+                ]);
+
+                $userDetails = $userDetailsResponse['response'][0] ?? [];
+
+                // Проверяем фильтры по количеству друзей
+                if (isset($extendedFilters['min_friends']) || isset($extendedFilters['max_friends'])) {
+                    $friendsCount = $userDetails['counters']['friends'] ?? 0;
+
+                    Log::info("Checking friends filter for user ID: $userId", [
+                        'friends_count' => $friendsCount,
+                        'min_friends'   => $extendedFilters['min_friends'] ?? null,
+                        'max_friends'   => $extendedFilters['max_friends'] ?? null
+                    ]);
+
+                    if (isset($extendedFilters['min_friends']) && $friendsCount < $extendedFilters['min_friends']) {
+                        Log::info("User ID $userId skipped due to min_friends filter");
+                        $skippedCount++;
+                        continue;
+                    }
+
+                    if (isset($extendedFilters['max_friends']) && $friendsCount > $extendedFilters['max_friends']) {
+                        Log::info("User ID $userId skipped due to max_friends filter");
+                        $skippedCount++;
+                        continue;
+                    }
+                }
+
+                // Проверяем фильтры по количеству подписчиков
+                if (isset($extendedFilters['min_followers']) || isset($extendedFilters['max_followers'])) {
+                    $followersCount = $userDetails['counters']['followers'] ?? 0;
+
+                    Log::info("Checking followers filter for user ID: {$userId}", [
+                        'followers_count' => $followersCount,
+                        'min_followers'   => $extendedFilters['min_followers'] ?? null,
+                        'max_followers'   => $extendedFilters['max_followers'] ?? null
+                    ]);
+
+                    if (isset($extendedFilters['min_followers']) && $followersCount < $extendedFilters['min_followers']) {
+                        Log::info("User ID $userId skipped due to min_followers filter");
+                        $skippedCount++;
+                        continue;
+                    }
+
+                    if (isset($extendedFilters['max_followers']) && $followersCount > $extendedFilters['max_followers']) {
+                        Log::info("User ID $userId skipped due to max_followers filter");
+                        $skippedCount++;
+                        continue;
+                    }
+                }
+
+                // Пользователь прошел все фильтры, добавляем его в результат
+                $filteredUsers[] = $user;
+
+                Log::info("User ID $userId passed all filters and added to results", [
+                    'current_filtered_count' => count($filteredUsers)
+                ]);
+
+                // Пауза между запросами для избежания rate limit
+                usleep(200000); // 0.2 секунды
+
+            } catch (\Exception $e) {
+                $errorCount++;
+                Log::warning("Failed to get user details for user ID $userId: " . $e->getMessage(), [
+                    'error' => $e->getMessage(),
+                    'trace' => $e->getTraceAsString()
+                ]);
+                continue;
+            }
+        }
+
+        // Обновляем ответ с отфильтрованными результатами
+        $searchResponse['response']['items'] = $filteredUsers;
+        $searchResponse['response']['count'] = count($filteredUsers);
+
+        Log::info('Extended filters application completed', [
+            'total_processed' => $processedCount,
+            'total_filtered'  => count($filteredUsers),
+            'total_skipped'   => $skippedCount,
+            'total_errors'    => $errorCount,
+            'final_count'     => $searchResponse['response']['count']
+        ]);
+
+        return $searchResponse;
     }
 
     /**
@@ -481,7 +621,7 @@ class VkClientService
     public function addLike(int $accountId, int $ownerId, int $itemId, LoggingServiceInterface $loggingService)
     {
         $accessToken = $this->getAccessTokenByAccountID($accountId);
-        $screenName = $this->getScreenNameByAccountID($accountId);
+        $screenName  = $this->getScreenNameByAccountID($accountId);
 
         // Логирование запроса
         $loggingService->log(

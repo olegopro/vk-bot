@@ -20,6 +20,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Log;
 use OpenApi\Attributes as OA;
+use Throwable;
 
 /**
  * Контроллер для управления задачами, связанными с лайками в социальной сети ВКонтакте.
@@ -552,11 +553,13 @@ final class TaskController extends Controller
     /**
      * Создает задачи на лайки для пользователей из указанного города.
      *
-     * Метод ищет пользователей по городу через VK API, получает их посты и создает задачи на лайки.
+     * Метод ищет пользователей по городу через VK API с применением фильтров,
+     * получает их посты и создает задачи на лайки.
      * Работает с пагинацией и завершается при 10 пустых ответах API подряд.
      *
      * ### Основные особенности:
      * - Ищет пользователей с открытыми профилями и screen_name
+     * - Применяет дополнительные фильтры для более точного поиска
      * - Создает задачи только для постов с фотографиями
      * - Отправляет все созданные задачи в очередь
      * - Всегда возвращает success=true с информацией о результате
@@ -565,6 +568,12 @@ final class TaskController extends Controller
      * - city_id: ID города для поиска пользователей
      * - account_id: ID аккаунта для выполнения задач
      * - count: желаемое количество задач (по умолчанию 10)
+     * - sex: пол (1 - женщина, 2 - мужчина, null - любой)
+     * - age_from: минимальный возраст
+     * - age_to: максимальный возраст
+     * - online_only: только онлайн пользователи
+     * - last_seen_days: максимальное количество дней с последнего посещения
+     * - is_friend: есть ли в друзьях у текущего пользователя
      *
      * @param Request $request HTTP-запрос с параметрами
      * @return \Illuminate\Http\JsonResponse Ответ с результатом
@@ -573,9 +582,21 @@ final class TaskController extends Controller
     {
         // Валидация входящих данных
         $validator = Validator::make($request->all(), [
-            'city_id'    => 'required|integer',
-            'account_id' => 'required|integer',
-            'count'      => 'integer|min:1|max:1000|nullable'
+            'city_id'        => 'required|integer',
+            'account_id'     => 'required|integer',
+            'count'          => 'integer|min:1|max:1000|nullable',
+            'sex'            => 'integer|in:1,2|nullable',
+            'age_from'       => 'integer|min:14|max:80|nullable',
+            'age_to'         => 'integer|min:14|max:80|nullable',
+            'online_only'    => 'boolean|nullable',
+            'has_photo'      => 'boolean|nullable',
+            'sort'           => 'integer|in:0,1|nullable',
+            'min_friends'    => 'integer|min:0|nullable',
+            'max_friends'    => 'integer|min:0|nullable',
+            'min_followers'  => 'integer|min:0|nullable',
+            'max_followers'  => 'integer|min:0|nullable',
+            'last_seen_days' => 'integer|min:1|nullable',
+            'is_friend'      => 'boolean|nullable'
         ]);
 
         if ($validator->fails()) {
@@ -589,24 +610,79 @@ final class TaskController extends Controller
         $cityId    = (int) $request->input('city_id');
         $count     = (int) $request->input('count', 10);
 
+        // Параметры фильтров
+        $sex          = $request->input('sex');
+        $ageFrom      = $request->input('age_from');
+        $ageTo        = $request->input('age_to');
+        $onlineOnly   = $request->boolean('online_only');
+        $hasPhoto     = $request->input('has_photo');
+        $sort         = $request->input('sort');
+        $minFriends   = $request->input('min_friends');
+        $maxFriends   = $request->input('max_friends');
+        $minFollowers = $request->input('min_followers');
+        $maxFollowers = $request->input('max_followers');
+        $lastSeenDays = $request->input('last_seen_days');
+        $isFriend     = $request->input('is_friend');
+
         try {
             $access_token      = VkClient::getAccessTokenByAccountID($accountId);
             $tasks             = [];
             $usedDomains       = [];
             $offset            = 0;
             $emptyResponses    = 0; // Счетчик пустых ответов от API
-            $maxEmptyResponses = 10; // Максимум 10 пустых ответов подряд
+            $maxEmptyResponses = 1000; // Максимум 1000 пустых ответов подряд
 
             // Основной цикл: ищем пользователей и создаем задачи до достижения нужного количества
             while (count($tasks) < $count && $emptyResponses < $maxEmptyResponses) {
                 $neededUsers = $count - count($tasks);
                 $neededUsers = max($neededUsers, 10); // Минимум 10 пользователей за раз
 
-                // Ищем пользователей
+                // Создаем фильтр с базовыми параметрами
                 $filter = (new VkUserSearchFilter())
                     ->setCity($cityId)
                     ->setCount($neededUsers)
                     ->addFilter('offset', $offset);
+
+                // Применяем фильтры пола и возраста
+                if ($sex !== null) {
+                    $filter->setSex($sex);
+                }
+
+                if ($ageFrom !== null) {
+                    $filter->setAgeFrom($ageFrom);
+                }
+
+                if ($ageTo !== null) {
+                    $filter->setAgeTo($ageTo);
+                }
+
+                if ($onlineOnly) {
+                    $filter->setOnlineOnly(true);
+                }
+                
+                if ($hasPhoto !== null) {
+                    $filter->setHasPhoto($hasPhoto);
+                }
+
+                if ($sort !== null) {
+                    $filter->setSort($sort);
+                }
+
+                if ($lastSeenDays !== null) {
+                    $filter->setLastSeen($lastSeenDays);
+                }
+
+                if ($isFriend !== null) {
+                    $filter->setIsFriend($isFriend);
+                }
+
+                // Применяем расширенные фильтры (через дополнительный API запрос)
+                $filter->setExtendedFilters(
+                    $minFriends,
+                    $maxFriends,
+                    $minFollowers,
+                    $maxFollowers
+                );
 
                 $response = $this->vkClient->searchUsers($filter, $accountId);
 
@@ -665,9 +741,20 @@ final class TaskController extends Controller
                 'requested_count' => $count,
                 'actual_count'    => $actualCount,
                 'found_users'     => count($usedDomains),
-                'used_users'      => count($usedDomains)
+                'used_users'      => count($usedDomains),
+                'applied_filters' => [
+                    'city_id'        => $cityId,
+                    'sex'            => $sex,
+                    'age_from'       => $ageFrom,
+                    'age_to'         => $ageTo,
+                    'online_only'    => $onlineOnly,
+                    'has_photo'      => $hasPhoto,
+                    'sort'           => $sort,
+                    'last_seen_days' => $lastSeenDays,
+                    'is_friend'      => $isFriend
+                ]
             ]);
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             return response()->json([
                 'success' => false,
                 'error'   => $e->getMessage()
