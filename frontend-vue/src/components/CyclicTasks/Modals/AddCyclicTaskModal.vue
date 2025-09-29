@@ -5,7 +5,6 @@
   import { useCyclicTasksStore } from '../../../stores/CyclicTasksStore'
   import TimePicker from '../TimePicker.vue'
   import { useModal } from '../../../composables/useModal'
-  import AddCyclicTaskModal from './AddCyclicTaskModal.vue'
 
   const accountsStore = useAccountsStore()
   const cyclicTaskStore = useCyclicTasksStore()
@@ -48,7 +47,7 @@
       <form @submit.prevent="addNewTask" class="modal-content">
         <div class="modal-header mb-1">
           <h1 class="modal-title fs-5" id="Delete task">Добавление циклической задачи</h1>
-          <button type="button" class="btn-close" @click="closeModal(AddCyclicTaskModal)" aria-label="Close"></button>
+          <button type="button" class="btn-close" @click="closeModal(modalId)" aria-label="Close"></button>
         </div>
 
         <PerfectScrollbar class="ps-modal">
@@ -94,7 +93,7 @@
         </PerfectScrollbar>
 
         <div class="modal-footer mb-1">
-          <button type="button" class="btn btn-secondary" @click=closeModal(AddCyclicTaskModal)>Отмена</button>
+          <button type="button" class="btn btn-secondary" @click=closeModal(modalId)>Отмена</button>
           <button type="submit" class="btn btn-success" :disabled="cyclicTaskStore.fetchCyclicTasks.loading">
             Создать
           </button>

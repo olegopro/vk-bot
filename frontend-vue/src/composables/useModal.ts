@@ -58,6 +58,7 @@ export function useModal() {
 
   // Функция для закрытия модального окна
   const closeModal = (modalId?: string) => {
+    console.log(modalId)
     if (!modalId) return showErrorNotification('Не удалось определить идентификатор модального окна')
 
     const modalToClose = modals.value[modalId] // Получаем модальное окно по ID

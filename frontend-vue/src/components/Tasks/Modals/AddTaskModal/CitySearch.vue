@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { ref, computed } from 'vue'
+  import { ref } from 'vue'
   import { useAccountStore } from '@/stores/AccountStore'
   import { useFilterStore } from '@/stores/FilterStore'
   import { showSuccessNotification } from '@/helpers/notyfHelper'
@@ -25,16 +25,12 @@
   const accountStore = useAccountStore()
   const filterStore = useFilterStore()
 
-  // Константы для ключей параметризованной загрузки
-  const CITY_SEARCH_KEY = 'city-search'
-  const CREATE_TASKS_KEY = 'create-tasks'
-
   const cityName = ref<string>('')
   const cityId = ref<number>(0)
   const selectedCity = ref<Nullable<VkCity>>(null)
   const cities = ref<VkCity[]>([])
 
-  const isCitySelected = computed<boolean>(() => cityId.value > 0)
+  // const isCitySelected = computed<boolean>(() => cityId.value > 0)
 
   // Функция поиска городов с задержкой в 500 мс
   const debouncedSearchCities = useDebounceFn((query: string) => {
@@ -49,7 +45,7 @@
         country_id: 1,
         count: 10
       }
-    }, CITY_SEARCH_KEY)
+    })
       .then(response => {
         cities.value = response.data.items
         showSuccessNotification(response.message)
@@ -103,8 +99,10 @@
 
     accountStore.createTasksForCity.execute({
       cityData
-    }, CREATE_TASKS_KEY).then(handleSuccess)
+    }).then(handleSuccess)
   }
+
+  defineExpose({ addCityTask })
 </script>
 
 <template>
@@ -135,7 +133,7 @@
     </div>
 
     <!-- Индикатор загрузки при поиске городов -->
-    <div v-if="filterStore.searchCities.isLoadingKey(CITY_SEARCH_KEY)" class="d-flex align-items-center justify-content-center mb-3 p-2 bg-light rounded">
+    <div v-if="filterStore.searchCities.loading" class="d-flex align-items-center justify-content-center mb-3 p-2 bg-light rounded">
       <div class="spinner-border spinner-border-sm text-primary me-2" role="status">
         <span class="visually-hidden">Загрузка...</span>
       </div>
@@ -143,22 +141,12 @@
     </div>
 
     <!-- Индикатор загрузки при создании задач -->
-    <div v-if="accountStore.createTasksForCity.isLoadingKey(CREATE_TASKS_KEY)" class="d-flex align-items-center justify-content-center mb-3 p-3 bg-success bg-opacity-10 border border-success border-opacity-25 rounded">
+    <div v-if="accountStore.createTasksForCity.loading" class="d-flex align-items-center justify-content-center mb-3 p-3 bg-success bg-opacity-10 border border-success border-opacity-25 rounded">
       <div class="spinner-grow spinner-grow-sm text-success me-2" role="status">
         <span class="visually-hidden">Создание задач...</span>
       </div>
       <small class="text-success fw-medium">Создание задач для пользователей из города...</small>
     </div>
-
-    <form @submit.prevent="addCityTask">
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" @click="emit('cancel')">Отмена</button>
-        <button type="submit" class="btn btn-success" :disabled="accountStore.createTasksForCity.isLoadingKey(CREATE_TASKS_KEY) || !isCitySelected">
-          Создать
-          <span v-if="accountStore.createTasksForCity.isLoadingKey(CREATE_TASKS_KEY)" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-        </button>
-      </div>
-    </form>
   </div>
 </template>
 

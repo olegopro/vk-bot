@@ -1,16 +1,23 @@
 <script setup lang="ts">
-  import { ref, getCurrentInstance } from 'vue'
+  import { ref, getCurrentInstance, computed } from 'vue'
   import { useAccountsStore } from '@/stores/AccountsStore'
   import { useTasksStore } from '@/stores/TasksStore'
   import { showSuccessNotification } from '@/helpers/notyfHelper'
   import { useModal } from '@/composables/useModal'
   import NewsfeedSearch from './AddTaskModal/NewsfeedSearch.vue'
   import CitySearch from './AddTaskModal/CitySearch.vue'
+  import FooterSection from '@/global-components/modal-component/footer/FooterSection.vue'
   import type { ApiResponseWrapper } from '@/models/ApiModel'
   import type { VkNewsFeedItem, VkUserFilters } from '@/types/vkontakte'
   import type { CreateTasksResponse } from '@/models/AccountsModel'
+  import { useAccountStore } from '@/stores/AccountStore'
+
+  // Рефы для дочерних компонентов
+  const newsfeedSearchRef = ref<InstanceType<typeof NewsfeedSearch>>()
+  const citySearchRef = ref<InstanceType<typeof CitySearch>>()
 
   const accountsStore = useAccountsStore()
+  const accountStore = useAccountStore()
   const tasksStore = useTasksStore()
   const { closeModal } = useModal()
 
@@ -54,6 +61,24 @@
     // Сброс фильтров
     userFilters.value = { ...DEFAULT_USER_FILTERS }
   }
+
+  const handleTaskSubmit = (): void => {
+    switch (searchType.value) {
+      case 'newsfeed':
+        newsfeedSearchRef.value?.addFeedTask()
+        break
+      case 'city':
+        citySearchRef.value?.addCityTask()
+        break
+    }
+  }
+
+  const loadingStates = {
+    newsfeed: computed(() => accountStore.addPostsToLike.loading),
+    city: computed(() => accountStore.createTasksForCity.loading)
+  }
+
+  const isFooterLoading = computed(() => loadingStates[searchType.value]?.value ?? false)
 </script>
 
 <template>
@@ -282,6 +307,7 @@
           <!-- Компоненты для разных типов поиска -->
           <NewsfeedSearch
             v-if="searchType === 'newsfeed'"
+            ref="newsfeedSearchRef"
             :account-id="accountId"
             :task-count="taskCount"
             @success="handleTaskSuccess"
@@ -290,6 +316,7 @@
 
           <CitySearch
             v-if="searchType === 'city'"
+            ref="citySearchRef"
             :account-id="accountId"
             :task-count="taskCount"
             :filters="userFilters"
@@ -298,13 +325,13 @@
           />
 
         </div>
+
+        <FooterSection
+          :on-submit="handleTaskSubmit"
+          :on-cancel="modalHide"
+          :is-loading="isFooterLoading"
+        />
       </div>
     </div>
   </div>
 </template>
-
-<style lang="scss" scoped>
-  :deep(.modal-footer) {
-    padding: 0 !important;
-  }
-</style>

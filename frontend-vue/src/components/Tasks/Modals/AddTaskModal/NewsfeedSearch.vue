@@ -25,16 +25,6 @@
     })
       .then((response: ApiResponseWrapper<VkNewsFeedItem[]>) => emit('success', response))
   }
-</script>
 
-<template>
-  <form @submit.prevent="addFeedTask">
-    <div class="modal-footer">
-      <button type="button" class="btn btn-secondary" @click="emit('cancel')">Отмена</button>
-      <button type="submit" class="btn btn-success" :disabled="accountStore.addPostsToLike.loading">
-        Создать
-        <span v-if="accountStore.addPostsToLike.loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-      </button>
-    </div>
-  </form>
-</template>
+  defineExpose({ addFeedTask })
+</script>
