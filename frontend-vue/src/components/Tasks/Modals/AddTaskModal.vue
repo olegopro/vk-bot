@@ -7,6 +7,7 @@
   import NewsfeedSearch from './AddTaskModal/NewsfeedSearch.vue'
   import CitySearch from './AddTaskModal/CitySearch.vue'
   import FooterSection from '@/global-components/modal-component/footer/FooterSection.vue'
+  import BodySection from '@/global-components/modal-component/BodySection.vue'
   import type { ApiResponseWrapper } from '@/models/ApiModel'
   import type { VkNewsFeedItem, VkUserFilters } from '@/types/vkontakte'
   import type { CreateTasksResponse } from '@/models/AccountsModel'
@@ -90,8 +91,8 @@
           <h1 class="modal-title fs-5" id="Delete task">Добавление задачи</h1>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
-        <div class="modal-body">
 
+        <BodySection :key="searchType">
           <!-- Выбор аккаунта и количества постов -->
           <select class="form-select mb-3" aria-label="Default select example" v-model="accountId">
             <option disabled selected value="selectAccount">Выберите аккаунт</option>
@@ -324,7 +325,7 @@
             @cancel="modalHide"
           />
 
-        </div>
+        </BodySection>
 
         <FooterSection
           :on-submit="handleTaskSubmit"

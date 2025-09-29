@@ -141,7 +141,7 @@
     </div>
 
     <!-- Индикатор загрузки при создании задач -->
-    <div v-if="accountStore.createTasksForCity.loading" class="d-flex align-items-center justify-content-center mb-3 p-3 bg-success bg-opacity-10 border border-success border-opacity-25 rounded">
+    <div v-if="accountStore.createTasksForCity.loading" class="d-flex align-items-center justify-content-center p-3 bg-success bg-opacity-10 border border-success border-opacity-25 rounded">
       <div class="spinner-grow spinner-grow-sm text-success me-2" role="status">
         <span class="visually-hidden">Создание задач...</span>
       </div>
@@ -152,8 +152,6 @@
 
 <style scoped lang="scss">
   .city-results {
-    max-height: 200px;
-    overflow-y: auto;
     border: 1px solid #dee2e6;
     border-radius: 0.375rem;
 
