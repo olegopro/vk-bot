@@ -1,9 +1,9 @@
 <script>
-  import TheNavbar from '../components/TheNavbar.vue'
+  import NavbarComponent from '../components-ui/navbar-component/NavbarComponent.vue'
 
   export default {
     name: 'MainLayout',
-    components: { TheNavbar }
+    components: { NavbarComponent }
   }
 </script>
 
@@ -11,7 +11,7 @@
   <PerfectScrollbar>
     <main>
       <div class="container">
-        <TheNavbar />
+        <NavbarComponent />
         <RouterView />
       </div>
     </main>

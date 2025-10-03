@@ -1,12 +1,12 @@
 <script>
 
   import MainLayout from './layouts/MainLayout.vue'
-  import GlobalModal from './components/GlobalModal.vue'
+  import ModalComponent from './components-ui/modal-component/ModalComponent.vue'
 
   export default {
     components: {
       MainLayout,
-      GlobalModal
+      ModalComponent
     },
 
     computed: {

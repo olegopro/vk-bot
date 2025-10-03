@@ -65,7 +65,7 @@ export function useModal() {
     modalToClose?.hide() // Если модальное окно найдено, скрываем его
   }
 
-  // Функция для регистрации GlobalModal ref
+  // Функция для регистрации ModalComponent ref
   const setGlobalModalRef = (globalModalRef: Nullable<ComponentInternalInstance>): void => {
     GlobalModalRef.value = globalModalRef
   }

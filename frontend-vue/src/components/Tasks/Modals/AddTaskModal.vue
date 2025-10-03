@@ -6,8 +6,8 @@
   import { useModal } from '@/composables/useModal'
   import NewsfeedSearch from './AddTaskModal/NewsfeedSearch.vue'
   import CitySearch from './AddTaskModal/CitySearch.vue'
-  import FooterSection from '@/global-components/modal-component/footer/FooterSection.vue'
-  import BodySection from '@/global-components/modal-component/BodySection.vue'
+  import FooterSection from '@/components-ui/modal-component/sections/FooterSection.vue'
+  import BodySection from '@/components-ui/modal-component/sections/BodySection.vue'
   import type { ApiResponseWrapper } from '@/models/ApiModel'
   import type { VkNewsFeedItem, VkUserFilters } from '@/types/vkontakte'
   import type { CreateTasksResponse } from '@/models/AccountsModel'
@@ -120,9 +120,9 @@
           <div v-if="searchType === 'city'" class="border rounded p-3 mb-3 bg-light">
             <div class="d-flex justify-content-between align-items-center mb-3">
               <h6 class="mb-0">Фильтры пользователей</h6>
-              <button 
-                type="button" 
-                class="btn btn-sm btn-outline-secondary" 
+              <button
+                type="button"
+                class="btn btn-sm btn-outline-secondary"
                 @click="showAdvancedFilters = !showAdvancedFilters"
               >
                 {{ showAdvancedFilters ? 'Скрыть' : 'Показать' }} расширенные фильтры
@@ -153,22 +153,22 @@
                 <label class="form-label">Возраст</label>
                 <div class="row g-2">
                   <div class="col-6">
-                    <input 
-                      type="number" 
-                      class="form-control form-control-sm" 
-                      placeholder="От" 
-                      min="14" 
-                      max="80" 
+                    <input
+                      type="number"
+                      class="form-control form-control-sm"
+                      placeholder="От"
+                      min="14"
+                      max="80"
                       v-model="userFilters.age_from"
                     >
                   </div>
                   <div class="col-6">
-                    <input 
-                      type="number" 
-                      class="form-control form-control-sm" 
-                      placeholder="До" 
-                      min="14" 
-                      max="80" 
+                    <input
+                      type="number"
+                      class="form-control form-control-sm"
+                      placeholder="До"
+                      min="14"
+                      max="80"
                       v-model="userFilters.age_to"
                     >
                   </div>
