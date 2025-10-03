@@ -969,17 +969,6 @@ const getAdjustedQualityImageUrl = (sizes, currentColumnClass) => {
 }
 ```
 
-### Provide/Inject Pattern
-
-**Использование в модальных окнах:**
-```typescript
-// В родительском компоненте
-provide('closeModal', closeModal)
-
-// В дочернем компоненте
-const closeModal = inject('closeModal')
-```
-
 ### ShallowRef для компонентов
 
 **Оптимизация:**

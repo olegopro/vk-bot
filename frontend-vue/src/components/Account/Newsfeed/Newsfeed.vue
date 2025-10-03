@@ -1,10 +1,9 @@
 <script setup>
-  import { onMounted, onUnmounted, provide, ref, shallowRef } from 'vue'
+  import { onMounted, onUnmounted, ref } from 'vue'
   import { useAccountStore } from '@/stores/AccountStore'
   import { showSuccessNotification } from '@/helpers/notyfHelper'
   import { useRoute } from 'vue-router'
   import { debounce } from 'lodash'
-  import { useModal } from '@/composables/useModal'
   import NewsfeedItem from '@/components/Account/Newsfeed/NewsfeedItem.vue'
 
   const accountStore = useAccountStore()
@@ -15,9 +14,6 @@
   const loadingStatus = ref([])
   const currentColumnClass = ref('col-4')
   const showNewsfeed = ref(true)
-  const modalComponent = shallowRef(null)
-  const ownerDataById = ref(null)
-  const { isOpen, showModal, closeModal } = useModal()
 
   // Локальное состояние для новостной ленты
   const accountNewsFeed = ref([])
@@ -47,8 +43,6 @@
     { class: 'col-4', icon: 'bi-3-square', iconFill: 'bi-3-square-fill pe-none' },
     { class: 'col-3', icon: 'bi-4-square', iconFill: 'bi-4-square-fill pe-none' }
   ])
-
-  provide('closeModal', closeModal)
 
   const changeColumnClass = async (newClass) => {
     // Очищаем текущую ленту новостей и сбрасываем состояния пагинации
@@ -178,15 +172,6 @@
       </div>
     </transition>
   </div>
-
-  <Teleport to="body">
-    <component v-if="isOpen"
-      @mounted="showModal"
-      :is="modalComponent"
-      :owner-data="ownerDataById"
-    />
-  </Teleport>
-
 </template>
 
 <style scoped lang="scss">
