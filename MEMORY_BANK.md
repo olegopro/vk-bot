@@ -376,7 +376,14 @@ src/
 │   ├── CyclicTasks/
 │   └── Accounts/
 ├── composables/              # Переиспользуемая логика
-├── global-components/        # Глобальные компоненты
+├── components-ui/            # UI компоненты
+│   ├── modal-component/      # Модальные окна
+│   │   ├── ModalComponent.vue
+│   │   └── sections/
+│   │       ├── BodySection.vue
+│   │       └── FooterSection.vue
+│   └── navbar-component/     # Навигация
+│       └── NavbarComponent.vue
 ├── handlers/                 # Обработчики событий
 ├── helpers/                  # Вспомогательные функции
 ├── layouts/                  # Layouts
@@ -517,7 +524,7 @@ onMounted(() => {
 ### Модальные окна
 
 **Архитектура:**
-1. Глобальный компонент `GlobalModal.vue` с Teleport
+1. Глобальный компонент `ModalComponent.vue` с Teleport
 2. Каждое модальное окно - отдельный компонент
 3. Управление через `useModal` composable
 4. ID модального окна из `getCurrentInstance()?.type.__name`
@@ -987,7 +994,7 @@ const modalComponent = shallowRef(null)
 
 ### Глобальный менеджер модальных окон
 
-**GlobalModal.vue структура:**
+**ModalComponent.vue структура:**
 ```vue
 <script setup lang="ts">
 const { isOpen, currentComponent, currentProps, setGlobalModalRef } = useModal()
@@ -1065,8 +1072,8 @@ const closeModal = (modalId?: string) => {
 <script setup lang="ts">
 import { getCurrentInstance } from 'vue'
 import { useModal } from '@/composables/useModal'
-import BodySection from '@/global-components/modal-component/BodySection.vue'
-import FooterSection from '@/global-components/modal-component/footer/FooterSection.vue'
+import BodySection from '@/components-ui/modal-component/sections/BodySection.vue'
+import FooterSection from '@/components-ui/modal-component/sections/FooterSection.vue'
 
 const modalId = getCurrentInstance()?.type.__name
 const { closeModal } = useModal()
@@ -1262,7 +1269,7 @@ if (!parameters) throw new Error('Не указаны параметры')
 5. ✅ Порядок в `<script>`: Computed -> Methods -> Watchers -> Hooks
 6. ✅ Простые выражения в template
 7. ✅ Все API через `useApi` composable
-8. ✅ Модальные окна через `useModal` + `GlobalModal`
+8. ✅ Модальные окна через `useModal` + `ModalComponent`
 
 
 
@@ -1338,7 +1345,7 @@ $filter->setCity($id)->setSex($sex)->setAgeFrom($age)->getFilters()
 - При удалении задач удаляются и из `jobs` таблицы
 
 ### Frontend:
-- Модальные окна управляются глобально через один `GlobalModal`
+- Модальные окна управляются глобально через один `ModalComponent`
 - PerfectScrollbar с кастомными классами для разных контекстов
 - IntersectionObserver для infinite scroll
 - Vue Masonry для сетки изображений
