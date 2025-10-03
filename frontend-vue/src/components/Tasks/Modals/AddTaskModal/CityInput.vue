@@ -1,7 +1,7 @@
 <script setup lang="ts">
   import { ref } from 'vue'
-  import { useAccountStore } from '@/stores/AccountStore'
   import { useFilterStore } from '@/stores/FilterStore'
+  import { useAccountStore } from '@/stores/AccountStore'
   import { showSuccessNotification } from '@/helpers/notyfHelper'
   import { filterNullableValues } from '@/helpers/objectHelper'
   import { useDebounceFn } from '@vueuse/core'
@@ -10,28 +10,25 @@
   import type { ApiResponseWrapper } from '@/models/ApiModel'
   import type { CreateTasksResponse } from '@/models/AccountsModel'
 
-  interface CitySearchProps {
+  interface CityInputProps {
     accountId: string
     taskCount: number
     filters: VkUserFilters
   }
 
-  const props = defineProps<CitySearchProps>()
+  const props = defineProps<CityInputProps>()
 
   const emit = defineEmits<{
     success: [response: ApiResponseWrapper<CreateTasksResponse>]
-    cancel: []
   }>()
 
-  const accountStore = useAccountStore()
   const filterStore = useFilterStore()
+  const accountStore = useAccountStore()
 
   const cityName = ref<string>('')
   const cityId = ref<number>(0)
   const selectedCity = ref<Nullable<VkCity>>(null)
   const cities = ref<VkCity[]>([])
-
-  // const isCitySelected = computed<boolean>(() => cityId.value > 0)
 
   // Функция поиска городов с задержкой в 500 мс
   const debouncedSearchCities = useDebounceFn((query: string) => {
@@ -68,17 +65,20 @@
     cities.value = []
   }
 
-  const handleSuccess = (response: ApiResponseWrapper<CreateTasksResponse>): void => {
-    // Сброс состояния формы поиска по городу
+  // Метод для сброса состояния (вызывается из родителя)
+  const reset = (): void => {
     cityName.value = ''
     selectedCity.value = null
     cityId.value = 0
     cities.value = []
+  }
+
+  // Создание задач для города
+  const handleSuccess = (response: ApiResponseWrapper<CreateTasksResponse>): void => {
     emit('success', response)
   }
 
   const addCityTask = (): void => {
-    // Создаем объект с данными для создания задач, включая фильтры
     const cityData = {
       account_id: Number(props.accountId),
       city_id: cityId.value,
@@ -91,7 +91,7 @@
     }).then(handleSuccess)
   }
 
-  defineExpose({ addCityTask })
+  defineExpose({ reset, addCityTask })
 </script>
 
 <template>
@@ -127,14 +127,6 @@
         <span class="visually-hidden">Загрузка...</span>
       </div>
       <small class="text-muted">Поиск городов...</small>
-    </div>
-
-    <!-- Индикатор загрузки при создании задач -->
-    <div v-if="accountStore.createTasksForCity.loading" class="d-flex align-items-center justify-content-center p-3 bg-success bg-opacity-10 border border-success border-opacity-25 rounded">
-      <div class="spinner-grow spinner-grow-sm text-success me-2" role="status">
-        <span class="visually-hidden">Создание задач...</span>
-      </div>
-      <small class="text-success fw-medium">Создание задач для пользователей из города...</small>
     </div>
   </div>
 </template>
