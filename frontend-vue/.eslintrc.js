@@ -30,7 +30,8 @@ module.exports = {
     'import/resolver': {
       typescript: {
         alwaysTryTypes: true,
-        project: './tsconfig.json'
+        project: './tsconfig.json',
+        extensions: ['.js', '.jsx', '.ts', '.tsx', '.vue']
       },
       node: {
         extensions: ['.js', '.jsx', '.ts', '.tsx', '.vue']
@@ -71,7 +72,11 @@ module.exports = {
       prefix: '@'
     }],
     // Отключаем предупреждение о named exports как default imports
-    'import/no-named-as-default': 'off'
+    'import/no-named-as-default': 'off',
+    // Отключаем проверку unresolved для алиасов @/ (TypeScript уже проверяет)
+    'import/no-unresolved': ['error', {
+      ignore: ['^@/']
+    }]
   },
 
   overrides: [

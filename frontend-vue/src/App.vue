@@ -19,5 +19,5 @@
 
 <template>
   <component :is="layout" />
-  <GlobalModal />
+  <ModalComponent />
 </template>
