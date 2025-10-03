@@ -625,9 +625,25 @@ export default {
 - Rate limiting: 10 запросов в секунду через `axios-rate-limit`
 - Централизованная настройка в `helpers/axiosConfig.ts`
 
-### Notifications
+### Helpers
 
-**Использование Notyf:**
+**objectHelper.ts** - вспомогательные функции для работы с объектами:
+
+```typescript
+import { filterNullableValues } from '@/helpers/objectHelper'
+
+// Фильтрует объект от свойств с null и undefined
+const filtered = filterNullableValues({ a: 1, b: null, c: false })
+// Результат: { a: 1, c: false }
+```
+
+**Использование:**
+- Очистка объектов от пустых значений перед отправкой на API
+- Работа с фильтрами и формами
+- Функциональный подход через `Object.fromEntries` + `filter`
+
+**notyfHelper.ts** - уведомления через Notyf:
+
 ```typescript
 import { showSuccessNotification, showErrorNotification } from '@/helpers/notyfHelper'
 
