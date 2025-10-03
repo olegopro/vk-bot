@@ -30,6 +30,9 @@
   const selectedCity = ref<Nullable<VkCity>>(null)
   const cities = ref<VkCity[]>([])
 
+  // Состояние фокуса для input поля города
+  const isCityInputFocused = ref<boolean>(false)
+
   // Функция поиска городов с задержкой в 500 мс
   const debouncedSearchCities = useDebounceFn((query: string) => {
     if (query.length < 2) {
@@ -97,14 +100,18 @@
 <template>
   <div>
     <!-- Поиск по городу -->
-    <div class="input-group mb-3">
-      <span class="input-group-text">Город</span>
+    <div class="input-group mb-3" style="box-shadow: rgba(0, 0, 0, 0.1) 0px 0px 10px inset; border-radius: 0.375rem; border: 1px solid #49b4f082;">
+      <span class="input-group-text" style="background-color: #f8f9fa; border: none;">Город</span>
       <input
         type="text"
         class="form-control"
+        :class="{ 'focused-input': isCityInputFocused }"
         placeholder="Введите название города"
         v-model="cityName"
         @input="handleCityInput"
+        @focus="isCityInputFocused = true"
+        @blur="isCityInputFocused = false"
+        style="border: none; font-size: 1.1rem; padding: 0.75rem 1rem;"
       >
     </div>
 
@@ -151,5 +158,10 @@
         border-bottom: none !important;
       }
     }
+  }
+
+  .focused-input {
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25), 0 4px 12px rgba(0, 123, 255, 0.3) !important;
+    transition: box-shadow 0.3s ease;
   }
 </style>

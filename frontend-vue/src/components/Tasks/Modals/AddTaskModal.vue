@@ -55,7 +55,11 @@
     sort: true,
     friends: true,
     followers: true,
-    activity: true
+    activity: true,
+    friendsCount: true,
+    followersCount: true,
+    lastSeen: true,
+    friendship: true
   })
 
   // Состояние свернутого блока фильтров
@@ -104,13 +108,25 @@
   }
 
   const isFooterLoading = computed(() => loadingStates[searchType.value]?.value ?? false)
+
+  // Состояние фокуса для input поля
+  const isInputFocused = ref<boolean>(false)
+
+  // Состояние фокуса для select аккаунта
+  const isAccountSelectFocused = ref<boolean>(false)
+
+  // Состояние фокуса для input полей в фильтрах
+  const isAgeInputFocused = ref<boolean>(false)
+  const isFriendsInputFocused = ref<boolean>(false)
+  const isFollowersInputFocused = ref<boolean>(false)
+  const isLastSeenInputFocused = ref<boolean>(false)
 </script>
 
 <template>
   <div class="modal fade" :id="modalId" tabindex="-1" aria-labelledby="Add task" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false"
   >
     <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content">
+      <div class="modal-content" style="box-shadow: 5px 12px 60px 20px rgba(0,0,0,0.3), 0 20px 30px rgba(0,0,0,0.2);">
         <div class="modal-header">
           <h1 class="modal-title fs-5" id="Delete task">Добавление задачи</h1>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -118,7 +134,7 @@
 
         <BodySection :key="searchType">
           <!-- Выбор аккаунта и количества постов -->
-          <select class="form-select mb-3" aria-label="Default select example" v-model="accountId">
+          <select class="form-select mb-3 mt-1" :class="{ 'focused-input': isAccountSelectFocused }" aria-label="Default select example" v-model="accountId" @focus="isAccountSelectFocused = true" @blur="isAccountSelectFocused = false">
             <option disabled selected value="selectAccount">Выберите аккаунт</option>
             <option v-for="account in accountsStore.fetchAccounts.data" :key="account.account_id" :value="account.account_id">
               {{ account.screen_name }} ({{ account.first_name }} {{ account.last_name }})
@@ -132,11 +148,14 @@
             <input
               type="number"
               class="form-control"
+              :class="{ 'focused-input': isInputFocused }"
               placeholder="По умолчанию 10 постов"
               min="1"
               max="100"
               step="1"
               v-model.number="taskCount"
+              @focus="isInputFocused = true"
+              @blur="isInputFocused = false"
             >
             <div class="form-text">
               <small class="text-muted">Диапазон: 1-100 постов</small>
@@ -144,27 +163,31 @@
           </div>
 
           <!-- Переключатели режимов поиска -->
-          <div class="form-check form-check-inline mb-3">
-            <input class="form-check-input" type="radio" name="searchType" id="newsfeedSearch" value="newsfeed" v-model="searchType">
-            <label class="form-check-label" for="newsfeedSearch">Поиск по ленте</label>
-          </div>
-          <div class="form-check form-check-inline mb-3">
-            <input class="form-check-input" type="radio" name="searchType" id="citySearch" value="city" v-model="searchType">
-            <label class="form-check-label" for="citySearch">Поиск по городу</label>
+          <div class="border rounded p-3 mb-3 bg-light" style="box-shadow: inset 0 0 10px rgba(0,0,0,0.1);">
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" name="searchType" id="newsfeedSearch" value="newsfeed" v-model="searchType">
+              <label class="form-check-label" for="newsfeedSearch">Поиск по ленте</label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" name="searchType" id="citySearch" value="city" v-model="searchType">
+              <label class="form-check-label" for="citySearch">Поиск по городу</label>
+            </div>
           </div>
 
           <!-- Поиск города для режима "Поиск по городу" -->
-          <CityInput
-            v-if="searchType === 'city'"
-            ref="cityInputRef"
-            :account-id="accountId"
-            :task-count="taskCount"
-            :filters="userFilters"
-            @success="handleTaskSuccess"
-          />
+          <KeepAlive>
+            <CityInput
+              v-if="searchType === 'city'"
+              ref="cityInputRef"
+              :account-id="accountId"
+              :task-count="taskCount"
+              :filters="userFilters"
+              @success="handleTaskSuccess"
+            />
+          </KeepAlive>
 
           <!-- Фильтры для поиска по городу -->
-          <div v-if="searchType === 'city'" class="border rounded p-0 mb-3 bg-light">
+          <div v-if="searchType === 'city'" class="border rounded p-0 mb-3 bg-light" style="box-shadow: inset 0 0 9px rgba(0,0,0,0.1)">
             <h6 class="m-0 p-3 d-flex justify-content-between align-items-center" style="cursor: pointer;" @click="toggleFiltersCollapse">
               <span>Фильтры пользователей</span>
               <i class="bi" :class="{ 'bi-chevron-down': isFiltersCollapsed, 'bi-chevron-up': !isFiltersCollapsed }"></i>
@@ -173,14 +196,14 @@
             <!-- Все фильтры -->
             <div v-if="!isFiltersCollapsed">
               <!-- Основные фильтры -->
-              <div class="row g-3 p-3">
+              <div class="row g-3 p-3 pb-0">
                 <!-- Пол -->
                 <div class="col-12">
-                  <div class="card border-0 bg-white shadow-sm">
-                    <div 
+                  <div class="card border-0 bg-white" :class="{ 'shadow': !collapsedCards.gender, 'shadow-sm': collapsedCards.gender }">
+                    <div
                       class="card-body m-0 p-0"
                     >
-                      <h6 class="card-title m-0 p-3 text-primary d-flex justify-content-between align-items-center" style="cursor: pointer;" @click="toggleCardCollapse('gender')">
+                      <h6 class="card-title m-0 p-3 text-dark d-flex justify-content-between align-items-center" style="cursor: pointer;" @click="toggleCardCollapse('gender')">
                         <span><i class="bi bi-person-fill me-2"></i>Пол</span>
                         <i class="bi small-icon" :class="{ 'bi-chevron-down': collapsedCards.gender, 'bi-chevron-up': !collapsedCards.gender }"></i>
                       </h6>
@@ -204,11 +227,11 @@
 
                 <!-- Возраст -->
                 <div class="col-12">
-                  <div class="card border-0 bg-white shadow-sm">
-                    <div 
+                  <div class="card border-0 bg-white" :class="{ 'shadow': !collapsedCards.age, 'shadow-sm': collapsedCards.age }">
+                    <div
                       class="card-body m-0 p-0"
                     >
-                      <h6 class="card-title m-0 p-3 text-primary d-flex justify-content-between align-items-center" style="cursor: pointer;" @click="toggleCardCollapse('age')">
+                      <h6 class="card-title m-0 p-3 text-dark d-flex justify-content-between align-items-center" style="cursor: pointer;" @click="toggleCardCollapse('age')">
                         <span><i class="bi bi-calendar-range me-2"></i>Возраст</span>
                         <i class="bi small-icon" :class="{ 'bi-chevron-down': collapsedCards.age, 'bi-chevron-up': !collapsedCards.age }"></i>
                       </h6>
@@ -218,21 +241,27 @@
                           <input
                             type="number"
                             class="form-control border-start-0 border-end-0 rounded-0"
+                            :class="{ 'focused-input': isAgeInputFocused }"
                             placeholder="14"
                             min="14"
                             max="80"
                             step="1"
                             v-model.number="userFilters.age_from"
+                            @focus="isAgeInputFocused = true"
+                            @blur="isAgeInputFocused = false"
                           >
                           <span class="input-group-text bg-light border-start-0 border-end-0">До</span>
                           <input
                             type="number"
                             class="form-control border-start-0 rounded-0"
+                            :class="{ 'focused-input': isAgeInputFocused }"
                             placeholder="80"
                             min="14"
                             max="80"
                             step="1"
                             v-model.number="userFilters.age_to"
+                            @focus="isAgeInputFocused = true"
+                            @blur="isAgeInputFocused = false"
                           >
                         </div>
                         <div class="form-text mt-2">
@@ -245,11 +274,11 @@
 
                 <!-- Наличие фото -->
                 <div class="col-12">
-                  <div class="card border-0 bg-white shadow-sm">
-                    <div 
+                  <div class="card border-0 bg-white" :class="{ 'shadow': !collapsedCards.photo, 'shadow-sm': collapsedCards.photo }">
+                    <div
                       class="card-body m-0 p-0"
                     >
-                      <h6 class="card-title m-0 p-3 text-primary d-flex justify-content-between align-items-center" style="cursor: pointer;" @click="toggleCardCollapse('photo')">
+                      <h6 class="card-title m-0 p-3 text-dark d-flex justify-content-between align-items-center" style="cursor: pointer;" @click="toggleCardCollapse('photo')">
                         <span><i class="bi bi-image me-2"></i>Наличие фото</span>
                         <i class="bi small-icon" :class="{ 'bi-chevron-down': collapsedCards.photo, 'bi-chevron-up': !collapsedCards.photo }"></i>
                       </h6>
@@ -273,11 +302,11 @@
 
                 <!-- Сортировка -->
                 <div class="col-12">
-                  <div class="card border-0 bg-white shadow-sm">
-                    <div 
+                  <div class="card border-0 bg-white" :class="{ 'shadow': !collapsedCards.sort, 'shadow-sm': collapsedCards.sort }">
+                    <div
                       class="card-body m-0 p-0"
                     >
-                      <h6 class="card-title m-0 p-3 text-primary d-flex justify-content-between align-items-center" style="cursor: pointer;" @click="toggleCardCollapse('sort')">
+                      <h6 class="card-title m-0 p-3 text-dark d-flex justify-content-between align-items-center" style="cursor: pointer;" @click="toggleCardCollapse('sort')">
                         <span><i class="bi bi-sort-down me-2"></i>Сортировка</span>
                         <i class="bi small-icon" :class="{ 'bi-chevron-down': collapsedCards.sort, 'bi-chevron-up': !collapsedCards.sort }"></i>
                       </h6>
@@ -298,143 +327,152 @@
                     </div>
                   </div>
                 </div>
-              </div>
 
-              <!-- Социальные связи -->
-              <div class="col-12 px-3 py-3">
-                <div class="card border-0 bg-info bg-opacity-10">
-                  <div 
-                    class="card-body m-0 p-0"
-                  >
-                    <h6 class="card-title m-0 p-3 text-info d-flex justify-content-between align-items-center" style="cursor: pointer;" @click="toggleCardCollapse('friends')">
-                      <span><i class="bi bi-people-fill me-2"></i>Социальные связи</span>
-                      <i class="bi small-icon" :class="{ 'bi-chevron-down': collapsedCards.friends, 'bi-chevron-up': !collapsedCards.friends }"></i>
-                    </h6>
-                    <div v-if="!collapsedCards.friends" class="p-3 pt-0" @click.stop>
-                      <div class="card border-0 bg-white shadow-sm">
-                        <div class="card-body p-0">
-                          <div class="row g-3 p-3">
-                            <!-- Количество друзей -->
-                            <div class="col-12">
-                              <label class="form-label fw-medium">
-                                <i class="bi bi-person-hearts me-1"></i>Количество друзей
-                              </label>
-                              <div class="input-group input-group-sm w-100">
-                                <span class="input-group-text bg-light border-end-0">От</span>
-                                <input
-                                  type="number"
-                                  class="form-control border-start-0 border-end-0 rounded-0"
-                                  placeholder="0"
-                                  min="0"
-                                  step="1"
-                                  v-model.number="userFilters.min_friends"
-                                >
-                                <span class="input-group-text bg-light border-start-0 border-end-0">До</span>
-                                <input
-                                  type="number"
-                                  class="form-control border-start-0 rounded-0"
-                                  placeholder="∞"
-                                  min="0"
-                                  step="1"
-                                  v-model.number="userFilters.max_friends"
-                                >
-                              </div>
-                              <div class="form-text mt-1">
-                                <small class="text-muted">Минимальное значение: 0</small>
-                              </div>
-                            </div>
-
-                            <!-- Количество подписчиков -->
-                            <div class="col-12">
-                              <label class="form-label fw-medium">
-                                <i class="bi bi-person-plus-fill me-1"></i>Количество подписчиков
-                              </label>
-                              <div class="input-group input-group-sm w-100">
-                                <span class="input-group-text bg-light border-end-0">От</span>
-                                <input
-                                  type="number"
-                                  class="form-control border-start-0 border-end-0 rounded-0"
-                                  placeholder="0"
-                                  min="0"
-                                  step="1"
-                                  v-model.number="userFilters.min_followers"
-                                >
-                                <span class="input-group-text bg-light border-start-0 border-end-0">До</span>
-                                <input
-                                  type="number"
-                                  class="form-control border-start-0 rounded-0"
-                                  placeholder="∞"
-                                  min="0"
-                                  step="1"
-                                  v-model.number="userFilters.max_followers"
-                                >
-                              </div>
-                              <div class="form-text mt-1">
-                                <small class="text-muted">Минимальное значение: 0</small>
-                              </div>
-                            </div>
-                          </div>
+                <!-- Количество друзей -->
+                <div class="col-12">
+                  <div class="card border-0 bg-white" :class="{ 'shadow': !collapsedCards.friendsCount, 'shadow-sm': collapsedCards.friendsCount }">
+                    <div
+                      class="card-body m-0 p-0"
+                    >
+                      <h6 class="card-title m-0 p-3 text-dark d-flex justify-content-between align-items-center" style="cursor: pointer;" @click="toggleCardCollapse('friendsCount')">
+                        <span><i class="bi bi-person-hearts me-2"></i>Количество друзей</span>
+                        <i class="bi small-icon" :class="{ 'bi-chevron-down': collapsedCards.friendsCount, 'bi-chevron-up': !collapsedCards.friendsCount }"></i>
+                      </h6>
+                      <div v-if="!collapsedCards.friendsCount" class="p-3 pt-0" @click.stop>
+                        <div class="input-group input-group-sm w-100">
+                          <span class="input-group-text bg-light border-end-0">От</span>
+                          <input
+                            type="number"
+                            class="form-control border-start-0 border-end-0 rounded-0"
+                            :class="{ 'focused-input': isFriendsInputFocused }"
+                            placeholder="0"
+                            min="0"
+                            step="1"
+                            v-model.number="userFilters.min_friends"
+                            @focus="isFriendsInputFocused = true"
+                            @blur="isFriendsInputFocused = false"
+                          >
+                          <span class="input-group-text bg-light border-start-0 border-end-0">До</span>
+                          <input
+                            type="number"
+                            class="form-control border-start-0 rounded-0"
+                            :class="{ 'focused-input': isFriendsInputFocused }"
+                            placeholder="∞"
+                            min="0"
+                            step="1"
+                            v-model.number="userFilters.max_friends"
+                            @focus="isFriendsInputFocused = true"
+                            @blur="isFriendsInputFocused = false"
+                          >
+                        </div>
+                        <div class="form-text mt-1">
+                          <small class="text-muted">Минимальное значение: 0</small>
                         </div>
                       </div>
                     </div>
                   </div>
                 </div>
-              </div>
 
-              <!-- Активность и статус -->
-              <div class="col-12 px-3">
-                <div class="card border-0 bg-warning bg-opacity-10">
-                  <div 
-                    class="card-body m-0 p-0"
-                  >
-                    <h6 class="card-title m-0 p-3 text-warning-emphasis d-flex justify-content-between align-items-center" style="cursor: pointer;" @click="toggleCardCollapse('activity')">
-                      <span><i class="bi bi-activity me-2"></i>Активность и статус</span>
-                      <i class="bi small-icon" :class="{ 'bi-chevron-down': collapsedCards.activity, 'bi-chevron-up': !collapsedCards.activity }"></i>
-                    </h6>
-                    <div v-if="!collapsedCards.activity" class="p-3 pt-0" @click.stop>
-                      <div class="card border-0 bg-white shadow-sm">
-                        <div class="card-body p-0">
-                          <div class="row g-3 p-3">
-                            <!-- Последняя активность -->
-                            <div class="col-12">
-                              <label class="form-label fw-medium">
-                                <i class="bi bi-clock-history me-1"></i>Последний онлайн (дней назад)
-                              </label>
-                              <div class="input-group input-group-sm w-100">
-                                <span class="input-group-text bg-light border-end-0">Макс</span>
-                                <input
-                                  type="number"
-                                  class="form-control border-start-0 border-end-0 rounded-0"
-                                  placeholder="30"
-                                  min="1"
-                                  max="365"
-                                  step="1"
-                                  v-model.number="userFilters.last_seen_days"
-                                >
-                                <span class="input-group-text bg-light border-start-0">дней</span>
-                              </div>
-                              <div class="form-text mt-1">
-                                <small class="text-muted">Диапазон: 1-365 дней</small>
-                              </div>
-                            </div>
+                <!-- Количество подписчиков -->
+                <div class="col-12">
+                  <div class="card border-0 bg-white" :class="{ 'shadow': !collapsedCards.followersCount, 'shadow-sm': collapsedCards.followersCount }">
+                    <div
+                      class="card-body m-0 p-0"
+                    >
+                      <h6 class="card-title m-0 p-3 text-dark d-flex justify-content-between align-items-center" style="cursor: pointer;" @click="toggleCardCollapse('followersCount')">
+                        <span><i class="bi bi-person-plus-fill me-2"></i>Количество подписчиков</span>
+                        <i class="bi small-icon" :class="{ 'bi-chevron-down': collapsedCards.followersCount, 'bi-chevron-up': !collapsedCards.followersCount }"></i>
+                      </h6>
+                      <div v-if="!collapsedCards.followersCount" class="p-3 pt-0" @click.stop>
+                        <div class="input-group input-group-sm w-100">
+                          <span class="input-group-text bg-light border-end-0">От</span>
+                          <input
+                            type="number"
+                            class="form-control border-start-0 border-end-0 rounded-0"
+                            :class="{ 'focused-input': isFollowersInputFocused }"
+                            placeholder="0"
+                            min="0"
+                            step="1"
+                            v-model.number="userFilters.min_followers"
+                            @focus="isFollowersInputFocused = true"
+                            @blur="isFollowersInputFocused = false"
+                          >
+                          <span class="input-group-text bg-light border-start-0 border-end-0">До</span>
+                          <input
+                            type="number"
+                            class="form-control border-start-0 rounded-0"
+                            :class="{ 'focused-input': isFollowersInputFocused }"
+                            placeholder="∞"
+                            min="0"
+                            step="1"
+                            v-model.number="userFilters.max_followers"
+                            @focus="isFollowersInputFocused = true"
+                            @blur="isFollowersInputFocused = false"
+                          >
+                        </div>
+                        <div class="form-text mt-1">
+                          <small class="text-muted">Минимальное значение: 0</small>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
 
-                            <!-- Статус дружбы -->
-                            <div class="col-12">
-                              <label class="form-label fw-medium">
-                                <i class="bi bi-heart-fill me-1"></i>Статус дружбы
-                              </label>
-                              <div class="btn-group w-100" role="group">
-                                <input type="radio" class="btn-check" name="friendship" id="friendshipAny" :value="null" v-model="userFilters.is_friend">
-                                <label class="btn btn-outline-secondary btn-sm" for="friendshipAny">Любой</label>
+                <!-- Последняя активность -->
+                <div class="col-12">
+                  <div class="card border-0 bg-white" :class="{ 'shadow': !collapsedCards.lastSeen, 'shadow-sm': collapsedCards.lastSeen }">
+                    <div
+                      class="card-body m-0 p-0"
+                    >
+                      <h6 class="card-title m-0 p-3 text-dark d-flex justify-content-between align-items-center" style="cursor: pointer;" @click="toggleCardCollapse('lastSeen')">
+                        <span><i class="bi bi-clock-history me-2"></i>Последний онлайн (дней назад)</span>
+                        <i class="bi small-icon" :class="{ 'bi-chevron-down': collapsedCards.lastSeen, 'bi-chevron-up': !collapsedCards.lastSeen }"></i>
+                      </h6>
+                      <div v-if="!collapsedCards.lastSeen" class="p-3 pt-0" @click.stop>
+                        <div class="input-group input-group-sm w-100">
+                          <span class="input-group-text bg-light border-end-0">Макс</span>
+                          <input
+                            type="number"
+                            class="form-control border-start-0 border-end-0 rounded-0"
+                            :class="{ 'focused-input': isLastSeenInputFocused }"
+                            placeholder="30"
+                            min="1"
+                            max="365"
+                            step="1"
+                            v-model.number="userFilters.last_seen_days"
+                            @focus="isLastSeenInputFocused = true"
+                            @blur="isLastSeenInputFocused = false"
+                          >
+                          <span class="input-group-text bg-light border-start-0">дней</span>
+                        </div>
+                        <div class="form-text mt-1">
+                          <small class="text-muted">Диапазон: 1-365 дней</small>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
 
-                                <input type="radio" class="btn-check" name="friendship" id="friendshipTrue" :value="true" v-model="userFilters.is_friend">
-                                <label class="btn btn-outline-success btn-sm" for="friendshipTrue">В друзьях</label>
+                <!-- Статус дружбы -->
+                <div class="col-12">
+                  <div class="card border-0 bg-white" :class="{ 'shadow': !collapsedCards.friendship, 'shadow-sm': collapsedCards.friendship }">
+                    <div
+                      class="card-body m-0 p-0"
+                    >
+                      <h6 class="card-title m-0 p-3 text-dark d-flex justify-content-between align-items-center" style="cursor: pointer;" @click="toggleCardCollapse('friendship')">
+                        <span><i class="bi bi-heart-fill me-2"></i>Статус дружбы</span>
+                        <i class="bi small-icon" :class="{ 'bi-chevron-down': collapsedCards.friendship, 'bi-chevron-up': !collapsedCards.friendship }"></i>
+                      </h6>
+                      <div v-if="!collapsedCards.friendship" class="p-3 pt-0" @click.stop>
+                        <div class="btn-group w-100" role="group">
+                          <input type="radio" class="btn-check" name="friendship" id="friendshipAny" :value="null" v-model="userFilters.is_friend">
+                          <label class="btn btn-outline-secondary btn-sm" for="friendshipAny">Любой</label>
 
-                                <input type="radio" class="btn-check" name="friendship" id="friendshipFalse" :value="false" v-model="userFilters.is_friend">
-                                <label class="btn btn-outline-danger btn-sm" for="friendshipFalse">Не в друзьях</label>
-                              </div>
-                            </div>
-                          </div>
+                          <input type="radio" class="btn-check" name="friendship" id="friendshipTrue" :value="true" v-model="userFilters.is_friend">
+                          <label class="btn btn-outline-success btn-sm" for="friendshipTrue">В друзьях</label>
+
+                          <input type="radio" class="btn-check" name="friendship" id="friendshipFalse" :value="false" v-model="userFilters.is_friend">
+                          <label class="btn btn-outline-danger btn-sm" for="friendshipFalse">Не в друзьях</label>
                         </div>
                       </div>
                     </div>
@@ -443,9 +481,9 @@
               </div>
 
               <!-- Только онлайн -->
-              <div class="row g-3 my-1 p-3">
+              <div class="row g-3 my-1 p-3 pt-0">
                 <div class="col-12">
-                  <div class="card border-0 bg-primary bg-opacity-10 border-primary border-opacity-25">
+                  <div class="card border-0 bg-primary bg-opacity-10 border-primary border-opacity-25 shadow-sm">
                     <div class="card-body p-3">
                       <div class="form-check form-switch">
                         <input class="form-check-input" type="checkbox" id="onlineOnly" v-model="userFilters.online_only">
@@ -470,14 +508,16 @@
           </div>
 
           <!-- Компоненты для разных типов поиска -->
-          <NewsfeedSearch
-            v-if="searchType === 'newsfeed'"
-            ref="newsfeedSearchRef"
-            :account-id="accountId"
-            :task-count="taskCount"
-            @success="handleTaskSuccess"
-            @cancel="modalHide"
-          />
+          <KeepAlive>
+            <NewsfeedSearch
+              v-if="searchType === 'newsfeed'"
+              ref="newsfeedSearchRef"
+              :account-id="accountId"
+              :task-count="taskCount"
+              @success="handleTaskSuccess"
+              @cancel="modalHide"
+            />
+          </KeepAlive>
 
         </BodySection>
 
@@ -490,3 +530,10 @@
     </div>
   </div>
 </template>
+
+<style lang="scss" scoped>
+.focused-input {
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25), 0 4px 12px rgba(0, 123, 255, 0.3) !important;
+  transition: box-shadow 0.3s ease;
+}
+</style>
