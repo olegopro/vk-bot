@@ -1,10 +1,10 @@
 <script setup>
   import { ref, getCurrentInstance } from 'vue'
-  import { useAccountsStore } from '../../../stores/AccountsStore'
-  import { showSuccessNotification } from '../../../helpers/notyfHelper'
-  import { useCyclicTasksStore } from '../../../stores/CyclicTasksStore'
-  import TimePicker from '../TimePicker.vue'
-  import { useModal } from '../../../composables/useModal'
+  import { useAccountsStore } from '@/stores/AccountsStore'
+  import { showSuccessNotification } from '@/helpers/notyfHelper'
+  import { useCyclicTasksStore } from '@/stores/CyclicTasksStore'
+  import TimePicker from '@/components/CyclicTasks/TimePicker.vue'
+  import { useModal } from '@/composables/useModal'
 
   const accountsStore = useAccountsStore()
   const cyclicTaskStore = useCyclicTasksStore()

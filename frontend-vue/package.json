@@ -28,6 +28,8 @@
     "vue3-perfect-scrollbar": "^1.6.1"
   },
   "devDependencies": {
+    "@babel/core": "^7.28.4",
+    "@babel/eslint-parser": "^7.28.4",
     "@types/bootstrap": "^5.2.10",
     "@types/lodash": "^4.17.20",
     "@types/node": "^22.0.0",
@@ -37,7 +39,9 @@
     "@vue/eslint-config-standard": "^8.0.1",
     "@vue/eslint-config-typescript": "^13.0.0",
     "eslint": "^8.52.0",
+    "eslint-import-resolver-typescript": "^4.4.4",
     "eslint-plugin-import": "^2.29.1",
+    "eslint-plugin-no-relative-import-paths": "^1.6.1",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^6.1.1",
     "eslint-plugin-vue": "^9.22.0",

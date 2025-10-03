@@ -1,4 +1,4 @@
-import { Task, TaskStatuses, TaskDetails } from '../types/tasks'
+import { Task, TaskStatuses, TaskDetails } from '@/types/tasks'
 
 export type TaskStatus = 'queued' | 'done' | 'failed' | ''
 

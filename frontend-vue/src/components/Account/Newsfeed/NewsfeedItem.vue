@@ -1,11 +1,11 @@
 <script setup>
   import { ref, toRefs } from 'vue'
-  import { useAccountStore } from '../../../stores/AccountStore'
-  import { showErrorNotification, showSuccessNotification } from '../../../helpers/notyfHelper'
-  import { useImageUrl } from '../../../composables/useImageUrl'
-  import { useModal } from '../../../composables/useModal'
-  import AccountDetailsModal from '../Modals/AccountDetailsModal.vue'
-  import GroupDetailsModal from '../Modals/GroupDetailsModal.vue'
+  import { useAccountStore } from '@/stores/AccountStore'
+  import { showErrorNotification, showSuccessNotification } from '@/helpers/notyfHelper'
+  import { useImageUrl } from '@/composables/useImageUrl'
+  import { useModal } from '@/composables/useModal'
+  import AccountDetailsModal from '@/components/Account/Modals/AccountDetailsModal.vue'
+  import GroupDetailsModal from '@/components/Account/Modals/GroupDetailsModal.vue'
 
   const props = defineProps({
     index: Number,

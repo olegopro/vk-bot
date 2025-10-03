@@ -1,12 +1,12 @@
 <script setup>
   import { onMounted } from 'vue'
-  import { useCyclicTasksStore } from '../stores/CyclicTasksStore'
-  import { useAccountsStore } from '../stores/AccountsStore'
-  import TableThread from '../components/CyclicTasks/TableThread.vue'
-  import AddCyclicTaskModal from '../components/CyclicTasks/Modals/AddCyclicTaskModal.vue'
-  import router from '../router'
+  import { useCyclicTasksStore } from '@/stores/CyclicTasksStore'
+  import { useAccountsStore } from '@/stores/AccountsStore'
+  import TableThread from '@/components/CyclicTasks/TableThread.vue'
+  import AddCyclicTaskModal from '@/components/CyclicTasks/Modals/AddCyclicTaskModal.vue'
+  import router from '@/router'
   import { useModal } from '@/composables/useModal.ts'
-  import DeleteAllCyclicTasksModal from '../components/CyclicTasks/Modals/DeleteAllCyclicTasksModal.vue'
+  import DeleteAllCyclicTasksModal from '@/components/CyclicTasks/Modals/DeleteAllCyclicTasksModal.vue'
 
   const { showModal } = useModal()
 

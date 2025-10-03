@@ -1,12 +1,12 @@
 <script setup lang="ts">
   import { defineProps, computed } from 'vue'
-  import TaskStatus from './TaskStatus.vue'
+  import TaskStatus from '@/components/CyclicTasks/TaskStatus.vue'
   import { format } from 'date-fns'
   import { useCyclicTasksStore } from '@/stores/CyclicTasksStore'
   import { useModal } from '@/composables/useModal'
-  import EditCyclicTaskModal from './Modals/EditCyclicTaskModal.vue'
-  import DeleteCyclicTaskModalModal from './Modals/DeleteCyclicTaskModal.vue'
-  import router from '../../router'
+  import EditCyclicTaskModal from '@/components/CyclicTasks/Modals/EditCyclicTaskModal.vue'
+  import DeleteCyclicTaskModalModal from '@/components/CyclicTasks/Modals/DeleteCyclicTaskModal.vue'
+  import router from '@/router'
   import type { CyclicTask } from '@/types/tasks'
 
   const { cyclicTask } = defineProps<{ cyclicTask: CyclicTask }>()

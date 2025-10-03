@@ -1,7 +1,7 @@
 <script>
 
-  import MainLayout from './layouts/MainLayout.vue'
-  import ModalComponent from './components-ui/modal-component/ModalComponent.vue'
+  import MainLayout from '@/layouts/MainLayout.vue'
+  import ModalComponent from '@/components-ui/modal-component/ModalComponent.vue'
 
   export default {
     components: {

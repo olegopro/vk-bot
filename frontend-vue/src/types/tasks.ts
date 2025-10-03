@@ -2,7 +2,7 @@
  * Сущности для работы с задачами
  */
 
-import { VkUser, VkAttachment } from './vkontakte'
+import { VkUser, VkAttachment } from '@/types/vkontakte'
 
 // Интерфейс для задачи
 export interface Task {

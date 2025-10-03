@@ -1,4 +1,4 @@
-import { Settings } from '../types/settings'
+import { Settings } from '@/types/settings'
 
 // Response типы
 export type SettingsResponse = Settings

@@ -11,15 +11,31 @@ module.exports = {
     // Это нужно поддержки TypeScript в ESLint
     'plugin:@typescript-eslint/recommended',
     // При использовании TypeScript с Vue
-    '@vue/typescript/recommended'
+    '@vue/typescript/recommended',
+    'plugin:import/recommended',
+    'plugin:import/typescript'
 
     // '@vue/typescript'
   ],
+
+  plugins: ['no-relative-import-paths'],
 
   parserOptions: {
     parser: '@typescript-eslint/parser',
     ecmaVersion: 2020,
     sourceType: 'module'
+  },
+
+  settings: {
+    'import/resolver': {
+      typescript: {
+        alwaysTryTypes: true,
+        project: './tsconfig.json'
+      },
+      node: {
+        extensions: ['.js', '.jsx', '.ts', '.tsx', '.vue']
+      }
+    }
   },
 
   rules: {
@@ -47,20 +63,29 @@ module.exports = {
     }],
     'vue/component-tags-order': ['error', {
       order: ['script', 'template', 'style']
-    }]
+    }],
+    // Автоматическая замена относительных импортов на алиасы @/
+    'no-relative-import-paths/no-relative-import-paths': ['error', {
+      allowSameFolder: false,
+      rootDir: 'src',
+      prefix: '@'
+    }],
+    // Отключаем предупреждение о named exports как default imports
+    'import/no-named-as-default': 'off'
   },
 
   overrides: [
     {
       files: ['*.js'],
       parserOptions: {
-        parser: '@babel/eslint-parser'
+        parser: '@babel/eslint-parser',
+        requireConfigFile: false
       }
     },
     {
       files: ['*.vue'],
       rules: {
-        'indent': 'off' // Отключаем стандартное правило для Vue файлов
+        indent: 'off' // Отключаем стандартное правило для Vue файлов
       }
     }
   ]

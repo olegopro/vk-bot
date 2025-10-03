@@ -1,12 +1,12 @@
 <script setup lang="ts">
   import { defineProps } from 'vue'
-  import TaskStatus from './TaskStatus.vue'
+  import TaskStatus from '@/components/Tasks/TaskStatus.vue'
   import { format } from 'date-fns'
   import { useTasksStore } from '@/stores/TasksStore'
   import { useAccountStore } from '@/stores/AccountStore'
-  import DeleteTaskModal from './Modals/DeleteTaskModal.vue'
-  import TaskDetailsModal from './Modals/TaskDetailsModal.vue'
-  import AccountDetailsModal from './Modals/AccountDetailsModal.vue'
+  import DeleteTaskModal from '@/components/Tasks/Modals/DeleteTaskModal.vue'
+  import TaskDetailsModal from '@/components/Tasks/Modals/TaskDetailsModal.vue'
+  import AccountDetailsModal from '@/components/Tasks/Modals/AccountDetailsModal.vue'
   import type { Task } from '@/types/tasks'
   import { useModal } from '@/composables/useModal'
 

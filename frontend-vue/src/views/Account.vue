@@ -2,10 +2,10 @@
   import { ref, onMounted } from 'vue'
   import { useAccountStore } from '@/stores/AccountStore'
   import { useRoute } from 'vue-router'
-  import Followers from '../components/Account/Followers.vue'
-  import Friends from '../components/Account/Friends.vue'
-  import OnlineStatus from '../components/Account/OnlineStatus.vue'
-  import Newsfeed from '../components/Account/Newsfeed/Newsfeed.vue'
+  import Followers from '@/components/Account/Followers.vue'
+  import Friends from '@/components/Account/Friends.vue'
+  import OnlineStatus from '@/components/Account/OnlineStatus.vue'
+  import Newsfeed from '@/components/Account/Newsfeed/Newsfeed.vue'
   import { useSettingsStore } from '@/stores/SettingsStore'
 
   const accountStore = useAccountStore()

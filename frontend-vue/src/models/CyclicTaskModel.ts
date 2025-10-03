@@ -1,4 +1,4 @@
-import { CyclicTask } from '../types/tasks'
+import { CyclicTask } from '@/types/tasks'
 
 export interface CyclicTasksPaginatedData {
   data: CyclicTask[]

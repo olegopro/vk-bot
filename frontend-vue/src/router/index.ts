@@ -1,11 +1,11 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import RouterPaths from './routerPaths'
-import Accounts from '../views/Accounts.vue'
-import Tasks from '../views/Tasks.vue'
-import Account from '../views/Account.vue'
-import Statistics from '../views/Statistics.vue'
-import Settings from '../views/Settings.vue'
-import CyclicTasks from '../views/CyclicTasks.vue'
+import RouterPaths from '@/router/routerPaths'
+import Accounts from '@/views/Accounts.vue'
+import Tasks from '@/views/Tasks.vue'
+import Account from '@/views/Account.vue'
+import Statistics from '@/views/Statistics.vue'
+import Settings from '@/views/Settings.vue'
+import CyclicTasks from '@/views/CyclicTasks.vue'
 
 const routes = [
   {

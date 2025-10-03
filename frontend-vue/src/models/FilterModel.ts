@@ -2,7 +2,7 @@
  * Модель для фильтров и связанных данных
  */
 
-import { VkCity, VkUser } from '../types/vkontakte'
+import { VkCity, VkUser } from '@/types/vkontakte'
 
 // Response типы
 export interface CitySearchResponse {

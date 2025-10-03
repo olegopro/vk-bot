@@ -1,4 +1,4 @@
-import { VkUser, VkGroup, VkNewsFeedItem } from '../types/vkontakte'
+import { VkUser, VkGroup, VkNewsFeedItem } from '@/types/vkontakte'
 
 export interface NewsFeedResponse {
   items: VkNewsFeedItem[]

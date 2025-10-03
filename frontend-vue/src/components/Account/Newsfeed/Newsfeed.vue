@@ -5,7 +5,7 @@
   import { useRoute } from 'vue-router'
   import { debounce } from 'lodash'
   import { useModal } from '@/composables/useModal'
-  import NewsfeedItem from './NewsfeedItem.vue'
+  import NewsfeedItem from '@/components/Account/Newsfeed/NewsfeedItem.vue'
 
   const accountStore = useAccountStore()
   const route = useRoute()

@@ -4,7 +4,7 @@
   import { useCyclicTasksStore } from '@/stores/CyclicTasksStore'
   import { useModal } from '@/composables/useModal'
   import { showSuccessNotification } from '@/helpers/notyfHelper'
-  import TimePicker from '../TimePicker.vue'
+  import TimePicker from '@/components/CyclicTasks/TimePicker.vue'
   import { EditCyclicTaskRequest } from '@/models/CyclicTaskModel'
 
   const modalId = getCurrentInstance()?.type.__name

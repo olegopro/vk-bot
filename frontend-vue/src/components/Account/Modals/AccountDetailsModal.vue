@@ -2,7 +2,7 @@
   import { computed, getCurrentInstance } from 'vue'
   import { useModal } from '@/composables/useModal'
   import { useAccountStore } from '@/stores/AccountStore'
-  import OnlineStatus from '../OnlineStatus.vue'
+  import OnlineStatus from '@/components/Account/OnlineStatus.vue'
 
   const modalId = getCurrentInstance()?.type.__name
   const { closeModal } = useModal()
