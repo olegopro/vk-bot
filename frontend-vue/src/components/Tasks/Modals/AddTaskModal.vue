@@ -163,7 +163,7 @@
           </div>
 
           <!-- Переключатели режимов поиска -->
-          <div class="border rounded p-3 mb-3 bg-light" style="box-shadow: inset 0 0 10px rgba(0,0,0,0.1);">
+          <div class="border rounded p-3 mb-3 bg-light">
             <div class="form-check form-check-inline">
               <input class="form-check-input" type="radio" name="searchType" id="newsfeedSearch" value="newsfeed" v-model="searchType">
               <label class="form-check-label" for="newsfeedSearch">Поиск по ленте</label>
@@ -187,7 +187,7 @@
           </KeepAlive>
 
           <!-- Фильтры для поиска по городу -->
-          <div v-if="searchType === 'city'" class="border rounded p-0 mb-3 bg-light" style="box-shadow: inset 0 0 9px rgba(0,0,0,0.1)">
+          <div v-if="searchType === 'city'" class="border rounded p-0 mb-3 bg-light">
             <h6 class="m-0 p-3 d-flex justify-content-between align-items-center" style="cursor: pointer;" @click="toggleFiltersCollapse">
               <span>Фильтры пользователей</span>
               <i class="bi" :class="{ 'bi-chevron-down': isFiltersCollapsed, 'bi-chevron-up': !isFiltersCollapsed }"></i>

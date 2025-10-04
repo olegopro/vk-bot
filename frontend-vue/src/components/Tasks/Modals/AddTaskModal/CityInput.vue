@@ -100,7 +100,7 @@
 <template>
   <div>
     <!-- Поиск по городу -->
-    <div class="input-group mb-3" style="box-shadow: rgba(0, 0, 0, 0.1) 0px 0px 10px inset; border-radius: 0.375rem; border: 1px solid #49b4f082;">
+    <div class="input-group mb-3" >
       <span class="input-group-text" style="background-color: #f8f9fa; border: none;">Город</span>
       <input
         type="text"
@@ -111,7 +111,6 @@
         @input="handleCityInput"
         @focus="isCityInputFocused = true"
         @blur="isCityInputFocused = false"
-        style="border: none; font-size: 1.1rem; padding: 0.75rem 1rem;"
       >
     </div>
 
