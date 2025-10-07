@@ -379,18 +379,15 @@ class VkClientService
     {
         $access_token = $this->getAccessTokenByAccountID($accountId);
 
-        // Получаем параметры для основного API запроса (без расширенных фильтров)
+        // Получаем параметры для основного API запроса users.search
         $parameters = $filter->getFilters();
-
-        // Удаляем расширенные фильтры из параметров для users.search
-        unset($parameters['extended_filters']);
 
         // Выполняем запрос к API
         $response = $this->request('users.search', $parameters, $access_token);
 
-            // Если есть расширенные фильтры, получаем детальную информацию о пользователях
+        // Если есть расширенные фильтры, получаем детальную информацию о пользователях
         $extendedFilters = $filter->getExtendedFilters();
-        if (isset($response['response']['items'])) {
+        if (isset($response['response']['items']) && !empty($extendedFilters)) {
             $response = $this->applyExtendedFiltersWithUserDetails($response, $extendedFilters, $access_token);
         }
 

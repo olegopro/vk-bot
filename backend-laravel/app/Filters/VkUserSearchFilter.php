@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Filters;
@@ -32,7 +33,7 @@ class VkUserSearchFilter
      *
      * @return VkUserSearchFilter Возвращает текущий экземпляр для цепочки вызовов
      */
-    public function setDefaults(): self
+    private function setDefaults(): self
     {
         $this->filters = [
             'fields' => 'photo_200,city,country,online,screen_name,is_closed',
@@ -51,6 +52,7 @@ class VkUserSearchFilter
     public function setQuery(?string $query): self
     {
         $this->filters['q'] = $query;
+
         return $this;
     }
 
@@ -63,6 +65,7 @@ class VkUserSearchFilter
     public function setCity(int $cityId): self
     {
         $this->filters['city'] = $cityId;
+
         return $this;
     }
 
@@ -75,6 +78,7 @@ class VkUserSearchFilter
     public function setCount(int $count): self
     {
         $this->filters['count'] = $count;
+
         return $this;
     }
 
@@ -137,7 +141,6 @@ class VkUserSearchFilter
 
         return $this;
     }
-
 
     /**
      * Устанавливает фильтр по наличию фото через API параметр.
@@ -214,7 +217,8 @@ class VkUserSearchFilter
         ?int $maxFriends = null,
         ?int $minFollowers = null,
         ?int $maxFollowers = null
-    ): self {
+    ): self
+    {
         $extendedFilters = [];
 
         if ($minFriends !== null) {
@@ -257,6 +261,7 @@ class VkUserSearchFilter
     public function addFilter(string $key, $value): self
     {
         $this->filters[$key] = $value;
+
         return $this;
     }
 
@@ -267,6 +272,6 @@ class VkUserSearchFilter
      */
     public function getFilters(): array
     {
-        return $this->filters;
+        return array_diff_key($this->filters, ['extended_filters' => true]);
     }
 }

@@ -497,59 +497,6 @@ final class TaskController extends Controller
         description: 'Задачи успешно созданы',
         content: new OA\JsonContent(ref: '#/components/schemas/TasksListResponse')
     )]
-    #[OA\Response(
-        response: 400,
-        description: 'Неверные параметры запроса',
-        content: new OA\JsonContent(ref: '#/components/schemas/TaskErrorResponse')
-    )]
-    #[OA\Response(
-        response: 500,
-        description: 'Внутренняя ошибка сервера',
-        content: new OA\JsonContent(ref: '#/components/schemas/TaskErrorResponse')
-    )]
-    public function createLikeTasksForUserWallPosts(Request $request): JsonResponse
-    {
-        $accountId    = $request->input('account_id');
-        $domains      = $request->input('domains');
-        $access_token = VkClient::getAccessTokenByAccountID($accountId);
-
-        if (!$accountId || !$domains || !is_array($domains)) {
-            return response()->json([
-                'success' => false,
-                'error'   => 'Неправильные параметры запроса'
-            ], 400);
-        }
-
-        $tasks = [];
-
-        Log::info('Domains data:', ['domains' => $domains]);
-
-        foreach ($domains as $domain) {
-
-            Log::info('Domain', ['domain' => $domain]);
-
-            // Получаем записи со стены пользователя по его логину
-            $wallPosts = $this->vkClient->fetchWallPostsByDomain($accountId, $domain, null, $this->loggingService);
-
-            // Извлекаем первую запись из стены
-            if (!empty($wallPosts['data']['response']['items'])) {
-                $post = $wallPosts['data']['response']['items'][0];
-
-                // Создаем задачу на лайк для извлеченной записи
-                $task    = $this->createPendingLikeTask($accountId, $post, false);
-                $tasks[] = $task;
-            }
-        }
-
-        $this->processAndQueuePendingLikeTasks($access_token);
-
-        return response()->json([
-            'success' => true,
-            'data'    => $tasks,
-            'message' => 'Задачи на лайки созданы для пользователей'
-        ]);
-    }
-
     /**
      * Создает задачи на лайки для пользователей из указанного города.
      *
@@ -657,9 +604,9 @@ final class TaskController extends Controller
                 }
 
                 if ($onlineOnly) {
-                    $filter->setOnlineOnly(true);
+                    $filter->setOnlineOnly();
                 }
-                
+
                 if ($hasPhoto !== null) {
                     $filter->setHasPhoto($hasPhoto);
                 }

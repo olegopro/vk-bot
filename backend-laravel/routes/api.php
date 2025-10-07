@@ -24,10 +24,13 @@ use Illuminate\Support\Facades\Route;
 Route::prefix('tasks')->group(function() {
     // Специфичные маршруты должны быть ПЕРЕД общими маршрутами
     Route::get('/task-info/{taskId}', [TaskController::class, 'getTaskInfo']);
+    
+
     Route::post('/get-posts-for-like', [TaskController::class, 'createAndQueueLikeTasksFromNewsfeed']);
-    Route::post('/add-task-likes',  [TaskController::class, 'processAndQueuePendingLikeTasks']);
-    Route::post('/create-for-users', [TaskController::class, 'createLikeTasksForUserWallPosts']);
     Route::post('/create-for-city', [TaskController::class, 'createLikeTasksForCityUsers']);
+    
+    Route::post('/add-task-likes',  [TaskController::class, 'processAndQueuePendingLikeTasks']);
+    
     Route::delete('/delete-like/{taskId}', [TaskController::class, 'deleteLike']);
     Route::delete('/delete-all-tasks/{status?}/{accountId?}', [TaskController::class, 'deleteAllTasks']);
     Route::delete('/delete-task-by-id/{id}', [TaskController::class, 'deleteTaskById']);

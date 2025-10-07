@@ -87,14 +87,6 @@ export const useAccountStore = defineStore('account', () => {
   })
 
   /**
-   * Создает задачи на лайки для указанных пользователей
-   */
-  const createTasksForUsers = useApi(async (parameters?: { tasksData: CreateTasksRequest }) => {
-    if (!parameters) throw new Error('Не указаны параметры для создания задач')
-    return (await axios.post<ApiResponseWrapper<CreateTasksResponse>>('tasks/create-for-users', parameters.tasksData)).data
-  })
-
-  /**
    * Создает задачи на лайки для пользователей из выбранного города
    */
   const createTasksForCity = useApi(async (parameters?: { cityData: { account_id: number; city_id: number; count?: number } }) => {
@@ -112,7 +104,6 @@ export const useAccountStore = defineStore('account', () => {
     addLike,
     addPostsToLike,
     fetchGroupData,
-    createTasksForUsers,
     createTasksForCity
   }
 })
