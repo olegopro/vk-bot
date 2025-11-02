@@ -21,8 +21,11 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::prefix('tasks')->group(function() {
-    // Специфичные маршруты должны быть ПЕРЕД общими маршрутами
+ // -----------------------------------------------------------------
+ // |  Маршруты задач
+ // |-----------------------------------------------------------------
+Route::prefix('tasks')->group(function () {
+    // Специфичные маршруты – должны идти раньше общих
     Route::get('/task-info/{taskId}', [TaskController::class, 'getTaskInfo']);
 
     Route::post('/get-posts-for-like', [TaskController::class, 'createAndQueueLikeTasksFromNewsfeed']);
@@ -32,11 +35,14 @@ Route::prefix('tasks')->group(function() {
     Route::delete('/delete-all-tasks/{status?}/{accountId?}', [TaskController::class, 'deleteAllTasks']);
     Route::delete('/delete-task-by-id/{id}', [TaskController::class, 'deleteTaskById']);
 
-    // Общий маршрут ОБЯЗАТЕЛЬНО должен быть в самом конце
+    // Общий маршрут – в конце
     Route::get('/{status?}/{accountId?}', [TaskController::class, 'getTasksByStatus']);
 });
 
-Route::prefix('cyclic-tasks')->group(function() {
+ // -----------------------------------------------------------------
+ // |  Маршруты циклических задач
+ // |-----------------------------------------------------------------
+Route::prefix('cyclic-tasks')->group(function () {
     Route::get('/', [CyclicTaskController::class, 'getCyclicTasks']);
     Route::post('/create-cyclic-task', [CyclicTaskController::class, 'createCyclicTask']);
     Route::patch('/{taskId}', [CyclicTaskController::class, 'editCyclicTask']);
@@ -45,13 +51,16 @@ Route::prefix('cyclic-tasks')->group(function() {
     Route::delete('/{taskId}', [CyclicTaskController::class, 'deleteCyclicTask']);
 });
 
-Route::prefix('accounts')->group(function() {
+ // -----------------------------------------------------------------
+ // |  Маршруты работы с аккаунтами
+ // |-----------------------------------------------------------------
+Route::prefix('accounts')->group(function () {
     Route::get('/all-accounts', [AccountsController::class, 'fetchAllAccounts']);
     Route::post('/add-account', [AccountsController::class, 'setAccountData']);
     Route::delete('/delete-account/{id}', [AccountsController::class, 'deleteAccount']);
 });
 
-Route::prefix('account')->group(function() {
+Route::prefix('account')->group(function () {
     Route::get('/data/{id}', [AccountController::class, 'fetchAccountData']);
     Route::get('/followers/{id}', [AccountController::class, 'fetchAccountFollowers']);
     Route::get('/friends/{id}', [AccountController::class, 'fetchAccountFriends']);
@@ -60,19 +69,23 @@ Route::prefix('account')->group(function() {
     Route::post('/like', [AccountController::class, 'addLike']);
 });
 
-Route::prefix('filters')->group(function() {
-    // Поиск пользователей с применением фильтров
+ // -----------------------------------------------------------------
+ // |  Фильтры поиска
+ // |-----------------------------------------------------------------
+Route::prefix('filters')->group(function () {
     Route::post('/search', [FilterController::class, 'searchUsers']);
-    // Получение списка городов для фильтрации
     Route::post('/cities', [FilterController::class, 'getCities']);
-
     Route::post('/users-by-city', [FilterController::class, 'getUsersByCity']);
 });
+
 Route::get('/group/data/{id}', [AccountController::class, 'fetchGroupData']);
 
 Route::get('/statistics', [StatisticController::class, 'getWeeklyTaskStats']);
 
-Route::prefix('settings')->group(function() {
+ // -----------------------------------------------------------------
+ // |  Настройки приложения
+ // |-----------------------------------------------------------------
+Route::prefix('settings')->group(function () {
     Route::get('/', [SettingsController::class, 'getSettings']);
     Route::post('/save', [SettingsController::class, 'saveSettings']);
 });
